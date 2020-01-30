@@ -25,7 +25,7 @@ include('includes/navbar.php');
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="code.php" method="POST">
+          <form action="nadadora_code.php" method="POST">
             <div class="modal-body">
               <div class="form-group">
                 <label for="licencia">Licencia</label>
@@ -46,7 +46,7 @@ include('includes/navbar.php');
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary" name="guardarNadadora">Guardar</button>
+              <button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
             </div>
           </form>      
 
@@ -72,12 +72,12 @@ include('includes/navbar.php');
 
           <?php
           if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
-            echo '<h2>'.$_SESSION['correcto'].'</h2>';
+            echo '<h2 class="bg-primary text-white-50">'.$_SESSION['correcto'].'</h2>';
             unset($_SESSION['correcto']);
           }
 
           if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
-            echo '<h2>'.$_SESSION['estado'].'</h2>';
+            echo '<h2 class="bg-danger text-white-50">'.$_SESSION['estado'].'</h2>';
             unset($_SESSION['estado']);
           }
           ?>
@@ -119,7 +119,12 @@ include('includes/navbar.php');
                           <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
                           </form>
                         </td>
-                        <td><button class="btn btn-danger" type="submit">Borrar</btn></td>
+                        <td>
+                          <form action="nadadora_code.php" method="POST">
+                            <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
+                          <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
+                            </form>
+                          </td>
                         </tr>
                         <?php
                       }

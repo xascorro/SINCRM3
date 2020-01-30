@@ -21,6 +21,19 @@
 
       <!-- Divider -->
       <hr class="sidebar-divider">
+ <!-- Heading -->
+      <div class="sidebar-heading">
+        Datos
+      </div>
+
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="nadadora.php">
+          <i class="fas fa-fw fa-female"></i>
+          <span>Nadadoras</span>
+        </a>
+      </li>
+      
 
       <!-- Heading -->
       <div class="sidebar-heading">
