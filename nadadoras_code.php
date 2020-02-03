@@ -1,6 +1,5 @@
 <?php
-session_start();
-$connection = mysqli_connect('localhost','root','xas','sincrm3');
+include('security.php');
 //Añadir registro
 if(isset($_POST['save_btn'])){
 	$licencia = $_POST['licencia'];
@@ -12,10 +11,10 @@ if(isset($_POST['save_btn'])){
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: nadadora.php');
+		header('Location: nadadoras.php');
 	}else{
-		$_SESSION['estado '] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: nadadora.php');	
+		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
+		header('Location: nadadoras.php');	
 	}
 }
 
@@ -31,10 +30,10 @@ if(isset($_POST['update_btn'])){
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: nadadora.php');
+		header('Location: nadadoras.php');
 	}else{
-		$_SESSION['estado '] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadora.php');	
+		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+		header('Location: nadadoras.php');	
 	}
 }
 
@@ -46,10 +45,10 @@ if(isset($_POST['delete_btn'])){
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: nadadora.php');
+		header('Location: nadadoras.php');
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: nadadora.php');	
+		header('Location: nadadoras.php');	
 	}
 }
 	?>

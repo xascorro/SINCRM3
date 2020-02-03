@@ -1,5 +1,5 @@
 <?php
-session_start();
+include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 ?>
@@ -25,7 +25,7 @@ include('includes/navbar.php');
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="nadadora_code.php" method="POST">
+          <form action="nadadoras_code.php" method="POST">
             <div class="modal-body">
               <div class="form-group">
                 <label for="licencia">Licencia</label>
@@ -72,19 +72,17 @@ include('includes/navbar.php');
 
           <?php
           if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
-            echo '<h2 class="bg-primary text-white-50">'.$_SESSION['correcto'].'</h2>';
+            echo '<div class="alert alert-primary" role="alert">'.$_SESSION['correcto'].'</div>';
             unset($_SESSION['correcto']);
           }
-
           if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
-            echo '<h2 class="bg-danger text-white-50">'.$_SESSION['estado'].'</h2>';
+            echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
             unset($_SESSION['estado']);
           }
           ?>
 
           <div class="table-responsive">
             <?php
-            $connection = mysqli_connect('localhost','root','xas','sincrm3');
             $query = "SELECT * FROM nadadoras"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
@@ -120,9 +118,9 @@ include('includes/navbar.php');
                           </form>
                         </td>
                         <td>
-                          <form action="nadadora_code.php" method="POST">
+                          <form action="nadadoras_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
-                          <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
+                            <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
                             </form>
                           </td>
                         </tr>
