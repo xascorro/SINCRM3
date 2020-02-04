@@ -20,28 +20,24 @@ include('includes/navbar.php');
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Añadir nadadora</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Añadir competición</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="nadadoras_code.php" method="POST">
+          <form action="competiciones_code.php" method="POST">
             <div class="modal-body">
-              <div class="form-group">
-                <label for="licencia">Licencia</label>
-                <input type="text" class="form-control" name="licencia">
-              </div>
-              <div class="form-group">
-                <label for="apellidos">Apellidos</label>
-                <input type="text" class="form-control" name="apellidos">
-              </div>
               <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" name="nombre">
               </div>
               <div class="form-group">
-                <label for="fechadenacimiento">Fecha de Nacimiento</label>
-                <input type="text" class="form-control" name="fechadenacimiento">
+                <label for="lugar">Lugar</label>
+                <input type="text" class="form-control" name="lugar">
+              </div>
+              <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="text" class="form-control" name="fecha">
               </div>
             </div>
             <div class="modal-footer">
@@ -63,8 +59,8 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary">Registro de nadadoras
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir nadadora</button> </h4>
+        <h4 class="mb-0 font-weight-bold text-primary">Registro de campeticiones
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir competición</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
 
@@ -83,18 +79,17 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT * FROM nadadoras"; 
+            $query = "SELECT * FROM competiciones"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
             <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Licencia</th>
-                  <th scope="col">Apellidos</th>
                   <th scope="col">Nombre</th>
-                  <th scope="col">Fecha de nacimiento</th>
-                  <th scope="col">Club</th>
+                  <th scope="col">Sede</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Activo</th>
                   <th scope="col">Editar</th>
                   <th scope="col">Borrar</th>
                 </tr>
@@ -103,22 +98,30 @@ include('includes/navbar.php');
                 <?php
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
+                    if($row['activo']=='si')
+                      $row['activo'] = '<button class="btn"><span style="color: mediumseagreen;"><i class="fas fa-toggle-on fa-2x"></i></span></button>';
+                    else
+                      $row['activo'] = '<form action="competiciones_code.php" method="POST">
+                    <input type="hidden" name="activar_id" value="'.$row['id'].'">
+                    <button type="submit" class="btn" name="activar_btn"><span style="color: orangered;"><i class="fas fa-toggle-off fa-2x"></i></span></button>
+                    </form>';
+
                     ?>
+                    
                     <tr>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
-                      <td> <?php echo $row['licencia']; ?> </td>
-                      <td> <?php echo $row['apellidos']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
-                      <td> <?php echo $row['fechadenacimiento']; ?> </td>
-                      <td> <?php echo $row['club']; ?> </td>
+                      <td> <?php echo $row['lugar']; ?> </td>
+                      <td> <?php echo $row['fecha']; ?> </td>
+                      <td> <?php echo $row['activo']; ?> </td>
                       <td>
-                        <form action="nadadoras_edit.php" method="post">
-                          <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
+                        <form action="competiciones_edit.php" method="post">
+                          <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?> ">
                           <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
                           </form>
                         </td>
                         <td>
-                          <form action="nadadoras_code.php" method="POST">
+                          <form action="competiciones_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
                             <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
                             </form>

@@ -92,7 +92,8 @@ include('includes/navbar.php');
                   <th scope="col">#</th>
                   <th scope="col">Username</th>
                   <th scope="col">Email</th>
-                  <th scope="col">Password</th>
+                  <th scope="col">Teléfono</th>
+                  <th scope="col">Club</th>
                   <th scope="col">Usertype</th>
                   <th scope="col">Editar</th>
                   <th scope="col">Borrar</th>
@@ -107,7 +108,8 @@ include('includes/navbar.php');
                       <th scope="row"> <?php echo $row['id']; ?> </th>
                       <td> <?php echo $row['username']; ?> </td>
                       <td> <?php echo $row['email']; ?> </td>
-                      <td> <?php echo $row['password']; ?> </td>
+                      <td> <?php echo $row['telefono']; ?> </td>
+                      <td> <?php echo $row['club']; ?> </td>
                       <td> <?php echo $row['usertype']; ?> </td>
                       <td>
                         <form action="usuarios_edit.php" method="post">

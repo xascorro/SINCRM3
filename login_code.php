@@ -12,9 +12,11 @@ if(isset($_POST['login_btn'])){
 	if($usertypes['usertype'] == 'admin'){
 		$_SESSION['username'] = $login_username;
 		header('Location: index.php');
+
 	}elseif($usertypes['usertype'] == 'user'){
 		$_SESSION['username'] = $login_username;
 		header('Location: nadadoras.php');
+		
 	}else{
 		$_SESSION['estado'] = "No coincide el Usuario y la Contraseña";
 		header('Location: login.php');

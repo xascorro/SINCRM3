@@ -62,7 +62,7 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
-          <a class="nav-link collapsed" href="nadadoras.php">
+          <a class="nav-link collapsed" href="competiciones.php">
             <i class="fas fa-fw fa-flag"></i>
             <span>Competiciones</span>
           </a>

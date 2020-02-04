@@ -27,7 +27,6 @@ include('includes/navbar.php');
 				<?php
 //Editar nadadora
 				if(isset($_POST['edit_btn'])){
-					$connection = mysqli_connect('localhost','root','xas','sincrm3');
 					$id = $_POST['edit_id'];
 					$query = "SELECT * from nadadoras WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
@@ -35,21 +34,17 @@ include('includes/navbar.php');
 						?>
 						<form action="nadadoras_code.php" method="POST">
 							<div class="form-group">
-								<input type="hidden" name="edit_id" value=" <?php echo $row['id']?>">
-								<label for="edit_licencia">Licencia</label>
-								<input type="text" class="form-control" name="edit_licencia" value=" <?php echo $row['licencia']?>" placeholder="Número de licencia, NIF para nadadoras sin licencia federativa">
+								<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
+								<label for="edit_licencia">Licencia</label><input type="text" class="form-control" name="edit_licencia" value=" <?php echo $row['licencia']?>" placeholder="Número de licencia, NIF para nadadoras sin licencia federativa">
 							</div>
 							<div class="form-group">
-								<label for="edit_apellidos">Apellidos</label>
-								<input type="text" class="form-control" name="edit_apellidos" value=" <?php echo $row['apellidos']?>"placeholder="Apellidos">
+								<label for="edit_apellidos">Apellidos</label><input type="text" class="form-control" name="edit_apellidos" value="<?php echo $row['apellidos']?>"placeholder="Apellidos">
 							</div>
 							<div class="form-group">
-								<label for="edit_nombre">Nombre</label>
-								<input type="text" class="form-control" name="edit_nombre" value=" <?php echo $row['nombre']?>"placeholder="Nombre">
+								<label for="edit_nombre">Nombre</label><input type="text" class="form-control" name="edit_nombre" value=" <?php echo $row['nombre']?>"placeholder="Nombre">
 							</div>
 							<div class="form-group">
-								<label for="edit_fechadenacimiento">Fecha de Nacimiento</label>
-								<input type="text" class="form-control" name="edit_fechadenacimiento" value=" <?php echo $row['fechadenacimiento']?>" placeholder="DD-MM-AAAA">
+								<label for="edit_fechadenacimiento">Fecha de Nacimiento</label><input type="text" class="form-control" name="edit_fechadenacimiento" value=" <?php echo $row['fechadenacimiento']?>" placeholder="DD-MM-AAAA">
 							</div>
 							<a href="nadadoras.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
