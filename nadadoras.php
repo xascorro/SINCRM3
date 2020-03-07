@@ -40,8 +40,8 @@ include('includes/navbar.php');
                 <input type="text" class="form-control" name="nombre">
               </div>
               <div class="form-group">
-                <label for="fechadenacimiento">Fecha de Nacimiento</label>
-                <input type="text" class="form-control" name="fechadenacimiento">
+                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                <input type="text" class="form-control" name="fecha_nacimiento">
               </div>
             </div>
             <div class="modal-footer">
@@ -63,7 +63,7 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary">Registro de nadadoras
+        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-female"></i> Registro de Nadadoras
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir nadadora</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
@@ -109,7 +109,7 @@ include('includes/navbar.php');
                       <td> <?php echo $row['licencia']; ?> </td>
                       <td> <?php echo $row['apellidos']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
-                      <td> <?php echo $row['fechadenacimiento']; ?> </td>
+                      <td> <?php echo $row['fecha_nacimiento']; ?> </td>
                       <td> <?php echo $row['club']; ?> </td>
                       <td>
                         <form action="nadadoras_edit.php" method="post">

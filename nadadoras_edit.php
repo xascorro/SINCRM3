@@ -44,7 +44,7 @@ include('includes/navbar.php');
 								<label for="edit_nombre">Nombre</label><input type="text" class="form-control" name="edit_nombre" value=" <?php echo $row['nombre']?>"placeholder="Nombre">
 							</div>
 							<div class="form-group">
-								<label for="edit_fechadenacimiento">Fecha de Nacimiento</label><input type="text" class="form-control" name="edit_fechadenacimiento" value=" <?php echo $row['fechadenacimiento']?>" placeholder="DD-MM-AAAA">
+								<label for="edit_fecha_nacimiento">Fecha de Nacimiento</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value=" <?php echo $row['fecha_nacimiento']?>" placeholder="DD-MM-AAAA">
 							</div>
 							<a href="nadadoras.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>

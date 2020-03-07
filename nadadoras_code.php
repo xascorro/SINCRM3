@@ -5,9 +5,9 @@ if(isset($_POST['save_btn'])){
 	$licencia = $_POST['licencia'];
 	$apellidos = $_POST['apellidos'];
 	$nombre = $_POST['nombre'];
-	$fechadenacimiento = $_POST['fechadenacimiento'];
+	$fecha_nacimiento = $_POST['fecha_nacimiento'];
 
-	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,fechadenacimiento) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fechadenacimiento."')";
+	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,fecha_nacimiento) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
@@ -24,9 +24,9 @@ if(isset($_POST['update_btn'])){
 	$licencia = $_POST['edit_licencia'];
 	$apellidos = $_POST['edit_apellidos'];
 	$nombre = $_POST['edit_nombre'];
-	$fechadenacimiento = $_POST['edit_fechadenacimiento'];	
+	$fecha_nacimiento = $_POST['edit_fecha_nacimiento'];	
 
-	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', fechadenacimiento='$fechadenacimiento' WHERE id='$id'"; 
+	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', fecha_nacimiento='$fecha_nacimiento' WHERE id='$id'"; 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';

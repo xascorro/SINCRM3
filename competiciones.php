@@ -59,7 +59,7 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary">Registro de campeticiones
+        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag"></i>Registro de Competiciones
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir competición</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
@@ -117,13 +117,13 @@ include('includes/navbar.php');
                       <td>
                         <form action="competiciones_edit.php" method="post">
                           <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?> ">
-                          <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
+                          <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
                           </form>
                         </td>
                         <td>
                           <form action="competiciones_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
-                            <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
+                            <button class="btn btn-danger" type="submit" name="delete_btn"><i class="fas fa-backspace"></i></btn>
                             </form>
                           </td>
                         </tr>

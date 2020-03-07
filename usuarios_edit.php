@@ -44,7 +44,7 @@ include('includes/navbar.php');
 									<input type="email" class="form-control form-control-user" name="edit_email" value="<?php echo $row['email']?>"placeholder="Email">
 								</div>
 								<div class="form-group col-3">
-									<label for="edit_telefon">Teléfono</label>
+									<label for="edit_telefono">Teléfono</label>
 									<input type="phone" class="form-control form-control-user" name="edit_telefono" value="<?php echo $row['telefono']?>"placeholder="Teléfono">
 								</div>
 								<div class="form-group col-3">

@@ -68,13 +68,13 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="nadadoras.php">
+          <a class="nav-link collapsed" href="federaciones.php">
             <i class="fas fa-fw fa-flag-checkered"></i>
             <span>Federaciones</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="nadadoras.php">
+          <a class="nav-link collapsed" href="clubes.php">
             <i class="fas fa-fw fa-users"></i>
             <span>Clubs</span>
           </a>
@@ -95,6 +95,12 @@
           <a class="nav-link collapsed" href="jueces.php">
             <i class="fab fa-xing"></i>
             <span>Figuras</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="imagenes.php">
+            <i class="fas fa-images"></i>
+            <span>Imágenes</span>
           </a>
         </li>
 
