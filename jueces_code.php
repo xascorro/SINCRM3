@@ -5,17 +5,16 @@ if(isset($_POST['save_btn'])){
 	$licencia = $_POST['licencia'];
 	$apellidos = $_POST['apellidos'];
 	$nombre = $_POST['nombre'];
-	$fecha_nacimiento = $_POST['fecha_nacimiento'];
-	$id_club = $_POST['id_club'];
+	$id_federacion = $_POST['federacion'];
 
-	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,fecha_nacimiento, club) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."','".$id_club."')";
+	$query="INSERT INTO jueces (apellidos,nombre,licencia, federacion) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$id_federacion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: nadadoras.php');
+		header('Location: jueces.php');
 	}else{
 		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: jueces.php');	
 	}
 }
 
@@ -25,17 +24,16 @@ if(isset($_POST['update_btn'])){
 	$licencia = $_POST['edit_licencia'];
 	$apellidos = $_POST['edit_apellidos'];
 	$nombre = $_POST['edit_nombre'];
-	$fecha_nacimiento = $_POST['edit_fecha_nacimiento'];	
-	$id_club = $_POST['id_club'];	
+	$id_federacion = $_POST['federacion'];	
 
-	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', fecha_nacimiento='$fecha_nacimiento', club='$id_club' WHERE id='$id'"; 
+	$query = "UPDATE jueces SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', federacion='$id_federacion' WHERE id='$id'"; 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: nadadoras.php');
+		header('Location: jueces.php');
 	}else{
 		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: jueces.php');	
 	}
 }
 
@@ -43,14 +41,14 @@ if(isset($_POST['update_btn'])){
 if(isset($_POST['delete_btn'])){
 	$id = $_POST['delete_id'];
 
-	$query = "DELETE FROM nadadoras WHERE id ='$id'"; 
+	$query = "DELETE FROM jueces WHERE id ='$id'"; 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: nadadoras.php');
+		header('Location: jueces.php');
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: jueces.php');	
 	}
 }
 	?>

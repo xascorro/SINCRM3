@@ -107,10 +107,10 @@ include('includes/navbar.php');
 								</div>
 							</div>
 
-						</div>
-						<a href="competiciones.php" class="btn btn-danger"> Cancelar </a>
-						<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
-					</form>
+							<a href="competiciones.php" class="btn btn-danger"> Cancelar </a>
+							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
+						</form>
+					</div>
 				</div>
 				<?php
 			}

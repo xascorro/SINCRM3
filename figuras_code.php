@@ -2,40 +2,36 @@
 include('security.php');
 //Añadir registro
 if(isset($_POST['save_btn'])){
-	$licencia = $_POST['licencia'];
-	$apellidos = $_POST['apellidos'];
+	$numero = $_POST['numero'];
 	$nombre = $_POST['nombre'];
-	$fecha_nacimiento = $_POST['fecha_nacimiento'];
-	$id_club = $_POST['id_club'];
+	$grado_dificultad = $_POST['grado_dificultad'];
 
-	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,fecha_nacimiento, club) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."','".$id_club."')";
+	$query="INSERT INTO figuras (numero, nombre,grado_dificultad) VALUES ('".$numero."','".$nombre."','".$grado_dificultad."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: nadadoras.php');
+		header('Location: figuras.php');
 	}else{
 		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: figuras.php');	
 	}
 }
 
 //Actualizar registro
 if(isset($_POST['update_btn'])){
 	$id = $_POST['edit_id'];
-	$licencia = $_POST['edit_licencia'];
-	$apellidos = $_POST['edit_apellidos'];
+	$numero = $_POST['edit_numero'];
 	$nombre = $_POST['edit_nombre'];
-	$fecha_nacimiento = $_POST['edit_fecha_nacimiento'];	
-	$id_club = $_POST['id_club'];	
+	$grado_dificultad = $_POST['edit_grado_dificultad'];	
 
-	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', fecha_nacimiento='$fecha_nacimiento', club='$id_club' WHERE id='$id'"; 
+	$query = "UPDATE figuras SET numero ='$numero', nombre='$nombre', grado_dificultad='$grado_dificultad' WHERE id='$id'"; 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: nadadoras.php');
+		header('Location: figuras.php');
 	}else{
 		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: figuras.php');	
 	}
 }
 
@@ -43,14 +39,14 @@ if(isset($_POST['update_btn'])){
 if(isset($_POST['delete_btn'])){
 	$id = $_POST['delete_id'];
 
-	$query = "DELETE FROM nadadoras WHERE id ='$id'"; 
+	$query = "DELETE FROM figuras WHERE id ='$id'"; 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: nadadoras.php');
+		header('Location: figuras.php');
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: figuras.php');	
 	}
 }
 	?>

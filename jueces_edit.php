@@ -20,7 +20,7 @@ include('includes/navbar.php');
 
 			<!-- Titulo página y pdf -->
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
-				<h4 class="mb-0 font-weight-bold text-primary">Editar nadadora</h4>
+				<h4 class="mb-0 font-weight-bold text-primary">Editar juez</h4>
 			</div>
 
 			<div class="card-body">
@@ -28,11 +28,11 @@ include('includes/navbar.php');
 //Editar nadadora
 				if(isset($_POST['edit_btn'])){
 					$id = $_POST['edit_id'];
-					$query = "SELECT * from nadadoras WHERE id = '$id'";
+					$query = "SELECT * from jueces WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
 					foreach ($query_run as $row) {
 						?>
-						<form action="nadadoras_code.php" method="POST">
+						<form action="jueces_code.php" method="POST">
 							<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 							<div class="form-group">
 								<div class="row">
@@ -51,11 +51,8 @@ include('includes/navbar.php');
 
 									</div>
 									<div class="col">
-										<label for="edit_fecha_nacimiento">Fecha de Nacimiento</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value="<?php echo $row['fecha_nacimiento']?>" placeholder="DD-MM-AAAA">
-									</div>
-									<div class="col">
 								<?php
-								include('./includes/club_select_option.php');
+								include('./includes/federacion_select_option.php');
 								?>
 							</div>
 								</div>

@@ -7,11 +7,15 @@ if(isset($_POST['save_btn'])){
 	$nombre = $_POST['nombre'];
 	$nombre_corto = $_POST['nombre_corto'];
 	$codigo = $_POST['codigo'];
+	$id_federacion = $_POST['federacion'];
 	$logo = $_FILES['logo']['name'];
+	if($logo == ''){
+		$logo = 'custom_logo.png';
+	}
 	
 	
 	
-	$query="INSERT INTO clubes (nombre,nombre_corto,codigo,logo) VALUES ('".$nombre."','".$nombre_corto."','".$codigo."','images/clubes/".$logo."')";
+	$query="INSERT INTO clubes (nombre,nombre_corto,codigo,logo, federacion) VALUES ('".$nombre."','".$nombre_corto."','".$codigo."','images/clubes/".$logo."','".$id_federacion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';

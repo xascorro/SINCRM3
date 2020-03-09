@@ -20,40 +20,34 @@ include('includes/navbar.php');
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Añadir club</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Añadir figura</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="clubes_code.php" method="POST" enctype="multipart/form-data">
+          <form action="figuras_code.php" method="POST">
             <div class="modal-body">
+              
               <div class="form-group">
                 <label for="nombre">Nombre</label>
                 <input type="text" class="form-control" name="nombre">
               </div>
-              <div class="row">
-                <div class="form-group col">
-                  <label for="nombre_corto">Nombre corto</label>
-                  <input type="text" class="form-control" name="nombre_corto">
-                </div>
-                <div class="form-group col">
-                  <label for="codigo">Código</label>
-                  <input type="text" class="form-control" name="codigo">
-                </div>
-              </div>
               <div class="form-group">
-                <label for="logo">Logo</label>
-                <input type="file" class="form-control" id="logo" name="logo"/>
+                <div class="row form-group">
+                  <div class="col">
+                <label for="apellidos">Número</label>
+                <input type="text" class="form-control" name="numero">
               </div>
-              <div class="form-group">
-                <?php
-                include('./includes/federacion_select_option.php');
-                ?>
+                  <div class="col">
+                    <label for="licencia">Grado de dificultad</label>
+                    <input type="text" class="form-control" name="grado_dificultad">
+                  </div>
+                </div>
               </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
-              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
             </div>
           </form>      
 
@@ -70,8 +64,8 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag-checkered"></i>Registro de clubes
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir club</button> </h4>
+        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-female"></i> Registro de figuras
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir figura</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
 
@@ -90,18 +84,16 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT clubes.id, clubes.nombre, clubes.nombre_corto, clubes.codigo, clubes.logo, federaciones.nombre_corto AS federacion_nombre_corto FROM clubes, federaciones WHERE federacion = federaciones.id ORDER BY clubes.id";
+            $query = "SELECT figuras.id, numero, nombre, grado_dificultad FROM figuras"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
-            <table class="table " id="dataTable" width="100%" cellspacing="0">
+            <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th scope="col">#</th>
+                  <th scope="col">Número</th>
                   <th scope="col">Nombre</th>
-                  <th scope="col">Nombre corto</th>
-                  <th scope="col">Código</th>
-                  <th scope="col">Logo</th>
-                  <th scope="col">Federación</th>
+                  <th scope="col">G.D.</th>
                   <th scope="col">Editar</th>
                   <th scope="col">Borrar</th>
                 </tr>
@@ -113,30 +105,27 @@ include('includes/navbar.php');
                     ?>
                     <tr>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
+                      <td> <?php echo $row['numero']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
-                      <td> <?php echo $row['nombre_corto']; ?> </td>
-                      <td> <?php echo $row['codigo']; ?> </td>
-                      <td> <?php echo '<img width="100px" alt="Imagen" src="'.$row[logo].'">';?></td>
-                      <td> <?php echo $row['federacion_nombre_corto'] ?> </td>
-
+                      <td> <?php echo $row['grado_dificultad']; ?> </td>
                       <td>
-                        <form action="clubes_edit.php" method="post">
-                          <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                        <form action="figuras_edit.php" method="post">
+                          <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
+                          <input type="hidden" name="id_federacion" value=" <?php echo $row['federacion']; ?> ">
                           <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
                           </form>
                         </td>
                         <td>
-                          <form action="clubes_code.php" method="POST">
-                            <input type="hidden" name="delete_id" value="<?php echo $row['id'];?>">
+                          <form action="figuras_code.php" method="POST">
+                            <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
                             <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
                             </form>
                           </td>
                         </tr>
                         <?php
                       }
-                    }
-                    else{
-                      echo "<tr><td colspan='10'>No se han encontrado registros en la base de datos</td></tr>";
+                    }else{
+                      echo "<tr><td>No se han encontrado registros en la base de datos</td></tr>";
                     }
                     ?>
                   </tbody>

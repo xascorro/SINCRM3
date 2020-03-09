@@ -34,7 +34,7 @@ include('includes/navbar.php');
 						?>
 						<form action="clubes_code.php" method="POST">
 							<div class="row">
-								<div class="form-group col-3">
+								<div class="form-group col">
 									<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 									<label for="edit_nombre">Nombre</label>
 									<input type="text" class="form-control" name="edit_nombre" value="<?php echo $row['nombre']?>" placeholder="Nombr">
@@ -47,30 +47,39 @@ include('includes/navbar.php');
 									<label for="edit_telefono">Código</label>
 									<input type="text" class="form-control form-control-user" name="edit_codigo" value="<?php echo $row['codigo']?>"placeholder="Código">
 								</div>
-								<div class="form-group col-3">
+							</div>
+							<div class="form-group row">
+								
+								<div class="col">
 									<label for="edit_logo">Logo</label>
 									<input type="text" class="form-control form-control-user" name="edit_logo" value="<?php echo $row['logo']?>"placeholder="Imagen logo">
 								</div>
+								<div class="col">
+									<?php
+									include('includes/federacion_select_option.php');
+									?>
+								</div>
 							</div>
 							
-							</div>
 							<a href="clubes.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
-						</form>
-						<?php
-					}
+						</div>
+					</div>
+				</form>
+				<?php
+			}
 
-				}
-				?>
-				
-
-
-
-			</div>
+		}
+		?>
 
 
-			<!-- template -->
-			<?php
-			include('includes/scripts.php');
-			include('includes/footer.php');
-			?>
+
+
+	</div>
+
+
+	<!-- template -->
+	<?php
+	include('includes/scripts.php');
+	include('includes/footer.php');
+	?>

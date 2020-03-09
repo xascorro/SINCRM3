@@ -28,10 +28,6 @@ include('includes/navbar.php');
           <form action="nadadoras_code.php" method="POST">
             <div class="modal-body">
               <div class="form-group">
-                <label for="licencia">Licencia</label>
-                <input type="text" class="form-control" name="licencia">
-              </div>
-              <div class="form-group">
                 <label for="apellidos">Apellidos</label>
                 <input type="text" class="form-control" name="apellidos">
               </div>
@@ -40,8 +36,21 @@ include('includes/navbar.php');
                 <input type="text" class="form-control" name="nombre">
               </div>
               <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                <input type="text" class="form-control" name="fecha_nacimiento">
+                <div class="row">
+                  <div class="col">
+                    <label for="licencia">Licencia</label>
+                    <input type="text" class="form-control" name="licencia">
+                  </div>
+                  <div class="col">
+                    <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+                    <input type="date" class="form-control" name="fecha_nacimiento">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <?php
+                  include('./includes/club_select_option.php');
+                  ?>
+                </div>
               </div>
             </div>
             <div class="modal-footer">
@@ -83,7 +92,7 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT * FROM nadadoras"; 
+            $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, fecha_nacimiento, club, clubes.nombre_corto FROM nadadoras, clubes where nadadoras.club = clubes.id"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
             <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
@@ -110,10 +119,11 @@ include('includes/navbar.php');
                       <td> <?php echo $row['apellidos']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
                       <td> <?php echo $row['fecha_nacimiento']; ?> </td>
-                      <td> <?php echo $row['club']; ?> </td>
+                      <td> <?php echo $row['nombre_corto']; ?> </td>
                       <td>
                         <form action="nadadoras_edit.php" method="post">
                           <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
+                          <input type="hidden" name="id_club" value=" <?php echo $row['club']; ?> ">
                           <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
                           </form>
                         </td>

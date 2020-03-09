@@ -92,7 +92,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link collapsed" href="jueces.php">
+          <a class="nav-link collapsed" href="figuras.php">
             <i class="fab fa-xing"></i>
             <span>Figuras</span>
           </a>
