@@ -1,5 +1,5 @@
 <?php
-// include('security.php');
+include('security.php');
 ?>
 <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -10,6 +10,11 @@
   </button>
 
   <!-- Topbar Search -->
+  <div class="alert" style="background-color:<?php echo $_SESSION['color_competicion_activa']; ?>">
+  <?php
+  echo $_SESSION['nombre_competicion_activa'];
+  ?>
+</div>
   <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
     <div class="input-group">
       <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">

@@ -1,5 +1,5 @@
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion sidebar-toogled toogled" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
       <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -18,14 +18,14 @@
           <i class="fas fa-fw fa-tachometer-alt"></i>
           <span>Dashboard</span></a>
         </li>
-<!-- Divider -->
+        <!-- Divider -->
 
         <hr class="sidebar-divider">
         <!-- Heading -->
         <div class="sidebar-heading">
           Administración
         </div>
-<!-- Nav Item - Pages Collapse Menu -->
+        <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
           <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
             <i class="fas fa-fw fa-cog"></i>
@@ -59,50 +59,84 @@
         <div class="sidebar-heading">
           Datos
         </div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatos" aria-expanded="true" aria-controls="collapseDatos">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>Datos</span>
+          </a>
+          <div id="collapseDatos" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Usuarios:</h6>
+              <a class="collapse-item" href="competiciones.php">
+                <i class="fas fa-fw fa-flag"></i>
+                <span>Competiciones</span>
+              </a> 
+              <a class="collapse-item" href="federaciones.php">
+                <i class="fas fa-fw fa-flag-checkered"></i>
+                <span>Federaciones</span>
+              </a> 
+              <a class="collapse-item" href="clubes.php">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Clubs</span>
+              </a> 
+              <a class="collapse-item" href="nadadoras.php">
+                <i class="fas fa-fw fa-female"></i>
+                <span>Nadadoras</span>
+              </a> 
+              <a class="collapse-item" href="categorias.php">
+                <i class="fas fa-signal"></i>
+                <span>Categorías</span>
+              </a>           
+              <a class="collapse-item" href="jueces.php">
+                <i class="fa fa-fw fa-gavel"></i>
+                <span>Jueces</span>
+              </a> 
+              <a class="collapse-item" href="figuras.php">
+                <i class="fab fa-xing"></i>
+                <span>Figuras</span>
+              </a> 
+              <a class="collapse-item" href="modalidades.php">
+                TO-DO<i class="fab fa-modx"></i>
+                <span>Modalidades</span>
+              </a>
+              <a class="collapse-item" href="imagenes.php">
+                TO-DO<i class="fas fa-images"></i>
+                <span>Imágenes</span>
+              </a>       
+
+
+
+            </div>
+          </div>
+        </li>
+
+
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompeticion" aria-expanded="true" aria-controls="collapseCompeticion">
+            <i class="fas fa-fw fa-flag-checkered"></i>
+            <span>Competición</span>
+          </a>
+          <div id="collapseCompeticion" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+              <h6 class="collapse-header">Configurar competición</h6>
+              <a class="collapse-item" href="fases.php">
+                <i class="fas fa-fw fa-signal"></i>
+                <span>Fases</span>
+              </a> 
+              <a class="collapse-item" href="paneles_jueces.php">
+                <i class="fa fa-fw fa-balance-scale-right"></i>
+                <span>Paneles jueces</span>
+              </a> 
+
+              <!-- Nav Item - Pages Collapse Menu -->
+        <!-- <li class="nav-item">
           <a class="nav-link collapsed" href="competiciones.php">
             <i class="fas fa-fw fa-flag"></i>
             <span>Competiciones</span>
           </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="federaciones.php">
-            <i class="fas fa-fw fa-flag-checkered"></i>
-            <span>Federaciones</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="clubes.php">
-            <i class="fas fa-fw fa-users"></i>
-            <span>Clubs</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="nadadoras.php">
-            <i class="fas fa-fw fa-female"></i>
-            <span>Nadadoras</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="jueces.php">
-            <i class="fa fa-fw fa-balance-scale-right"></i>
-            <span>Jueces</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="figuras.php">
-            <i class="fab fa-xing"></i>
-            <span>Figuras</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link collapsed" href="imagenes.php">
-            <i class="fas fa-images"></i>
-            <span>Imágenes</span>
-          </a>
-        </li>
+        </li> -->
+        
 
 
 
@@ -211,4 +245,3 @@
           </a>
 
 
-      
