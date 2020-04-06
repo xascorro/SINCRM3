@@ -29,8 +29,15 @@ include('includes/navbar.php');
             <div class="modal-body">
               <div class="row">
                 <div class="form-group col-2">
+                  <?php
+                  $query = "SELECT max(orden)+1 as nuevo_orden FROM fases WHERE id_competicion = '".$_SESSION['id_competicion_activa']."'";
+                  $query_run = mysqli_query($connection,$query); 
+                  $row = mysqli_fetch_assoc($query_run);
+
+
+                  ?>
                   <label for="orden">Orden</label>
-                  <input type="number" class="form-control" name="orden" value="0">
+                  <input type="number" class="form-control" name="orden" value="<?php echo $row['nuevo_orden']; ?>">
                 </div>
                 <div class="form-group col">
                   <?php

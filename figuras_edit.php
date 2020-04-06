@@ -23,6 +23,11 @@ $ParsedownExtra->setBreaksEnabled(false);
 		<!-- Begin Page Content -->
 		<div class="container-fluid">
 
+
+
+
+
+
 			<!-- Titulo página y pdf -->
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
 				<h4 class="mb-0 font-weight-bold text-primary">Editar figura</h4>
@@ -53,33 +58,31 @@ $ParsedownExtra->setBreaksEnabled(false);
 									</div>
 								</div>
 								<div class="form-group">
-<label for="descripcion">Descripción (en formato Markdown)</label>
-    <textarea class="form-control" name="descripcion" rows="6"><?php echo $row['descripcion'];?></textarea>									<hr>									
+									<label for="descripcion">Descripción (en formato <a href='https://www.markdownguide.org/'>Markdown</a>)</label>
+									<textarea class="form-control" name="descripcion" rows="6"><?php echo $row['descripcion'];?></textarea>		<hr>									
 									<div class="alert"> 
-										<?php echo $ParsedownExtra->text($row['descripcion']); ?></div>
-
+										<?php echo $ParsedownExtra->text($row['descripcion']); ?>
 									</div>
-
-									<hr/>
 								</div>
+							</div>
 
-								<a href="figuras.php" class="btn btn-danger"> Cancelar </a>
-								<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
-							</form>
-							<?php
-						}
-
+							<a href="figuras.php" class="btn btn-danger"> Cancelar </a>
+							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
+						</form>
+						<?php
 					}
-					?>
 
-
-
-
-				</div>
-
-
-				<!-- template -->
-				<?php
-				include('includes/scripts.php');
-				include('includes/footer.php');
+				}
 				?>
+
+
+
+
+			</div>
+
+
+			<!-- template -->
+			<?php
+			include('includes/scripts.php');
+			include('includes/footer.php');
+			?>
