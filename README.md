@@ -1,30 +1,24 @@
 # SINCRM3
 
 SINCRM3 es un programa para la gestión de campeonatos de Natación Artística.
-Desarrollado
 
-## Installation
+## Tecnologías
+SINCRM3 está desarrollado en HTML, PHP, MySQL y JQuery
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
+## Requisitos
 
-```bash
-pip install foobar
+Para hacer funcionar SINCRM3 necesitamos un servidor Apache, PHP, MySQL, puedes instalarlo todo mediante MAMP, LAMP o WAMP según tu sistema operativo.
+
+## Uso
+
+```sql
+select someone from thing;
 ```
 
-## Usage
+## Contribuir
+Se aceptan Pull request. Para cambios mayores, por favor, abre un issue y hablamos sobre lo que te gustaria modificar.
 
-```python
-import foobar
+Por favor, asegurate de que tu código funciona correctamente.
 
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-## License
+## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
