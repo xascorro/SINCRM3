@@ -17,8 +17,8 @@ include('includes/header.php');
 						<div class="col-lg-6">
 							<div class="p-5">
 								<div class="text-center">
-									<h1 class="h4 text-gray-900 mb-4">Hola de nuevo!!</h1>
-									<h1 class="h4 text-gray-900 mb-4">Hola de nuevo!!</h1>
+									<h1 class="text-gray-900 mb-4">Hola de nuevo!!</h1>
+									<h4 class="text-gray-900 mb-4">Introduce tu nombre de usuario y contraseña</h3>
 										<?php
 								if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
 										echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
