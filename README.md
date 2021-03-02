@@ -7,6 +7,7 @@ SINCRM3 está desarrollado en HTML, PHP, MySQL y JQuery
 
 ## Requisitos
 
+
 Para hacer funcionar SINCRM3 necesitamos un servidor Apache, PHP, MySQL, puedes instalarlo todo mediante MAMP, LAMP o WAMP según tu sistema operativo.
 
 ## Uso
