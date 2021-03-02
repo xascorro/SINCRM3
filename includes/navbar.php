@@ -35,7 +35,7 @@
             <div class="bg-white py-2 collapse-inner rounded">
               <h6 class="collapse-header">Usuarios:</h6>
               <a class="collapse-item" href="usuarios.php">Usuarios</a>
-              <a class="collapse-item" href="niveles.php">Niveles</a>
+              <a class="collapse-item" href="usertype.php">Tipos de usuarios</a>
             </div>
           </div>
         </li>

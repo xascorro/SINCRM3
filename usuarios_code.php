@@ -33,14 +33,14 @@ if(isset($_POST['update_btn'])){
 	$password = $_POST['edit_password'];
 	$r_password = $_POST['edit_r_password'];
 	$telefono = $_POST['edit_telefono'];
-	$club = $_POST['edit_club'];
+	$comentario = $_POST['edit_comentario'];
 	$usertype = $_POST['edit_usertype'];
 	
 	if($password != $r_password){
 		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
 		header('Location: usuarios.php');
 	}else{
-		$query = "UPDATE usuarios SET username ='$username', email='$email', telefono='$telefono', password='$password', telefono='$telefono', club='$club', usertype='$edit_$usertype' WHERE id='$id'"; 
+		$query = "UPDATE usuarios SET username ='$username', email='$email', telefono='$telefono', password='$password', telefono='$telefono', comentario='$comentario', usertype='$edit_$usertype' WHERE id='$id'"; 
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] = 'Datos actualizados con éxito';

@@ -20,29 +20,22 @@ include('includes/navbar.php');
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Añadir usuario</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Añadir tipo de usuario</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <form action="usuarios_code.php" method="POST">
+          <form action="usertype_code.php" method="POST">
             <div class="modal-body">
               <div class="form-group">
-                <label for="username">Nombre de usuario</label>
-                <input type="text" class="form-control" name="username">
+                <label for="usertype_nombre">Rol</label>
+                <input type="text" class="form-control" name="usertype_nombre">
               </div>
               <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control form-control-user" name="email">
+                <label for="level">Level</label>
+                <input type="text" class="form-control form-control-user" name="level">
               </div>
-              <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input type="password" class="form-control" name="password">
-              </div>
-              <div class="form-group">
-                <label for="r_password">Repite la contraseña</label>
-                <input type="password" class="form-control" name="r_password">
-              </div>
+              
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -63,8 +56,8 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary">Registro de usuarios
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir usuario</button> </h4>
+        <h4 class="mb-0 font-weight-bold text-primary">Registro de Tipos de Usuarios
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir tipo usuario</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
 
@@ -83,18 +76,15 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT usuarios.id, username, email, telefono, comentario, usertype_nombre FROM usuarios, usertype where usuarios.usertype = usertype.id order by usuarios.id"; 
+            $query = "SELECT * FROM usertype order by level asc"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
             <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Teléfono</th>
-                  <th scope="col">Comentario</th>
-                  <th scope="col">Usertype</th>
+                  <th scope="col">Rol</th>
+                  <th scope="col">Level</th>
                   <th scope="col">Editar</th>
                   <th scope="col">Borrar</th>
                 </tr>
@@ -106,19 +96,16 @@ include('includes/navbar.php');
                     ?>
                     <tr>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
-                      <td> <?php echo $row['username']; ?> </td>
-                      <td> <?php echo $row['email']; ?> </td>
-                      <td> <?php echo $row['telefono']; ?> </td>
-                      <td> <?php echo $row['comentario']; ?> </td>
                       <td> <?php echo $row['usertype_nombre']; ?> </td>
+                      <td> <?php echo $row['level']; ?> </td>
                       <td>
-                        <form action="usuarios_edit.php" method="post">
+                        <form action="usertype_edit.php" method="post">
                           <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                           <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
                           </form>
                         </td>
                         <td>
-                          <form action="usuarios_code.php" method="POST">
+                          <form action="usertype_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'];?>">
                           <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
                             </form>

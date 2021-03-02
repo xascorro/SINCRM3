@@ -34,22 +34,18 @@ include('includes/navbar.php');
 						?>
 						<form action="usuarios_code.php" method="POST">
 							<div class="row">
-								<div class="form-group col-3">
+								<div class="form-group col-4">
 									<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 									<label for="edit_username">Nombre de usuario</label>
 									<input type="text" class="form-control" name="edit_username" value="<?php echo $row['username']?>" placeholder="Nombre de usuario">
 								</div>
-								<div class="form-group col-3">
+								<div class="form-group col-4">
 									<label for="edit_email">Email</label>
 									<input type="email" class="form-control form-control-user" name="edit_email" value="<?php echo $row['email']?>"placeholder="Email">
 								</div>
-								<div class="form-group col-3">
+								<div class="form-group col-4">
 									<label for="edit_telefono">Teléfono</label>
 									<input type="phone" class="form-control form-control-user" name="edit_telefono" value="<?php echo $row['telefono']?>"placeholder="Teléfono">
-								</div>
-								<div class="form-group col-3">
-									<label for="edit_club">Club</label>
-									<input type="text" class="form-control form-control-user" name="edit_club" value="<?php echo $row['club']?>"placeholder="Club">
 								</div>
 							</div>
 							<div class="row">
@@ -62,11 +58,15 @@ include('includes/navbar.php');
 									<input type="password" class="form-control" name="edit_r_password"  value="<?php echo $row['password']?>"placeholder="Repite la contraseña">
 								</div>
 								<div class="form-group col-4">
-									<label for="usertype">Usertype</label>
-									<select name="edit_usertype" class="form-control">
-										<option value="user">Usuario</option>
-										<option value="admin">Administrador</option>
-									</select>
+									<?php
+										include('./includes/usertype_select_option.php');
+									?>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-12">
+									<label for="edit_comentario">Comentario</label>
+									<input type="text" class="form-control form-control-user" name="edit_comentario" value="<?php echo $row['comentario']?>"placeholder="Comentario">
 								</div>
 							</div>
 							<a href="usuarios.php" class="btn btn-danger"> Cancelar </a>
