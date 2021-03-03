@@ -68,7 +68,7 @@ include('includes/navbar.php');
 
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-female"></i> Registro de Jueces
+        <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-gavel"></i> Registro de Jueces
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir juez</button> </h4>
           <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
         </div>
@@ -88,7 +88,7 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT jueces.id, licencia, apellidos, federacion, jueces.nombre, federaciones.nombre_corto FROM jueces, federaciones where jueces.federacion = federaciones.id"; 
+            $query = "SELECT jueces.id, licencia, apellidos, federacion, jueces.nombre, federaciones.nombre_corto FROM jueces, federaciones where jueces.federacion = federaciones.id order by jueces.id"; 
             $query_run = mysqli_query($connection,$query); 
             ?>
             <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
