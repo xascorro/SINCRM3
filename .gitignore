@@ -1,3 +1,4 @@
 node_modules
 includes/config.php
-config.php
+database/db_config.php
+database/backup/*
