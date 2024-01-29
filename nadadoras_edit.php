@@ -1,8 +1,11 @@
 <?php
 include('security.php');
 include('includes/header.php');
-include('includes/navbar.php');
-?>
+if(!isset($_SESSION['club'])){
+    include('includes/navbar.php');
+}else{
+    $condicion_club = " and nadadoras.club = ".$_SESSION['club'];
+}?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
 
@@ -36,24 +39,28 @@ include('includes/navbar.php');
 							<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 							<div class="form-group">
 								<div class="row">
-							<div class="col">
+							<div class="col-12 col-sm-6">
 								<label for="edit_apellidos">Apellidos</label><input type="text" class="form-control" name="edit_apellidos" value="<?php echo $row['apellidos']?>"placeholder="Apellidos">
 							</div>
-							<div class="col">
+							<div class="col-12 col-sm-6">
 								<label for="edit_nombre">Nombre</label><input type="text" class="form-control" name="edit_nombre" value="<?php echo $row['nombre']?>"placeholder="Nombre">
 							</div>
 							</div>
 							</div>
 							<div class="form-group">
 								<div class="row">
-									<div class="col">
+									<div class="col col-12 col-sm-4">
 										<label for="edit_licencia">Licencia</label><input type="text" class="form-control" name="edit_licencia" value="<?php echo $row['licencia']?>" placeholder="Número de licencia, NIF para nadadoras sin licencia federativa">
 
 									</div>
-									<div class="col">
-										<label for="edit_fecha_nacimiento">Fecha de Nacimiento</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value="<?php echo $row['fecha_nacimiento']?>" placeholder="DD-MM-AAAA">
+									<div class="col col-12 col-sm-4">
+<!--										<label for="edit_fecha_nacimiento">Año</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value="<?php //echo $row['año_nacimiento']?>" placeholder="AAAA">-->
+                                <?php
+                            $S_SESSION['año_nacimiento'] = $row['año_nacimiento'];
+								include('./includes/año_select_option.php');
+								?>
 									</div>
-									<div class="col">
+									<div class="col col-12 col-sm-4">
 								<?php
 								include('./includes/club_select_option.php');
 								?>

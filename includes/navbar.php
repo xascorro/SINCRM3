@@ -1,14 +1,23 @@
+    <?php
+if($_SESSION['id_rol'] == '1'){
+
+    ?>
+
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion sidebar-toogled toogled" id="accordionSidebar">
 
       <!-- Sidebar - Brand -->
-      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+<!--
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-water"></i>
         </div>
         <div class="sidebar-brand-text mx-3">SINC<span style="color:#FF6C60">RM</span> <sup>3</sup></div>
-      </a>
-
+-->
+<!--
+        <div class="text-center">
+         <img src="./images/logo_sincrm_removebg.png" alt="" width="230px" >
+</div>
+-->
       <!-- Divider -->
       <hr class="sidebar-divider my-0">
 
@@ -27,29 +36,17 @@
       </div>
       <!-- Nav Item - Pages Collapse Menu -->
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="true" aria-controls="collapseUsuarios">
-          <i class="fas fa-fw fa-user-cog"></i>
-          <span>Usuarios</span>
-        </a>
-        <div id="collapseUsuarios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-          <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="usuarios.php"><i class="fas fa-fw fa-user-edit"></i> Usuarios</a>
-            <a class="collapse-item" href="usertype.php"><i class="fas fa-user-shield"></i> Tipos de usuarios</a>
-          </div>
-        </div>
+        <a class="nav-link" href="db_setup.php">
+          <i class="fas fa-fw fa-server"></i>
+          <span>Configuración DB</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDB" aria-expanded="true" aria-controls="collapseDB">
-          <i class="fas fa-fw fa-server"></i>
-          <span>Servidor</span>
-        </a>
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDB" aria-expanded="true" aria-controls="collapseDB"><i class="fas fa-fw fa-user-cog"></i><span>Gestión de usuarios</span></a>
         <div id="collapseDB" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
           <div class="bg-white py-2 collapse-inner rounded">
-            <a class="collapse-item" href="db_setup.php"><i class="fas fa-fw fa-database"></i>Configuración</a>
-            <a class="collapse-item" href="db_save.php"><i class="fas fa-fw fa-save"></i>Guardar</a>
-            <a class="collapse-item" href="db_load.php"><i class="fas fa-fw fa-th"></i>Cargar</a>
+            <a class="collapse-item" href="usuarios.php"><i class="fas fa-fw fa-user-edit"></i> Usuarios</a>
+            <a class="collapse-item" href="roles.php"><i class="fas fa-user-shield"></i> Tipos de usuarios</a>
           </div>
-        </div>
       </li>
       <!-- Divider -->
       <hr class="sidebar-divider">
@@ -124,19 +121,46 @@
             </a>
             <a class="collapse-item" href="paneles_jueces.php">
               <i class="fa fa-fw fa-balance-scale-right"></i>
-              <span>Paneles jueces</span>
+              <span>Puestos y paneles</span>
             </a>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <!-- <li class="nav-item">
-          <a class="nav-link collapsed" href="competiciones.php">
-            <i class="fas fa-fw fa-flag"></i>
-            <span>Competiciones</span>
-          </a>
-        </li> -->
-
-
-
+            <?php
+              if ($_SESSION['competicion_figuras'] == 'no'){
+            ?>
+             <a class="collapse-item" href="rutinas.php">
+              <i class="fa fa-fw fa-balance-scale-right"></i>
+              <span>Rutinas</span>
+            </a>
+            <?php
+              }else{
+            ?>
+              <a class="collapse-item" href="inscripciones_figuras.php">
+                <i class="fa-regular fa-flag"></i>
+              <span>Inscripciones Figuras</span>
+            </a>
+            <?php
+              }
+              ?>
+              <a class="collapse-item" href="sorteo_figuras.php">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>Orden de salida</span>
+            </a>
+            <a class="collapse-item" href="puntuaciones.php">
+            <i class="fa fa-sort-numeric-asc"></i>
+            <span>Puntuaciones</span>
+            </a>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="informes_competicion.php">
+          <i class="fas fa-file"></i>
+          <span>Informes</span></a>
+        </li>
+            <li class="nav-item">
+        <a class="nav-link" href="puntuaciones_lista_fases.php">
+          <i class="fas fa-calculator"></i>
+          <span>Puntuaciones</span></a>
+        </li>
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -219,25 +243,32 @@
 
       <!-- Divider -->
       <hr class="sidebar-divider d-none d-md-block">
+      <!-- Nav Item - Tables -->
+      <li class="nav-item">
+        <a class="nav-link" href="ayuda.html">
+          <i class="fas fa-fw fa-life-ring"></i>
+          <span>Ayuda</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="about.html">
+          <i class="fas fa-fw fa-info"></i>
+          <span>Más info</span></a>
+        <hr class="sidebar-divider d-none d-md-block">
+      </li>
 
       <!-- Sidebar Toggler (Sidebar) -->
       <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
       </div>
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
 
     </ul>
     <!-- End of Sidebar -->
-
-
-
-
-
-
-
-
-
-
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
       <i class="fas fa-angle-up"></i>
     </a>
+        <?php
+}
+?>

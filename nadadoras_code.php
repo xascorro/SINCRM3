@@ -6,9 +6,9 @@ if(isset($_POST['save_btn'])){
 	$apellidos = $_POST['apellidos'];
 	$nombre = $_POST['nombre'];
 	$fecha_nacimiento = $_POST['fecha_nacimiento'];
-	$id_club = $_POST['id_club'];
+	$club = $_POST['club'];
 
-	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,fecha_nacimiento, club) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."','".$id_club."')";
+	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,año_nacimiento, club) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."','".$club."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
@@ -26,9 +26,9 @@ if(isset($_POST['update_btn'])){
 	$apellidos = $_POST['edit_apellidos'];
 	$nombre = $_POST['edit_nombre'];
 	$fecha_nacimiento = $_POST['edit_fecha_nacimiento'];	
-	$id_club = $_POST['id_club'];	
+	$club = $_POST['club'];
 
-	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', fecha_nacimiento='$fecha_nacimiento', club='$id_club' WHERE id='$id'"; 
+	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', año_nacimiento='$fecha_nacimiento', club='$club' WHERE id='$id'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
@@ -39,9 +39,36 @@ if(isset($_POST['update_btn'])){
 	}
 }
 
+//dar de baja nadadora
+if(isset($_POST['baja_btn'])){
+	$id = $_POST['id_nadadora'];
+	$query = "UPDATE nadadoras SET baja ='si' WHERE id='$id'";
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_error($connection) == ''){
+		$_SESSION['correcto'] = 'Nadadora dada de baja';
+		header('Location: nadadoras.php');
+	}else{
+		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+		header('Location: nadadoras.php');
+	}
+}
+//dar de alta nadadora
+if(isset($_POST['alta_btn'])){
+	$id = $_POST['id_nadadora'];
+	$query = "UPDATE nadadoras SET baja ='no' WHERE id='$id'";
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_error($connection) == ''){
+		$_SESSION['correcto'] = 'Nadadora dada de alta';
+		header('Location: nadadoras.php');
+	}else{
+		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+		header('Location: nadadoras.php');
+	}
+}
+
 //Borrar registro
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['delete_id'];
+	$id = $_POST['id_nadadora'];
 
 	$query = "DELETE FROM nadadoras WHERE id ='$id'"; 
 	$query_run = mysqli_query($connection,$query);

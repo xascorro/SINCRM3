@@ -89,15 +89,15 @@ function mysqli_import_sql( $args , $dbhost, $dbuser, $dbpass ,$dbname ) {
  *
  * @param string directory , as the directory to put file
  * @param $outname as file name just the name !, if file exist will be overide as numeric next ++ as name_1.sql.gz , name_2.sql.gz next ++
- *
+ * @param string $descripcion descripción del archivo
+
  * @param string $dbhost database host
  * @param string $dbuser database user
  * @param string $dbpass database password
  * @param string $dbname database name
  *
  */
-function backup_database( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbname ) {
-  
+function backup_database( $directory, $outname, $descripcion, $dbhost, $dbuser, $dbpass ,$dbname ) {
   // check mysqli extension installed
   if( ! function_exists('mysqli_connect') ) {
     die(' This scripts need mysql extension to be running properly ! please resolve!!');
@@ -147,7 +147,8 @@ function backup_database( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbn
       if( ! empty( $tables ) ) {
 
   //cycle through
-  $return = '';
+  //inlcuimos el comentario para identificar el archivo
+  $return = "";
   foreach( $tables as $table )
   {
     $result     = $mysqli->query('SELECT * FROM '.$table);
@@ -221,7 +222,7 @@ function backup_database( $directory, $outname , $dbhost, $dbuser, $dbpass ,$dbn
 
   }
 
-$return = 
+$return = "/*$descripcion*/\n\n"
 "-- ---------------------------------------------------------
 --
 -- SIMPLE SQL Dump

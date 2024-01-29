@@ -2,6 +2,10 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
+$condicion_club = '';
+if(isset($_SESSION['club'])){
+    $condicion_club = " and nadadoras.club = ".$_SESSION['club'];
+}
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -42,8 +46,8 @@ include('includes/navbar.php');
                     <input type="text" class="form-control" name="licencia">
                   </div>
                   <div class="col">
-                    <label for="fecha_nacimiento">Fecha de Nacimiento</label>
-                    <input type="date" class="form-control" name="fecha_nacimiento">
+                    <label for="fecha_nacimiento">Año</label>
+                    <input type="text" class="form-control" name="fecha_nacimiento">
                   </div>
                 </div>
                 <div class="form-group">
@@ -73,8 +77,10 @@ include('includes/navbar.php');
       <!-- Titulo página y pdf -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-female"></i> Registro de Nadadoras
-          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir nadadora</button> </h4>
-          <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir nadadora</button>
+          <a href="./index_club.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>
+</i> Volver</a>
+       </h4>
         </div>
 
         <div class="card-body">
@@ -92,45 +98,74 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, fecha_nacimiento, club, clubes.nombre_corto FROM nadadoras, clubes where nadadoras.club = clubes.id"; 
+            $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, año_nacimiento, club, clubes.nombre_corto, baja FROM nadadoras, clubes where nadadoras.club = clubes.id".$condicion_club;
             $query_run = mysqli_query($connection,$query); 
             ?>
-            <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
+            <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
+                 <?php
+                    if(!isset($_SESSION['club'])){
+                    echo '<th scope="col">#</th>';
+                    }
+                ?>
                   <th scope="col">Licencia</th>
                   <th scope="col">Apellidos</th>
                   <th scope="col">Nombre</th>
-                  <th scope="col">Fecha de nacimiento</th>
-                  <th scope="col">Club</th>
-                  <th scope="col">Editar</th>
-                  <th scope="col">Borrar</th>
+                  <th scope="col">Año</th>
+                  <?php
+                    if(!isset($_SESSION['club'])){
+                    echo '<th scope="col">Club</th>';
+                    }
+                ?>
+                  <th scope="col" colspan="2" class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
+                      $clase = '';
+                      if($row['baja']=='si')
+                          $clase = 'class= bg-warning' ;
+                    echo '<tr '.$clase.'>';
+                    if(!isset($_SESSION['club'])){
+                        echo '<th scope="row">'.$row['id'].'</th>';
+                    }
                     ?>
-                    <tr>
-                      <th scope="row"> <?php echo $row['id']; ?> </th>
+
                       <td> <?php echo $row['licencia']; ?> </td>
                       <td> <?php echo $row['apellidos']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
-                      <td> <?php echo $row['fecha_nacimiento']; ?> </td>
-                      <td> <?php echo $row['nombre_corto']; ?> </td>
-                      <td>
+                      <td> <?php echo $row['año_nacimiento']; ?> </td>
+                    <?php
+                    if(!isset($_SESSION['club'])){
+                        echo '<th scope="row">'.$row['nombre_corto'].'</th>';
+                    }
+                    ?>
+                       <td class="center">
                         <form action="nadadoras_edit.php" method="post">
                           <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
                           <input type="hidden" name="id_club" value=" <?php echo $row['club']; ?> ">
-                          <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
+                          <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
                           </form>
                         </td>
-                        <td>
+                        <td class="text-center">
                           <form action="nadadoras_code.php" method="POST">
-                            <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
-                            <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
+                            <input type="hidden" name="id_nadadora" value="<?php echo $row['id'] ?>">
+                            <?php
+                    if(!isset($_SESSION['club'])){
+                        echo '<button class="btn btn-danger" type="submit" name="delete_btn"><i class="fas fa-trash"></i></btn>';
+                    }else{
+                        if($row['baja'] == 'si')
+                            echo '<button class="btn btn-info" type="submit" name="alta_btn"><i class="fas fa-circle-up"></i></btn>';
+                        else
+                            echo '<button class="btn btn-warning" type="submit" name="baja_btn"><i class="fas fa-circle-down"></i></btn>';
+                    }
+                    ?>
+
+
+
                             </form>
                           </td>
                         </tr>

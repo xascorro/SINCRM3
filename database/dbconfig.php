@@ -1,12 +1,19 @@
 <?php
 //Datos de conexión
 //Actualizado el 03032021 a las 00:27:24 por el usuario 
-$servername = 'localhost';
-$db_name ='sincrm3';
-$db_username ='root';
-$db_password = 'xas';
-
+if($_SERVER['SERVER_NAME'] == 'sincrm.pedrodiaz.eu'){
+    $servername = 'localhost';
+    $db_name ='sincrm3';
+    $db_username ='xas';
+    $db_password = '79eagle';
+}else{
+    $servername = 'localhost';
+    $db_name ='sincrm3';
+    $db_username ='root';
+    $db_password = 'xas';
+}
 $connection = mysqli_connect($servername,$db_username,$db_password, $db_name);
+mysqli_set_charset($connection, "utf8mb4");
 $dbconfig = mysqli_select_db($connection,$db_name);
 $mysqli = new mysqli($servername,$db_username,$db_password, $db_name);
 

@@ -2,6 +2,7 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
+include('./lib/my_functions.php');
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -28,7 +29,7 @@ include('includes/navbar.php');
           <form action="fases_code.php" method="POST" enctype="multipart/form-data">
             <div class="modal-body">
               <div class="row">
-                <div class="form-group col-2">
+                <div class="form-group col-3">
                   <?php
                   $query = "SELECT max(orden)+1 as nuevo_orden FROM fases WHERE id_competicion = '".$_SESSION['id_competicion_activa']."'";
                   $query_run = mysqli_query($connection,$query); 
@@ -41,16 +42,25 @@ include('includes/navbar.php');
                 </div>
                 <div class="form-group col">
                   <?php
-                  include('includes/categoria_select_option.php');
+                    if($_SESSION['competicion_figuras'] == 'si')
+                        include('includes/figura_select_option.php');
+                    else
+                        include('includes/modalidad_select_option.php');
                   ?>
+                </div>
+                <div class="col-3">
+                <label for="orden">F ChoMu</label>
+                  <input type="number" class="form-control" name="f_chomu" value="<?php echo $row['f_chomu']; ?>">
                 </div>
               </div>
               <div class="row">
                 <div class="col">
-                  <?php
-                  include('includes/figura_select_option.php');
+                 <?php
+                  include('includes/categoria_select_option.php');
                   ?>
+
                 </div>
+
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -92,18 +102,33 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+            if($_SESSION['competicion_figuras']=='si'){
+                $competicion_figuras ='si';
+                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+            }
+            else
+                $query = "SELECT fases.id, fases.elementos_coach_card, fases.f_chomu, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+
             $query_run = mysqli_query($connection,$query); 
             ?>
-            <table class="table " id="dataTable" width="100%" cellspacing="0">
+            <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Orden</th>
-                  <th scope="col">Categoría</th>
-                  <th scope="col">Figura</th>
-                  <th scope="col">Editar</th>
-                  <th scope="col">Borrar</th>
+                    <th scope="col">Modalidad</th>
+
+                  <?php
+                    if($competicion_figuras == 'si')
+                        echo '<th scope="col">Figura</th>';
+
+                    else{
+                        echo '<th scope="col">Categoría</th>';
+                        echo '<th scope="col">El. CC</th>';
+                        echo '<th scope="col">FC</th>';
+                    }
+                    ?>
+                  <th scope="col" colspan="2" class="text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -114,23 +139,30 @@ include('includes/navbar.php');
                     <tr>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
                       <td> <?php echo $row['orden']; ?> </td>
+                      <td> <?php echo @$row['nombre']; ?> </td>
                       <td> <?php echo $row['nombre_categoria']; ?> </td>
+                      <td> <?php echo @$row['elementos_coach_card']; ?> </td>
+                      <td> <?php echo @$row['f_chomu']; ?> </td>
                       <td> <?php echo $row['numero']." - ".$row['nombre_figura']; ?> </td>
-                      <td>
+
+                      <td class="text-center">
                         <form action="fases_edit.php" method="post">
                           <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                           <input type="hidden" name="id_figura" value="<?php echo $row['id_figura']; ?>">
+                          <input type="hidden" name="id_modalidad" value="<?php echo @$row['id_modalidad']; ?>">
                           <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
                           <input type="hidden" name="edad_minima" value="<?php echo $row['edad_minima']; ?>">
                           <input type="hidden" name="edad_maxima" value="<?php echo $row['edad_maxima']; ?>">
-                          <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
-                          </form>
-                        </td>
-                        <td>
-                          <form action="fases_code.php" method="POST">
+                          <input type="hidden" name="elementos_coach_card" value="<?php echo @$row['elementos_coach_card']; ?>">
+                          <input type="hidden" name="f_chomu" value="<?php echo @$row['f_chomu']; ?>">
+                          <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
+                        </form>
+                          </td>
+                          <td class="text-center">
+                        <form action="fases_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'];?>">
-                            <button class="btn btn-danger" type="submit" name="delete_btn">Borrar</btn>
-                            </form>
+                              <button class="btn btn-danger" type="submit" name="delete_btn"><i class="fas fa-trash"></i></btn>
+                        </form>
                           </td>
                         </tr>
                         <?php

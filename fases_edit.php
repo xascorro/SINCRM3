@@ -28,6 +28,8 @@ include('includes/navbar.php');
 //Editar nadadora
 				if(isset($_POST['edit_btn'])){
 					$id = $_POST['edit_id'];
+                    $figura = $_POST['id_figura'];
+
 					$query = "SELECT * from fases WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
 					foreach ($query_run as $row) {
@@ -39,16 +41,31 @@ include('includes/navbar.php');
 									<label for="edit_orden">Orden</label>
 									<input type="number" class="form-control" name="edit_orden" value="<?php echo $row['orden']?>" placeholder="orden">
 								</div>
+								<div class="form-group col-1">
+									<label for="edit_elementos_coach_card">El. CC</label>
+									<input type="number" class="form-control" name="edit_elementos_coach_card" value="<?php echo $row['elementos_coach_card']?>" placeholder="#">
+								</div>
+								<div class="form-group col-2">
+									<label for="edit_f_chomu">F ChoMu</label>
+									<input type="number" step="0.1" class="form-control" name="edit_f_chomu" value="<?php echo $row['f_chomu']?>" placeholder="X.X">
+								</div>
 								<div class="col">
 									<?php
 									include('includes/categoria_select_option.php');
 									?>
 								</div>
+
 								<div class="col">
 									<?php
-									include('includes/figura_select_option.php');
+                                    if($figura <> NULL)
+									   include('includes/figura_select_option.php');
+                                    else
+                                        include('includes/modalidad_select_option.php');
+
 									?>
 								</div>
+
+
 							</div>
 							<a href="fases.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>

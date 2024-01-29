@@ -49,24 +49,28 @@ include('includes/navbar.php');
 								</div>
 							</div>
 							<div class="row">
-								<div class="form-group col-4">
+								<div class="form-group col-3">
 									<label for="edit_password">Contraseña</label>
 									<input type="password" class="form-control" name="edit_password" value="<?php echo $row['password']?>"placeholder="Contraseña">
 								</div>
-								<div class="form-group col-4">
+								<div class="form-group col-3">
 									<label for="edit_r_password">Repite la contraseña</label>
 									<input type="password" class="form-control" name="edit_r_password"  value="<?php echo $row['password']?>"placeholder="Repite la contraseña">
 								</div>
-								<div class="form-group col-4">
+								<div class="form-group col-3">
+									<?php                                        include('./includes/rol_select_option.php');
+									?>
+								</div>
+								<div class="form-group col-3">
 									<?php
-										include('./includes/usertype_select_option.php');
+								    include('./includes/club_select_option.php');
 									?>
 								</div>
 							</div>
 							<div class="row">
 								<div class="form-group col-12">
 									<label for="edit_comentario">Comentario</label>
-									<input type="text" class="form-control form-control-user" name="edit_comentario" value="<?php echo $row['comentario']?>"placeholder="Comentario">
+									<input type="text" class="form-control form-control-user" name="edit_comentario" value="<?php echo $row['comentario'];?>"placeholder="Comentario">
 								</div>
 							</div>
 							<a href="usuarios.php" class="btn btn-danger"> Cancelar </a>

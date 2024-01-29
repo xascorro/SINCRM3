@@ -13,7 +13,7 @@ include('includes/navbar.php');
     include('includes/topbar.php');
     ?>
     
-    <!-- template -->
+    <!-- template  -->
 
     <!-- Tu código empieza aquí -->
     <div class="container-fluid">

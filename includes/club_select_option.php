@@ -1,15 +1,17 @@
 <?php  
-$query = "SELECT id, nombre_corto FROM clubes";
-$query_run = mysqli_query($connection,$query); 
+if(isset($_SESSION['club']))
+    $condicion = ' WHERE id = '.$_SESSION['club'];
+$query = "SELECT id, nombre_corto FROM clubes ".$condicion;
+$query_run_select = mysqli_query($connection,$query);
 $select = "<label for='club'>Club</label>";
-$select .= "<select name='id_club' id='club' class='form-control'>";
-if(mysqli_num_rows($query_run) > 0){
-	while ($row = mysqli_fetch_assoc($query_run)) {	    
-		if(intval($_POST['id_club']) == $row['id']){
-			$select .= "<option selected value=".$row['id'].">".$row['nombre_corto']."</option>";
+$select .= "<select name='club' id='club' class='form-control'>";
+if(mysqli_num_rows($query_run_select) > 0){
+	while ($row_select = mysqli_fetch_assoc($query_run_select)) {
+		if(intval($row_select['id']) == $_SESSION['club']){
+			$select .= "<option selected value=".$row_select['id'].">".$row_select['nombre_corto']."</option>";
 		}
 		else{
-			$select .= "<option value=".$row['id'].">".$row['nombre_corto']."</option>";
+			$select .= "<option value=".$row_select['id'].">".$row_select['nombre_corto']."</option>";
 		}
 
 	}

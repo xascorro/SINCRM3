@@ -6,9 +6,14 @@ session_start();
 if(isset($_POST['save_btn'])){
 	$orden = $_POST['orden'];
 	$categoria = $_POST['categoria'];
-	$figura = $_POST['figura'];	
+	$figura = $_POST['figura'];
+	$modalidad = $_POST['modalidad'];
 	
-	$query="INSERT INTO fases (orden,id_categoria,id_figura, id_competicion) VALUES ('".$orden."','".$categoria."','".$figura."','".$_SESSION['id_competicion_activa']."')";
+    if($figura <> NULL)
+	   $query="INSERT INTO fases (orden,id_categoria,id_figura, id_competicion) VALUES ('".$orden."','".$categoria."','".$figura."','".$_SESSION['id_competicion_activa']."')";
+    if($modalidad <> NULL)
+        $query="INSERT INTO fases (orden,id_categoria,id_modalidad, id_competicion) VALUES ('".$orden."','".$categoria."','".$modalidad."','".$_SESSION['id_competicion_activa']."')";
+
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';
@@ -27,12 +32,19 @@ if(isset($_POST['update_btn'])){
 	$orden = $_POST['edit_orden'];
 	$categoria = $_POST['categoria'];
 	$figura = $_POST['figura'];
+    $modalidad = $_POST['modalidad'];
+    $elementos_coach_card = $_POST['edit_elementos_coach_card'];
+    $f_chomu = $_POST['edit_f_chomu'];
+
 	
 	if($password != $r_password){
 		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
 		header('Location: usuarios.php');
 	}else{
-		$query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_figura='$figura' WHERE id='$id'"; 
+        if($figura <> NULL)
+		  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_figura='$figura' WHERE id='$id'";
+        if($modalidad <> NULL)
+		  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_modalidad='$modalidad', elementos_coach_card='$elementos_coach_card', f_chomu='$f_chomu' WHERE id='$id'";
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] = 'Datos actualizados con éxito';

@@ -113,7 +113,7 @@ include('includes/navbar.php');
                         <form action="categorias_edit.php" method="post">
                           <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
                           <input type="hidden" name="id_club" value=" <?php echo $row['club']; ?> ">
-                          <button class="btn btn-success" type="submit" name="edit_btn">Editar</btn>
+                          <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-trash"></i></btn>
                           </form>
                         </td>
                         <td>
