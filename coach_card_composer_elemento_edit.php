@@ -40,7 +40,7 @@ include('includes/navbar.php');
                     $query_run = mysqli_query($connection,$query);
                     $elementos = mysqli_fetch_assoc($query_run);
                     ?>
-								<div class="form-group col-2">
+								<div class="form-group col-6 col-md-2">
 									<input type="hidden" name="id_rutina" value="<?php echo $row['id_rutina']?>">
 									<label for="edit_time">Inicio</label>
 									<input type="time" class="form-control" name="time_inicio" value="<?php echo $elementos['texto']?>" placeholder="00:00">
@@ -50,18 +50,18 @@ include('includes/navbar.php');
                     $query_run = mysqli_query($connection,$query);
                     $elementos = mysqli_fetch_assoc($query_run);
                     ?>
-								<div class="form-group col-2">
+								<div class="form-group col-6 col-md-2">
 									<input type="hidden" name="id_rutina" value="<?php echo $row['id_rutina']?>">
 									<label for="edit_time">Fin</label>
 									<input type="time" class="form-control" name="time_fin" value="<?php echo $elementos['texto']?>" placeholder="00:00">
 								</div>
-								<div class="col">
+								<div class="form-group col-6 col-md-2">
 									<?php
 									include('includes/tipo_hibridos_select_option.php');
 									?>
 								</div>
 
-								<div class="col">
+								<div class="form-group col-6 col-md-2">
                                     <?php
 								    $tipo_elemento='Basemark';
 									echo "<label for=edit_basemark>$tipo_elemento</label>";
@@ -82,7 +82,7 @@ include('includes/navbar.php');
                                     }
 									?>
 								</div>
-								<div class="col-2">
+								<div class="form-group col-6 col-md-2">
 									<label for="edit_dd">DD</label>
 									<?php
                                     $tipo_elemento='dd';
@@ -102,7 +102,7 @@ include('includes/navbar.php');
                                     }
 									?>
 								</div>
-								<div class="col-2">
+								<div class="form-group col-6 col-md-2">
 									<label for="edit_bonus">Bonus</label>
 									<?php
                                     $tipo_elemento='bonus';

@@ -75,7 +75,6 @@ include('includes/navbar.php');
 						<div class="modal-body">
 							<div class="row">
 								<div class="col">
-									Antes del elemento
 								</div>
 								<div class="col">
 									<?php
@@ -93,14 +92,14 @@ include('includes/navbar.php');
 								</div>
 							</div>
 							<div class="modal-footer">
-								<input type="hidden" name="id_rutina" value="<? echo $id_rutina;?>">
+								<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>">
+								<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>">
+									Antes del elemento
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 								<button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
 							</div>
 						</div>
 					</form>
-
-
 				</div>
 			</div>
 		</div>
@@ -112,7 +111,7 @@ include('includes/navbar.php');
 		<div class="container-fluid">
 			<!-- Titulo página y pdf -->
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
-				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i>Coach Card Composer
+				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
 				</h4>
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
 				<a href="./inscripciones_figuras.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>Volver</a>
@@ -149,22 +148,15 @@ include('includes/navbar.php');
                   while ($row = mysqli_fetch_assoc($query_run)) {
                       ?>
 					<div class="row">
-						<div class="col-2">
-							<h4>#<?php echo $id_rutina;?></h4>
+						<div class="col-6 col-md-2">
+							<h5>#<?php echo $id_rutina;?></h5>
 						</div>
-						<div class="col-4">
-							<h4>
-								<?php
-                        echo $row['nombre_modalidad']." ".$row['nombre_categoria'];
-                        ?>
-							</h4>
+						<div class="col-6 col-md-3">
+							<h5><?php echo $row['nombre_modalidad']." ".$row['nombre_categoria'];
+                        ?></h5>
 						</div>
-						<div class="col-6">
-							<h4>
-								<?php
-                        echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];
-                        ?>
-							</h4>
+						<div class="col-12 col-md-7">
+							<h5><?php echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];?></h5>
 						</div>
 					</div>
 					<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">

@@ -15,9 +15,6 @@ if(isset($_POST['save_btn'])){
 		$_SESSION['estado'] = 'Error, Transición no añadida <br>'.mysqli_error($connection);
 	}
 	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
-
-
-
 }
 
 //Actualizar registro
