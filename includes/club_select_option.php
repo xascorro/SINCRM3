@@ -1,7 +1,7 @@
 <?php  
 if(isset($_SESSION['club']))
     $condicion = ' WHERE id = '.$_SESSION['club'];
-$query = "SELECT id, nombre_corto FROM clubes ".$condicion;
+$query = "SELECT id, nombre_corto FROM clubes ".@$condicion;
 $query_run_select = mysqli_query($connection,$query);
 $select = "<label for='club'>Club</label>";
 $select .= "<select name='club' id='club' class='form-control'>";

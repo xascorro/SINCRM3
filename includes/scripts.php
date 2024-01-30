@@ -26,4 +26,4 @@
 
 
 <!-- Mis scripts -->
-<script src="includes/js/buscar_en_tablas.js"></script>
+<script src="includes/js/mis_scripts.js"></script>

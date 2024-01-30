@@ -25,7 +25,7 @@ if(isset($_POST['update_btn'])){
 	$licencia = $_POST['edit_licencia'];
 	$apellidos = $_POST['edit_apellidos'];
 	$nombre = $_POST['edit_nombre'];
-	$fecha_nacimiento = $_POST['edit_fecha_nacimiento'];	
+	$fecha_nacimiento = $_POST['fecha_nacimiento'];
 	$club = $_POST['club'];
 
 	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', año_nacimiento='$fecha_nacimiento', club='$club' WHERE id='$id'";

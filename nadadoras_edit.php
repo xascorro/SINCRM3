@@ -56,7 +56,7 @@ if(!isset($_SESSION['club'])){
 									<div class="col col-12 col-sm-4">
 <!--										<label for="edit_fecha_nacimiento">Año</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value="<?php //echo $row['año_nacimiento']?>" placeholder="AAAA">-->
                                 <?php
-                            $S_SESSION['año_nacimiento'] = $row['año_nacimiento'];
+                            $_SESSION['año_nacimiento'] = $row['año_nacimiento'];
 								include('./includes/año_select_option.php');
 								?>
 									</div>

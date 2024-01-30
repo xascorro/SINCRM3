@@ -46,8 +46,7 @@ if(isset($_SESSION['club'])){
                     <input type="text" class="form-control" name="licencia">
                   </div>
                   <div class="col">
-                    <label for="fecha_nacimiento">Año</label>
-                    <input type="text" class="form-control" name="fecha_nacimiento">
+					<?php include('./includes/año_select_option.php');?>
                   </div>
                 </div>
                 <div class="form-group">
@@ -102,7 +101,8 @@ if(isset($_SESSION['club'])){
             $query_run = mysqli_query($connection,$query); 
             ?>
 <!--            <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">-->
-<!--		campo buscar con buscar_en_tablas.js-->
+<!--
+		campo buscar con buscar_en_tablas.js
 			<div class="input-group">
 				<input type="text" id="searchInput" class="form-control bg-light border-0 small" placeholder="Buscar por..." aria-label="Search" aria-describedby="basic-addon2">
 				<div class="input-group-append">
@@ -111,25 +111,24 @@ if(isset($_SESSION['club'])){
 					</button>
 				</div>
 			</div>
-			<table id="dataTable" class="table">
+-->
+			<table id="dataTable" class="table table-striped table-sm">
     <!-- Contenido de la tabla -->
               <thead>
                 <tr>
-                 <?php
-                    if(!isset($_SESSION['club'])){
-                    echo '<th scope="col">#</th>';
-                    }
-                ?>
-                  <th scope="col">Licencia</th>
-                  <th scope="col">Apellidos</th>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Año</th>
+                  <th class="th-sm" scope="col">Apellidos</th>
+                  <th class="th-sm" scope="col">Nombre</th>
+                  <th class="th-sm" scope="col">Año</th>
+                  <th class="th-sm" scope="col">Licencia</th>
                   <?php
                     if(!isset($_SESSION['club'])){
-                    echo '<th scope="col">Club</th>';
+                    	echo '<th class="th-sm" scope="col">Club</th>';
+                    	echo '<th scope="col">#</th>';
                     }
                 ?>
-                  <th scope="col" colspan="2" class="text-center">Acciones</th>
+                  <th scope="col" class="th-sm text-center no-sort"></th>
+                  <th scope="col" class="th-sm text-center no-sort"></th>
+<!--                  <th scope="col" colspan="2" class="th-sm text-center">Acciones</th>-->
                 </tr>
               </thead>
               <tbody>
@@ -140,24 +139,22 @@ if(isset($_SESSION['club'])){
                       if($row['baja']=='si')
                           $clase = 'class= bg-warning' ;
                     echo '<tr '.$clase.'>';
-                    if(!isset($_SESSION['club'])){
-                        echo '<th scope="row">'.$row['id'].'</th>';
-                    }
                     ?>
 
-                      <td> <?php echo $row['licencia']; ?> </td>
-                      <td> <?php echo $row['apellidos']; ?> </td>
+                      <td  class="th-sm" > <?php echo $row['apellidos']; ?> </td>
                       <td> <?php echo $row['nombre']; ?> </td>
                       <td> <?php echo $row['año_nacimiento']; ?> </td>
+                      <td  class="th-sm" > <?php echo $row['licencia']; ?> </td>
                     <?php
                     if(!isset($_SESSION['club'])){
                         echo '<th scope="row">'.$row['nombre_corto'].'</th>';
+                        echo '<th scope="row">'.$row['id'].'</th>';
                     }
                     ?>
                        <td class="center">
                         <form action="nadadoras_edit.php" method="post">
                           <input type="hidden" name="edit_id" value=" <?php echo $row['id']; ?> ">
-                          <input type="hidden" name="id_club" value=" <?php echo $row['club']; ?> ">
+                          <input type="hidden" name="club" value=" <?php echo $row['club']; ?> ">
                           <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
                           </form>
                         </td>
