@@ -98,7 +98,7 @@ if(isset($_SESSION['club'])){
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, año_nacimiento, club, clubes.nombre_corto, baja FROM nadadoras, clubes where nadadoras.club = clubes.id".$condicion_club;
+            $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, año_nacimiento, club, clubes.nombre_corto, baja FROM nadadoras, clubes where nadadoras.club = clubes.id".$condicion_club." ORDER BY apellidos, nombre";
             $query_run = mysqli_query($connection,$query); 
             ?>
             <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">

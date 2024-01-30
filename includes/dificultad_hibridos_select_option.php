@@ -11,7 +11,7 @@ if($tipo_elemento == 'Basemark'){
         $query = "SELECT id, codigo, valor from dificultad_hibridos";
     }
 }elseif($tipo_elemento == 'bonus'){
-    $query = "SELECT id, codigo, valor from dificultad_hibridos".$where;
+    $query = "SELECT id, codigo, valor from dificultad_hibridos".@$where;
 }
 
 $query_run2 = mysqli_query($connection,$query);

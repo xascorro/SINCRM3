@@ -32,7 +32,11 @@ if(isset($_POST['login_btn'])){
                 'index_club.php',
                 'nadadoras.php',
                 'inscripciones_figuras.php',
-                'inscripciones_figuras_code.php');
+                'inscripciones_figuras_code.php',
+                'coach_card_composer.php',
+                'coach_card_composer_edit.php',
+                'coach_card_composer_code.php'
+			);
             //redirecciono a su pagina inicial
 			header('Location: '.$_SESSION['startPage']);
 

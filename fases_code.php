@@ -37,24 +37,21 @@ if(isset($_POST['update_btn'])){
     $f_chomu = $_POST['edit_f_chomu'];
 
 	
-	if($password != $r_password){
-		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
-		header('Location: usuarios.php');
+
+	if($figura <> NULL)
+	  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_figura='$figura', elementos_coach_card='$elementos_coach_card' WHERE id='$id'";
+	if($modalidad <> NULL)
+	  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_modalidad='$modalidad', elementos_coach_card='$elementos_coach_card', f_chomu='$f_chomu' WHERE id='$id'";
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_error($connection) == ''){
+		$_SESSION['correcto'] = 'Datos actualizados con éxito';
+		header('Location: fases.php');
 	}else{
-        if($figura <> NULL)
-		  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_figura='$figura' WHERE id='$id'";
-        if($modalidad <> NULL)
-		  $query = "UPDATE fases SET orden ='$orden', id_categoria='$categoria', id_modalidad='$modalidad', elementos_coach_card='$elementos_coach_card', f_chomu='$f_chomu' WHERE id='$id'";
-		$query_run = mysqli_query($connection,$query);
-		if(mysqli_error($connection) == ''){
-			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-			header('Location: fases.php');
-		}else{
-			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-			header('Location: fases.php');	
-		}
+		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
+		header('Location: fases.php');
 	}
 	
+
 }
 
 //Borrar registro

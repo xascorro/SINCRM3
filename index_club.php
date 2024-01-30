@@ -16,7 +16,13 @@ include('includes/header.php');
 
     <!-- Tu código empieza aquí -->
     <div class="container-fluid">
+<?php
+		if(isset($_SESSION['no_acceso']) && $_SESSION['no_acceso'] != ''){
+            echo '<div class="alert alert-danger" role="alert">'.$_SESSION['no_acceso'].'</div>';
+            unset($_SESSION['no_acceso']);
+          }
 
+		?>
       <!-- Page Heading -->
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>

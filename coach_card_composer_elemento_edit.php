@@ -24,7 +24,8 @@ include('includes/navbar.php');
 //Editar elemento
 				if(isset($_POST['edit_btn'])){
 					$id_rutina = $_POST['edit_id_rutina'];
-                    $id_elemento = $_POST['edit_id_elemento'];
+					$id_fase = $_POST['edit_id_fase'];
+                    @$id_elemento = $_POST['edit_id_elemento'];
                     $elemento = $_POST['edit_elemento'];
 				?>
 				<h4 class="mb-0 font-weight-bold text-primary">Editar Elemento <?php echo $elemento ;?> Coach Card</h4>
@@ -122,12 +123,14 @@ include('includes/navbar.php');
 									?>
 								</div>
 							</div>
-							<a href="coach_card_composer.php?id_rutina=<?php echo $id_rutina;?>" class="btn btn-danger"> Cancelar </a>
+							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>
+							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>
+							<input type="hidden" name="elemento" value="<?php echo $elemento;?>"/>
+							<a href="coach_card_composer.php?id_rutina=<?php echo $id_rutina;?>&id_fase=<?php echo $id_fase;?>" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 						</div>
 					</div>
-					<input type="hidden" name="id_rutina" value="<?php echo $id_rutina?>"/>
-					<input type="hidden" name="elemento" value="<?php echo $elemento?>"/>
+
 				</form>
 				<?php
 

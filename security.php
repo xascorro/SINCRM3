@@ -21,10 +21,11 @@ if(!$_SESSION['username']){
 	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
 	$_SESSION['color_competicion_activa']= $competicion['color'];
 	$_SESSION['competicion_figuras']= $competicion['figuras'];
-
     //redireccionamos si el rol no tiene acceso a esta página, administrador tiene acceso a todo
     if($_SESSION['paginas_permitidas'] != '*'){
-        if(!in_array(@array_pop(array_filter(explode('/',     $_SERVER['REQUEST_URI']))),$_SESSION['paginas_permitidas'])){
+		if(!in_array(basename(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH)),$_SESSION['paginas_permitidas'])){
+			echo basename(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH));
+			$_SESSION['no_acceso'] = 'No tienes acceso a la página solicitada, consulta con el administrador.';
 			header('Location: '.$_SESSION['startPage']);
     }
     }

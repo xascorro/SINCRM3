@@ -4,7 +4,7 @@ include('includes/header.php');
 include('includes/navbar.php');
 ?>
 
-<?
+<?php
 //si no existen elementos de coach card los crea
     $id_rutina=$_GET['id_rutina'];
     $id_fase=$_GET['id_fase'];
@@ -45,8 +45,6 @@ include('includes/navbar.php');
                 $query_run = mysqli_query($connection,$query);
                 $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='total'";
                 $query_run = mysqli_query($connection,$query);
-
-
             }
         }
     }
@@ -54,33 +52,33 @@ include('includes/navbar.php');
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
 
-    <!-- Main Content -->
-    <div id="content">
-        <?php
+	<!-- Main Content -->
+	<div id="content">
+		<?php
     include('includes/topbar.php');
     ?>
-            <!-- template -->
-            <!-- Tu código empieza aquí -->
+		<!-- template -->
+		<!-- Tu código empieza aquí -->
 
 
-            <!-- Modal -->
-            <div class="modal fade" id="addUserProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Añadir transición</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-                        </div>
-                        <form action="coach_card_composer_code.php" method="POST" enctype="multipart/form-data">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col">
-                                       Antes del elemento
-                                    </div>
-                                    <div class="col">
-                                        <?php
+		<!-- Modal -->
+		<div class="modal fade" id="addUserProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Añadir transición</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<form action="coach_card_composer_code.php" method="POST" enctype="multipart/form-data">
+						<div class="modal-body">
+							<div class="row">
+								<div class="col">
+									Antes del elemento
+								</div>
+								<div class="col">
+									<?php
                                         $query = "SELECT max(elemento) as elementos_coach_card FROM hibridos_rutina where id_rutina ='".$id_rutina."'";
                                         $query_run = mysqli_query($connection,$query);
                                         $n_elementos = mysqli_fetch_assoc($query_run);
@@ -92,38 +90,38 @@ include('includes/navbar.php');
                                         $select .= "</select>";
                                         echo $select;
                   ?>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                   <input type="hidden" name="id_rutina" value="<? echo $id_rutina;?>">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                    <button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
-                                </div>
-                            </div>
-                        </form>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<input type="hidden" name="id_rutina" value="<? echo $id_rutina;?>">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+								<button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
+							</div>
+						</div>
+					</form>
 
 
-                    </div>
-                </div>
-            </div>
-            <!-- Final Modal -->
+				</div>
+			</div>
+		</div>
+		<!-- Final Modal -->
 
 
 
-            <!-- Begin Page Content -->
-            <div class="container-fluid">
-                <!-- Titulo página y pdf -->
-                <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag-checkered"></i>Coach Card Composer
-                    </h4>
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
-                    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generar PDF</a>
-                </div>
+		<!-- Begin Page Content -->
+		<div class="container-fluid">
+			<!-- Titulo página y pdf -->
+			<div class="d-sm-flex align-items-center justify-content-between mb-4">
+				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i>Coach Card Composer
+				</h4>
+				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
+				<a href="./inscripciones_figuras.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>Volver</a>
+			</div>
 
-                <div class="card-body">
+			<div class="card-body">
 
 
-                    <?php
+				<?php
           if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
             echo '<div class="alert alert-primary" role="alert">'.$_SESSION['correcto'].'</div>';
             unset($_SESSION['correcto']);
@@ -134,58 +132,58 @@ include('includes/navbar.php');
           }
           ?>
 
-                        <div class="table-responsive">
-                            <?php
-                            $id_rutina=$_GET['id_rutina'];
-                            $query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
-                            if($_SESSION['competicion_figuras'] == 'si')
-                            $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+				<div class="table-responsive">
+					<?php
+				$id_rutina=$_GET['id_rutina'];
+				$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+				if($_SESSION['competicion_figuras'] == 'si')
+					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
 
-                            $query_run = mysqli_query($connection,$query);
+				$query_run = mysqli_query($connection,$query);
             ?>
 
 
 
-                                        <?php
+					<?php
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
                       ?>
-                                            <div class="row">
-                                    <div class="col-4">
-                                        <h3>COACH CARD #<?php echo $id_rutina;?></h3>
-                                    </div>
-                                                <div class="col-4">
-                                                    <h3>
-                                                        <?php
+					<div class="row">
+						<div class="col-2">
+							<h4>#<?php echo $id_rutina;?></h4>
+						</div>
+						<div class="col-4">
+							<h4>
+								<?php
                         echo $row['nombre_modalidad']." ".$row['nombre_categoria'];
                         ?>
-                        </h3>
-                        </div>
-                        <div class="col-4">
-                                                    <h3>
-                                                        <?php
-                        echo $row['nombre_club'].''.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];
+							</h4>
+						</div>
+						<div class="col-6">
+							<h4>
+								<?php
+                        echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];
                         ?>
+							</h4>
+						</div>
+					</div>
+					<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
+						<thead>
+							<tr>
+								<th scope="col" id="1">#</th>
+								<th scope="col">Inicio</th>
+								<th scope="col">Fin</th>
+								<th scope="col">Part</th>
+								<th scope="col">Basemark</th>
+								<th scope="col">Declared Difficulty</th>
+								<th scope="col">Bonus</th>
+								<th scope="col">Total</th>
+								<th scope="col">Editar</th>
+							</tr>
+						</thead>
 
-                                                    </h3>
-                                                </div>                                            </div>
-<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
-              <thead>
-                <tr>
-                  <th scope="col" id="1">#</th>
-                  <th scope="col">Inicio</th>
-                  <th scope="col">Fin</th>
-                 <th scope="col">Part</th>
-                 <th scope="col">Basemark</th>
-                  <th scope="col">Declared Difficulty</th>
-                  <th scope="col">Bonus</th>
-                  <th scope="col" >Total</th>
-                  <th scope="col" >Editar</th>
-                </tr>
-              </thead>
-
-                                            <tbody>
-                                            <?php
+						<tbody>
+							<?php
                       $i = 1;
                       for($row['elementos_coach_card'];$i<=$row['elementos_coach_card'];$i++){
 
@@ -198,12 +196,12 @@ include('includes/navbar.php');
                                 echo "</td>";
                                 echo "<td style='background-color:".$elemento['color']."'>";
                                 ?>
-                                <form action="coach_card_composer_code.php" method="post">
-                                <input type="hidden" name="id_rutina" value="<?php echo $id_rutina; ?>">
-                                <input type="hidden" name="elemento" value="<?php echo $i; ?>">
-                                <button class="btn btn-warning" type="submit" name="dlt_btn_transicion"><i class="fa fa-trash"></i></btn>
-                                </form>
-                                <?php
+							<form action="coach_card_composer_code.php" method="post">
+								<input type="hidden" name="id_rutina" value="<?php echo $id_rutina; ?>">
+								<input type="hidden" name="elemento" value="<?php echo $i; ?>">
+								<button class="btn btn-warning" type="submit" name="dlt_btn_transicion"><i class="fa fa-trash"></i></btn>
+							</form>
+							<?php
                                 echo "</td>";
                                 echo "</tr>";
                             }
@@ -229,8 +227,9 @@ include('includes/navbar.php');
                             echo "</td>";
                           $query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto <> 3 and id_rutina=$id_rutina and elemento = $i";
                         $query_elementos = mysqli_query($connection,$query);
+						  	echo '<td ';
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-                                echo "<td style='background-color:".$elemento['color']."'>";
+                                echo "style='background-color:".$elemento['color']."'>";
                                 echo $elemento['nombre'];
                                 $id_tipo_hibrido = $elemento['id'];
                             }
@@ -239,7 +238,7 @@ include('includes/navbar.php');
                           $query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i and valor>0";
                         $query_elementos = mysqli_query($connection,$query);
                            echo "<td>";
-                          if($elemento['valor'] != '')
+                          if(@$elemento['valor'] != '')
                                 $elemento['valor'] = "(".$elemento['valor'].") ";
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
                                 echo $elemento['texto']." +".$elemento['valor']."<br>";
@@ -256,7 +255,7 @@ include('includes/navbar.php');
                           $query = "SELECT texto, valor from hibridos_rutina where tipo='bonus' and id_rutina=$id_rutina and elemento = $i and valor>0";
                         $query_elementos = mysqli_query($connection,$query);
                           echo "<td>";
-                          if($elemento['valor'] != '')
+                          if(@$elemento['valor'] != '')
                                 $elemento['valor'] = "(".$elemento['valor'].") ";
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
                                 echo $elemento['texto']." +".$elemento['valor']."<br>";
@@ -273,37 +272,38 @@ include('includes/navbar.php');
 
                           echo "<td>";
                           ?>
-                          <form action="coach_card_composer_elemento_edit.php" method="post">
-                            <input type="hidden" name="edit_id_rutina" value="<?php echo $row['id']; ?>">
-                            <input type="hidden" name="edit_elemento" value="<?php echo $i; ?>">
-                            <input type="hidden" name="id_tipo_hibrido" value="<?php echo $id_tipo_hibrido; ?>">
-                            <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
-                          <?php
+							<form action="coach_card_composer_elemento_edit.php" method="post">
+								<input type="hidden" name="edit_id_rutina" value="<?php echo $row['id']; ?>">
+								<input type="hidden" name="edit_id_fase" value="<?php echo $id_fase; ?>">
+								<input type="hidden" name="edit_elemento" value="<?php echo $i; ?>">
+								<input type="hidden" name="id_tipo_hibrido" value="<?php echo $id_tipo_hibrido; ?>">
+								<button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
+									<?php
                         echo "</td>";
                         echo "</tr>";
                         ?>
-                        </form>
-                        <?php
+							</form>
+							<?php
 
 
                       }
                       ?>
 
-                        <?php
+							<?php
                       }
                     }
                     else{
                       echo "<tr><td colspan='10'>No se han encontrado registros en la base de datos</td></tr>";
                     }
                     ?>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+						</tbody>
+					</table>
+				</div>
+			</div>
 
 
-            <!-- template -->
-            <?php
-            include('includes/scripts.php');
-            include('includes/footer.php');
-            ?>
+			<!-- template -->
+			<?php
+include('includes/scripts.php');
+include('includes/footer.php');
+?>

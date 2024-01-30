@@ -3,6 +3,11 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 include('./lib/my_functions.php');
+
+$condicion_club = '';
+if(isset($_SESSION['club'])){
+    $condicion_club = " and nadadoras.club = ".$_SESSION['club'];
+}
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -114,7 +119,7 @@ include('./lib/my_functions.php');
                 $query = "SELECT id FROM fases WHERE id_categoria = ".$row_categorias['id_categoria']." and id_competicion = ".$_SESSION['id_competicion_activa']." LIMIT 1";
                 $id_fase = mysqli_result(mysqli_query($connection,$query),0);
 
-                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, nadadoras.año_nacimiento as año, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, nadadoras, clubes WHERE inscripciones_figuras.id_fase = fases.id and inscripciones_figuras.id_nadadora= nadadoras.id and nadadoras.club = clubes.id and fases.id = $id_fase ORDER BY nadadoras.club, nadadoras.nombre, nadadoras.apellidos";
+                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, nadadoras.año_nacimiento as año, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, nadadoras, clubes WHERE inscripciones_figuras.id_fase = fases.id and inscripciones_figuras.id_nadadora= nadadoras.id and nadadoras.club = clubes.id and fases.id = $id_fase $condicion_club ORDER BY nadadoras.club, nadadoras.nombre, nadadoras.apellidos";
                 $query_run = mysqli_query($connection,$query);
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
@@ -128,7 +133,7 @@ include('./lib/my_functions.php');
                       if($row['elementos_coach_card']>0){
                           ?>
                                 <td><a href="./coach_card_composer.php?id_rutina=<?php echo $row['id']; ?>&id_fase=<?php echo $row['id_fase'];?>" class=" btn btn-warning btn-circle btn">
-                                        <i class="fas fa-file"></i>
+                                        <i class="fa-solid fa-puzzle-piece"></i>
                                     </a> </td>
 
 
@@ -136,14 +141,16 @@ include('./lib/my_functions.php');
                       } else
                           echo "<td></td>";
                       ?>
+<!--
                                 <td class="text-center">
                                     <form action="rutinas_edit.php" method="post">
-                                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
-                                        <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
-                                        <input type="hidden" name="id_club" value="<?php echo @$row['id_club']; ?>">
+                                        <input type="hidden" name="edit_id" value="<?php //echo $row['id']; ?>">
+                                        <input type="hidden" name="id_fase" value="<?php //echo $row['id_fase']; ?>">
+                                        <input type="hidden" name="id_club" value="<?php //echo @$row['id_club']; ?>">
                                         <button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
                                     </form>
                                 </td>
+-->
                                 <td class="text-center">
                                     <form action="inscripciones_figuras_code.php" method="POST">
                                         <input type="hidden" name="delete_id" value="<?php echo $row['id'];?>">
