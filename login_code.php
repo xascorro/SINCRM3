@@ -35,7 +35,8 @@ if(isset($_POST['login_btn'])){
                 'inscripciones_figuras_code.php',
                 'coach_card_composer.php',
                 'coach_card_composer_edit.php',
-                'coach_card_composer_code.php'
+                'coach_card_composer_code.php',
+                'coach_card_composer_elemento_edit.php'
 			);
             //redirecciono a su pagina inicial
 			header('Location: '.$_SESSION['startPage']);
