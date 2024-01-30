@@ -33,7 +33,3 @@ $('#dataTable').DataTable({
 
 //comenar con navbar cerrado
 $("#accordionSidebar").toggleClass("toggled");
-
-
-
-
