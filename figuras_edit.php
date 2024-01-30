@@ -35,9 +35,12 @@ $ParsedownExtra->setBreaksEnabled(false);
 
 			<div class="card-body">
 				<?php
-//Editar nadadora
-				if(isset($_POST['edit_btn'])){
-					$id = $_POST['edit_id'];
+//Editar figura
+				if(isset($_POST['edit_btn']) or isset($_GET['edit_id'])){
+					if(isset($_POST['edit_id']))
+						$id = $_POST['edit_id'];
+					else
+						$id = $_GET['edit_id'];
 					$query = "SELECT * from figuras WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
 					foreach ($query_run as $row) {

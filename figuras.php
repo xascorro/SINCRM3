@@ -84,9 +84,18 @@ include('includes/navbar.php');
 
           <div class="table-responsive">
             <?php
-            $query = "SELECT figuras.id, numero, nombre, grado_dificultad FROM figuras"; 
+            $query = "SELECT figuras.id, numero, nombre, grado_dificultad FROM figuras ORDER BY numero ASC";
             $query_run = mysqli_query($connection,$query); 
             ?>
+            <!--		campo buscar con buscar_en_tablas.js-->
+			<div class="input-group">
+				<input type="text" id="searchInput" class="form-control bg-light border-0 small" placeholder="Buscar por..." aria-label="Search" aria-describedby="basic-addon2">
+				<div class="input-group-append">
+					<button class="btn btn-primary" type="button">
+						<i class="fas fa-search fa-sm"></i>
+					</button>
+				</div>
+			</div>
             <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
