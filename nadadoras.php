@@ -101,7 +101,18 @@ if(isset($_SESSION['club'])){
             $query = "SELECT nadadoras.id, licencia, apellidos, nadadoras.nombre, año_nacimiento, club, clubes.nombre_corto, baja FROM nadadoras, clubes where nadadoras.club = clubes.id".$condicion_club." ORDER BY apellidos, nombre";
             $query_run = mysqli_query($connection,$query); 
             ?>
-            <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">
+<!--            <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">-->
+<!--		campo buscar con buscar_en_tablas.js-->
+			<div class="input-group">
+				<input type="text" id="searchInput" class="form-control bg-light border-0 small" placeholder="Buscar por..." aria-label="Search" aria-describedby="basic-addon2">
+				<div class="input-group-append">
+					<button class="btn btn-primary" type="button">
+						<i class="fas fa-search fa-sm"></i>
+					</button>
+				</div>
+			</div>
+			<table id="dataTable" class="table">
+    <!-- Contenido de la tabla -->
               <thead>
                 <tr>
                  <?php
@@ -186,6 +197,3 @@ if(isset($_SESSION['club'])){
             include('includes/scripts.php');
             include('includes/footer.php');
             ?>
-
-
-
