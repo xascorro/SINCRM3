@@ -49,15 +49,15 @@ $ParsedownExtra->setBreaksEnabled(false);
 							<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 							<div class="form-group">
 								<div class="row">
-									<div class="col-2">
+									<div class="col-6 col-md12">
 										<label for="edit_numero">Número</label><input type="text" class="form-control" name="edit_numero" value="<?php echo $row['numero']?>"placeholder="Número de Figura">
+									</div>
+
+									<div class="col-6 col-md-12">
+										<label for="edit_grado_dificultad">GD</label><input type="text" class="form-control" name="edit_grado_dificultad" value="<?php echo $row['grado_dificultad']?>" placeholder="Grado de Dificultad de la Figura">
 									</div>
 									<div class="col">
 										<label for="edit_nombre">Nombre</label><input type="text" class="form-control" name="edit_nombre" value="<?php echo $row['nombre']?>"placeholder="Nombre">
-									</div>
-									<div class="col-2">
-										<label for="edit_grado_dificultad">GD</label><input type="text" class="form-control" name="edit_grado_dificultad" value="<?php echo $row['grado_dificultad']?>" placeholder="Grado de Dificultad de la Figura">
-
 									</div>
 								</div>
 								<div class="form-group">
