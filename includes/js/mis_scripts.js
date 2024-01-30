@@ -1,4 +1,4 @@
-
+//traducir dataTable, configurar clase no-sort, cambiar paginación por defecto
 $('#dataTable').DataTable({
     language: {
         "decimal": "",
@@ -29,3 +29,11 @@ $('#dataTable').DataTable({
       "orderable": false,
     }]
 });
+
+
+//comenar con navbar cerrado
+$("#accordionSidebar").toggleClass("toggled");
+
+
+
+
