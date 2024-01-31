@@ -1,6 +1,6 @@
 <?php
 if(!isset($_SESSION)) {
-     session_start();
+    session_start();
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
@@ -22,7 +22,7 @@ if(!$_SESSION['username']){
 	$_SESSION['color_competicion_activa']= $competicion['color'];
 	$_SESSION['competicion_figuras']= $competicion['figuras'];
     //redireccionamos si el rol no tiene acceso a esta página, administrador tiene acceso a todo
-    if($_SESSION['paginas_permitidas'] != '*'){
+    if(@$_SESSION['paginas_permitidas'] != '*'){
 		if(!in_array(basename(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH)),$_SESSION['paginas_permitidas'])){
 			echo basename(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH));
 			$_SESSION['no_acceso'] = 'No tienes acceso a la página solicitada, consulta con el administrador.';
