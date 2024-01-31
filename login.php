@@ -2,8 +2,6 @@
 session_start();
 include('includes/header.php');
 ?>
-
-
 <div class="container">
 
 	<!-- Outer Row -->
@@ -13,15 +11,15 @@ include('includes/header.php');
 				<div class="card-body p-0">
 					<!-- Nested Row within Card Body -->
 					<div class="row">
-<!--						<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>-->
+						<!--						<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>-->
 						<div class="col-lg-6 bg-login-image"></div>
 						<div class="col-lg-6">
 							<div class="p-5">
 								<div class="text-center">
 									<h1 class="text-gray-900 mb-4">Hola de nuevo!!</h1>
 									<h4 class="text-gray-900 mb-4">Introduce tu nombre de usuario y contraseña</h3>
-										<?php
-								if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
+									<?php
+									if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
 										echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
 										unset($_SESSION['estado']);
 									}
@@ -29,13 +27,22 @@ include('includes/header.php');
 								</div>
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Enter Email Address...">
+									<label for="username">Email o usuario</label>
+										<input type="username" name="username" class="form-control form-control-user" placeholder="Email o usuario...">
 									</div>
 									<div class="form-group">
+									<label for="password">Contraseña</label>
 										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
 									</div>
 									<button type="submit" name="login_btn" href="index.html" class="btn btn-primary btn-user btn-block">
 										Login
+									</button>
+									<hr>
+								</form>
+
+								<form class="user" action="register.php" method="POST">
+									<button type="submit" name="login_btn" href="register.php" class="btn btn-info btn-user btn-block">
+										Registrarse
 									</button>
 									<hr>
 								</form>

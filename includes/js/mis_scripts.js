@@ -26,10 +26,10 @@ $('#dataTable').DataTable({
 	"order": [],
 	"columnDefs": [{
 		"targets": 'no-sort',
-		"orderable": false,
+		"orderable": false
     }]
 });
 
 
 //comenar con navbar cerrado
-$("#accordionSidebar").toggleClass("toggled");
+$('#accordionSidebar').toggleClass('toggled');
