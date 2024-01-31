@@ -102,7 +102,7 @@ include('includes/navbar.php');
           <div class="table-responsive">
             <?php
             if($competicion_figuras == 'si')
-                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, figuras.grado_dificultad, fases.orden as orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, id_modalidad, figuras.nombre as nombre_figura, numero, figuras.grado_dificultad, fases.orden as orden FROM fases, categorias, modalidades, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             else
                 $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
 
