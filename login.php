@@ -3,7 +3,6 @@ session_start();
 include('includes/header.php');
 ?>
 <div class="container">
-
 	<!-- Outer Row -->
 	<div class="row justify-content-center">
 		<div class="col-xl-10 col-lg-12 col-md-9">
@@ -23,6 +22,10 @@ include('includes/header.php');
 										echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
 										unset($_SESSION['estado']);
 									}
+									if (isset($_SESSION['estado_registro']) && $_SESSION['estado_registro'] != '') {
+										echo '<div class="alert alert-info" role="info">'.$_SESSION['estado_registro'].'</div>';
+										unset($_SESSION['estado_registro']);
+									}
 									?>
 								</div>
 								<form class="user" action="login_code.php" method="POST">
@@ -32,14 +35,13 @@ include('includes/header.php');
 									</div>
 									<div class="form-group">
 									<label for="password">Contraseña</label>
-										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" placeholder="Password">
+										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" autocomplete="current-password" placeholder="Password">
 									</div>
 									<button type="submit" name="login_btn" href="index.html" class="btn btn-primary btn-user btn-block">
 										Login
 									</button>
 									<hr>
 								</form>
-
 								<form class="user" action="register.php" method="POST">
 									<button type="submit" name="login_btn" href="register.php" class="btn btn-info btn-user btn-block">
 										Registrarse
@@ -51,11 +53,8 @@ include('includes/header.php');
 					</div>
 				</div>
 			</div>
-
 		</div>
-
 	</div>
-
 </div>
 
 
