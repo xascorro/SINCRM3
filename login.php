@@ -31,11 +31,11 @@ include('includes/header.php');
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
 									<label for="username">Email o usuario</label>
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Email o usuario...">
+										<input type="username" name="username" class="form-control form-control-user" placeholder="Email o usuario..." required>
 									</div>
 									<div class="form-group">
 									<label for="password">Contraseña</label>
-										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" autocomplete="current-password" placeholder="Password">
+										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" autocomplete="current-password" placeholder="Password" required>
 									</div>
 									<button type="submit" name="login_btn" href="index.html" class="btn btn-primary btn-user btn-block">
 										Login

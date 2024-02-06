@@ -82,21 +82,30 @@ if(isset($_POST['login_btn'])){
 		if (mysqli_num_rows($query_run) > 0 ){
 			$_SESSION['estado'] = "Ya existe un usuario registrado con ese email";
 			header('Location: register.php');
+			exit();
 		}
 	}
 	if ($register_password != $register_password_r){
 			$_SESSION['estado'] = "Las contraseñas no coinciden";
 			header('Location: register.php');
+			exit();
 	}
 	$register_password_hash = password_hash($register_password, PASSWORD_DEFAULT);
 	$query = "INSERT INTO usuarios (username, email, telefono, hash, comentario) values ('$register_username', '$register_email', '$register_telefono', '$register_password_hash', '$register_comentario')";
 	if(!mysqli_query($connection, $query)){
 		$_SESSION['estado_registro'] = "Ups!, ha ocurrido un error inesperado";
 		header('Location: register.php');
+		exit();
 	}else{
-		$_SESSION['estado_registro'] = "Enhorabuena, has completado el regitro con éxito!! <br>Comprueba tu correo electrónico para terminar el proceso.";
 		//envio email con confirmación de email
-
+		$toAddress = 'admin@sincrm.pedrodiaz.eu';
+		$toName = 'Pedro Diaz';
+		$subject = 'Nuevo usuario registrado';
+		$body = 'Se ha registrado el usuario <b>'.$_POST['username'].'</b> con el email <b>'.$_POST['email'].'</b>. Termina de configurar el usuario desde el  <a href="https://sincrm.pedrodiaz.eu/usuarios.php">Panel de usuarios.</a>';
+		$altbody = 'Se ha registrado el usuario '.$_POST['username'].' con el email '.$_POST['username'].'. Termina de configurar el usuario desde el <a href="https://sincrm.pedrodiaz.eu/usuarios.php">Panel de usuarios.</a>';
+		include('enviar_email.php');
+		//envio mensaje de confirmación
+		$_SESSION['estado_registro'] = "Enhorabuena, has completado el registro con éxito!! <br>Un administrador debe de aprobar tu registro y configurar tu usuario para comenzar a usar este sitio web.";
 		header('Location: login.php');
 	}
 }
