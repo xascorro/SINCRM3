@@ -24,8 +24,10 @@ $resultado=mysqli_query($connection,$query) or die (mysqli_error());
 		mysqli_query($connection,$query);
         if(mysqli_error($connection) == ''){
             $_SESSION['correcto'] .= 'Participante añadida con éxito';
-        }else{
-            $_SESSION['estado'] .= 'Error, psrticipante no añadida <br>'.mysqli_error($connection);
+			//escribo log
+			$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
+			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." a creado una nueva  inscripción de figuras: ".$query) or die("Error escribiendo en el archivo");fclose($logFile);        }else{
+            $_SESSION['estado'] .= 'Error, participante no añadida <br>'.mysqli_error($connection);
         }
     }
     header('Location: inscripciones_figuras.php');
@@ -47,6 +49,10 @@ if(isset($_POST['delete_btn'])){
 	}else{
 		$_SESSION['estado'] .= 'Error al eliminar la Coach Card o alguno de sus elementos<br>'.mysqli_error($connection);
 	}
+	//escribo log
+	$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
+	fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." a eliminado la inscripción de figuras con id: ".$id) or die("Error escribiendo en el archivo");fclose($logFile);
+
     header('Location: inscripciones_figuras.php');
 }
 

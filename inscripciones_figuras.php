@@ -119,14 +119,14 @@ if(isset($_SESSION['club'])){
                 $query = "SELECT id FROM fases WHERE id_categoria = ".$row_categorias['id_categoria']." and id_competicion = ".$_SESSION['id_competicion_activa']." LIMIT 1";
                 $id_fase = mysqli_result(mysqli_query($connection,$query),0);
 
-                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, nadadoras.año_nacimiento as año, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, nadadoras, clubes WHERE inscripciones_figuras.id_fase = fases.id and inscripciones_figuras.id_nadadora= nadadoras.id and nadadoras.club = clubes.id and fases.id = $id_fase $condicion_club ORDER BY nadadoras.club, nadadoras.nombre, nadadoras.apellidos";
+                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, nadadoras.año_nacimiento as año, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, nadadoras, clubes WHERE inscripciones_figuras.id_fase = fases.id and inscripciones_figuras.id_nadadora= nadadoras.id and nadadoras.club = clubes.id and fases.id = $id_fase $condicion_club ORDER BY nadadoras.club, nadadoras.apellidos, nadadoras.nombre";
                 $query_run = mysqli_query($connection,$query);
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
                     ?>
                             <tr>
                                 <th scope="row"> <?php echo $row['id']; ?> </th>
-                                <td colspan="4"> <?php echo $row['nombre_nadadora'].' '.$row['apellidos_nadadora']; ?> </td>
+                                <td colspan="4"> <?php echo $row['apellidos_nadadora'].', '.$row['nombre_nadadora']; ?> </td>
                                 <td> <?php echo $row['año'];?> </td>
                                 <td> <?php echo $row['nombre_club'];?> </td>
                                 <?php
