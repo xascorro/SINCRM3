@@ -50,15 +50,16 @@ include('includes/navbar.php');
 							</div>
 							<div class="row">
 								<div class="form-group col-3">
-									<label for="edit_password">Contraseña</label>
-									<input type="password" class="form-control" name="edit_password" value="<?php echo $row['password']?>"placeholder="Contraseña">
+									<label for="edit_password">...</label>
+									<input type="password" class="form-control" name="edit_password" value="<?php echo $row['hash']?>"placeholder="...">
 								</div>
 								<div class="form-group col-3">
-									<label for="edit_r_password">Repite la contraseña</label>
-									<input type="password" class="form-control" name="edit_r_password"  value="<?php echo $row['password']?>"placeholder="Repite la contraseña">
+									<label for="edit_r_password">...</label>
+									<input type="password" class="form-control" name="edit_r_password"  value="<?php echo $row['hash']?>"placeholder="...">
 								</div>
 								<div class="form-group col-3">
-									<?php                                        include('./includes/rol_select_option.php');
+									<?php
+									include('./includes/rol_select_option.php');
 									?>
 								</div>
 								<div class="form-group col-3">

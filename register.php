@@ -34,25 +34,25 @@ include('includes/header.php');
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
 										<label for="username">Nombre de usuario</label>
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." >
+										<input type="username" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." required>
 									</div>
 									<div class="form-group">
 										<label for="password">Contraseña</label>
-										<input type="password" name="password" class="form-control form-control-user" id="InputPassword" placeholder="Password" >
+										<input type="password" name="password" class="form-control form-control-user" id="InputPassword" placeholder="Password" required>
 										<label for="password_r">Repite tu contraseña</label>
-										<input type="password" name="password_r" class="form-control form-control-user" id="InputPassword_r" placeholder="Password" >
+										<input type="password" name="password_r" class="form-control form-control-user" id="InputPassword_r" placeholder="Password" required>
 									</div>
 									<div class="form-group">
   										<label for="email" class="form-label">Email</label>
-  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" >
+  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" required>
 									</div>
  										<div class="form-group">
   										<label for="telefono" class="form-label">Teléfono</label>
-  										<input type="phone" name="telefono" class="form-control form-control-user" id="telefono" placeholder="Número móvil" >
+  										<input type="phone" name="telefono" class="form-control form-control-user" id="telefono" placeholder="Número móvil" required>
 									</div>
  										<div class="form-group">
   										<label for="comentario" class="form-label">Comentario</label>
-  										<input type="text" class="form-control form-control-user" id="comentario" name="comentario" placeholder="Cuentanos brevemente quien eres" >
+  										<input type="text" class="form-control form-control-user" id="comentario" name="comentario" placeholder="Cuentanos brevemente quien eres" required>
 									</div>
 									<div class="form-group">
 										<button type="submit" name="register_btn" href="register_code.php" class="btn btn-info btn-user btn-block">
