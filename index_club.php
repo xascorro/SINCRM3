@@ -118,7 +118,7 @@ include('includes/header.php');
                 <div class="col mr-2">
                   <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Competición actual</div>
                   <?php
-                    $query = 'select * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
+                    $query = 'SELECT * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -132,32 +132,57 @@ include('includes/header.php');
                                 </div>';
                                 echo '</div>';
                                 ?>
-                                <div class="row">
-                                    <div class="col col-12 col-md-4">
-                                        <table class="table table-responsive table-striped">
-                                            <thead>
-                                                <tr><th colspan=2>Fases</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>ale</td><td>pierna</td>
-                                                </tr><tr>
-                                                    <td>ale</td><td>pierna</td>
-                                                </tr><tr>
-                                                    <td>ale</td><td>pierna</td>
-                                                </tr><tr>
-                                                    <td>ale</td><td>pierna</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                       <div class="col col-12 col-md-4">
-                                        <a href="./inscripciones_figuras.php" class="btn btn-info">Realizar Inscripciones</a>
-                                    </div>
-                                       <div class="col col-12 col-md-4">
-                                        Sorteo
-                                    </div>
-                                </div>
+                                    <div class="col col-12">
+                                        <?php
+            if($_SESSION['competicion_figuras']=='si'){
+                $competicion_figuras ='si';
+                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+            }
+
+            $query_run = mysqli_query($connection,$query);
+            ?>
+            <table class="table table-striped table-sm" id="noDataTable" width="100%" cellspacing="0">
+              <thead>
+                <tr>
+                    <th scope="col">Modalidad</th>
+                    <th scope="col">Figura</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                if(mysqli_num_rows($query_run) > 0){
+                  while ($row2 = mysqli_fetch_assoc($query_run)) {
+                    ?>
+                    <tr>
+                      <td> <?php echo $row2['nombre_categoria']; ?> </td>
+                      <td> <?php echo $row2['numero']." - ".$row2['nombre_figura']; ?> </td>
+					</tr>
+                        <?php
+                      }
+                    }
+                    else{
+                      echo "<tr><td colspan='10'>No se han encontrado registros en la base de datos</td></tr>";
+                    }
+                    ?>
+                  </tbody>
+                </table>
+				</div>
+				<div class="row">
+					<div class="col col-12 col-md-6">
+					<?php
+					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
+					?>
+						<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']);
+					}else{
+						?>
+						<span class="btn btn-danger" style="text-decoration:line-through;">Inscripciones</span> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']);
+					}
+								?>
+					</div>
+					<div class="col col-12 col-md-6">
+						<a href="<?php echo $row['enlace_sorteo'];?>" class="btn btn-info">Sorteo <i class="fa-solid fa-video"></i></a> El <?php echo dateAFecha($row['fecha_sorteo']);?>
+					</div>
+				</div>
                                 <?php
                             }
                         }else{

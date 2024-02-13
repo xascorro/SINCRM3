@@ -1,5 +1,7 @@
 <?php
 // include('security.php');
+include('./lib/my_functions.php');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

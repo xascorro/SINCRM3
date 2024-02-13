@@ -17,6 +17,8 @@ if(isset($_POST['login_btn'])){
         $_SESSION['club'] = $usuario['club'];
         $_SESSION['icono'] = $usuario['icono'];
 		if (password_verify($login_password, $usuario['hash'])) {
+			$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
+			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha conectado") or die("Error escribiendo en el archivo");fclose($logFile);
 			//admin
 			if($_SESSION['id_rol'] == '1'){
 				$_SESSION['startPage'] = 'index.php';
@@ -37,13 +39,14 @@ if(isset($_POST['login_btn'])){
 					'coach_card_composer.php',
 					'coach_card_composer_edit.php',
 					'coach_card_composer_code.php',
-					'coach_card_composer_elemento_edit.php'
+					'coach_card_composer_elemento_edit.php',
+					'informe_figuras_preinscripciones.php'
 				);
 				//redirecciono a su pagina inicial
 				header('Location: '.$_SESSION['startPage']);
 
 			}else if($_SESSION['id_rol'] == '6'){
-				$_SESSION['estado'] = "Estas registrado como Invitado, debes de esperar a que el administrador te otorgue un rol";
+				$_SESSION['estado'] = "Estas registrado como Invitado, debes de esperar a que el administrador aprueba tu registro.";
 				header('Location: login.php');
 
 			}
@@ -60,6 +63,8 @@ if(isset($_POST['login_btn'])){
 }elseif (isset($_POST['logout_btn'])) {
 		unset($_SESSION);
 		$_SESSION['estado'] = "Usuario desconectado";
+		$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
+		fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);
 		header('Location: login.php');
 
 

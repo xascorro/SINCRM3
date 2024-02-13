@@ -1,4 +1,8 @@
 <?php
+ ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    setlocale(LC_ALL,'es_ES');
 //============================================================+
 // File name   : example_048.php
 // Begin       : 2009-03-20

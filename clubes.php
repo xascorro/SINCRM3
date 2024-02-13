@@ -116,7 +116,7 @@ include('includes/navbar.php');
                       <td> <?php echo $row['nombre']; ?> </td>
                       <td> <?php echo $row['nombre_corto']; ?> </td>
                       <td> <?php echo $row['codigo']; ?> </td>
-                      <td> <?php echo '<img width="100px" alt="Imagen" src="'.$row[logo].'">';?></td>
+                      <td> <?php echo '<img width="100px" alt="Imagen" src="'.$row['logo'].'">';?></td>
                       <td> <?php echo $row['federacion_nombre_corto'] ?> </td>
 
                       <td>

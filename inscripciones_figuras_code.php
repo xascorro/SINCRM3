@@ -23,10 +23,10 @@ $resultado=mysqli_query($connection,$query) or die (mysqli_error());
 		$query = "insert into inscripciones_figuras (id_fase, id_nadadora, orden, id_competicion) values ('".$fase['id']."', '$id_nadadora', '$orden', '$id_competicion')";
 		mysqli_query($connection,$query);
         if(mysqli_error($connection) == ''){
-            $_SESSION['correcto'] .= 'Participante añadida con éxito';
+            $_SESSION['correcto'] = 'Participante añadida con éxito';
 			//escribo log
 			$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
-			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." a creado una nueva  inscripción de figuras: ".$query) or die("Error escribiendo en el archivo");fclose($logFile);        }else{
+			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." a creado una nueva inscripción de figuras: ".$query) or die("Error escribiendo en el archivo");fclose($logFile);        }else{
             $_SESSION['estado'] .= 'Error, participante no añadida <br>'.mysqli_error($connection);
         }
     }

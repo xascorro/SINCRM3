@@ -2,7 +2,7 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-include('./lib/my_functions.php');
+//include('./lib/my_functions.php');
 
 $condicion_club = '';
 if(isset($_SESSION['club'])){
