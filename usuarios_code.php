@@ -1,5 +1,7 @@
 <?php
 include('security.php');
+//include('./lib/my_functions.php');
+$query ='';
 
 session_start();
 //Añadir registro
@@ -25,7 +27,6 @@ if(isset($_POST['save_btn'])){
 	}
 
 }
-
 //Actualizar registro
 if(isset($_POST['update_btn'])){
 	$id = $_POST['edit_id'];
@@ -41,19 +42,19 @@ if(isset($_POST['update_btn'])){
 	if($password != $r_password){
 		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
 		header('Location: usuarios.php');
-	}else{
-		$query = "UPDATE usuarios SET username ='$username', email='$email', telefono='$telefono', password='$password', club='$club', telefono='$telefono', comentario='$comentario', rol='$edit_rol' WHERE id='$id'";
+	}else if($password == ''){
 		$query = "UPDATE usuarios SET username ='$username', email='$email', telefono='$telefono', club='$club', telefono='$telefono', comentario='$comentario', id_rol='$edit_rol' WHERE id='$id'";
-		echo $query;
+	}else{
+		$query = "UPDATE usuarios SET username ='$username', email='$email', telefono='$telefono', hash='".password_hash($password, PASSWORD_DEFAULT)."', club='$club', comentario='$comentario', id_rol='$edit_rol' WHERE id='$id'";
+	}
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-			header('Location: usuarios.php');
 		}else{
 			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-			header('Location: usuarios.php');
 		}
-	}
+		header('Location: usuarios.php');
+
 
 }
 

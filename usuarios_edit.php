@@ -50,12 +50,12 @@ include('includes/navbar.php');
 							</div>
 							<div class="row">
 								<div class="form-group col-3">
-									<label for="edit_password">...</label>
-									<input type="password" class="form-control" name="edit_password" value="<?php echo $row['hash']?>"placeholder="...">
+									<label for="edit_password">Nueva contraseña</label>
+									<input type="password" class="form-control" name="edit_password" placeholder="Nueva contraseña">
 								</div>
 								<div class="form-group col-3">
-									<label for="edit_r_password">...</label>
-									<input type="password" class="form-control" name="edit_r_password"  value="<?php echo $row['hash']?>"placeholder="...">
+									<label for="edit_r_password">Confirma contraseña</label>
+									<input type="password" class="form-control" name="edit_r_password"  placeholder="Repite nueva contraseña">
 								</div>
 								<div class="form-group col-3">
 									<?php

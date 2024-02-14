@@ -1,12 +1,13 @@
 <?php
 include('security.php');
+include('./lib/my_functions.php');
+
 	//Login
 if(isset($_POST['login_btn'])){
 	$login_username = $_POST['username'];
 	$login_password = $_POST['password'];
 	@$login_email = $_POST['email'];
 	$query = "SELECT usuarios.id as id_usuario, id_rol, club, hash, roles.nombre as nombre_rol, icono FROM usuarios, roles WHERE (username ='$login_username' or email='$login_username') and usuarios.id_rol = roles.id";
-	echo $query;
 	$query_run = mysqli_query($connection,$query);
 	$usuario = mysqli_fetch_array($query_run);
 	if($usuario != NULL){
@@ -16,6 +17,10 @@ if(isset($_POST['login_btn'])){
         $_SESSION['id_rol'] = $usuario['id_rol'];
         $_SESSION['club'] = $usuario['club'];
         $_SESSION['icono'] = $usuario['icono'];
+		if($_SESSION['id_rol'] == 5){
+			$query = "SELECT nombre FROM clubes WHERE id = ".$_SESSION['club'];
+        	$_SESSION['nombre_club'] = mysqli_result(mysqli_query($connection,$query),0);
+		}
 		if (password_verify($login_password, $usuario['hash'])) {
 			$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
 			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha conectado") or die("Error escribiendo en el archivo");fclose($logFile);

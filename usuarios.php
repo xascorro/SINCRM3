@@ -2,8 +2,7 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-include('./lib/my_functions.php');
-
+//echo password_hash('juanCT', PASSWORD_DEFAULT);
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -81,12 +80,13 @@ include('./lib/my_functions.php');
           <?php
           if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
             echo '<div class="alert alert-primary" role="alert">'.$_SESSION['correcto'].'</div>';
-            unset($_SESSION['correcto']);
+
           }
           if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
             echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
-            unset($_SESSION['estado']);
           }
+			unset($_SESSION['correcto']);
+            unset($_SESSION['estado']);
           ?>
 
           <div class="table-responsive">
