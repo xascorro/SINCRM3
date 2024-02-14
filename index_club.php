@@ -136,7 +136,7 @@ include('includes/header.php');
                                         <?php
             if($_SESSION['competicion_figuras']=='si'){
                 $competicion_figuras ='si';
-                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden, grado_dificultad FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
 
             $query_run = mysqli_query($connection,$query);
@@ -146,6 +146,7 @@ include('includes/header.php');
                 <tr>
                     <th scope="col">Modalidad</th>
                     <th scope="col">Figura</th>
+                    <th scope="col">GD</th>
                 </tr>
               </thead>
               <tbody>
@@ -156,6 +157,7 @@ include('includes/header.php');
                     <tr>
                       <td> <?php echo $row2['nombre_categoria']; ?> </td>
                       <td> <?php echo $row2['numero']." - ".$row2['nombre_figura']; ?> </td>
+                      <td> <?php echo "GD: ".$row2['grado_dificultad']; ?> </td>
 					</tr>
                         <?php
                       }
@@ -168,18 +170,18 @@ include('includes/header.php');
                 </table>
 				</div>
 				<div class="row">
-					<div class="col col-12 col-md-6">
+					<div class="col col-12 col-md-6 mb-4">
 					<?php
 					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
 					?>
-						<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']);
+						<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';
 					}else{
 						?>
 						<span class="btn btn-danger" style="text-decoration:line-through;">Inscripciones</span> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']);
 					}
 								?>
 					</div>
-					<div class="col col-12 col-md-6">
+					<div class="col col-12 col-md-6 mb-4">
 						<a href="<?php echo $row['enlace_sorteo'];?>" class="btn btn-info">Sorteo <i class="fa-solid fa-video"></i></a> El <?php echo dateAFecha($row['fecha_sorteo']);?>
 					</div>
 				</div>
