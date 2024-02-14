@@ -67,19 +67,29 @@ if(isset($_SESSION['club'])){
 
 
         <!-- Begin Page Content -->
-        <div class="container-fluid">
+        <div class="container-fluid" style="padding:0px 0px 0px 5px">
 
             <!-- Titulo página y pdf -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h4 class="mb-0 font-weight-bold text-primary"><i class="fa-regular fa-flag"></i> Registro de participantes en figuras
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir participante</button>
-                    <a href="./index_club.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>
-                        </i> Volver</a>
+                <h4 class="mb-0 font-weight-bold text-primary"><i class="fa-regular fa-flag"></i> Inscripciones en figuras
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir</button>
+                    <?php if($_SESSION['id_rol'] != 5){
+	?>
+                    	<a target="_blank" href="./informes/informe_figuras_preinscripciones.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
+							<?php
+                    }else{
+					?>
+                    <a target="_blank" href="./informes/informe_figuras_preinscripciones.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
+                    <?php
+					}
+					?>
+                    <a href="./index_club.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</a>
+
                 </h4>
 
             </div>
 
-            <div class="card-body">
+            <div class="card-body" style="padding:0px">
 
                 <?php
           if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
@@ -92,17 +102,22 @@ if(isset($_SESSION['club'])){
           }
           ?>
 
-                <div class="table-responsive">
                     <?php
-            $query = "SELECT DISTINCT fases.id_categoria, categorias.nombre FROM fases, categorias WHERE fases.id_categoria = categorias.id and fases.id_competicion = ".$_SESSION['id_competicion_activa'];
+            $query = "SELECT DISTINCT fases.id_categoria, categorias.nombre, categorias.edad_minima, categorias.edad_maxima FROM fases, categorias WHERE fases.id_categoria = categorias.id and fases.id_competicion = ".$_SESSION['id_competicion_activa'];
             $query_categorias = mysqli_query($connection,$query);
             while ($row_categorias = mysqli_fetch_assoc($query_categorias)) {
                 ?>
+                    <div class="table-responsive">
+
                     <table class="table table-striped table-sm" id="dataTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th colspan=10>
-                                    <h2 class="primary"><?php echo $row_categorias['nombre'];?></h2>
+                                    <h2 class="primary"><?php echo $row_categorias['nombre'];
+//mostar edades de categorias
+//								echo ' (de '.$row_categorias['edad_minima'].' a '.$row_categorias['edad_maxima'].' años)';
+										?>
+                               </h2>
                                 </th>
                             </tr>
                             <tr>
@@ -169,13 +184,13 @@ if(isset($_SESSION['club'])){
                     ?>
                         </tbody>
                     </table>
+				</div>
                     <?php
             }
 
 
             ?>
 
-                </div>
             </div>
 
 

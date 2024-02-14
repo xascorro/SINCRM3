@@ -1,8 +1,8 @@
 <?php
- ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-    setlocale(LC_ALL,'es_ES');
+ ini_set('display_errors', 0);
+ ini_set('display_startup_errors', 1);
+//    error_reporting(E_ALL);
+setlocale(LC_ALL,'es_ES');
 //============================================================+
 // File name   : example_048.php
 // Begin       : 2009-03-20
@@ -39,18 +39,20 @@ session_start();
 if(!$_SESSION['username']){
 	header('Location: login.php');
 }else{
-	$query = "SELECT id, nombre FROM competiciones WHERE activo = 'si'";
-	$query_run = mysqli_query($connection,$query);
-	$competicion = mysqli_fetch_assoc($query_run);
-	$_SESSION['id_competicion_activa'] = $competicion['id'];
-	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
-	$_SESSION['color_competicion_activa']= $competicion['color'];
+	$query = "SELECT * FROM competiciones WHERE activo = 'si'";
+	if(isset($_GET['id_competicion']))
+		$query = "SELECT * FROM competiciones WHERE id = ".$_GET['id_competicion'];
+	$result= mysqli_query($connection,$query);
+//	$competicion = mysqli_fetch_assoc($query_run);
+//	$_SESSION['id_competicion_activa'] = $competicion['id'];
+//	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
+//	$_SESSION['color_competicion_activa']= $competicion['color'];
 }
 
 $GLOBALS["id_competicion_activa"] = 0;
 $GLOBALS["nombre_competicion_activa"] = "No hay competición activa";
-$query = "select * from competiciones where activo='si'";     // Esta linea hace la consulta
-$result = mysqli_query($connection,$query);
+//$query = "select * from competiciones where activo='si'";     // Esta linea hace la consulta
+//$result = mysqli_query($connection,$query);
     while ($registro = mysqli_fetch_array($result)){
 	    $GLOBALS["id_competicion_activa"] = $registro['id'];
 	    $GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
@@ -177,7 +179,10 @@ while($fase = mysqli_fetch_array($fases)){
 
 	$par=1;
 	$numero_rutinas = 0;
-    $query = "select id_nadadora, apellidos, nadadoras.nombre, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club order by club, apellidos";
+	//muestro solo las nadadoras del club que envio
+	if(isset($_GET['club']))
+		$condicion = ' and club = '.$_GET['club'].' ';
+    $query = "select id_nadadora, apellidos, nadadoras.nombre, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club $condicion order by club, apellidos";
 	$rutinas = mysqli_query($connection,$query);
 	while($rutina = mysqli_fetch_array($rutinas)){
 		$numero_rutinas++;
