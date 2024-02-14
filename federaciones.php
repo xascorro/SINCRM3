@@ -114,7 +114,7 @@ include('includes/navbar.php');
                       <td> <?php echo $row['nombre']; ?> </td>
                       <td> <?php echo $row['nombre_corto']; ?> </td>
                       <td> <?php echo $row['codigo']; ?> </td>
-                      <td> <?php echo '<img width="100px" alt="Imagen" src="'.$row[logo].'">';?></td>
+                      <td> <?php echo '<img width="100px" alt="Imagen" src="'.$row['logo'].'">';?></td>
                       <td>
                         <form action="federaciones_edit.php" method="post">
                           <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
