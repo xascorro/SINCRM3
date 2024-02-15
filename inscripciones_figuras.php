@@ -83,7 +83,7 @@ if(isset($_SESSION['club'])){
                     <?php
 					}
 					?>
-                    <a href="./index_club.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</a>
+                    <a href="./index.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</a>
 
                 </h4>
 

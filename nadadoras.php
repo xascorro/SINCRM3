@@ -77,7 +77,7 @@ if(isset($_SESSION['club'])){
       <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-female"></i> Registro de Nadadoras
           <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir nadadora</button>
-          <a href="./index_club.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>
+          <a href="./index.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>
 </i> Volver</a>
        </h4>
         </div>
