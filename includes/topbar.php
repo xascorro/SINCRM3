@@ -3,11 +3,14 @@ include('security.php');
 ?>
 <!-- Topbar -->
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-  <!-- Sidebar Toggle (Topbar) -->
-  <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+<?php
+if($_SESSION['id_rol'] == 1 or $_SESSION['id_rol'] == 2){
+	echo '<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
     <i class="fa fa-bars"></i>
-  </button>
+  </button>';
+}
+ ?>
+  <!-- Sidebar Toggle (Topbar) -->
 
          <img src="./images/logo_sincrm_removebg.png" alt="" width="110px" >
  <p class="text-dark">

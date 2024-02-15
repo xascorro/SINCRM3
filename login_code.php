@@ -31,13 +31,13 @@ if(isset($_POST['login_btn'])){
 				header('Location: '.$_SESSION['startPage']);
 			//club
 			}elseif($_SESSION['id_rol'] == '5'){
-				$_SESSION['startPage'] = 'index_club.php';
+				$_SESSION['startPage'] = 'index.php';
 				$_SESSION['club'] = $usuario['club'];
 				//paginas con acceso para el rol club
 				$_SESSION['paginas_permitidas'] = array(
 					'login.php',
 					'login_code.php',
-					'index_club.php',
+					'index.php',
 					'nadadoras.php',
 					'inscripciones_figuras.php',
 					'inscripciones_figuras_code.php',
