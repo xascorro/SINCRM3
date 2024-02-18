@@ -9,8 +9,8 @@ include('includes/navbar.php');
 	<!-- Main Content -->
 	<div id="content">
 		<?php
-    include('includes/topbar.php');
-    ?>
+    	include('includes/topbar.php');
+    	?>
 
 		<!-- template -->
 
@@ -118,13 +118,7 @@ include('includes/navbar.php');
 				</div>
 
 
-				<!-- Competición activa -->
-				<?php
-        $query = "SELECT * FROM competiciones where id  = ".$_SESSION['id_competicion_activa'];
-        $query_run = mysqli_query($connection,$query);
-        $competicion = mysqli_fetch_array($query_run);
-        $fecha_sorteo = $competicion['fecha_sorteo'];
-          ?>
+				<!-- Proximas competiciones -->
 				<div class="col col-12 mb-4">
 					<div class="card border-left-info shadow h-100 py-2">
 						<div class="card-body">
@@ -132,7 +126,8 @@ include('includes/navbar.php');
 								<div class="col mr-2">
 									<div class="font-weight-bold text-info text-uppercase mb-1">Próxima competición</div>
 									<?php
-                    $query = 'SELECT * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
+//                    $query = 'SELECT * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
+                    	$query = 'SELECT * FROM competiciones WHERE fecha >= now() ORDER BY fecha asc limit 2';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -147,36 +142,62 @@ include('includes/navbar.php');
                                 echo '</div>';
                                 ?>
 									<div class="col col-12" style="padding-left: 0px; padding-right: 0px;">
-										<?php
-            if($_SESSION['competicion_figuras']=='si'){
-                $competicion_figuras ='si';
-                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden, grado_dificultad FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
-            }
-
-            $query_run = mysqli_query($connection,$query);
-            ?>
 										<table class="table table-striped table-sm" id="noDataTable" width="100%" cellspacing="0">
 											<thead>
 												<tr>
+													<?php
+				if($row['figuras']=='si'){
+                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden, grado_dificultad FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$row['id']." ORDER BY orden, fases.id";?>
 													<th scope="col">Categoria</th>
 													<th scope="col">Figura</th>
-													<th scope="col">GD</th>
+													<th class="d-none d-sm-block" scope="col">GD</th>
+													<?php
+				}else if($row['figuras']=='no'){
+                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre_modalidad, orden, elementos_coach_card, numero_participantes, numero_reservas, f_chomu FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$row['id']." ORDER BY orden, fases.id";?>
+													<th scope="col">Categoria</th>
+													<th scope="col">Modalidad</th>
+													<th scope="col">Participantes</th>
+<!--
+													<th scope="col">CC</th>
+													<th scope="col">F_CHOMU</th>
+-->
+													<?php
+            }
+//obtengo las fases y datos asociados
+            $query_run2 = mysqli_query($connection,$query);
+            ?>
 												</tr>
 											</thead>
 											<tbody>
 												<?php
-                if(mysqli_num_rows($query_run) > 0){
-                  while ($row2 = mysqli_fetch_assoc($query_run)) {
+								if(mysqli_num_rows($query_run2) > 0){
+					while ($row2 = mysqli_fetch_assoc($query_run2)) {
                     ?>
 												<tr>
+												<?php
+										if($row['figuras']=='si'){
+											$enlace_inscripcion="./inscripciones_figuras.php";
+?>
 													<td> <?php echo $row2['nombre_categoria']; ?> </td>
 													<td> <?php echo $row2['numero']." - ".$row2['nombre_figura']; ?> </td>
-													<td> <?php echo "GD: ".$row2['grado_dificultad']; ?> </td>
+													<td class="d-none d-sm-block" > <?php echo $row2['grado_dificultad']; ?> </td>
 												</tr>
 												<?php
+										}else if($row['figuras']=='no'){
+											$enlace_inscripcion="./rutinas.php";
+?>
+													<td> <?php echo $row2['nombre_categoria']; ?> </td>
+													<td> <?php echo $row2['nombre_modalidad']; ?> </td>
+													<td scope="col"><?php echo $row2['numero_participantes'].' + '.$row2['numero_reservas'].'R'; ?> </td>
+<!--
+													<td scope="col"><?php echo $row2['elementos_coach_card']; ?> </td>
+													<td scope="col"><?php echo $row2['f_chomu']; ?> </td>
+-->
+												</tr>
+												<?php
+										}
                       }
-                    }
-                    else{
+                }else{
                       echo "<tr><td colspan='10'>No se han encontrado registros en la base de datos</td></tr>";
                     }
                     ?>
@@ -188,7 +209,13 @@ include('includes/navbar.php');
 					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
 					?>
 										<div class="col col-12 col-md-6 mb-4">
-											<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?>
+										<form action="<?php echo $enlace_inscripcion;?>" method="post">
+										<label for="inscripciones">Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?></label>
+										<input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+										<input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+											<input name="inscripciones" class="btn btn-info form-control" type="submit" value="Inscribirse">
+										</form>
+<!--											<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?>-->
 										</div>
 										<?php
 
@@ -203,7 +230,8 @@ include('includes/navbar.php');
 					}
 								?>
 										<div class="col col-12 col-md-6 mb-4">
-											<a href="<?php echo $row['enlace_sorteo'];?>" class="btn btn-info">Sorteo <i class="fa-solid fa-video"></i></a> El <?php echo dateAFecha($row['fecha_sorteo']);?>
+										<label for="sorteo">El sorteo se realizará el <?php echo dateAFecha($row['fecha_sorteo']);?></label>
+											<a href="<?php echo $row['enlace_sorteo'];?>" class="btn btn-info form-control" name="sorteo">Unirse <i class="fa-solid fa-video"></i></a>
 										</div>
 									</div>
 									<?php
@@ -225,9 +253,11 @@ include('includes/navbar.php');
                                     echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Liga</a></div>';
                                 }
                                 echo '</div>';
+								echo '<div class="border-top border-info my-5"></div>';
+
 							}
                         }else{
-                            echo '<div class="row"><div class="col col-12 h5 mb-0 font-weight-bold text-gray-800">No existen competiciones activas</div></div>';
+                            echo '<div class="row"><div class="col col-12 h5 mb-0 font-weight-bold text-gray-800">No existen competiciones programadas</div></div>';
                         }
                         ?>
 								</div>
@@ -235,16 +265,18 @@ include('includes/navbar.php');
 						</div>
 					</div>
 				</div>
+				<!--
 			</div>
 		</div>
+-->
 
-		<div class="col col-12 mb-4">
-			<div class="card border-left-success shadow h-100 py-2">
-				<div class="card-body">
-					<div class="row no-gutters align-items-center">
-						<div class="col mr-2">
-							<div class="font-weight-bold text-success text-uppercase mb-1">Competiciones programadas</div>
-							<?php
+				<div class="col col-12 mb-4">
+					<div class="card border-left-success shadow h-100 py-2">
+						<div class="card-body">
+							<div class="row no-gutters align-items-center">
+								<div class="col mr-2">
+									<div class="font-weight-bold text-success text-uppercase mb-1">Competiciones programadas</div>
+									<?php
                     $query = 'select * FROM competiciones WHERE activo like "no" and fecha >= now() ORDER BY fecha asc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
@@ -261,20 +293,20 @@ include('includes/navbar.php');
                             echo '<div class="row"><div class="col col-12 h5 mb-0 font-weight-bold text-gray-800">No existen eventos programados</div></div>';
                         }
                         ?>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
 
 
-		<div class="col col-12 mb-4">
-			<div class="card border-left-danger shadow h-100 py-2">
-				<div class="card-body">
-					<div class="row no-gutters align-items-center">
-						<div class="col mr-2">
-							<div class="font-weight-bold text-danger text-uppercase mb-1">Historial</div>
-							<?php
+				<div class="col col-12 mb-4">
+					<div class="card border-left-danger shadow h-100 py-2">
+						<div class="card-body">
+							<div class="row no-gutters align-items-center">
+								<div class="col mr-2">
+									<div class="font-weight-bold text-danger text-uppercase mb-1">Historial</div>
+									<?php
                     $query = 'select * FROM competiciones WHERE fecha < now() ORDER BY fecha desc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
@@ -308,23 +340,20 @@ include('includes/navbar.php');
                                     echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Liga</a></div>';
                                 }
                                 echo '</div>';
-
-
-                                echo '<hr>';
                             }
                         }
                         ?>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
 
 
 
-	<!--template -->
-	<?php
+			<!--template -->
+			<?php
     include('includes/scripts.php');
     include('includes/footer.php');
     ?>
