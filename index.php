@@ -206,13 +206,15 @@ include('includes/navbar.php');
 									</div>
 									<div class="row">
 										<?php
-					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
+//					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
+					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion'])){
 					?>
 										<div class="col col-12 col-md-6 mb-4">
 										<form action="<?php echo $enlace_inscripcion;?>" method="post">
 										<label for="inscripciones">Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?></label>
 										<input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
 										<input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+										<input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
 											<input name="inscripciones" class="btn btn-info form-control" type="submit" value="Inscribirse">
 										</form>
 <!--											<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?>-->

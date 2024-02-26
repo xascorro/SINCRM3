@@ -28,7 +28,11 @@ include('includes/navbar.php');
                     @$id_elemento = $_POST['edit_id_elemento'];
                     $elemento = $_POST['edit_elemento'];
 				?>
-				<h4 class="mb-0 font-weight-bold text-primary">Editar Elemento <?php echo $elemento ;?> Coach Card</h4>
+				<h4 class="mb-0 font-weight-bold text-primary">Editar Elemento <?php echo $elemento ;?> Coach Card</h4> <form display="dp-inline" action="./coach_card_composer.php" method="post">
+							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>
+							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>
+								<button class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
+				</form>
 			</div>
 
 			<div class="card-body">
@@ -96,7 +100,7 @@ include('includes/navbar.php');
                                             $x++;
                                         }
                                     }
-                                    for($x=$x; $x<6; $x++){
+                                    for($x=$x; $x<10; $x++){
                                         $texto='';
                                         include('includes/dificultad_hibridos_select_option.php');
                                     }
@@ -126,7 +130,7 @@ include('includes/navbar.php');
 							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>
 							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>
 							<input type="hidden" name="elemento" value="<?php echo $elemento;?>"/>
-							<a href="coach_card_composer.php?id_rutina=<?php echo $id_rutina;?>&id_fase=<?php echo $id_fase;?>" class="btn btn-danger"> Cancelar </a>
+<!--							<a href="coach_card_composer.php?id_rutina=<?php echo $id_rutina;?>&id_fase=<?php echo $id_fase;?>" class="btn btn-danger"> Cancelar </a>-->
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 						</div>
 					</div>

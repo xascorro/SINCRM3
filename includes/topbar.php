@@ -15,7 +15,8 @@ if($_SESSION['id_rol'] == 1 or $_SESSION['id_rol'] == 2){
          <img src="./images/logo_sincrm_removebg.png" alt="" width="110px" >
  <p class="text-dark">
  <?php
-  echo $_SESSION['nombre_competicion_activa'];
+//  echo @$_SESSION['nombre_competicion_activa'];
+  echo 'S'.@$_SESSION['id_competicion_activa'];
   ?>
   </p>
 

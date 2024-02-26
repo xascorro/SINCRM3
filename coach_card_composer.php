@@ -6,8 +6,15 @@ include('includes/navbar.php');
 
 <?php
 //si no existen elementos de coach card los crea
-    $id_rutina=$_GET['id_rutina'];
-    $id_fase=$_GET['id_fase'];
+	if(isset($_SESSION['id_rutina']))
+		$id_rutina = $_SESSION['id_rutina'];
+    else
+		$id_rutina = $_POST['id_rutina'];
+    if(isset($_SESSION['id_fase']))
+		$id_fase = $_SESSION['id_fase'];
+	else
+		$id_fase = $_POST['id_fase'];
+
     $query = "SELECT * FROM hibridos_rutina where id_rutina = '$id_rutina'";
     $query_run = mysqli_query($connection,$query);
     if(mysqli_num_rows($query_run) == 0){
@@ -114,7 +121,12 @@ include('includes/navbar.php');
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
 				</h4>
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
-				<a href="./inscripciones_figuras.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i>Volver</a>
+			<form action="./rutinas.php" method="post" class="form d-inline">
+         	<input type="hidden" name="id_fase" value="<?php echo @$_SESSION['id_fase']?>">
+         	<input type="hidden" name="id_competicion" value="<?php echo $_SESSION['id_competicion_activa']?>">
+         	<input type="hidden" name="club" value="<?php echo $club?>">
+			 <button type="submit" class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
+         </form>
 			</div>
 
 			<div class="card-body">
@@ -133,11 +145,15 @@ include('includes/navbar.php');
 
 				<div class="table-responsive">
 					<?php
-				$id_rutina=$_GET['id_rutina'];
-				$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
-				if($_SESSION['competicion_figuras'] == 'si')
-					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+//				$id_rutina=$_POST['id_rutina'];
 
+				if($_SESSION['competicion_figuras'] == 'si'){
+					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+				}else{
+					$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+					$nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = $id_rutina";
+					$nombres = mysqli_result(mysqli_query($connection,$nombres));
+				}
 				$query_run = mysqli_query($connection,$query);
             ?>
 
@@ -156,7 +172,12 @@ include('includes/navbar.php');
                         ?></h5>
 						</div>
 						<div class="col-12 col-md-7">
-							<h5><?php echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];?></h5>
+							<h5><?php if(isset($nombres))
+											echo $row['nombre_club'].' ('.$nombres.')';
+										else
+											echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];
+								?>
+										 </h5>
 						</div>
 					</div>
 					<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
@@ -187,6 +208,7 @@ include('includes/navbar.php');
                                 $id_tipo_hibrido = $elemento['id'];
                                 echo "</td>";
                                 echo "<td style='background-color:".$elemento['color']."'>";
+//								td.
                                 ?>
 							<form action="coach_card_composer_code.php" method="post">
 								<input type="hidden" name="id_rutina" value="<?php echo $id_rutina; ?>">
@@ -219,13 +241,13 @@ include('includes/navbar.php');
                             echo "</td>";
                           $query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto <> 3 and id_rutina=$id_rutina and elemento = $i";
                         $query_elementos = mysqli_query($connection,$query);
-						  	echo '<td ';
+//						  	echo '<td';
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-                                echo "style='background-color:".$elemento['color']."'>";
-                                echo $elemento['nombre'];
+                                echo "<td style='background-color:".$elemento['color']."'>";
+                                echo $elemento['nombre'].'</td>';
                                 $id_tipo_hibrido = $elemento['id'];
                             }
-                            echo "</td>";
+//                            echo "</td>";
 
                           $query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i and valor>0";
                         $query_elementos = mysqli_query($connection,$query);

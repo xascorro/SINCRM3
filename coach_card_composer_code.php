@@ -1,7 +1,10 @@
 <?php
 include('security.php');
 $id_rutina = $_POST['id_rutina'];
+$_SESSION['id_rutina'] = $_POST['id_rutina'];
 $id_fase = $_POST['id_fase'];
+$_SESSION['id_fase'] = $_SESSION['id_fase'];
+
 //Añadir transición
 if(isset($_POST['save_btn'])){
 	$elemento = $_POST['elemento_transicion'];
@@ -164,9 +167,11 @@ if(isset($_POST['update_btn'])){
             $query = "SELECT valor from dificultad_acropair WHERE codigo = '$dd0'";
             $query_run2 = mysqli_query($connection,$query);
             $valor = mysqli_fetch_assoc($query_run2);
-            $valor = $valor['valor'];
+			if($valor['total'] == '')
+				$valor['total'] = 0;
+        	$valor = $valor['total'];
             $query = "UPDATE hibridos_rutina SET texto = '$dd0', valor = '$valor' WHERE tipo='dd' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
-            $query_run = mysqli_query($connection,$query);
+            $query_run = @mysqli_query($connection,$query);
             $query = "SELECT valor from dificultad_acropair WHERE codigo = '$dd1'";
             $query_run2 = mysqli_query($connection,$query);
             $valor = mysqli_fetch_assoc($query_run2);
@@ -188,7 +193,7 @@ if(isset($_POST['update_btn'])){
 			$valor = mysqli_fetch_assoc($query_run2);
 			$valor = @$valor['valor'];
 			$query = "UPDATE hibridos_rutina SET texto = '$bonus0', valor = '$valor' WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
-			$query_run = mysqli_query($connection,$query);
+			$query_run = @mysqli_query($connection,$query);
 		}
 		if($bonus1 != ''){
 			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus1'";
@@ -200,7 +205,7 @@ if(isset($_POST['update_btn'])){
 			$id = mysqli_fetch_assoc($query_run2);
 			$id = $id['id'];
 			$query = "UPDATE hibridos_rutina SET texto = '$bonus1', valor='$valor' WHERE id='$id'";
-			$query_run = mysqli_query($connection,$query);
+			$query_run = @mysqli_query($connection,$query);
 		}
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] .= 'Bonus actualizado con éxito. ';
@@ -213,15 +218,17 @@ if(isset($_POST['update_btn'])){
         $query = "SELECT sum(valor) as total from hibridos_rutina WHERE tipo!='total' and id_rutina ='$id_rutina' and elemento='$elemento' and texto not like 'ACROPAIR'";
         $query_run = mysqli_query($connection,$query);
         $valor = mysqli_fetch_assoc($query_run);
-        $valor = @$valor['total'];
+		if($valor['total'] == '')
+			$valor['total'] = 0;
+        $valor = $valor['total'];
         $query = "UPDATE hibridos_rutina SET valor = '$valor' WHERE tipo='total' and id_rutina ='$id_rutina' and elemento='$elemento'";
-		$query_run = mysqli_query($connection,$query);
+		$query_run = @mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] .= 'Total actualizado con éxito. ';
 		}else{
 			$_SESSION['estado'] .= 'Error, el Total no se ha actualizado <br>'.mysqli_error($connection);
 		}
-		header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
+		header('Location: coach_card_composer.php');
 }
 
 //Borrar registro

@@ -1,67 +1,35 @@
 <?php
-//============================================================+
-// File name   : example_048.php
-// Begin       : 2009-03-20
-// Last Update : 2013-05-14
-//
-// Description : Example 048 for TCPDF class
-//               HTML tables and table headers
-//
-// Author: Nicola Asuni
-//
-// (c) Copyright:
-//               Nicola Asuni
-//               Tecnick.com LTD
-//               www.tecnick.com
-//               info@tecnick.com
-//============================================================+
-
-/**
- * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: HTML tables and table headers
- * @author Nicola Asuni
- * @since 2009-03-20
- */
-
-// Include the main TCPDF liary (search for installation path).
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 1);
+//    error_reporting(E_ALL);
+setlocale(LC_ALL,'es_ES');
 require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
+include('../lib/my_functions.php');
 session_start();
 
 if(!$_SESSION['username']){
-	header('Location: login.php');
-}else{
-	$query = "SELECT id, nombre FROM competiciones WHERE activo = 'si'";
-	$query_run = mysqli_query($connection,$query);
-	$competicion = mysqli_fetch_assoc($query_run);
-	$_SESSION['id_competicion_activa'] = $competicion['id'];
-	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
-	$_SESSION['color_competicion_activa']= $competicion['color'];
+	header('Location: ../login.php');
 }
-include('../lib/my_functions.php');
+$query = "SELECT * FROM competiciones WHERE activo = 'si'";
+if(isset($_GET['id_competicion']))
+	$query = "SELECT * FROM competiciones WHERE id = ".$_GET['id_competicion'];
+$result= mysqli_query($connection,$query);
+$competicion = mysqli_fetch_assoc($result);
+$_SESSION['id_competicion_activa'] = $competicion['id'];
+$_SESSION['nombre_competicion_activa'] = $competicion['nombre'];
+$_SESSION['color_competicion_activa'] = $competicion['color'];
+$GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
+$GLOBALS["lugar"] = $competicion['lugar'];
+$GLOBALS["fecha"] = $competicion['fecha'];
+$GLOBALS["organizador"] = $competicion['organizador'];;
+$GLOBALS["header"] = $competicion['header_informe'];
+$GLOBALS["footer"] = $competicion['footer_informe'];
 
-$query = "SELECT * from rutinas WHERE id = ".$_SESSION['id_competicion_activa'];
-	$query_run = mysqli_query($connection,$query);
-
-//    mysqli_query("SET NAMES 'utf8'");
-    $GLOBALS["id_competicion_activa"] = 0;
-	$GLOBALS["nombre_competicion_activa"] = "No hay competición activa";
-    $query = "select * from competiciones where activo='si'";     // Esta linea hace la consulta
-	$query_run = mysqli_query($connection,$query);
-    while ($registro = mysqli_fetch_array($query_run)){
-	    $id_competicion_activa = $registro['id'];
-	    $GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
-	    $GLOBALS["lugar"] = $registro['lugar'];
-	    $GLOBALS["fecha"] = $registro['fecha'];
-	    $GLOBALS["organizador"] = $registro['organizador'];
-	    $GLOBALS["header"] = $registro['header_informe'];
-	    $GLOBALS["footer"] = $registro['footer_informe'];
-	}
 ////****************************//
 $titulo = $_GET['titulo'];
-$titulo_documento = $GLOBALS['nombre_competicion_activa']."<br>$titulo";
-$nombre_documento = $titulo.' '.$GLOBALS['nombre_competicion_activa'].'.pdf';
+$titulo_documento = $_SESSION['nombre_competicion_activa']."<br>$titulo";
+$nombre_documento = $titulo.' '.$_SESSION['nombre_competicion_activa'].'.pdf';
 $GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."\n <br> Fecha: ".dateAFecha($GLOBALS['fecha']);
 $logo_header_width= 100;
 $GLOBALS['header_image'] = '../'.$GLOBALS['header'];
@@ -74,7 +42,7 @@ class MYPDF extends TCPDF {
     public function Header() {
         // Logo
         $this->SetFont('helvetica', 12);
-        $this->WriteHTML('<img style="border-bottom:1px #cecece;" src="'.$GLOBALS['header_image'].'">', true, false, true, false, '');
+        $this->WriteHTML('<img style="border-bottom:1px #e92662;" src="'.$GLOBALS['header_image'].'">', true, false, true, false, '');
         $this->SetXY(25,12);
         $this->WriteHTML('<div style="text-align:center; font-size:large; font-weight:bold">'.$GLOBALS['titulo_documento']."</div>", true, false, true, false, '');
 
@@ -147,12 +115,13 @@ $pdf->SetFont('helvetica', 'B', 14);
 
 
 $error_color = "#E65B5E";
-$rutina_color_par = "#EFEFEF";
-$rutina_color_impar = "#FFFFFF";
+$rutina_color_par = "#FCE4EC";
+$rutina_color_impar = "#F7F7F7";
 // add a page
 $pdf->AddPage();
 
-$query = "select * from fases where id_competicion = '".$GLOBALS["id_competicion_activa"]."' ORDER BY orden";
+$query = "select * from fases where id_competicion = '".$_SESSION["id_competicion_activa"]."' ORDER BY orden";
+
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
 	$query = "select nombre, id from categorias where id = '".$fase['id_categoria']."'";
@@ -168,19 +137,25 @@ while($fase = mysqli_fetch_array($fases)){
 
 	$html = '<table cellpadding="2" cellspacing="2" nobr="false">';
 	//segun titulo de documento
-	if($titulo =='Rutinas' or $titulo =='Orden de salida'){
+//	if($titulo =='Rutinas' or $titulo =='Orden de salida'){
+
         if($titulo == 'Orden de salida')
             $order_by = 'order by orden';
-    $query = "select * from rutinas where id_fase='".$fase['id']."' $order_by";
+		$condicion = '';
+	if(isset($_GET['club']))
+		$condicion = " and id_club = ".$_GET['club'];
+    $query = "select * from rutinas where id_fase='".$fase['id']."'".$condicion.$order_by;
 	$rutinas = mysqli_query($connection,$query);
-    if($titulo == 'Rutinas')
+//    if($titulo == 'Rutinas')
         $cantidad = ' ('.mysqli_num_rows($rutinas).')';
 
     if(mysqli_num_rows($rutinas)>0) {
 	   $html .= '<thead><tr><th width="80%"><h1>'.$nombre_modalidad.' '.$nombre_categoria.$cantidad.'</h1></th><th></th></tr></thead>';
 	   $order_by = "";
     }
-}
+//}
+
+
 	//fin segun titulo documento
 
 	$par=0;
@@ -208,7 +183,8 @@ while($fase = mysqli_fetch_array($fases)){
             else if($rutina['orden']=='-2')
 				$preswimmer = " (EXHIBICIÓN)";
 			$html .='<tr style="background-color:'.$rutina_color.'"><td width="90%"><h3>'.$nombre_rutina.$preswimmer.'</h3></td><td width="10%"><h1>'.$rutina['orden'].'</h1></td></tr>';
-		}elseif($titulo =='Rutinas'){
+//		}elseif($titulo =='Rutinas'){
+		}else{
 			$preswimmer = '';
 			if($rutina['orden']=='-1')
 				$preswimmer = " (PRESWIMMER)";
@@ -234,7 +210,8 @@ while($fase = mysqli_fetch_array($fases)){
 				 //segun titulo de documento
 				if($titulo =='Orden de salida'){
 					$html .='<tr style="background-color:'.$rutina_color.'"><td colspan="2">&nbsp;&nbsp;'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td></tr>';
-				}elseif($titulo =='Rutinas'){
+//				}elseif($titulo =='Rutinas'){
+				}{
 					// $html .='<tr style="background-color:'.$rutina_color.'"><td width="50%">'.$apellidos_participante.', '.$nombre_participante.' '.$titular.'</td><td width="25%">'.$licencia_participante.'</td><td width="25%" style="text-align:right;">'.$fecha_nacimiento_participante.'</td></tr>';
 					$html .='<tr style="background-color:'.$rutina_color.'"><td>'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td><td></td></tr>';
 			}
@@ -263,3 +240,4 @@ $pdf->Output($nombre_documento, 'I');
 //============================================================+
 // END OF FILE
 //============================================================+
+?>

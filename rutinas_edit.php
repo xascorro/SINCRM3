@@ -25,39 +25,52 @@ include('includes/navbar.php');
 
 			<div class="card-body">
 				<?php
-//Editar nadadora
+//Editar rutina
 				if(isset($_POST['edit_btn'])){
 					$id = $_POST['edit_id'];
-                    $figura = $_POST['id_figura'];
+					$_SESSION['id_club_rutina'] = $_POST['club'];
+                    $figura = @$_POST['id_figura'];
+                    $id_competicion = $_POST['id_competicion'];
 
-					$query = "SELECT * from rutinas WHERE id = '$id'";
+					$query = "SELECT id, id_fase, id_club as club, orden, preswimmer, tematica, musica FROM rutinas WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
-					foreach ($query_run as $row) {
+					foreach ($query_run as $rutina) {
 						?>
-						<form action="rutinas_code.php" method="POST">
-							<div class="row">
-								<div class="form-group col-1">
-									<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
-									<label for="edit_orden">Orden</label>
-									<input type="number" class="form-control" name="id_club" value="<?php echo $row['orden']?>" placeholder="orden">
-								</div>
+				<form action="rutinas_code.php" method="POST" enctype='multipart/form-data'>>
+					<div class="row form-group">
+						<div class="col-12 col-md-2">
+							<input type="hidden" name="edit_id" value="<?php echo $rutina['id']?>">
+							<input type="hidden" name="<id_competicion></id_>" value="<?php echo $competicion ?>">
+							<input type="hidden" name="edit_id" value="<?php echo $rutina['id']?>">
+							<label for="edit_orden">Orden</label>
+							<input type="number" class="form-control" name="orden" value="<?php echo $rutina['orden']?>" placeholder="orden">
+						</div>
 
-								<div class="col">
-									<?php
+						<div class="col-12 col-md-5">
+							<?php
 									include('includes/fases_select_option.php');
 									?>
-								</div>
+						</div>
 
-								<div class="col">
-									<?php
+						<div class="col-12 col-md-5">
+							<?php
                                     include('includes/club_select_option.php');
 									?>
-								</div>
-							</div>
-							<a href="rutinas.php" class="btn btn-danger"> Cancelar </a>
-							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 						</div>
+						<div class="col-12 col-md-6">
+							<label for="tematica">Temática</label>
+							<input class="form-control" type="text" name="tematica" placeholder="Tema de la rutina" value="<?php echo $rutina['tematica']?>">
+						</div>
+						<div class="border-top border-info my-5"></div>
+						<div class="col-12 col-md-6">
+							<label for="musica">Música</label>
+							<input type="file" class="custom-file" name="musica">
+						</div>
+
 					</div>
+
+					<button type="submit" name="cancel_btn" class="btn btn-danger">Cancelar</button>
+					<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 				</form>
 				<?php
 			}
@@ -68,11 +81,11 @@ include('includes/navbar.php');
 
 
 
-	</div>
+			</div>
 
 
-	<!-- template -->
-	<?php
+			<!-- template -->
+			<?php
 	include('includes/scripts.php');
 	include('includes/footer.php');
 	?>

@@ -42,13 +42,15 @@ if(isset($_POST['login_btn'])){
 					'inscripciones_figuras.php',
 					'inscripciones_figuras_code.php',
 					'coach_card_composer.php',
-					'coach_card_composer_edit.php',
+//					'coach_card_composer_edit.php',
 					'coach_card_composer_code.php',
 					'rutinas.php',
 					'rutinas_code.php',
 					'rutinas_edit.php',
 					'rutinas_participantes.php',
 					'rutinas_participantes_code.php',
+					'inscripciones_rutinas_participantes_code.php',
+					'coach_card_composer_elemento_edit.php',
 					'informe_figuras_preinscripciones.php'
 				);
 				//redirecciono a su pagina inicial

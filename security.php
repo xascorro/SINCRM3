@@ -14,13 +14,19 @@ if(!$_SESSION['username']){
 //si esta logeado
 }else{
     //obtenemos datos
-	$query = "SELECT id, nombre, color, figuras FROM competiciones WHERE activo = 'si'";
-	$query_run = mysqli_query($connection,$query); 
-	$competicion = mysqli_fetch_assoc($query_run);
-	$_SESSION['id_competicion_activa'] = $competicion['id'];
-	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
-	$_SESSION['color_competicion_activa']= $competicion['color'];
-	$_SESSION['competicion_figuras']= $competicion['figuras'];
+	if($_SESSION['id_rol'] == 5){
+		//obtenemos datos
+		$query = "SELECT id, nombre, color, figuras FROM competiciones WHERE activo = 'si'";
+		$query_run = mysqli_query($connection,$query);
+		$competicion = mysqli_fetch_assoc($query_run);
+		if($_SESSION['rol'] != 5){
+			$_SESSION['id_competicion_activa'] = $competicion['id'];
+		}
+		$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
+		$_SESSION['color_competicion_activa']= $competicion['color'];
+		$_SESSION['figuras']= $competicion['figuras'];
+	}
+
     //redireccionamos si el rol no tiene acceso a esta página, administrador tiene acceso a todo
     if(@$_SESSION['paginas_permitidas'] != '*' and $_SESSION['username'] != 'registrando'){
 		if(!in_array(basename(parse_url($_SERVER['REQUEST_URI'],PHP_URL_PATH)),$_SESSION['paginas_permitidas'])){

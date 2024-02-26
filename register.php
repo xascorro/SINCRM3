@@ -34,7 +34,7 @@ include('includes/header.php');
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
 										<label for="username">Nombre de usuario</label>
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." required>
+										<input type="username" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." maxlength="40"  required>
 									</div>
 									<div class="form-group">
 										<label for="password">Contraseña</label>
@@ -44,7 +44,7 @@ include('includes/header.php');
 									</div>
 									<div class="form-group">
   										<label for="email" class="form-label">Email</label>
-  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" required>
+  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" maxlength="40" required>
 									</div>
  										<div class="form-group">
   										<label for="telefono" class="form-label">Teléfono</label>

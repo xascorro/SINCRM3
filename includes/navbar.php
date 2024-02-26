@@ -124,7 +124,7 @@ if($_SESSION['id_rol'] == '1'){
               <span>Puestos y paneles</span>
             </a>
             <?php
-              if ($_SESSION['competicion_figuras'] == 'no'){
+              if (@$_SESSION['competicion_figuras'] == 'no'){
             ?>
              <a class="collapse-item" href="rutinas.php">
               <i class="fa fa-fw fa-balance-scale-right"></i>
