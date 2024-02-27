@@ -5,6 +5,8 @@ if(isset($_SESSION['club'])){
 if(!isset($row['club'])){
 	$row['club'] = @$_SESSION['id_club_rutina'];
 }
+if(isset($_POST['club']))
+	$row['club'] = $_POST['club'];
 $query = "SELECT id, nombre_corto FROM clubes ".@$condicion;
 $query_run_select = mysqli_query($connection,$query);
 $select = "<label for='club'>Club</label>";

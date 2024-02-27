@@ -1,10 +1,5 @@
 <?php
 include('security.php');
-$id_rutina = $_POST['id_rutina'];
-$_SESSION['id_rutina'] = $_POST['id_rutina'];
-$id_fase = $_POST['id_fase'];
-$_SESSION['id_fase'] = $_SESSION['id_fase'];
-
 //Añadir transición
 if(isset($_POST['save_btn'])){
 	$elemento = $_POST['elemento_transicion'];

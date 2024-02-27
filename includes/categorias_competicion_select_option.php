@@ -6,7 +6,7 @@ $select .= "<select name='categoria' id='categoria' class='form-control'>";
 $select .= "<option value='0'>Todas las categorías</option>";
 if(mysqli_num_rows($query_run) > 0){
 	while ($row = mysqli_fetch_assoc($query_run)) {
-		if(intval($_POST['id_categoria']) == $row['id']){
+		if(intval(@$_POST['id_categoria']) == $row['id']){
 			$select .= "<option selected value=".$row['id'].">".$row['nombre']." (".$row['edad_minima']."-".$row['edad_maxima'].")</option>";
 		}
 		else{

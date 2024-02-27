@@ -38,6 +38,7 @@ if(isset($_POST['login_btn'])){
 					'login.php',
 					'login_code.php',
 					'index.php',
+					'security.php',
 					'nadadoras.php',
 					'inscripciones_figuras.php',
 					'inscripciones_figuras_code.php',
@@ -73,6 +74,8 @@ if(isset($_POST['login_btn'])){
 
 }elseif (isset($_POST['logout_btn'])) {
 		unset($_SESSION);
+	session_destroy();
+
 		$_SESSION['estado'] = "Usuario desconectado";
 		$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
 		fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);

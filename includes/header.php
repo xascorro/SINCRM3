@@ -13,6 +13,8 @@ include('./lib/my_functions.php');
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="Pedro Díaz">
+  <link rel="icon" href="data:,">
+
 
   <title>SINCRM3</title>
 

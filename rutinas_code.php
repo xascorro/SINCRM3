@@ -1,21 +1,21 @@
 <?php
 include('security.php');
 include('./lib/my_functions.php');
-if(isset($_POST['id_competicion'])){
-	$id_competicion = $_POST['id_competicion'];
-	$_SESSION['id_competicion_usuario'] = $_POST['id_competicion'];
-}
-if(isset($_POST['id_rutina'])){
-	$id_rutina = $_POST['id_rutina'];
-	$_SESSION['id_rutina'] = $id_rutina;
-}elseif(isset($_SESSION['id_rutina'])){
-	$id_rutina = $_SESSION['id_rutina'];
-}
-if(isset($_POST['id_fase'])){
-	$id_fase = $_POST['id_fase'];
-}elseif(isset($_SESSION['id_fase'])){
-	$id_fase = $_SESSION['id_fase'];
-}
+//if(isset($_POST['id_competicion'])){
+//	$id_competicion = $_POST['id_competicion'];
+//	$_SESSION['id_competicion_usuario'] = $_POST['id_competicion'];
+//}
+//if(isset($_POST['id_rutina'])){
+//	$id_rutina = $_POST['id_rutina'];
+//	$_SESSION['id_rutina'] = $id_rutina;
+//}elseif(isset($_SESSION['id_rutina'])){
+//	$id_rutina = $_SESSION['id_rutina'];
+//}
+//if(isset($_POST['id_fase'])){
+//	$id_fase = $_POST['id_fase'];
+//}elseif(isset($_SESSION['id_fase'])){
+//	$id_fase = $_SESSION['id_fase'];
+//}
 
 //session_start();
 //Añadir rutina
@@ -43,13 +43,13 @@ $query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fa
 
 //Actualizar rutina
 if(isset($_POST['update_btn'])){
-	$id = $_POST['edit_id'];
-	$id_fase = $_POST['id_fase'];
+//	$id = $_POST['edit_id'];
+//	$id_fase = $_POST['id_fase'];
 	$id_club = $_POST['club'];
 	$orden = $_POST['orden'];
 	$tematica = $_POST['tematica'];
 
-	$query = "UPDATE rutinas SET id_fase ='$id_fase', id_club='$id_club', orden='$orden', tematica='$tematica' WHERE id='$id'";
+	$query = "UPDATE rutinas SET id_fase ='$id_fase', id_club='$id_club', orden='$orden', tematica='$tematica' WHERE id='$id_rutina'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Rutina actualizada con éxito';

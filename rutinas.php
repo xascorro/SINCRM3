@@ -1,24 +1,27 @@
 <?php
-include('security.php');
+//include('security.php');
+session_start();
+
 include('includes/header.php');
 include('includes/navbar.php');
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
-
 	<!-- Main Content -->
 	<div id="content">
 		<?php
     include('includes/topbar.php');
-	  if(isset($_POST['id_competicion'])){
-		  $id_competicion = $_POST['id_competicion'];
-		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
-		}else{
-			$id_competicion=$_SESSION['id_competicion_activa'];
-		}
-		if(isset($_POST['competicion_figuras'])){
-			$_SESSION['competicion_figuras'] = $_POST['competicion_figuras'];
-		  }
+//	  if(isset($_POST['id_competicion'])){
+//		  $id_competicion = $_POST['id_competicion'];
+////		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
+//		}else if(isset($_SESSION['id_competicion_usuario'])){
+//		  $id_competicion = $_SESSION['id_competicion_usuario'];
+//		}else{
+//			$id_competicion=$_SESSION['id_competicion_activa'];
+//		}
+//		if(isset($_POST['competicion_figuras'])){
+//			$_SESSION['competicion_figuras'] = $_POST['competicion_figuras'];
+//		  }
 //		echo $_SESSION['competicion_figuras'].$_SESSION['id_competicion_activa'];
 		$query = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, date_add(fecha, interval -dias_coach_card day) as fecha_coach_card, date_add(fecha, interval -dias_sorteo day) as fecha_sorteo, date_add(fecha, interval -dias_inicio_inscripcion day) as fecha_inicio_inscripcion, date_add(fecha, interval -dias_fin_inscripcion day) as fecha_fin_inscripcion FROM competiciones WHERE id='.$id_competicion;
 		//habilito o deshabilito subir musica
@@ -68,7 +71,7 @@ include('includes/navbar.php');
 
 								<div class="form-group col">
 									<?php
-                    if($_SESSION['competicion_figuras'] == 'si')
+                    if($figuras == 'si')
                         include('includes/nadadoras_select_option.php');
                     else
                         include('includes/club_select_option.php');
@@ -83,6 +86,8 @@ include('includes/navbar.php');
 								</div>
 							</div>
 							<div class="modal-footer">
+							    <input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
+
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 								<button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
 							</div>
@@ -104,7 +109,7 @@ include('includes/navbar.php');
 		$condicion = '';
 		if(isset($_SESSION['club']))
 			$condicion = ' and rutinas.id_club ='.$_SESSION['club'];
-		$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa'].$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
+		$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_num_rows($query_run) > 0){
@@ -127,11 +132,11 @@ include('includes/navbar.php');
 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile" <?php echo $enable_inscripcion?>>Añadir rutina</button>
 					<?php if($_SESSION['id_rol'] != 5){
 	?>
-					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
+					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
 					<?php
                     }else{
 					?>
-					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
+					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
 					<?php
 					}
 					?>
@@ -158,7 +163,7 @@ include('includes/navbar.php');
 					$condicion = '';
 					if(isset($_SESSION['club']))
 						$condicion = ' and rutinas.id_club ='.$_SESSION['club'];
-                	$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa'].$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
+                	$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 
             $query_run = mysqli_query($connection,$query);
 
@@ -204,7 +209,7 @@ include('includes/navbar.php');
 									<div class="modal-content">
 										<div class="modal-header">
 											<h4 class="modal-title" id="exampleModalLabel"><?php
-				if($_SESSION['competicion_figuras'] == 'si')
+				if($figuras == 'si')
                         echo 'Eliminar figura';
                     else
                         echo 'Eliminar rutina';
@@ -239,16 +244,15 @@ include('includes/navbar.php');
 							<!--		fin modal eliminar rutina			  -->
 							<!--			Inicio modal musica -->
 							<?php
-					  				if($_SESSION['competicion_figuras'] == 'no'){
+					  $path = './public/music/'.$id_competicion.'/';
+$music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
+					  				if($figuras == 'no'){
 ?>
 							<div class="modal fade" id="player<?php echo $row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
 										<div class="modal-body align-center">
 											<?php
-$path = './public/music/'.$_SESSION['id_competicion_activa'].'/';
-$music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
-//																				 $music_name = $row['music_name'];
 if(file_exists($path.$music_name)){
 ?>
 											<div class="card" style="">
@@ -340,6 +344,7 @@ if( $enable_musica == ''){
 										<button class="btn btn-warning btn-circle" type="submit" name=""><i class="fa fa-solid fa-puzzle-piece"></i></button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']?>">
+										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
 
 
 									</form>
@@ -352,9 +357,8 @@ if( $enable_musica == ''){
 								if($_SESSION['id_rol'] != 5){ ?>
 								<td>
 									<form action="rutinas_edit.php" method="post">
-										<input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+										<input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
-										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion ?>">
 										<input type="hidden" name="club" value="<?php echo $row['id_club']; ?>">
 										<button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
 									</form>

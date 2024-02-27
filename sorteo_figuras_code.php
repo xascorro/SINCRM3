@@ -24,8 +24,10 @@ if(isset($_POST['desbloquear'])){
 //        mysqli_query($connection,$query);
         $query = "SELECT id, id_categoria FROM fases WHERE id_categoria='$categoria' and id_competicion=".$_SESSION['id_competicion_activa']." ORDER by orden";
     }
-    $result = mysqli_query($connection,$query);
-    if(count($result)>0){
+			echo $query;
+
+    $result = mysqli_query($connection, $query);
+//    if(count($result)>0){
         $corte_fase= 1;
         $id_categoria_anterior = 0;
         while ($fase = mysqli_fetch_array($result)){
@@ -85,7 +87,7 @@ if(isset($_POST['desbloquear'])){
 
 
 
-}
+//}
 //
 ////Actualizar registro
 //if(isset($_POST['update_btn'])){

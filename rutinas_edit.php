@@ -27,21 +27,14 @@ include('includes/navbar.php');
 				<?php
 //Editar rutina
 				if(isset($_POST['edit_btn'])){
-					$id = $_POST['edit_id'];
-					$_SESSION['id_club_rutina'] = $_POST['club'];
-                    $figura = @$_POST['id_figura'];
-                    $id_competicion = $_POST['id_competicion'];
-
-					$query = "SELECT id, id_fase, id_club as club, orden, preswimmer, tematica, musica FROM rutinas WHERE id = '$id'";
+					$club = $_POST['club'];
+					$query = "SELECT id, id_fase, id_club as club, orden, preswimmer, tematica, musica FROM rutinas WHERE id = '$id_rutina'";
 					$query_run = mysqli_query($connection,$query);
 					foreach ($query_run as $rutina) {
 						?>
-				<form action="rutinas_code.php" method="POST" enctype='multipart/form-data'>>
+				<form action="rutinas_code.php" method="POST" enctype='multipart/form-data'>
 					<div class="row form-group">
 						<div class="col-12 col-md-2">
-							<input type="hidden" name="edit_id" value="<?php echo $rutina['id']?>">
-							<input type="hidden" name="<id_competicion></id_>" value="<?php echo $competicion ?>">
-							<input type="hidden" name="edit_id" value="<?php echo $rutina['id']?>">
 							<label for="edit_orden">Orden</label>
 							<input type="number" class="form-control" name="orden" value="<?php echo $rutina['orden']?>" placeholder="orden">
 						</div>

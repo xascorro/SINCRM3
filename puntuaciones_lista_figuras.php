@@ -2,7 +2,7 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-include('./lib/my_functions.php');
+//include('./lib/my_functions.php');
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -78,7 +78,7 @@ include('./lib/my_functions.php');
                 <?php
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
-                      if($row['baja']==si){
+                      if($row['baja']=='si'){
                           $class=' class=bg-danger';
                       }else{
                             $class='';

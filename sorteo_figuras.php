@@ -2,7 +2,7 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-include('./lib/my_functions.php');
+//include('./lib/my_functions.php');
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -32,7 +32,7 @@ include('./lib/my_functions.php');
 
                                 <div class="form-group col-8">
                                     <?php
-                    if($_SESSION['competicion_figuras'] == 'si')
+                    if($_SESSION['figuras'] == 'si')
                         include('includes/categorias_competicion_select_option.php');
                     else
                         include('includes/club_select_option.php');

@@ -1,6 +1,11 @@
+
 <?php
 include('security.php');
 include('includes/header.php');
+
+?>
+
+<?php
 include('includes/navbar.php');
 ?>
 <!-- Content Wrapper -->
@@ -23,14 +28,22 @@ include('includes/navbar.php');
 			<?php
 //Editar elemento
 				if(isset($_POST['edit_btn'])){
-					$id_rutina = $_POST['edit_id_rutina'];
-					$id_fase = $_POST['edit_id_fase'];
+//					$id_rutina = $_POST['edit_id_rutina'];
+//					$id_fase = $_POST['edit_id_fase'];
                     @$id_elemento = $_POST['edit_id_elemento'];
                     $elemento = $_POST['edit_elemento'];
+					 if(isset($_POST['id_competicion'])){
+//		  $id_competicion = $_POST['id_competicion'];
+//		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
+//		}else{
+//			$id_competicion=$_SESSION['id_competicion_activa'];
+		}
+
 				?>
 				<h4 class="mb-0 font-weight-bold text-primary">Editar Elemento <?php echo $elemento ;?> Coach Card</h4> <form display="dp-inline" action="./coach_card_composer.php" method="post">
-							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>
-							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>
+<!--							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>-->
+<!--							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>-->
+<!--							<input type="hidden" name="id_competicion" value="<?php echo $id_competicion;?>"/>-->
 								<button class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
 				</form>
 			</div>
@@ -45,7 +58,7 @@ include('includes/navbar.php');
                     $elementos = mysqli_fetch_assoc($query_run);
                     ?>
 								<div class="form-group col-6 col-md-2">
-									<input type="hidden" name="id_rutina" value="<?php echo $row['id_rutina']?>">
+
 									<label for="edit_time">Inicio</label>
 									<input type="time" class="form-control" name="time_inicio" value="<?php echo $elementos['texto']?>" placeholder="00:00">
 								</div>
@@ -55,7 +68,6 @@ include('includes/navbar.php');
                     $elementos = mysqli_fetch_assoc($query_run);
                     ?>
 								<div class="form-group col-6 col-md-2">
-									<input type="hidden" name="id_rutina" value="<?php echo $row['id_rutina']?>">
 									<label for="edit_time">Fin</label>
 									<input type="time" class="form-control" name="time_fin" value="<?php echo $elementos['texto']?>" placeholder="00:00">
 								</div>
@@ -127,10 +139,8 @@ include('includes/navbar.php');
 									?>
 								</div>
 							</div>
-							<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>"/>
-							<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>"/>
 							<input type="hidden" name="elemento" value="<?php echo $elemento;?>"/>
-<!--							<a href="coach_card_composer.php?id_rutina=<?php echo $id_rutina;?>&id_fase=<?php echo $id_fase;?>" class="btn btn-danger"> Cancelar </a>-->
+							<a href="coach_card_composer.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 						</div>
 					</div>
@@ -152,3 +162,9 @@ include('includes/navbar.php');
 	include('includes/scripts.php');
 	include('includes/footer.php');
 	?>
+<script>
+	$('#id_tipo_hibrido').on('change', function() {
+//    alert( $(this).find(":selected").val() );
+$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?por_jquery=si&tipo_elemento=dd&id_tipo_hibrido="+$(this).find(":selected").val());
+});
+</script>

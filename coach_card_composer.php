@@ -6,14 +6,24 @@ include('includes/navbar.php');
 
 <?php
 //si no existen elementos de coach card los crea
-	if(isset($_SESSION['id_rutina']))
-		$id_rutina = $_SESSION['id_rutina'];
-    else
-		$id_rutina = $_POST['id_rutina'];
-    if(isset($_SESSION['id_fase']))
-		$id_fase = $_SESSION['id_fase'];
-	else
-		$id_fase = $_POST['id_fase'];
+//	if(isset($_SESSION['id_rutina'])){
+//		$id_rutina = $_SESSION['id_rutina'];
+//		unset($_SESSION['id_rutina']);
+//	}
+//    else
+//		$id_rutina = $_POST['id_rutina'];
+//    if(isset($_SESSION['id_fase']))
+//		$id_fase = $_SESSION['id_fase'];
+//	else
+//		$id_fase = $_POST['id_fase'];
+// if(isset($_POST['id_competicion'])){
+//		  $id_competicion = $_POST['id_competicion'];
+//		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
+//		}else{
+//			$id_competicion=$_SESSION['id_competicion_activa'];
+//		}
+// if(isset($_SESSION['id_competicion_activa_from_code']))
+//		  $id_competicion = $_SESSION['id_competicion_activa_from_code'];
 
     $query = "SELECT * FROM hibridos_rutina where id_rutina = '$id_rutina'";
     $query_run = mysqli_query($connection,$query);
@@ -122,8 +132,8 @@ include('includes/navbar.php');
 				</h4>
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
 			<form action="./rutinas.php" method="post" class="form d-inline">
-         	<input type="hidden" name="id_fase" value="<?php echo @$_SESSION['id_fase']?>">
-         	<input type="hidden" name="id_competicion" value="<?php echo $_SESSION['id_competicion_activa']?>">
+         	<input type="hidden" name="id_fase" value="<?php echo $id_fase?>">
+         	<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
          	<input type="hidden" name="club" value="<?php echo $club?>">
 			 <button type="submit" class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
          </form>
@@ -147,10 +157,10 @@ include('includes/navbar.php');
 					<?php
 //				$id_rutina=$_POST['id_rutina'];
 
-				if($_SESSION['competicion_figuras'] == 'si'){
-					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+				if($figuras == 'si'){
+					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 				}else{
-					$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
+					$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 					$nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = $id_rutina";
 					$nombres = mysqli_result(mysqli_query($connection,$nombres));
 				}
@@ -287,8 +297,9 @@ include('includes/navbar.php');
                           echo "<td>";
                           ?>
 							<form action="coach_card_composer_elemento_edit.php" method="post">
-								<input type="hidden" name="edit_id_rutina" value="<?php echo $row['id']; ?>">
-								<input type="hidden" name="edit_id_fase" value="<?php echo $id_fase; ?>">
+<!--								<input type="hidden" name="edit_id_rutina" value="<?php echo $row['id']; ?>">-->
+<!--								<input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">-->
+<!--								<input type="hidden" name="edit_id_fase" value="<?php echo $id_fase; ?>">-->
 								<input type="hidden" name="edit_elemento" value="<?php echo $i; ?>">
 								<input type="hidden" name="id_tipo_hibrido" value="<?php echo $id_tipo_hibrido; ?>">
 								<button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>

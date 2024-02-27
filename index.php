@@ -1,5 +1,8 @@
 <?php
-include('security.php');
+session_start();
+//unset($_SESSION['id_competicion_usuario']); el favicon no me solita esta pagina
+//exit();
+//include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 ?>
