@@ -44,7 +44,6 @@ if(!$_SESSION['username']){
 		$figuras=$_SESSION['competicion_figuras_usuario'];
 	}
 
-	echo $figuras;
 
 	if(isset($_POST['id_rutina'])){
 		$id_rutina = $_POST['id_rutina'];
@@ -52,7 +51,6 @@ if(!$_SESSION['username']){
 	}else if(isset($_SESSION['id_rutina_usuario'])){
 		$id_rutina = $_SESSION['id_rutina_usuario'];
 	}
-	echo $id_rutina;
 
 	if(isset($_POST['id_fase'])){
 		$id_fase = $_POST['id_fase'];
@@ -60,7 +58,6 @@ if(!$_SESSION['username']){
 	}else if(isset($_SESSION['id_fase_usuario'])){
 		$id_fase = $_SESSION['id_fase_usuario'];
 	}
-	echo $id_fase;
 
 
     //redireccionamos si el rol no tiene acceso a esta página, administrador tiene acceso a todo

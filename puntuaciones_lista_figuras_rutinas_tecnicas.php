@@ -71,7 +71,7 @@ include('includes/navbar.php');
                       <th scope="row"> <?php echo $row['orden']; ?> </th>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
                       <td> <?php echo $row['apellidos_nadadora'].", ".$row['nombre_nadadora']; ?> </td>
-                      <td> <?php echo $row['nombre_club'].' '.$row['nombre_rutina']; ?> </td>
+                      <td> <?php echo $row['nombre_club'].' '.@$row['nombre_rutina']; ?> </td>
                       <?php
                       if($row['elementos_coach_card']>0){
                           ?>
@@ -86,8 +86,8 @@ include('includes/navbar.php');
                         <form  target="_blank" action="puntuaciones_figuras_rutina_tecnica.php" method="post">
                           <input type="hidden" name="id_inscripcion_figuras" value="<?php echo $row['id']; ?>">
                           <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
-                          <input type="hidden" name="id_club" value="<?php echo $row['id_club']; ?>">
-                          <input type="hidden" name="nombre_modalidad" value="<?php echo $row['nombre_modalidad']; ?>">
+                          <input type="hidden" name="id_club" value="<?php echo @$row['id_club']; ?>">
+                          <input type="hidden" name="nombre_modalidad" value="<?php echo @$row['nombre_modalidad']; ?>">
                           <input type="hidden" name="nombre_categoria" value="<?php echo $row['nombre_categoria']; ?>">
                           <input type="hidden" name="nombre_club" value="<?php echo $row['nombre_club']; ?>">
                           <input type="hidden" name="nombre_nadadora" value="<?php echo $row['nombre_nadadora']; ?>">

@@ -91,8 +91,8 @@ include('includes/navbar.php');
                                             $x++;
                                         }
                                     }
-
-                                    for($x=$x+1; $x<=2; $x++){
+									$bm_max = 1;
+                                    for($x=$x+1; $x<=$bm_max; $x++){
                                         $texto='';
                                         include('includes/dificultad_hibridos_select_option.php');
                                     }
@@ -132,7 +132,8 @@ include('includes/navbar.php');
                                             $x++;
                                         }
                                     }
-                                    for($x; $x<2; $x++){
+									$bonus_max = 4;
+                                    for($x; $x<$bonus_max; $x++){
                                         $texto='';
                                         include('includes/dificultad_hibridos_select_option.php');
                                     }
@@ -163,8 +164,38 @@ include('includes/navbar.php');
 	include('includes/footer.php');
 	?>
 <script>
+//	cuando cambia el select de tipo de hibrido
 	$('#id_tipo_hibrido').on('change', function() {
-//    alert( $(this).find(":selected").val() );
-$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?por_jquery=si&tipo_elemento=dd&id_tipo_hibrido="+$(this).find(":selected").val());
+		//cambio el select de dd
+		$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&id_tipo_hibrido="+$(this).find(":selected").val());
+		//cambio el select de basemark
+		$(".tipo_basemark").load("./includes/dificultad_hibridos_select_option.php?tipo_basemark="+$(this).find(":selected").val());
+		//habilito los select de basemark, dd y bonus si estoy en un hibrido
+		if($(this).find(":selected").val() == 1){
+			$(".tipo_basemark").attr("disabled",false);
+			$(".id_tipo_hibrido").attr("disabled",false);
+			$(".bonus_tipo_hibrido").attr("disabled",false);
+		}
+		//habilito los select de basemark, dd si estoy en un TRE
+		else if($(this).find(":selected").val() == 2){
+			$(".tipo_basemark").attr("disabled",false);
+			$(".id_tipo_hibrido").attr("disabled",false);
+			$(".bonus_tipo_hibrido").val('')
+			$(".bonus_tipo_hibrido").attr("disabled",true);
+		}
+		//desabilito el select de bonus si estoy en una acro
+		else if($(this).find(":selected").val() == 4){
+			$(".bonus_tipo_hibrido").val('')
+			$(".bonus_tipo_hibrido").attr("disabled",true);
+			$(".id_tipo_hibrido").attr("disabled",true);
+		}
+
+});
+//cuando cambia el select de basemark
+	$('#Basemark0').on('change', function() {
+		//cambio el select de dd
+		$(".id_tipo_hibrido").attr("disabled",false);
+
+		$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro="+$(this).find(":selected").val());
 });
 </script>

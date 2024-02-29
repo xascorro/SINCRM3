@@ -107,7 +107,7 @@ include('includes/navbar.php');
 
 				<div class="table-responsive">
 					<?php
-            if($_SESSION['competicion_figuras']=='si'){
+            if($_SESSION['figuras']=='si'){
                 $competicion_figuras ='si';
                 $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }

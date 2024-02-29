@@ -142,7 +142,7 @@ include('includes/navbar.php');
                 $numero_categorias = mysqli_query($connection,$query)->num_rows;
                 $numero_categorias=1;
                     ?>
-                    <table class="table table-striped table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-striped table-hover table-sm" id="nodataTable" width="100%" cellspacing="0">
                         <thead class="thead-light">
                             <tr>
                                 <th colspan=5>

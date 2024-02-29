@@ -24,7 +24,7 @@ while($fase_figuras = mysqli_fetch_array($fases)){
 		if($puntos_penalizacion == 0)
 			$puntos_penalizacion = "";
         $gd_acumulado = mysqli_result(mysqli_query($connection,"select sum(grado_dificultad) from figuras where id in (select id_figura from fases where id_competicion='".$id_competicion."' and id_categoria='".$fase_figuras['id_categoria']."')"),0);
-		$nota_final_calculada = (($resultado_nadadora['sum_nota_final']/$gd_acumulado)*10) - $puntos_penalizacion;
+		$nota_final_calculada = @(($resultado_nadadora['sum_nota_final']/$gd_acumulado)*10) - $puntos_penalizacion;
         if($fase_figuras['elementos_coach_card']>1){
             $query = "select nota_final from inscripciones_figuras where id in (select id from inscripciones_figuras where id_nadadora='".$resultado_nadadora['id_nadadora']."' and id_competicion='".$id_competicion."')";
             $nota_final = mysqli_result(mysqli_query($connection,$query),0);

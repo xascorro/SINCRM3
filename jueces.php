@@ -122,7 +122,7 @@ include('includes/navbar.php');
                           </form>
                         </td>
                         <td>
-                          <form action="nadadoras_code.php" method="POST">
+                          <form action="jueces_code.php" method="POST">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id'] ?>">
                             <button class="btn btn-danger" type="submit" name="delete_btn"><i class="fas fa-trash"></btn>
                             </form>

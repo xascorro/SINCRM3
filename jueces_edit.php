@@ -47,7 +47,7 @@ include('includes/navbar.php');
 							<div class="form-group">
 								<div class="row">
 									<div class="col">
-										<label for="edit_licencia">Licencia</label><input type="text" class="form-control" name="edit_licencia" value="<?php echo $row['licencia']?>" placeholder="Número de licencia, NIF para nadadoras sin licencia federativa">
+										<label for="edit_licencia">Licencia</label><input type="text" class="form-control" name="edit_licencia" value="<?php echo $row['licencia']?>" placeholder="Número de licencia">
 
 									</div>
 									<div class="col">
@@ -58,7 +58,7 @@ include('includes/navbar.php');
 								</div>
 							</div>
 							
-							<a href="nadadoras.php" class="btn btn-danger"> Cancelar </a>
+							<a href="jueces.php" class="btn btn-danger"> Cancelar </a>
 							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
 						</form>
 						<?php

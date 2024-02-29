@@ -2,69 +2,55 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-?>
-
-<?php
+if(isset($_GET['id_rutina'])){
+	$id_rutina = $_GET['id_rutina'];
+}
+if(isset($_GET['id_fase'])){
+	$id_rutina = $_GET['id_fase'];
+}
 //si no existen elementos de coach card los crea
-//	if(isset($_SESSION['id_rutina'])){
-//		$id_rutina = $_SESSION['id_rutina'];
-//		unset($_SESSION['id_rutina']);
-//	}
-//    else
-//		$id_rutina = $_POST['id_rutina'];
-//    if(isset($_SESSION['id_fase']))
-//		$id_fase = $_SESSION['id_fase'];
-//	else
-//		$id_fase = $_POST['id_fase'];
-// if(isset($_POST['id_competicion'])){
-//		  $id_competicion = $_POST['id_competicion'];
-//		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
-//		}else{
-//			$id_competicion=$_SESSION['id_competicion_activa'];
-//		}
-// if(isset($_SESSION['id_competicion_activa_from_code']))
-//		  $id_competicion = $_SESSION['id_competicion_activa_from_code'];
-
-    $query = "SELECT * FROM hibridos_rutina where id_rutina = '$id_rutina'";
-    $query_run = mysqli_query($connection,$query);
-    if(mysqli_num_rows($query_run) == 0){
-        $query = "SELECT elementos_coach_card FROM fases where id = '$id_fase'";
-        $query_run = mysqli_query($connection,$query);
-        if(mysqli_num_rows($query_run) > 0){
-            $n_elementos = mysqli_fetch_assoc($query_run);
-            $n_elementos = $n_elementos['elementos_coach_card'];
-            for($x=1; $x<=$n_elementos; $x++){
-                $query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='time_inicio';";
-                $query_run = mysqli_query($connection,$query);
-                $query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='time_fin';";
-                $query_run = mysqli_query($connection,$query);
-                $query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='part'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='basemark'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='basemark'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='bonus'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='bonus'";
-                $query_run = mysqli_query($connection,$query);
-                $query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='total'";
-                $query_run = mysqli_query($connection,$query);
-            }
-        }
-    }
+$query = "SELECT * FROM hibridos_rutina where id_rutina = '$id_rutina'";
+$query_run = mysqli_query($connection,$query);
+if(mysqli_num_rows($query_run) == 0){
+	$query = "SELECT elementos_coach_card FROM fases where id = '$id_fase'";
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_num_rows($query_run) > 0){
+		$n_elementos = mysqli_fetch_assoc($query_run);
+		$n_elementos = $n_elementos['elementos_coach_card'];
+		for($x=1; $x<=$n_elementos; $x++){
+			//creo registros para declarar time_inicio
+			$query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='time_inicio';";
+			$query_run = mysqli_query($connection,$query);
+			//creo registros para declarar time_fin
+			$query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='time_fin';";
+			$query_run = mysqli_query($connection,$query);
+			//creo registros para declarar part
+			$query= "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='part'";
+			$query_run = mysqli_query($connection,$query);
+			//creo registros para declarar basemark
+			$bm_max = 1;
+			for ($i = 1; $i <= $bm_max; $i++) {
+				$query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='basemark'";
+				$query_run = mysqli_query($connection,$query);
+			}
+			//creo registros para declarar dd
+			$dd_max = 10;
+			for ($i = 1; $i <= $dd_max; $i++) {
+				$query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
+				$query_run = mysqli_query($connection,$query);
+			}
+			//creo registros para declarar bonus
+			$bonus_max = 4;
+			for ($i = 1; $i <= $bonus_max; $i++) {
+				$query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='bonus'";
+				$query_run = mysqli_query($connection,$query);
+			}
+			//creo registro para declarar total
+			$query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='total'";
+			$query_run = mysqli_query($connection,$query);
+		}
+	}
+}
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -155,7 +141,6 @@ include('includes/navbar.php');
 
 				<div class="table-responsive">
 					<?php
-//				$id_rutina=$_POST['id_rutina'];
 
 				if($figuras == 'si'){
 					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
@@ -252,6 +237,7 @@ include('includes/navbar.php');
                           $query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto <> 3 and id_rutina=$id_rutina and elemento = $i";
                         $query_elementos = mysqli_query($connection,$query);
 //						  	echo '<td';
+						  $id_tipo_hibrido = '';
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
                                 echo "<td style='background-color:".$elemento['color']."'>";
                                 echo $elemento['nombre'].'</td>';
