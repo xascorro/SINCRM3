@@ -4179,6 +4179,7 @@ class TCPDF {
 			// SHY character will not be printed
 			return (0);
 		}
+		$char = strval($char); // Explicitly cast $char to a string
 		if (isset($this->CurrentFont['cw'][$char])) {
 			$w = $this->CurrentFont['cw'][$char];
 		} elseif (isset($this->CurrentFont['dw'])) {

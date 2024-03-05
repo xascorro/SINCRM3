@@ -11,18 +11,6 @@ include('includes/navbar.php');
 	<div id="content">
 		<?php
     include('includes/topbar.php');
-//	  if(isset($_POST['id_competicion'])){
-//		  $id_competicion = $_POST['id_competicion'];
-////		  $_SESSION['id_competicion_activa'] = $_POST['id_competicion'];
-//		}else if(isset($_SESSION['id_competicion_usuario'])){
-//		  $id_competicion = $_SESSION['id_competicion_usuario'];
-//		}else{
-//			$id_competicion=$_SESSION['id_competicion_activa'];
-//		}
-//		if(isset($_POST['competicion_figuras'])){
-//			$_SESSION['competicion_figuras'] = $_POST['competicion_figuras'];
-//		  }
-//		echo $_SESSION['competicion_figuras'].$_SESSION['id_competicion_activa'];
 		$query = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, date_add(fecha, interval -dias_coach_card day) as fecha_coach_card, date_add(fecha, interval -dias_sorteo day) as fecha_sorteo, date_add(fecha, interval -dias_inicio_inscripcion day) as fecha_inicio_inscripcion, date_add(fecha, interval -dias_fin_inscripcion day) as fecha_fin_inscripcion FROM competiciones WHERE id='.$id_competicion;
 		//habilito o deshabilito subir musica
 		$fechas = mysqli_fetch_assoc(mysqli_query($connection, $query));
@@ -34,7 +22,7 @@ include('includes/navbar.php');
 		//habilito o deshabilito coach_card
 		$fecha_coach_card = $fechas['fecha_coach_card'];
 		if(date('Y-m-d') > $fecha_coach_card & $_SESSION['id_rol'] != 1 )
-			$enable_coach = 'disabled';
+			$enable_coach_card = 'disabled';
 		else
 			$enable_coach_card = '';
 		$fecha_sorteo = $fechas['fecha_sorteo'];
@@ -284,6 +272,7 @@ if( $enable_musica == ''){
 													</div>
 													<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 													<input type="hidden" name="edit_id" value="<?php echo $row['id'];?>">
+													<input type="hidden" name="id_competicion" value="<?php echo $id_competicion;?>">
 													<button class="btn btn-primary" type="submit" name="upload_music" <?php echo $enable_musica ?>>Guardar</button>
 												</div>
 										</div>

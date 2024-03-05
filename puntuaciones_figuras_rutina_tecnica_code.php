@@ -1,5 +1,6 @@
 <?php
-
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 include('security.php');
 session_start();
 extract($_POST, EXTR_PREFIX_SAME, "wddx");
@@ -239,46 +240,54 @@ if(isset($_POST['save_btn'])){
     nota_total = (SELECT (sum(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5),
     nota=(SELECT (sum(nota))/(count(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5)*$dd5*$factor5, id_rutina=$id_inscripcion_figuras, elemento=5";
     mysqli_query($connection,$query);
-    if($BM6 != ''){
-            $dd6=$BM6;
-            $llevado_BM = "llevado_BM='si',";
-    }else
-        $llevado_BM = "";
-    $query="INSERT puntuaciones_elementos SET $llevado_BM
-    nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6),
-    nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6),
-    nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6)*$dd6*$factor6, id_rutina=$id_inscripcion_figuras, elemento=6";
-    mysqli_query($connection,$query);
-    if($BM7 != ''){
-        $dd7=$BM7;
-        $llevado_BM = "llevado_BM='si',";
-    }else
-        $llevado_BM = "";
-    $query="INSERT puntuaciones_elementos SET $llevado_BM
-    nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7),
-    nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7),
-    nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7)*$dd7*$factor7, id_rutina=$id_inscripcion_figuras, elemento=7";
-    mysqli_query($connection,$query);
-    if($BM8 != ''){
-        $dd8=$BM8;
-        $llevado_BM = "llevado_BM='si',";
-    }else
-        $llevado_BM = "";
-    $query="INSERT puntuaciones_elementos SET $llevado_BM
-    nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8),
-    nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8),
-    nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8)*$dd8*$factor8, id_rutina=$id_inscripcion_figuras, elemento=8";
-    mysqli_query($connection,$query);
-    if($BM9 != ''){
-        $dd9=$BM9;
-        $llevado_BM = "llevado_BM='si',";
-    }else
-        $llevado_BM = "";
-    $query="INSERT puntuaciones_elementos SET $llevado_BM
-    nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9),
-    nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9),
-    nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9)*$dd9*$factor9, id_rutina=$id_inscripcion_figuras, elemento=9";
-    mysqli_query($connection,$query);
+	if(isset($dd6) && isset($factor6)){
+		if($BM6 != ''){
+				$dd6=$BM6;
+				$llevado_BM = "llevado_BM='si',";
+		}else
+			$llevado_BM = "";
+		$query="INSERT puntuaciones_elementos SET $llevado_BM
+		nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6),
+		nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6),
+		nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6)*$dd6*$factor6, id_rutina=$id_inscripcion_figuras, elemento=6";
+		mysqli_query($connection,$query);
+	}
+	if(isset($dd7) && isset($factor7)){
+		if($BM7 != ''){
+			$dd7=$BM7;
+			$llevado_BM = "llevado_BM='si',";
+		}else
+			$llevado_BM = "";
+		$query="INSERT puntuaciones_elementos SET $llevado_BM
+		nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7),
+		nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7),
+		nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7)*$dd7*$factor7, id_rutina=$id_inscripcion_figuras, elemento=7";
+		mysqli_query($connection,$query);
+	}
+	if(isset($dd8) && isset($factor8)){
+		if($BM8 != ''){
+			$dd8=$BM8;
+			$llevado_BM = "llevado_BM='si',";
+		}else
+			$llevado_BM = "";
+		$query="INSERT puntuaciones_elementos SET $llevado_BM
+		nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8),
+		nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8),
+		nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8)*$dd8*$factor8, id_rutina=$id_inscripcion_figuras, elemento=8";
+		mysqli_query($connection,$query);
+	}
+	if(isset($dd9) && isset($factor9)){
+		if($BM9 != ''){
+			$dd9=$BM9;
+			$llevado_BM = "llevado_BM='si',";
+		}else
+			$llevado_BM = "";
+		$query="INSERT puntuaciones_elementos SET $llevado_BM
+		nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9),
+		nota_total = (SELECT (sum(nota)-min(nota)-max(nota)) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9),
+		nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9)*$dd9*$factor9, id_rutina=$id_inscripcion_figuras, elemento=9";
+		mysqli_query($connection,$query);
+	}
 
     //penalizaciones
     $query = "SELECT sum(puntos) FROM penalizaciones, penalizaciones_rutinas WHERE penalizaciones_rutinas.id_penalizacion = penalizaciones.id and penalizaciones_rutinas.id_inscripcion_figuras=$id_inscripcion_figuras";
@@ -286,10 +295,10 @@ if(isset($_POST['save_btn'])){
     if($penalizaciones == '')
         $penalizaciones = 0;
     //nota final
-    $query = "SELECT sum(nota) - $penalizaciones FROM puntuaciones_elementos WHERE id_rutina=$id_inscripcion_figuras)";
+    $query = "SELECT sum(nota) - $penalizaciones FROM puntuaciones_elementos WHERE id_rutina=$id_inscripcion_figuras";
     $nota_elementos = mysqli_fetch_assoc(mysqli_query($connection,$query))['sum(nota)'];
-    $query = "SELECT nota from errores_sincronizacion WHERE id_inscripcion_figuras=$id_inscripcion_figuras";
-    $errores_sincro = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
+//    $query = "SELECT nota from errores_sincronizacion WHERE id_inscripcion_figuras=$id_inscripcion_figuras";
+//    $errores_sincro = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
     $query = "SELECT sum(nota) - $penalizaciones as nota FROM puntuaciones_elementos WHERE id_rutina=$id_inscripcion_figuras and elemento > 0";
     $nota_elementos = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
     $compensacion = 0;

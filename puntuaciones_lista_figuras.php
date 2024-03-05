@@ -56,7 +56,7 @@ include('includes/navbar.php');
 
             $query_run = mysqli_query($connection,$query);
             ?>
-            <table class="table table-sm" id="dataTable">
+            <table class="table table-sm" id="nodataTable">
                 <thead>
                     <tr>
                         <th scope="col">Orden</th>
@@ -81,7 +81,7 @@ include('includes/navbar.php');
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
                       if($row['baja']=='si'){
-                          $class=' class=bg-danger';
+                          $class=' class=bg-warning';
                       }else{
                             $class='';
                       }
@@ -90,7 +90,7 @@ include('includes/navbar.php');
                       <th scope="row" > <?php echo $row['orden']; ?> </th>
                       <th scope="row" > <?php echo $row['id']; ?> </th>
                       <td > <?php echo $row['apellidos_nadadora'].', '.$row['nombre_nadadora']; ?> </td>
-                        <form  target="_blank" action="puntuaciones_lista_figuras_code.php" method="post">
+                        <form  class="notas" target="_blank" action="puntuaciones_lista_figuras_code.php" method="post">
                           <input type="hidden" name="id_inscripcion_figuras" value="<?php echo $row['id']; ?>">
                           <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
                           <input type="hidden" name="grado_dificultad" value="<?php echo $grado_dificultad; ?>">
@@ -115,7 +115,7 @@ include('includes/navbar.php');
                         echo "<td>".$row['nota_final']."</td>";
                         ?>
                          <td>
-                          <button class="form-control form-control-sm btn btn-success" type="submit" name="puntuar_btn"><i class="fa-solid fa-calculator"></i></btn>
+                          <button class="form-control form-control-sm btn btn-success notas" type="submit" name="puntuar_btn" id="puntuar_btn<?php echo $row['id']; ?>"><i class="fa-solid fa-calculator"></i></btn>
                           </form>
                         </td>
                         </tr>
@@ -140,5 +140,15 @@ include('includes/navbar.php');
             include('includes/footer.php');
             ?>
 
+<!--
 
+<script>
+	$('.notas').on("submit", function() {
 
+    setTimeout( function () {
+  location.reload();
+    }, 300);
+
+});
+</script>
+-->

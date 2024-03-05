@@ -97,7 +97,7 @@ if(mysqli_num_rows($query_run) == 0){
 							<div class="modal-footer">
 								<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>">
 								<input type="hidden" name="id_fase" value="<?php echo $id_fase;?>">
-									Antes del elemento
+								Antes del elemento
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 								<button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
 							</div>
@@ -117,14 +117,13 @@ if(mysqli_num_rows($query_run) == 0){
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
 				</h4>
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
-			<form action="./rutinas.php" method="post" class="form d-inline">
-         	<input type="hidden" name="id_fase" value="<?php echo $id_fase?>">
-         	<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
-         	<input type="hidden" name="club" value="<?php echo $club?>">
-			 <button type="submit" class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
-         </form>
+				<form action="./rutinas.php" method="post" class="form d-inline">
+					<input type="hidden" name="id_fase" value="<?php echo $id_fase?>">
+					<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
+					<input type="hidden" name="club" value="<?php echo $club?>">
+					<button type="submit" class="btn btn-primary"><i class='fa fa-chevron-left' aria-hidden='true'></i> Volver</button>
+				</form>
 			</div>
-
 			<div class="card-body">
 
 
@@ -145,7 +144,7 @@ if(mysqli_num_rows($query_run) == 0){
 				if($figuras == 'si'){
 					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 				}else{
-					$query = "SELECT rutinas.id, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
+					$query = "SELECT rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 					$nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = $id_rutina";
 					$nombres = mysqli_result(mysqli_query($connection,$nombres));
 				}
@@ -172,9 +171,15 @@ if(mysqli_num_rows($query_run) == 0){
 										else
 											echo $row['nombre_club'].' - '.$row['nombre_nadadora'].' '.$row['apellidos_nadadora'];
 								?>
-										 </h5>
+							</h5>
 						</div>
 					</div>
+					<form class="" action="coach_card_composer_code.php" method="post">
+						<input type="text" class="form-control col col-12" id="tematica" name="tematica" placeholder="Introduce el tema de la rutina" value="<?php echo $row['tematica'];?>">
+						<input type="submit" class="btn btn-primary col col-4" name="update_tematica_btn" value="Actualizar temática">
+					</form>
+
+
 					<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
 						<thead>
 							<tr>
@@ -283,9 +288,6 @@ if(mysqli_num_rows($query_run) == 0){
                           echo "<td>";
                           ?>
 							<form action="coach_card_composer_elemento_edit.php" method="post">
-<!--								<input type="hidden" name="edit_id_rutina" value="<?php echo $row['id']; ?>">-->
-<!--								<input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">-->
-<!--								<input type="hidden" name="edit_id_fase" value="<?php echo $id_fase; ?>">-->
 								<input type="hidden" name="edit_elemento" value="<?php echo $i; ?>">
 								<input type="hidden" name="id_tipo_hibrido" value="<?php echo $id_tipo_hibrido; ?>">
 								<button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>

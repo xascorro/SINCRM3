@@ -63,11 +63,10 @@ if(isset($_POST['puntuar_btn'])){
         $query = "UPDATE inscripciones_figuras SET nota_media = $nota_media,nota_total = $nota_total, nota_final= $nota_final WHERE id = $id_inscripcion_figuras";
         mysqli_query($connection,$query);
 
+?>
 
-
-    echo "<script>window.close();</script>";
-
-
+"<script>window.close();</script>
+<?php
 }
 if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] = 'Datos actualizados con éxito';

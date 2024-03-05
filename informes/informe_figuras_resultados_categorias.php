@@ -1,4 +1,6 @@
 <?php
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
 include('../lib/my_functions.php');
@@ -151,7 +153,7 @@ if(isset($_GET['hoja_tecnica'])){
 		$nombre = mysqli_result(mysqli_query($connection,"select nombre from jueces where id = '".$puesto_juez['id_juez']."'"), 0);
 		$apellidos = mysqli_result(mysqli_query($connection,"select apellidos from jueces where id = '".$puesto_juez['id_juez']."'"), 0);
 		$licencia = mysqli_result(mysqli_query($connection,"select licencia from jueces where id = '".$puesto_juez['id_juez']."'"), 0);
-		$licencia = substr_replace($licencia, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia)-$_SESSION['enmascarar_licencia']-1);
+//		$licencia = substr_replace($licencia, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia)-$_SESSION['enmascarar_licencia']-1);
 
 		$id_federacion = mysqli_result(mysqli_query($connection,"select federacion from jueces where id = '".$puesto_juez['id_juez']."'"), 0);
 		$federacion = mysqli_query($connection,"select nombre_corto from federaciones where id = '".$id_federacion."'");
@@ -169,7 +171,7 @@ if(isset($_GET['hoja_tecnica'])){
 	$jueces = mysqli_query($connection,$query);
 	while($juez = mysqli_fetch_array($jueces)){
 		$licencia_juez = mysqli_result(mysqli_query($connection,"select licencia from jueces where id = '".$juez['id_juez']."'"), 0);
-		$licencia_juez = substr_replace($licencia_juez, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_juez)-$_SESSION['enmascarar_licencia']-1);
+//		$licencia_juez = substr_replace($licencia_juez, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_juez)-$_SESSION['enmascarar_licencia']-1);
 		$nombre_juez = mysqli_result(mysqli_query($connection,"select nombre from jueces where id = '".$juez['id_juez']."'"),0).' '.mysqli_result(mysqli_query($connection,"select apellidos from jueces where id = '".$juez['id_juez']."'"), 0);
 		$federacion = mysqli_result(mysqli_query($connection,"select federacion from jueces where id = '".$juez['id_juez']."'"),0);
 		$federacion = mysqli_result(mysqli_query($connection,"select nombre_corto from federaciones where id = '".$federacion."'"),0);
@@ -201,7 +203,11 @@ $rutina_color_impar = '#FCE4EC';
 $query = "select resultados_figuras_categorias.id_categoria from resultados_figuras_categorias, fases WHERE fases.id_categoria = resultados_figuras_categorias.id_categoria and fases.elementos_coach_card < 1 and fases.id_competicion ='".$_SESSION["id_competicion_activa"]."' group by resultados_figuras_categorias.id_categoria";
 $categorias = mysqli_query($connection,$query);
 while($categoria = mysqli_fetch_array($categorias)){
-	$query = "select nombre, id from categorias where id = '".$categoria['id_categoria']."'";
+	if($categoria['id_categoria'] == '234' or $categoria['id_categoria'] == '235')
+		$id_categoria = '241';
+	else
+		$id_categoria = $categoria['id_categoria'];
+	$query = "select nombre, id from categorias where id = '".$id_categoria."'";
     $nombre_categoria=mysqli_result(mysqli_query($connection,$query),0);
 	// add a page
 	$pdf->AddPage();
@@ -210,7 +216,7 @@ while($categoria = mysqli_fetch_array($categorias)){
 	$pdf->writeHTML($html, true, false, true, false, '');
 	$pdf->SetFont('helvetica', '', 8);
 // obtengo las figuras y el grado de dificultad
-	$query = "select id_figura from fases where id_categoria='".$categoria['id_categoria']."' and id_competicion='".$_SESSION['id_competicion_activa']."'";
+	$query = "select id_figura from fases where id_categoria='".$id_categoria."' and id_competicion='".$_SESSION['id_competicion_activa']."'";
 	$figuras = mysqli_query($connection,$query);
 	$figuras_texto = '';
 	while($figuras2 = mysqli_fetch_array($figuras)){
@@ -225,7 +231,7 @@ while($categoria = mysqli_fetch_array($categorias)){
 $html .= '<table style="margin-top=10px">';
 	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:34%">Nadadora</th><th style="width:11%">Figura</th><th style="width:18%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
 	$par=0;
-	$query = "select * from resultados_figuras_categorias where id_categoria='".$categoria['id_categoria']."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' order by posicion asc, nota_final_calculada desc";
+	$query = "select * from resultados_figuras_categorias where id_categoria='".$id_categoria."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' order by posicion asc, nota_final_calculada desc";
 	$resultados_figuras_categorias = mysqli_query($connection,$query);
 	if(mysqli_num_rows($resultados_figuras_categorias)>16)
 		$pdf->SetFont('helvetica', '', 7);
@@ -242,7 +248,7 @@ $html .= '<table style="margin-top=10px">';
 		$query = mysqli_query($connection,"select apellidos, nombre, licencia, club from nadadoras where id='".$resultado_figuras['id_nadadora']."'");
 		$nombre_nadadora = mysqli_result($query, 0).", ".mysqli_result($query,0,1);
 		$licencia_nadadora = mysqli_result($query, 0,2);
-		$licencia_nadadora = substr_replace($licencia_nadadora, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_nadadora)-$_SESSION['enmascarar_licencia']-1);
+//		$licencia_nadadora = substr_replace($licencia_nadadora, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_nadadora)-$_SESSION['enmascarar_licencia']-1);
 		$club_nadadora = mysqli_result(mysqli_query($connection,"select nombre_corto from clubes where id = '".mysqli_result($query, 0,3)."'"),0);
 		$html .= '<tr><td style="width:5%; font-size:14; font-weight:bold;">'.$resultado_figuras['posicion'].'</td>';
 //		$html .= '<td style="width:34%">'.$nombre_nadadora.' ('.$licencia_nadadora.')<br>'.$club_nadadora.'</td>';
@@ -360,7 +366,7 @@ $html .= '<table style="margin-top=10px">';
 		$query = mysqli_query($connection,"select apellidos, nombre, licencia, club, id from nadadoras where id='".$resultado_figuras['id_nadadora']."'");
 		$nombre_nadadora = mysqli_result($query, 0).", ".mysqli_result($query,0,1);
 		$licencia_nadadora = mysqli_result($query, 0,2);
-		$licencia_nadadora = substr_replace($licencia_nadadora, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_nadadora)-$_SESSION['enmascarar_licencia']-1);
+//		$licencia_nadadora = substr_replace($licencia_nadadora, str_repeat('X',$_SESSION["enmascarar_licencia"]), sizeof($licencia_nadadora)-$_SESSION['enmascarar_licencia']-1);
 		$club_nadadora = mysqli_result(mysqli_query($connection,"select nombre_corto from clubes where id = '".mysqli_result($query, 0,3)."'"),0);
 
 

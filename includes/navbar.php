@@ -132,7 +132,7 @@ if($_SESSION['id_rol'] == '1'){
     				<?php
               }else{
             ?>
-    				<a class="collapse-item" href="inscripciones_figuras.php">
+    				<a class="collapse-item" href="inscripciones_figuras.php?id_competicion=49">
     					<i class="fa-regular fa-flag"></i><span> Inscripciones Figuras</span>
     				</a>
     				<?php

@@ -130,7 +130,7 @@ include('includes/navbar.php');
 									<div class="font-weight-bold text-info text-uppercase mb-1">Próxima competición</div>
 									<?php
 //                    $query = 'SELECT * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
-                    	$query = 'SELECT * FROM competiciones WHERE fecha >= now() ORDER BY fecha asc limit 2';
+                    	$query = 'SELECT * FROM competiciones WHERE fecha >= (SELECT CURDATE() AS Today) ORDER BY fecha asc limit 2';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -209,7 +209,6 @@ include('includes/navbar.php');
 									</div>
 									<div class="row">
 										<?php
-//					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion']) & (date("Y-m-d") <= $row['fecha_fin_inscripcion'])){
 					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion'])){
 					?>
 										<div class="col col-12 col-md-6 mb-4">
@@ -220,11 +219,10 @@ include('includes/navbar.php');
 										<input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
 											<input name="inscripciones" class="btn btn-info form-control" type="submit" value="Inscribirse">
 										</form>
-<!--											<a href="./inscripciones_figuras.php" class="btn btn-info">Inscripciones</a> Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?>-->
 										</div>
 										<?php
 
-					}else if((date("Y-m-d") <= $row['fecha_inicio_inscripcion'])){
+					}else if((date("Y-m-d") < $row['fecha_inicio_inscripcion'])){
 						?>
 										<div class="col col-12 col-md-6 mb-4">
 											<span class="text text-info">La inscripción se abrirá del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion'])?>
@@ -282,7 +280,7 @@ include('includes/navbar.php');
 								<div class="col mr-2">
 									<div class="font-weight-bold text-success text-uppercase mb-1">Competiciones programadas</div>
 									<?php
-                    $query = 'select * FROM competiciones WHERE activo like "no" and fecha >= now() ORDER BY fecha asc';
+                    $query = 'select * FROM competiciones WHERE activo like "no" and fecha >= (SELECT CURDATE() + 1) ORDER BY fecha asc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -312,7 +310,7 @@ include('includes/navbar.php');
 								<div class="col mr-2">
 									<div class="font-weight-bold text-danger text-uppercase mb-1">Historial</div>
 									<?php
-                    $query = 'select * FROM competiciones WHERE fecha < now() ORDER BY fecha desc';
+                    $query = 'select * FROM competiciones WHERE fecha < (SELECT CURDATE()) ORDER BY fecha desc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {

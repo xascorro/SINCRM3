@@ -1,5 +1,20 @@
 <?php
 include('security.php');
+
+//actualizar tema rutina
+if(isset($_POST['update_tematica_btn'])){
+	foreach($_POST as $nombre_campo => $valor){
+		$asignacion = "\$" . $nombre_campo . "='" . $valor . "';";
+		eval($asignacion);
+	}
+	$query = "UPDATE rutinas SET tematica = '$tematica' WHERE id = $id_rutina";
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_error($connection) == ''){
+		$_SESSION['correcto'] = 'Tema actualizado con éxito. ';
+	}else{
+		$_SESSION['estado'] = 'Error, el tema no se ha actualizado <br>'.mysqli_error($connection);
+	}
+}
 //Actualizar registro
 if(isset($_POST['update_btn'])){
 	foreach($_POST as $nombre_campo => $valor){
@@ -24,7 +39,7 @@ if(isset($_POST['update_btn'])){
 		$_SESSION['estado'] = 'Error, el Time no se ha actualizado <br>'.mysqli_error($connection);
 	}
 	//actualizar TIPO DE HIBRIDO (PART)
-	$query = "UPDATE hibridos_rutina SET texto = '$id_tipo_hibrido' WHERE tipo='part' and id_rutina ='$id_rutina' and elemento='$elemento'";
+	$query = "UPDATE hibridos_rutina SET texto = '$id_tipo_hibrido' WHERE tipo='part' and id_rutina ='$id_rutina' and elemento='$elemento' and texto not like '3'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'PART actualizada con éxito. ';
@@ -122,7 +137,7 @@ if(isset($_POST['update_btn'])){
 		}else{
 			$_SESSION['estado'] .= 'Error, el Total no se ha actualizado <br>'.mysqli_error($connection);
 		}
-		header('Location: coach_card_composer.php');
+//		header('Location: coach_card_composer.php');
 }
 
 
@@ -138,7 +153,6 @@ if(isset($_POST['save_btn'])){
 	}else{
 		$_SESSION['estado'] = 'Error, Transición no añadida <br>'.mysqli_error($connection);
 	}
-	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
 }
 
 //Borrar transicion
@@ -153,7 +167,9 @@ if(isset($_POST['dlt_btn_transicion'])){
 	}else{
 		$_SESSION['estado'] = 'Error. La Transición no se ha eliminado <br>'.mysqli_error($connection);
 	}
-	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
+//	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
 
 }
+	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
+
 ?>

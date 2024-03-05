@@ -108,7 +108,7 @@ include('includes/navbar.php');
 
             $query_run = mysqli_query($connection,$query);
             ?>
-            <table class="table " id="dataTable" width="100%" cellspacing="0">
+            <table class="table " id="nodataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th scope="col">#</th>

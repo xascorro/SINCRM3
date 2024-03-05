@@ -87,20 +87,16 @@ if(isset($_POST['delete_btn'])){
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'Coach Card eliminada con éxito<br>';
-//		header('Location: rutinas.php');
 	}else{
 		$_SESSION['estado'] .= 'Error al eliminar la Coach Card o alguno de sus elementos<br>'.mysqli_error($connection);
-//		header('Location: rutinas.php');
 	}
-//borro archivo
-if (!unlink($archivo_a_borrar)) {
-		$_SESSION['estado'] .= 'Error al eliminar el archivo de música<br>'.mysqli_error($connection);
-}
-else {
-		$_SESSION['correcto'] .= 'Archivo de música eliminado<br>';
-}
-	//header('Location: rutinas.php');
-
+	//borro archivo
+	if (!unlink($archivo_a_borrar)) {
+			$_SESSION['estado'] .= 'Error al eliminar el archivo de música<br>'.mysqli_error($connection);
+	}
+	else {
+			$_SESSION['correcto'] .= 'Archivo de música eliminado<br>';
+	}
 }
 
 //Subir o actualizar musica
@@ -108,7 +104,10 @@ if(isset($_POST['upload_music'])){
 	$id = $_POST['edit_id'];
 	$id_club = $_POST['club'];
 	$music_name = $_POST['music_name'];
-
+	if(isset($_POST['id_competicion']))
+		  $id_competicion = $_POST['id_competicion'];
+	else
+		  $id_competicion = $_SESSION['id_competicion_activa'];
 function stripAccents($str) {
     return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
 }
@@ -120,7 +119,7 @@ function stripAccents($str) {
 		$_SESSION['estado'] = 'Error, la música no se ha actualizado <br>'.mysqli_error($connection);
 	}
 	if($_FILES["musica"] != ''){
-		$path = './public/music/'.$_SESSION['id_competicion_activa'].'/';
+		$path = './public/music/'.$id_competicion.'/';
 		if (!is_dir($path)) {
     		mkdir($path, 0777, true);
 		}else{

@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // Include the main TCPDF liary (search for installation path).
 require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
@@ -7,7 +9,7 @@ session_start();
 if(!$_SESSION['username']){
 	header('Location: login.php');
 }else{
-	$query = "SELECT id, nombre FROM competiciones WHERE activo = 'si'";
+	$query = "SELECT id, nombre, color FROM competiciones WHERE activo = 'si'";
 	$query_run = mysqli_query($connection,$query);
 	$competicion = mysqli_fetch_assoc($query_run);
 	$_SESSION['id_competicion_activa'] = $competicion['id'];
@@ -36,7 +38,7 @@ if(!$_SESSION['username']){
 	    $GLOBALS["id_categoria"] = '';
 	}
 //****************************//
-$titulo = $_GET['titulo'];
+@$titulo = $_GET['titulo'];
 $titulo_documento = $GLOBALS['temporada'].'<br>'.$GLOBALS['clave_liga']." de Natación Artística FNRM<br>$titulo";
 $nombre_documento = $titulo.' '.$GLOBALS['nombre_competicion_activa'];
 $GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."<br> Fecha de la competición: ".$GLOBALS['fecha'];
@@ -131,7 +133,11 @@ $pdf->SetFont('helvetica', 'B', 14);
         $query = "select nombre_corto, fecha, lugar, color from competiciones where clave_liga like '$clave_liga' order by id asc";
 	$jornadas_liga = mysqli_query($connection,$query);
     // add a page
-    $query = "select nombre from categorias where id = '".$id_categoria['id_categoria']."'";
+	if($id_categoria['id_categoria'] == '234' or $id_categoria['id_categoria'] == '235')
+				$categoria = '241';
+	else
+		$id_categoria['id_categoria'] = $categoria;
+    $query = "select nombre from categorias where id = '".$categoria."'";
     $GLOBALS['nombre_categoria'] = mysqli_result(mysqli_query($connection,$query),0);
 	$pdf->AddPage('L');
 	//$pdf->AddPage();
@@ -146,11 +152,11 @@ $pdf->SetFont('helvetica', 'B', 14);
 	}
 	$html .= '<th width="8%" style="background-color:'.$total_color.'"><span>&nbsp;</span><br><span style="font-size:18px">Total</span></th></tr>';
 	 $i = 0;
-		  $clasificacion_nadadoras[] = "";
-		  $query = "select distinct(id_nadadora) from resultados_figuras_categorias where id_categoria = '".$id_categoria['id_categoria']."'  and id_competicion in (select id from competiciones where clave_liga like '$clave_liga')";
+		  $clasificacion_nadadoras[][] = "";
+		  $query = "select distinct(id_nadadora) from resultados_figuras_categorias where id_categoria = '".$categoria."'  and id_competicion in (select id from competiciones where clave_liga like '$clave_liga')";
 		  $nadadoras = mysqli_query($connection,$query);
 
-		  $numero_jornadas_liga = mysqli_result(mysqli_query("select count(id) from competiciones where clave_liga like '$clave_liga'"), 0);
+		  $numero_jornadas_liga = mysqli_result(mysqli_query($connection, "select count(id) from competiciones where clave_liga like '$clave_liga'"), 0);
 		  while($nadadora = mysqli_fetch_array($nadadoras)){
 			$puntos_totales = 0;
 			$query = "select apellidos from nadadoras where id = '".$nadadora['id_nadadora']."'";
@@ -217,7 +223,7 @@ $pdf->SetFont('helvetica', 'B', 14);
 		  	$puntos_anterior=$clasificacion_nadadora['puntos_clasificacion'];
             $color = '';
 		  	foreach($clasificacion_nadadora as $jornada => $valor){
-                if(strpos($valor, '#') === false){
+                if(strpos($valor, '#') === false and $valor != ''){
                     $html .= '<td style="font-size:14px; background-color:'.$color.'">'.$valor.'</td>';
                     $color = '';
                 }else{

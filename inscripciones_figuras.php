@@ -8,6 +8,26 @@ $condicion_club = '';
 if(isset($_SESSION['club'])){
     $condicion_club = " and nadadoras.club = ".$_SESSION['club'];
 }
+
+$query = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, date_add(fecha, interval -dias_coach_card day) as fecha_coach_card, date_add(fecha, interval -dias_sorteo day) as fecha_sorteo, date_add(fecha, interval -dias_inicio_inscripcion day) as fecha_inicio_inscripcion, date_add(fecha, interval -dias_fin_inscripcion day) as fecha_fin_inscripcion FROM competiciones WHERE id='.$id_competicion;
+		//habilito o deshabilito coach_card
+		$fecha_coach_card = $fechas['fecha_coach_card'];
+		if(date('Y-m-d') > $fecha_coach_card & $_SESSION['id_rol'] != 1 )
+			$enable_coach_card = 'disabled';
+		else
+			$enable_coach_card = '';
+		$fecha_sorteo = $fechas['fecha_sorteo'];
+		if(date('Y-m-d') > $fecha_sorteo)
+			$enable_sorteo = 'disabled';
+		else
+			$enable_sorteo = '';
+		//habilito o deshabilito inscripciones (añadir participantes y borrar)
+		$fecha_inicio_inscripcion = $fechas['fecha_inicio_inscripcion'];
+		$fecha_fin_inscripcion = $fechas['fecha_fin_inscripcion'];
+		if(date('Y-m-d') >= $fecha_fin_inscripcion & $_SESSION['id_rol'] != 1 )
+			$enable_inscripcion = 'disabled';
+		else
+			$enable_inscripcion = '';
 ?>
 <!-- Content Wrapper -->
 <div id="content-wrapper" class="d-flex flex-column">
@@ -37,7 +57,7 @@ if(isset($_SESSION['club'])){
 
                                 <div class="form-group col">
                                     <?php
-                    if($_SESSION['competicion_figuras'] == 'si')
+                    if($figuras == 'si')
                         include('includes/nadadoras_select_option.php');
                     else
                         include('includes/club_select_option.php');
@@ -72,7 +92,7 @@ if(isset($_SESSION['club'])){
             <!-- Titulo página y pdf -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h4 class="mb-0 font-weight-bold text-primary"><i class="fa-regular fa-flag"></i> Inscripciones en figuras
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile">Añadir</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile" <?php echo $enable_inscripcion?>>Añadir</button>
                     <?php if($_SESSION['id_rol'] != 5){
 	?>
                     	<a target="_blank" href="./informes/informe_figuras_preinscripciones.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
@@ -147,7 +167,7 @@ if(isset($_SESSION['club'])){
                                 <?php
                       if($row['elementos_coach_card']>0){
                           ?>
-                                <td><a href="./coach_card_composer.php?id_rutina=<?php echo $row['id']; ?>&id_fase=<?php echo $row['id_fase'];?>" class=" btn btn-warning btn-circle btn">
+                                <td><a href="./coach_card_composer.php?id_rutina=<?php echo $row['id']; ?>&id_fase=<?php echo $row['id_fase'];?>" class=" btn btn-warning btn-circle btn" <?php echo $enable_inscripcion;?>>
                                         <i class="fa-solid fa-puzzle-piece"></i>
                                     </a> </td>
 
@@ -171,7 +191,7 @@ if(isset($_SESSION['club'])){
                                         <input type="hidden" name="delete_id" value="<?php echo $row['id'];?>">
                                         <input type="hidden" name="id_nadadora" value="<?php echo $row['id_nadadora'];?>">
                                         <input type="hidden" name="delete_id_categoria" value="<?php echo $row_categorias['id_categoria'];?>">
-                                        <button class="btn btn-danger" type="submit" name="delete_btn"><i class="fas fa-trash"></i></btn>
+                                        <button class="btn btn-danger" type="submit" name="delete_btn" <?php echo $enable_inscripcion;?>><i class="fas fa-trash"></i></btn>
                                     </form>
                                 </td>
                             </tr>

@@ -21,7 +21,7 @@ if($tipo_elemento == 'dd'){
         $query = "SELECT * from dificultad_acrobacias".$where;
 		$class = 'id_tipo_hibrido';
     }else if($_POST['id_tipo_hibrido']==1){
-        $query = "SELECT * from dificultad_hibridos";
+        $query = "SELECT * FROM dificultad_hibridos WHERE subagrupar is NULL or subagrupar not like 'no'";
 		$class = 'id_tipo_hibrido';
     }else{
     $query = "SELECT * from dificultad_hibridos";
@@ -48,7 +48,7 @@ if($tipo_elemento == 'Basemark'){
     $query = "SELECT * from dificultad_basemark WHERE codigo like '".$basemark."'";
 	$class = 'tipo_basemark';
 }elseif($tipo_elemento == 'bonus'){
-    $query = "SELECT * from dificultad_hibridos".@$where;
+    $query = "SELECT * FROM dificultad_hibridos WHERE agrupar like 'Bonus'";
 	$class = 'bonus_tipo_hibrido';
 }
 $query_run2 = mysqli_query($connection,$query);

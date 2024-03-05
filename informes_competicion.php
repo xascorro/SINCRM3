@@ -84,6 +84,8 @@ include('includes/navbar.php');
                 </div>
                 <div class="d-sm-flex align-items-center justify-content-between mb-12">
 				<a target="_blank" href="./informes/informe_figuras_liga_categorias.php"><h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Resultados Liga de Figuras</h4></a>
+                </div><div class="d-sm-flex align-items-center justify-content-between mb-12">
+				<a target="_blank" href="./informes/informe_figuras_liga_categorias_puntuaciones.php"><h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Resultados Liga de Figuras Puntuaciones</h4></a>
                 </div>
 			</div>
 			<hr class="sidebar-divider">
