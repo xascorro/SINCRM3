@@ -121,6 +121,7 @@ include('includes/navbar.php');
 					<?php if($_SESSION['id_rol'] != 5){
 	?>
 					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
+					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_rutina=157&id_fase=79&id_competicion=52" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
 					<?php
                     }else{
 					?>

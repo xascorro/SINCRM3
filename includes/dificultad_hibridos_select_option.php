@@ -11,20 +11,19 @@ if(isset($_GET['id_tipo_hibrido']))
 	$_POST['id_tipo_hibrido'] = $_GET['id_tipo_hibrido'];
 
 if($tipo_elemento == 'dd'){
-    if($_POST['id_tipo_hibrido']==2){
+	if($_POST['id_tipo_hibrido']==1){
+        $query = "SELECT * FROM dificultad_hibridos WHERE subagrupar is NULL or subagrupar not like 'no' order by orden_select";
+		$class = 'id_tipo_hibrido';
+    }else if($_POST['id_tipo_hibrido']==2){
         $query = "SELECT * from dificultad_tre";
 		$class = 'id_tipo_hibrido';
     }else if($_POST['id_tipo_hibrido']==4 or isset($_GET['tipo_acro'])){
 		$where = '';
-		if(isset($_GET['tipo_acro']))
+		if(isset($_GET['tipo_acro']) ){
+			$tipo_acro = $_GET['tipo_acro'];
 			$where = ' WHERE agrupar like "%'.$_GET['tipo_acro'].'%"';
-        $query = "SELECT * from dificultad_acrobacias".$where;
-		$class = 'id_tipo_hibrido';
-    }else if($_POST['id_tipo_hibrido']==1){
-        $query = "SELECT * FROM dificultad_hibridos WHERE subagrupar is NULL or subagrupar not like 'no'";
-		$class = 'id_tipo_hibrido';
-    }else{
-    $query = "SELECT * from dificultad_hibridos";
+		}
+        $query = "SELECT * from dificultad_acrobacias".$where." order by orden_select";
 		$class = 'id_tipo_hibrido';
     }
 }
@@ -59,14 +58,16 @@ if(mysqli_num_rows($query_run2) > 0){
 	if(mysqli_num_rows($query_run2) > 1)
     	$select .= "<option value=''> Selecciona valor </option>";
 	while ($row = mysqli_fetch_assoc($query_run2)) {
+		$row2['codigo'] = str_replace("'", "XX", $row['codigo']);
+
 		if($agrupar != @$row['agrupar'].@$row['subagrupar']){
 				$select .= '</optgroup><optgroup label="'.$row['agrupar'].' '.@$row['subagrupar'].'">';
 			}
 		if($texto == $row['codigo']){
-			$select .= "<option selected value='".$row['codigo']."'>".$row['codigo']." +".$row['valor']."</option>";
+			$select .= "<option selected value=".$row2['codigo'].">".$row['codigo']." +".$row['valor']."</option>";
 		}
 		else{
-			$select .= "<option value='".$row['codigo']."'>".$row['codigo']." +".$row['valor']."</option>";
+			$select .= "<option value='".$row2['codigo']."'>".$row['codigo']." +".$row['valor']."</option>";
 		}
 		$agrupar = @$row['agrupar'].@$row['subagrupar'];
 

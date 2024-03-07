@@ -1,6 +1,5 @@
 <?php
 include('security.php');
-
 //actualizar tema rutina
 if(isset($_POST['update_tematica_btn'])){
 	foreach($_POST as $nombre_campo => $valor){
@@ -70,9 +69,12 @@ if(isset($_POST['update_btn'])){
 	else if($id_tipo_hibrido == 4)
 		$tabla = ' dificultad_acrobacias ';
 	if ($id_tipo_hibrido != 3) {
-    	$ddArray = array($dd0, $dd1, $dd2, $dd3, $dd4, $dd5, $dd6, $dd7, $dd8, $dd9);
+//    	$ddArray = array($dd0, $dd1, $dd2, $dd3, $dd4, $dd5, $dd6, $dd7, $dd8, $dd9);
+		$ddArray = array($dd0, $dd1, $dd2, $dd3, $dd4, $dd5, $dd6, $dd7, $dd8, $dd9, $dd10, $dd11, $dd12, $dd13, $dd14);
+
     	for ($i = 0; $i < count($ddArray); $i++) {
         	$ddValue = $ddArray[$i];
+			$ddValue = str_replace("XX", "\'", $ddValue);
 //        	if ($ddValue != '') {
 				$query = "SELECT valor from $tabla WHERE codigo = '$ddValue'";
 				$query_run2 = mysqli_query($connection,$query);
@@ -84,10 +86,9 @@ if(isset($_POST['update_btn'])){
 				$query_run2 = mysqli_query($connection,$query);
 				$id = mysqli_fetch_assoc($query_run2);
 				$id = @$id['id'];
-				$query = "UPDATE hibridos_rutina SET texto = '$ddValue', valor=$valor WHERE id='$id'";
+			$query = "UPDATE hibridos_rutina SET texto = '".$ddValue."', valor=".$valor." WHERE id='$id'";
 				$query_run = mysqli_query($connection,$query);
-//           }
-		}
+}
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] .= 'DD actualizado con éxito. ';
 		}else{
@@ -103,8 +104,6 @@ if(isset($_POST['update_btn'])){
 			if($bonus0 == '')
 				$valor = " NULL ";
 			$query = "UPDATE hibridos_rutina SET texto = '$bonus0', valor = $valor WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
-							echo '<br>'.$query;
-
 			$query_run = @mysqli_query($connection,$query);
 			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus1'";
 			$query_run2 = mysqli_query($connection,$query);
@@ -118,13 +117,39 @@ if(isset($_POST['update_btn'])){
 			$id = $id['id'];
 			$query = "UPDATE hibridos_rutina SET texto = '$bonus1', valor = $valor WHERE id='$id'";
 			$query_run = @mysqli_query($connection,$query);
+
+			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus2'";
+			$query_run2 = mysqli_query($connection,$query);
+			$valor = mysqli_fetch_assoc($query_run2);
+			$valor = @$valor['valor'];
+			if($bonus2 == '')
+				$valor = " NULL ";
+			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 2,1";
+			$query_run2 = mysqli_query($connection,$query);
+			$id = mysqli_fetch_assoc($query_run2);
+			$id = $id['id'];
+			$query = "UPDATE hibridos_rutina SET texto = '$bonus2', valor = $valor WHERE id='$id'";
+			$query_run = @mysqli_query($connection,$query);
+
+			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus3'";
+			$query_run2 = mysqli_query($connection,$query);
+			$valor = mysqli_fetch_assoc($query_run2);
+			$valor = @$valor['valor'];
+			if($bonus3 == '')
+				$valor = " NULL ";
+			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 3,1";
+			$query_run2 = mysqli_query($connection,$query);
+			$id = mysqli_fetch_assoc($query_run2);
+			$id = $id['id'];
+			$query = "UPDATE hibridos_rutina SET texto = '$bonus3', valor = $valor WHERE id='$id'";
+			$query_run = @mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] .= 'Bonus actualizado con éxito. ';
 		}else{
 			$_SESSION['estado'] .= 'Error, el Bonus no se ha actualizado <br>'.mysqli_error($connection);
 		}
         //actualizar TIPO DE HIBRIDO (TOTAL)
-        $query = "SELECT sum(valor) as total from hibridos_rutina WHERE tipo!='total' and id_rutina ='$id_rutina' and elemento='$elemento' and texto not like 'ACROPAIR'";
+        $query = "SELECT sum(valor) as total from hibridos_rutina WHERE tipo!='total' and id_rutina ='$id_rutina' and elemento='$elemento'";
         $query_run = mysqli_query($connection,$query);
         $valor = mysqli_fetch_assoc($query_run);
 		if($valor['total'] == '')

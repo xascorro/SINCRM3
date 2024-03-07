@@ -34,7 +34,7 @@ if(mysqli_num_rows($query_run) == 0){
 				$query_run = mysqli_query($connection,$query);
 			}
 			//creo registros para declarar dd
-			$dd_max = 10;
+			$dd_max = 15;
 			for ($i = 1; $i <= $dd_max; $i++) {
 				$query = "insert into hibridos_rutina set id_rutina = '$id_rutina', elemento='$x', tipo='dd'";
 				$query_run = mysqli_query($connection,$query);
@@ -156,6 +156,7 @@ if(mysqli_num_rows($query_run) == 0){
 					<?php
                 if(mysqli_num_rows($query_run) > 0){
                   while ($row = mysqli_fetch_assoc($query_run)) {
+					  $nombre_basemark
                       ?>
 					<div class="row">
 						<div class="col-6 col-md-2">
@@ -180,7 +181,7 @@ if(mysqli_num_rows($query_run) == 0){
 					</form>
 
 
-					<table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
+					<table class="table table-striped" id="nodataTable" width="100%" cellspacing="0">
 						<thead>
 							<tr>
 								<th scope="col" id="1">#</th>
@@ -208,10 +209,10 @@ if(mysqli_num_rows($query_run) == 0){
                                 $id_tipo_hibrido = $elemento['id'];
                                 echo "</td>";
                                 echo "<td style='background-color:".$elemento['color']."'>";
-//								td.
                                 ?>
 							<form action="coach_card_composer_code.php" method="post">
 								<input type="hidden" name="id_rutina" value="<?php echo $id_rutina; ?>">
+								<input type="hidden" name="elemento" value="<?php echo $i; ?>">
 								<input type="hidden" name="elemento" value="<?php echo $i; ?>">
 								<button class="btn btn-warning" type="submit" name="dlt_btn_transicion"><i class="fa fa-trash"></i></btn>
 							</form>
@@ -251,19 +252,29 @@ if(mysqli_num_rows($query_run) == 0){
 //                            echo "</td>";
 
                           $query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i and valor>0";
+                          $query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i";
                         $query_elementos = mysqli_query($connection,$query);
                            echo "<td>";
                           if(@$elemento['valor'] != '')
                                 $elemento['valor'] = "(".$elemento['valor'].") ";
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-                                echo $elemento['texto']." +".$elemento['valor']."<br>";
+								$nombre_basemark = $elemento['texto'];
+                                echo $elemento['texto'];
+								if($elemento['valor'] != '')
+									echo " +".$elemento['valor']."<br>";
                             }
                          echo  "</td>";
                           $query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and valor>0";
+                          $query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and texto <> ''";
                         $query_elementos = mysqli_query($connection,$query);
                            echo "<td>";
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-                                echo $elemento['texto']." +".$elemento['valor']."<br>";
+								if($elemento['valor'] != ''){
+									echo $elemento['texto']." +".$elemento['valor']."<br>";
+//									echo " +".$elemento['valor'];
+								}else
+									echo $elemento['texto']."<br>";
+
                             }
                             echo  "</td>";
 
@@ -274,6 +285,7 @@ if(mysqli_num_rows($query_run) == 0){
                                 $elemento['valor'] = "(".$elemento['valor'].") ";
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
                                 echo $elemento['texto']." +".$elemento['valor']."<br>";
+//                                echo $elemento['texto']." +".$elemento['valor'];
                             }
                                                       echo  "</td>";
                           $query = "SELECT valor from hibridos_rutina where tipo='total' and id_rutina=$id_rutina and elemento = $i";
@@ -290,6 +302,7 @@ if(mysqli_num_rows($query_run) == 0){
 							<form action="coach_card_composer_elemento_edit.php" method="post">
 								<input type="hidden" name="edit_elemento" value="<?php echo $i; ?>">
 								<input type="hidden" name="id_tipo_hibrido" value="<?php echo $id_tipo_hibrido; ?>">
+								<input type="hidden" name="tipo_acro" value="<?php echo $nombre_basemark; ?>">
 								<button class="btn btn-success" type="submit" name="edit_btn"><i class="fas fa-edit"></i></btn>
 									<?php
                         echo "</td>";

@@ -6,6 +6,9 @@ include('includes/header.php');
 ?>
 
 <?php
+
+if(isset($_POST['tipo_acro']))
+	$_GET['tipo_acro'] = $_POST['tipo_acro'];
 include('includes/navbar.php');
 ?>
 <!-- Content Wrapper -->
@@ -48,7 +51,7 @@ include('includes/navbar.php');
 				</form>
 			</div>
 
-			<div class="card-body">
+			<div class="card-body" id="contenedor">
 
 						<form action="coach_card_composer_code.php" method="POST">
 							<div class="row">
@@ -82,6 +85,9 @@ include('includes/navbar.php');
 								    $tipo_elemento='Basemark';
 									echo "<label for=edit_basemark>$tipo_elemento</label>";
                                     $query = "SELECT texto from hibridos_rutina WHERE id_rutina = '$id_rutina' and tipo='$tipo_elemento' and elemento = $elemento";
+
+
+
                                     $query_run = mysqli_query($connection,$query);
                                     if(mysqli_num_rows($query_run) > 0){
                                         $x=0;
@@ -96,6 +102,7 @@ include('includes/navbar.php');
                                         $texto='';
                                         include('includes/dificultad_hibridos_select_option.php');
                                     }
+
 									?>
 								</div>
 								<div class="form-group col-6 col-md-2">
@@ -112,7 +119,8 @@ include('includes/navbar.php');
                                             $x++;
                                         }
                                     }
-                                    for($x=$x; $x<10; $x++){
+					$dd_max = 15;
+                                    for($x=$x; $x<$dd_max; $x++){
                                         $texto='';
                                         include('includes/dificultad_hibridos_select_option.php');
                                     }
@@ -128,7 +136,8 @@ include('includes/navbar.php');
                                         $x=0;
                                         while ($row = mysqli_fetch_array($query_run)) {
                                             $texto = $row['texto'];
-                                            include('includes/dificultad_hibridos_select_option.php');
+//                                           		$texto = str_replace("XX", "'", $texto);
+ include('includes/dificultad_hibridos_select_option.php');
                                             $x++;
                                         }
                                     }
@@ -198,4 +207,10 @@ include('includes/navbar.php');
 
 		$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro="+$(this).find(":selected").val());
 });
+
+
+		// A $( document ).ready() block.
+//$( document ).ready(function() {
+//	$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro="+document.getElementById('Basemark0').value);
+//})
 </script>
