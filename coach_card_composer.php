@@ -115,6 +115,7 @@ if(mysqli_num_rows($query_run) == 0){
 			<!-- Titulo página y pdf -->
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
+				<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_rutina=<?php echo $id_rutina;?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
 				</h4>
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#addUserProfile">Añadir transición</button>
 				<form action="./rutinas.php" method="post" class="form d-inline">

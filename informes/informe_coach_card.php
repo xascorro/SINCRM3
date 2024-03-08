@@ -28,9 +28,10 @@ $GLOBALS["footer"] = $competicion['footer_informe'];
 $id_rutina=$_GET['id_rutina'];
 $id_competicion=$_GET['id_competicion'];
 ////****************************//
-$titulo = $_GET['titulo'];
-$titulo_documento = $_SESSION['nombre_competicion_activa']."<br>$titulo";
-$nombre_documento = $titulo.' '.$_SESSION['nombre_competicion_activa'].'.pdf';
+$titulo = 'Coach Card Composer';
+$titulo_documento = $_SESSION['nombre_competicion_activa']."<br>".$titulo;
+$titulo_documento = $_GET['id_rutina'].' '.$titulo;
+$nombre_documento = $_GET['id_rutina'].' Coach Card Composer.pdf';
 $GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."\n <br> Fecha: ".dateAFecha($GLOBALS['fecha']);
 $logo_header_width= 100;
 $GLOBALS['header_image'] = '../'.$GLOBALS['header'];
@@ -42,7 +43,7 @@ class MYPDF extends TCPDF {
     //Page header
     public function Header() {
         // Logo
-        $this->SetFont('helvetica', 12);
+        $this->SetFont('helvetica', 8);
         $this->WriteHTML('<img style="border-bottom:1px #e92662;" src="'.$GLOBALS['header_image'].'">', true, false, true, false, '');
         $this->SetXY(25,12);
         $this->WriteHTML('<div style="text-align:center; font-size:large; font-weight:bold">'.$GLOBALS['titulo_documento']."</div>", true, false, true, false, '');
@@ -63,7 +64,7 @@ $h = '';
 
         $this->SetXY(16,275);
 		$pagenumtxt = $this->getAliasNumPage().' de '.$this->getAliasNbPages();
-        $this->WriteHTML('<div style="text-align:right; font-size:large; font-weight:bold">'.$GLOBALS['footer_substring'].'<br>'.$pagenumtxt.'</div>', true, false, true, false, '');
+        $this->WriteHTML('<div style="text-align:right; font-size:large; font-weight:bold">'.$GLOBALS['footer_substring'].'</div>', true, false, true, false, '');
     }
 }
 
@@ -118,12 +119,23 @@ $pdf->SetFont('helvetica', 'B', 14);
 $error_color = "#E65B5E";
 $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#F7F7F7";
+
+if(isset($_GET['id_rutina'])){
+	$query = "SELECT id FROM rutinas WHERE id=".$_GET['id_rutina']." ORDER by id_fase";
+}elseif(isset($_GET['id_club'])){
+	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion and id_club=".$_GET['id_club']." ORDER by id_fase";
+}elseif(isset($_GET['id_competicion'])){
+	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion ORDER by id_fase";
+}
+$query_rutinas = mysqli_query($connection,$query);
+		while ($id_rutina = mysqli_fetch_assoc($query_rutinas)) {
+			$id_rutina = $id_rutina['id'];
+
+
 // add a page
 $pdf->AddPage();
-//$html ="<table  nobr=true style='border-right:0.1px'>";
-//$html = '<table border="1" align="center" bordercolor="blue" cellspacing="0">';
-$html = '<table border="1" cellspacing="0" paddig="1">';
-$query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades WHERE fases.id=".$_GET['id_fase']." and categorias.id = fases.id_categoria and modalidades.id = fases.id_modalidad";
+$html = '<table border="1" cellpadding="4" style="font-size:12">';
+$query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades, rutinas WHERE fases.id=rutinas.id_fase and rutinas.id='$id_rutina' and categorias.id = fases.id_categoria and modalidades.id = fases.id_modalidad";
         $nombres = mysqli_fetch_assoc(mysqli_query($connection,$query));
         $nombre_modalidad = ".".$nombres['modalidad'];
         $nombre_categoria = $nombres['categoria'];
@@ -139,56 +151,164 @@ $query_run = mysqli_query($connection,$query);
 if(mysqli_num_rows($query_run) > 0){
 	$row = mysqli_fetch_assoc($query_run);
 	//nombre club
-//	$html .= "<thead>";
 	$html .= "<tr>";
 	$html .= '<td colspan="2" width="20%">Club</td>';
-	$html .= '<td colspan="6" width="80%">'.$row['nombre_club'].'</td>';
+	$html .= '<td colspan="4" width="69%">'.$row['nombre_club'].'</td>';
+	$html .= '<td align="right" colspan="2" width="11%">#'.$row['id'].'</td>';
 	$html .= "</tr>";
-//	//nombre participantes
+
+	//	//nombre participantes
 	$html .= '<tr>';
 	$html .= '<td colspan="2" width="20%">Competición</td>';
 	$html .= '<td colspan="6" width="80%">'.$_SESSION['nombre_competicion_activa'].'</td>';
 	$html .= "</tr>";
-//
-//	//nombre fase
-//	$html .= "<tr>";
-//	$html .= "<td colspan='2'>Evento</td>";
-//	$html .= "<td colspan='6'>".$row['nombre_modalidad']." ".$row['nombre_categoria']."</td>";
-//	$html .= "</tr>";
-//
-//	//tema
-//	$html .= "<tr>";
-//	$html .= "<td colspan='2'>Tema</td>";
-//	$html .= "<td colspan='6'>".$row['tematica']."</td>";
-//	$html .= "</tr>";
-//
-//	//nombres participantes
-//	$html .= "<tr>";
-//	$html .= "<td colspan='2'>Participantes</td>";
-//	$html .= "<td colspan='6'>".$nombres."</td>";
-//	$html .= "</tr>";
-//	$html .= "</head>";
 
-//	//texto
-//	$html .= "<tr>";
-//	$html .= "<td colspan='8'>ELEMENTOS EN ORDER DE EJECUCIÓN</td>";
-//	$html .= "</tr>";
-//	$html .= "<tr>";
-//	$html .= "<td>TIME</td><td>PART</td><td>EL</td><td>BASEMARK</td><td>DIFFICULTAD DECLARADA</td><td>BONUS</td><td>DD</td><td>TC</td>";
-//	$html .= "</tr>";
+	//	//nombre fase
+	$html .= '<tr>';
+	$html .= '<td colspan="2">Evento</td>';
+	$html .= '<td colspan="6">'.$row['nombre_modalidad'].' '.$row['nombre_categoria'].'</td>';
+	$html .= '<td align="right" colspan="2">'.$row['orden'].'</td>';
 
-//	$html .= "<h5>#".$id_rutina.$row['nombre_modalidad']." ".$row['nombre_categoria']."</h5>";
-//	$html .= $row['nombre_club'].' (.....'.$nombres.')';
+	$html .= '</tr>';
+
+	//tema
+	$html .= '<tr>';
+	$html .= '<td colspan="2">Tema</td>';
+	$html .= '<td colspan="6">'.$row['tematica'].'</td>';
+	$html .= '</tr>';
+
+	//nombres participantes
+	$html .= '<tr>';
+	$html .= '<td colspan="2">Participantes</td>';
+	$html .= '<td colspan="6" style="font-size:8">'.$nombres.'</td>';
+	$html .= '</tr>';
+	$html .= '</table>';
+
+	$html .= '<br>&nbsp;<br>';
+
+	//	//texto
+	$html .= '<table border="1" cellpadding="4" style="margin-top:3px, font-size:12">';
+	$html .= '<tr>';
+	$html .= '<td colspan="8" align="center">ELEMENTOS EN ORDEN DE EJECUCIÓN</td>';
+	$html .= '</tr>';
+	$html .= '</table>';
+
+	$html .= '<br>&nbsp;<br>';
+
+	//cabecera tabla
+	$html .= '<table border="1" cellpadding="4" style="margin-top:3px, font-size:12">';
+	$html .= '<tr align="center" style="font-size:8">';
+	$html .= '<td width="10%">TIME</td><td width="10%">PART</td><td width="4%">EL</td><td width="9%">BM</td><td width="40%">DIFFICULTAD DECLARADA</td><td width="16%">BONUS</td><td width="5%">DD</td><td width="6%" style="background-color:#CECECE">TC</td>';
+	$html .= '</tr>';
+
+	//fila de declaración del hibrido
+	$i = 1;
+	for($row['elementos_coach_card'];$i<=$row['elementos_coach_card'];$i++){
+		$query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto = 3 and id_rutina=$id_rutina and elemento = $i";
+		$query_elementos = mysqli_query($connection,$query);
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+//			$html .= '<tr align="center" style="font-size:10"><td colspan="7" style="background-color:'.$elemento['color'].'">';
+			$html .= '<tr align="center" style="font-size:10"><td colspan="7">';
+			$html .= $elemento['nombre'];
+			$id_tipo_hibrido = $elemento['id'];
+			$html .= '</td>';
+			$html .= '<td style="background-color:#CECECE">';
+			$html .= '</td>';
+			$html .= '</tr>';
+		}
+
+		//tiempos
+		$html .= '<tr style="font-size:7">';
+		$query = "SELECT texto from hibridos_rutina where tipo='time_inicio' and id_rutina=$id_rutina and elemento = $i";
+		$query_elementos = mysqli_query($connection,$query);
+		$html .= "<td>";
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+			$html .= $elemento['texto']." - ";
+		}
+		$query = "SELECT texto from hibridos_rutina where tipo='time_fin' and id_rutina=$id_rutina and elemento = $i";
+
+		$query_elementos = mysqli_query($connection,$query);
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+			$html .= $elemento['texto'];
+		}
+		$html .= "</td>";
+
+		//tipo de hibrido
+		$query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto <> 3 and id_rutina=$id_rutina and elemento = $i";
+		$query_elementos = mysqli_query($connection,$query);
+		$id_tipo_hibrido = '';
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+			$html .= '<td align="center" style="background-color:'.$elemento['color'].'">';
+			$html .= $elemento['nombre'].'</td>';
+			$id_tipo_hibrido = $elemento['id'];
+		}
+
+		//numero elemento
+		$html .= '<th align="center">'.$i.'</th>';
+
+		//basemark
+		$query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i and valor>0";
+		$query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i";
+		$query_elementos = mysqli_query($connection,$query);
+		$html .= '<td align="center">';
+		if(@$elemento['valor'] != '')
+			$elemento['valor'] = "(".$elemento['valor'].") ";
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+			$nombre_basemark = $elemento['texto'];
+			$html .= $elemento['texto'];
+		}
+		$html .=  "</td>";
+
+		//dificultad declarada
+		$query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and valor>0";
+		$query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and texto <> ''";
+		$query_elementos = mysqli_query($connection,$query);
+		$html .= '<td style="font-size:8">';
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+			$html .= $elemento['texto'].'&nbsp;';
+
+		}
+		$html .=  "</td>";
+
+		//bonus
+		$query = "SELECT texto, valor from hibridos_rutina where tipo='bonus' and id_rutina=$id_rutina and elemento = $i and valor>0";
+		$query_elementos = mysqli_query($connection,$query);
+		$html .= "<td>";
+		if(@$elemento['valor'] != '')
+		$elemento['valor'] = "(".$elemento['valor'].") ";
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+		$html .= $elemento['texto'].'&nbsp;';
+		}
+		$html .=  "</td>";
+
+		//dd total
+		$query = "SELECT valor from hibridos_rutina where tipo='total' and id_rutina=$id_rutina and elemento = $i";
+		$html .= '<td align="center">';
+		$query_elementos = mysqli_query($connection,$query);
+		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+		$html .= $elemento['valor'];
+		}
+		$html .= "</td>";
+
+		//gris
+		$html .= '<td style="background-color:#CECECE"></td>';
+
+
+$html .= "</tr>";
+
+
+}
 
 
 
 
-	}
-	$html .= "</table>";
 
-//$html .= "<table><tr><td>hola</td><td>adios</td></tr></table>";
-    $pdf->writeHTML($html, true, false, false, false, '');
 
+}
+$html .= "</table>";
+
+$pdf->writeHTML($html, true, false, false, false, '');
+}
 $pdf->Output($nombre_documento, 'I');
 
 

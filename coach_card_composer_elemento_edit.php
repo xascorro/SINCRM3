@@ -210,7 +210,9 @@ include('includes/navbar.php');
 
 
 		// A $( document ).ready() block.
-//$( document ).ready(function() {
-//	$(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro="+document.getElementById('Basemark0').value);
-//})
+$( document ).ready(function() {
+	if($("#id_tipo_hibrido").val() == 4){
+			$(".bonus_tipo_hibrido").attr("disabled",true);
+		}
+})
 </script>
