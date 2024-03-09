@@ -117,8 +117,7 @@ $pdf->SetFont('helvetica', 'B', 14);
 $error_color = "#E65B5E";
 $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#F7F7F7";
-// add a page
-$pdf->AddPage();
+
 
 $query = "select * from fases where id_competicion = '".$_SESSION["id_competicion_activa"]."' ORDER BY orden";
 
@@ -131,13 +130,12 @@ while($fase = mysqli_fetch_array($fases)){
     $nombre_modalidad=mysqli_result(mysqli_query($connection,$query),0);
     $id_categoria=mysqli_result(mysqli_query($connection,$query),0,1);
 
+	// add a page
+	$pdf->AddPage();
 	$pdf->SetFont('helvetica', '', 10);
-//	$html = "<h2> $nombre_modalidad $nombre_categoria </h2>";
-//	$pdf->writeHTML($html, true, false, true, false, '');
 
 	$html = '<table cellpadding="2" cellspacing="2" nobr="false">';
 	//segun titulo de documento
-//	if($titulo =='Rutinas' or $titulo =='Orden de salida'){
 
         if($titulo == 'Orden de salida')
             $order_by = 'order by orden';
@@ -150,7 +148,7 @@ while($fase = mysqli_fetch_array($fases)){
         $cantidad = ' ('.mysqli_num_rows($rutinas).')';
 
     if(mysqli_num_rows($rutinas)>0) {
-	   $html .= '<thead><tr><th width="80%"><h1>'.$nombre_modalidad.' '.$nombre_categoria.$cantidad.'</h1></th><th></th></tr></thead>';
+	   $html .= '<thead><tr><th width="80%"><h1>'.$nombre_modalidad.' '.$nombre_categoria.'</h1></th><th></th></tr></thead>';
 	   $order_by = "";
     }
 //}
@@ -178,11 +176,14 @@ while($fase = mysqli_fetch_array($fases)){
 		//segun titulo de documento
 		if($titulo =='Orden de salida'){
 			$preswimmer = '';
-			if($rutina['orden']=='-1')
+			if($rutina['orden']=='-1'){
 				$preswimmer = " (PRESWIMMER)";
-            else if($rutina['orden']=='-2')
+				$rutina['orden'] = '';
+			}else if($rutina['orden']=='-2'){
 				$preswimmer = " (EXHIBICIÓN)";
-			$html .='<tr style="background-color:'.$rutina_color.'"><td width="90%"><h3>'.$nombre_rutina.$preswimmer.'</h3></td><td width="10%"><h1>'.$rutina['orden'].'</h1></td></tr>';
+				$rutina['orden'] = '';
+			}
+			$html .='<tr style="background-color:'.$rutina_color.'"><td width="10%"><h2>'.$rutina['orden'].'</h2></td><td width="90%"><h3>'.$nombre_rutina.$preswimmer.'</h3></td></tr>';
 //		}elseif($titulo =='Rutinas'){
 		}else{
 			$preswimmer = '';
@@ -209,10 +210,9 @@ while($fase = mysqli_fetch_array($fases)){
 				$year=$participante['año_nacimiento'];
 				 //segun titulo de documento
 				if($titulo =='Orden de salida'){
-					$html .='<tr style="background-color:'.$rutina_color.'"><td colspan="2">&nbsp;&nbsp;'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td></tr>';
+					$html .='<tr style="background-color:'.$rutina_color.'"><td></td><td>&nbsp;&nbsp;&nbsp;&nbsp;'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td></tr>';
 //				}elseif($titulo =='Rutinas'){
-				}{
-					// $html .='<tr style="background-color:'.$rutina_color.'"><td width="50%">'.$apellidos_participante.', '.$nombre_participante.' '.$titular.'</td><td width="25%">'.$licencia_participante.'</td><td width="25%" style="text-align:right;">'.$fecha_nacimiento_participante.'</td></tr>';
+				}else{
 					$html .='<tr style="background-color:'.$rutina_color.'"><td>'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td><td></td></tr>';
 			}
 				//fin segun titulo documento
