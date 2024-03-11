@@ -1,11 +1,11 @@
 <?php
 //FACTORIZACION
-$f_chomu = 1.0; //leer de la DB más adelante
-$factor_Performance = 1;
-$factor_Transitions = 1;
-$factor_hybrid = 1.0;
-$factor_acro = 0.5;
-$factor_tre = 0.5;
+//$f_chomu = 1.0; //leer de la DB más adelante
+//$factor_Performance = 1;
+//$factor_Transitions = 1;
+//$factor_hybrid = 1.0;
+//$factor_acro = 0.5;
+//$factor_tre = 0.5;
 //FIN FACTORIZACION
 
 
@@ -30,11 +30,16 @@ include('includes/navbar.php');
     else{
         $id_rutina = $_GET['id_rutina'];
     }
-      $query = "SELECT fases.id, fases.f_chomu FROM fases, rutinas WHERE rutinas.id='$id_rutina' and fases.id=id_fase";
-    $id_fase = mysqli_query($connection,$query);
-      $id_fase = mysqli_fetch_assoc($id_fase)['id'];
-    $f_chomu = mysqli_query($connection,$query);
-      $f_chomu = mysqli_fetch_assoc($f_chomu)['f_chomu'];
+	$query = "SELECT fases.id, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre FROM fases, rutinas WHERE rutinas.id='$id_rutina' and fases.id=id_fase";
+	$fase = mysqli_query($connection, $query);
+	$fase = mysqli_fetch_assoc($fase);
+	$id_fase = $fase['id'];
+	$f_chomu = $fase['f_chomu'];
+	$f_performance = $fase['f_performance'];
+	$f_transitions = $fase['f_transitions'];
+	$f_hybrid = $fase['f_hybrid'];
+	$f_acro = $fase['f_acro'];
+	$f_tre = $fase['f_tre'];
 
 //    if(isset($_POST['id_fase']))
 //        $id_fase = $_POST['id_fase'];
@@ -80,7 +85,7 @@ include('includes/navbar.php');
 
             $query_run = mysqli_query($connection,$query);
             ?>
-            <table class="table " id="dataTable" width="100%" cellspacing="0">
+            <table class="table " id="NOdataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
                     <th colspan=3></th>
@@ -113,11 +118,11 @@ include('includes/navbar.php');
                     <tr>
                      <?php
                       if ($row['nombre'] == 'HYBRID')
-                        $factor = $factor_hybrid;
+                        $factor = $f_hybrid;
                       elseif ($row['nombre'] == 'ACROBATIC')
-                        $factor = $factor_acro;
+                        $factor = $f_acro;
                       elseif ($row['nombre'] == 'TRE')
-                        $factor = $factor_tre;
+                        $factor = $f_tre;
                       ?>
                       <th scope="row" style="background-color:<?php echo $row['color'];?>"> <?php echo $row['nombre'].$row['texto'].' F:'.$factor; ?> </th>
 
@@ -239,7 +244,7 @@ include('includes/navbar.php');
                     echo "<th></th><th></th><th>P</th>";
                     echo "<tr>";
                     echo "<th>ChoMu</th>";
-                    echo "<td>$f_chomu</td>";
+                    echo "<td>".$f_chomu."</td>";
                     ?>
                     <input type="hidden" name="f_chomu" value="<?php echo $f_chomu; ?>">
                     <?php
@@ -274,9 +279,9 @@ include('includes/navbar.php');
                       $nota_ia = $nota_ia + $nota['nota'];
                     echo "<tr>";
                     echo "<th>Performance</th>";
-                    echo "<td>$factor_Performance</td>";
+                    echo "<td>$f_performance</td>";
                     ?>
-                    <input type="hidden" name="factor_Performance" value="<?php echo $factor_Performance; ?>">
+                    <input type="hidden" name="factor_Performance" value="<?php echo $f_performance; ?>">
                     <?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
@@ -310,9 +315,9 @@ include('includes/navbar.php');
 
                     echo "<tr>";
                     echo "<th>Transitions</th>";
-                    echo "<td>$factor_Transitions</td>";
+                    echo "<td>$f_transitions</td>";
                     ?>
-                    <input type="hidden" name="factor_Transitions" value="<?php echo $factor_Transitions; ?>">
+                    <input type="hidden" name="factor_Transitions" value="<?php echo $f_transitions; ?>">
                     <?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);

@@ -94,7 +94,7 @@ $h = '';
 
 
 // create new PDF document
-$pdf = new MYPDF('landscape', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new MYPDF('portrait', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 //define ('PDF_HEADER_LOGO', 'kki.jpg');
 // set document information
 $pdf->SetCreator(PDF_CREATOR);
@@ -136,23 +136,23 @@ if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
 // set font
 $pdf->SetFont('helvetica', 'B', 14);
 
-$hojas_por_pagina = 6;
+$hojas_por_pagina = 4;
 $contador_hojas_por_pagina = 0;
 //$pdf->AddPage();
 $html = "";
 
 // -----------------------------------------------------------------------------
 //saco fases_figuras
-$query = "select id_categoria, id_modalidad, id, orden, elementos_coach_card from fases where id_competicion ='".$GLOBALS["id_competicion_activa"]."' order by orden limit 0,2";
+$query = "select id_categoria, id_modalidad, id, orden, elementos_coach_card from fases where id_competicion ='".$GLOBALS["id_competicion_activa"]."' order by orden limit 1,2";
+$query = "select id_categoria, id_modalidad, id, orden, elementos_coach_card from fases where id_competicion ='".$GLOBALS["id_competicion_activa"]."' and elementos_coach_card > 0 order by orden";
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
-
 	$query = "select nombre from categorias where id = '".$fase['id_categoria']."'";
     $nombre_categoria=mysqli_result(mysqli_query($connection,$query),0);
 	$query = "select nombre from modalidades where id = '".$fase['id_modalidad']."'";
     $nombre_modalidad=mysqli_result(mysqli_query($connection,$query),0);
-    //saco numeros de juez
-   	$query = "select nombre, numero_juez from panel_jueces, paneles where id_fase = '".$fase['id']."' and id_panel = paneles.id order by numero_juez";
+    //saco numeros de juez del panel tipo 1 (Elementos) y quito si hay un juez de con nombre Media
+   	$query = "select paneles.nombre, numero_juez from panel_jueces, paneles, jueces where id_fase = '".$fase['id']."' and id_panel = paneles.id and paneles.id_paneles_tipo = 2 and jueces.id = panel_jueces.id_juez and jueces.nombre not like 'Media' order by numero_juez";
 
    	$jueces = mysqli_query($connection,$query);
    	while($juez = mysqli_fetch_array($jueces)){
@@ -160,44 +160,64 @@ while($fase = mysqli_fetch_array($fases)){
 	   	$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' order by orden";
 	   	$ordenes = mysqli_query($connection,$query);
 	   	while($orden = mysqli_fetch_assoc($ordenes)){
+			if($orden['orden'] == '-1')
+				$orden['orden'] = 'PS';
 			//imprimo
 			$pdf->SetFont('helvetica', '', 18);
             $html = '<br>';
-			$html .= '<table align="center" border="2" width="100%">';
+			$html .= '<table align="center" border="2" width="100%" cellpadding="5">';
 			$html .= '<tr><th colspan="2"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
 			$html .= '<tr><th colspan="2">'.'<span style="font-size:16">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
-			$html .= '<tr><th>'.'<span>ELEMENTO</span></th><th>'.'<span>NOTA</span>'.'</th></tr>';
-            for ($x=1;$x<=$fase['elementos_coach_card'];$x++){
+			$html .= '<tr><th width="60%">'.'<span>ELEMENTO</span></th><th width="40%">'.'<span>NOTA</span>'.'</th></tr>';
+			$x=1;
+            for ($x;$x<=$fase['elementos_coach_card'];$x++){
                 $query = "SELECT nombre, texto FROM hibridos_rutina, tipo_hibridos WHERE tipo like 'part' and texto=tipo_hibridos.id and nombre not like 'TRANSITION' and id_rutina = ".$orden['id']." and elemento=$x";
                 $tipo_elemento = mysqli_result(mysqli_query($connection,$query),0);
+                $tipo_acro = mysqli_result(mysqli_query($connection,$query),1,2);
                 if($tipo_elemento == 'TRE'){
                     $query = "select texto from hibridos_rutina where texto like '%-TRE%' and id_rutina = ".$orden['id']." and elemento=$x";
                     $nombre = mysqli_result(mysqli_query($connection,$query),0);
                     $nombre = substr($nombre,2,5);
+                }else if($tipo_elemento == 'ACROBATIC'){
+                    $query = "SELECT texto FROM hibridos_rutina WHERE tipo like 'basemark' and id_rutina = ".$orden['id']." and elemento=$x";
+                    $nombre = mysqli_result(mysqli_query($connection,$query),0);
                 }else{
                     $nombre = $tipo_elemento;
-
                 }
-                $html .= "<tr><td style='align:left'>$x - $nombre</td><td></td></tr>";
+                $html .= '<tr align="left"><td> '.$x.' - '.$nombre.'</td><td></td></tr>';
             }
+
+			if($x<8){
+				$rowspan = '<br>';
+			}else{
+				$rowspan = '';
+			}
+			if($x<=9){
+				for ($x;$x<=9;$x++){
+					$rowspan .='<br>';
+				}
+				$html .= '<tr><td colspan="2">'.$rowspan.'</td></tr>';
+			}
 			$html .= '</table>';
+
+			//diseño 2 x 2
 			if($contador_hojas_por_pagina == 0){
 				$pdf->AddPage();
 				$html2 .= '<table><tr><td>'.$html.'</td>';
 				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina < 2){
-				$html2 .= '<td>'.$html.'</td>';
-				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 2){
+//			}elseif ($contador_hojas_por_pagina < 2){
+//				$html2 .= '<td>'.$html.'</td>';
+//				$contador_hojas_por_pagina++;
+			}elseif ($contador_hojas_por_pagina == 1){
 				$html2 .= '<td>'.$html.'</td></tr><tr><td colspan=3></td></tr>';
 				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 3){
+			}elseif ($contador_hojas_por_pagina == 2){
 				$html2 .= '<tr><td>'.$html.'</td>';
 				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 4){
-				$html2 .= '<td>'.$html.'</td>';
-				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 5){
+//			}elseif ($contador_hojas_por_pagina == 4){
+//				$html2 .= '<td>'.$html.'</td>';
+//				$contador_hojas_por_pagina++;
+			}elseif ($contador_hojas_por_pagina == 3){
 				$html2 .= '<td>'.$html.'</td></tr></table>';
 				$contador_hojas_por_pagina = 0;
 				$pdf->writeHTML($html2, true, false, false, false, '');
@@ -208,7 +228,7 @@ while($fase = mysqli_fetch_array($fases)){
 	}
 }
 				$html_extra = "";
-				if($contador_hojas_por_pagina == 2)
+				if($contador_hojas_por_pagina == 1)
 					$html_extra = '<td></td></tr></table>';
 				$pdf->writeHTML($html2.$html_extra, true, false, false, false, '');
 

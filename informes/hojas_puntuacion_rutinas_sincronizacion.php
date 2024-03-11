@@ -115,7 +115,7 @@ $pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
 // set margins
 //$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$pdf->SetMargins(1,5,5);
+$pdf->SetMargins(5,5,5);
 $pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
 $pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
 
@@ -150,12 +150,7 @@ while($fase = mysqli_fetch_array($fases)){
     $nombre_categoria=mysqli_result(mysqli_query($connection,$query),0);
 	$query = "select nombre from modalidades where id = '".$fase['id_modalidad']."'";
     $nombre_modalidad=mysqli_result(mysqli_query($connection,$query),0);
-    //saco numeros de juez del panel tipo 2 (Artístico) y quito si hay un juez de con nombre Media
-   	$query = "select paneles.nombre, numero_juez from panel_jueces, paneles, jueces where id_fase = '".$fase['id']."' and id_panel = paneles.id and paneles.id_paneles_tipo = 2 and jueces.id = panel_jueces.id_juez and jueces.nombre not like 'Media' order by numero_juez";
-
-   	$jueces = mysqli_query($connection,$query);
-   	while($juez = mysqli_fetch_array($jueces)){
-	   	//saco orden de salida nadadoras
+    	   	//saco orden de salida nadadoras
 	   	$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' order by orden";
 	   	$ordenes = mysqli_query($connection,$query);
 	   	while($orden = mysqli_fetch_assoc($ordenes)){
@@ -164,49 +159,36 @@ while($fase = mysqli_fetch_array($fases)){
 			//imprimo
 			$pdf->SetFont('helvetica', '', 18);
             $html = '<br>';
-			$html .= '<table align="center" border="2" width="100%">';
-			$html .= '<tr><th colspan="2"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
-			$html .= '<tr><th colspan="2">'.'<span style="font-size:16">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
-			$html .= '<tr><th>'.'<span>IMP. ARTÍSTICA</span></th><th>'.'<span>NOTA</span>'.'</th></tr>';
+			$html .= '<table align="center" border="3" width="100%">';
+			$html .= '<tr><th colspan="3"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
+			$html .= '<tr><th colspan="3">'.'<span style="font-size:16">ERRORES DE SINCRONIZACIÓN</span></th></tr>';
+			$html .= '<tr><th colspan="3">'.'<span style="font-size:16">'.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
 
-            $html .= "<tr><td style='align:left'>ChoMu<br></td><td></td></tr>";
-            $html .= "<tr><td style='align:left'>Performance<br></td><td></td></tr>";
-            $html .= "<tr><td style='align:left'>Transitions<br></td><td></td></tr>";
+            			$html .= '<tr><th><span>PEQUEÑOS</span></th><th><span>OBVIOS</span></th><th><span>MAYORES</span></th></tr>';
+
 			$rowspan = '';
-			for ($x=0;$x<=6;$x++){
+			for ($x=0;$x<=12;$x++){
 				$rowspan .='<br>';
 			}
-			$html .= '<tr><td colspan="2">'.$rowspan.'</td></tr>';
+
+			$html .= '<tr><td>'.$rowspan.'</td><td>'.$rowspan.'</td><td>'.$rowspan.'</td></tr>';
 			$html .= '</table>';			//diseño 2 x 2
 			if($contador_hojas_por_pagina == 0){
 				$pdf->AddPage();
-				$html2 .= '<table><tr><td>'.$html.'</td>';
+				$html2 .= '<table><tr><td>'.$html.'</td></tr><tr><td colspan="3"></td></tr><tr><td colspan="3"></td></tr>';
 				$contador_hojas_por_pagina++;
-//			}elseif ($contador_hojas_por_pagina < 2){
-//				$html2 .= '<td>'.$html.'</td>';
-//				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 1){
-				$html2 .= '<td>'.$html.'</td></tr><tr><td colspan=3></td></tr>';
-				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 2){
-				$html2 .= '<tr><td>'.$html.'</td>';
-				$contador_hojas_por_pagina++;
-//			}elseif ($contador_hojas_por_pagina == 4){
-//				$html2 .= '<td>'.$html.'</td>';
-//				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 3){
-				$html2 .= '<td>'.$html.'</td></tr></table>';
+				$html2 .= '<tr><td>'.$html.'</td></tr></table>';
 				$contador_hojas_por_pagina = 0;
 				$pdf->writeHTML($html2, true, false, false, false, '');
 				$html2 = "";
 			}
-
 		}
-	}
+
 }
 				$html_extra = "";
 				if($contador_hojas_por_pagina == 1)
-					$html_extra = '<td></td></tr></table>';
+					$html_extra = '</table>';
 				$pdf->writeHTML($html2.$html_extra, true, false, false, false, '');
 
 // -----------------------------------------------------------------------------

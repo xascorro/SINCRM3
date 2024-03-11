@@ -125,7 +125,7 @@ if(isset($_GET['id_rutina'])){
 }elseif(isset($_GET['id_club'])){
 	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion and id_club=".$_GET['id_club']." ORDER by id_fase";
 }elseif(isset($_GET['id_competicion'])){
-	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion ORDER by id_fase";
+	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion ORDER by id_fase, rutinas.orden";
 }
 $query_rutinas = mysqli_query($connection,$query);
 		while ($id_rutina = mysqli_fetch_assoc($query_rutinas)) {
@@ -142,9 +142,13 @@ $query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad
 
 
 
-$query = "SELECT rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
+$query = "SELECT rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, rutinas.orden as orden, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 $nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = $id_rutina";
 $nombres = mysqli_result(mysqli_query($connection,$nombres));
+$nombres_reservas = "SELECT group_concat(nadadoras.nombre, ' (R)' SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'si' and id_rutina = $id_rutina";
+$nombres_reservas = mysqli_result(mysqli_query($connection,$nombres_reservas));
+if($nombres_reservas <> NULL)
+	$nombres .= ', '.$nombres_reservas;
 
 $query_run = mysqli_query($connection,$query);
 
@@ -166,8 +170,10 @@ if(mysqli_num_rows($query_run) > 0){
 	//	//nombre fase
 	$html .= '<tr>';
 	$html .= '<td colspan="2">Evento</td>';
-	$html .= '<td colspan="6">'.$row['nombre_modalidad'].' '.$row['nombre_categoria'].'</td>';
-	$html .= '<td align="right" colspan="2">'.$row['orden'].'</td>';
+	$html .= '<td colspan="4">'.$row['nombre_modalidad'].' '.$row['nombre_categoria'].'</td>';
+	if ($row['orden'] == -1)
+		$row['orden'] = 'PS';
+	$html .= '<td align="right" colspan="2">Orden de salida: '.$row['orden'].'</td>';
 
 	$html .= '</tr>';
 

@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-    error_reporting(E_ALL);
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
@@ -127,7 +126,7 @@ include('includes/navbar.php');
                                 </th>
                             </tr>
                             <tr>
-                                <th scope="col" class="col col-1  text-center">Orden</th>
+                                <th scope="col" class="col col-1  text-center"><i class="fa-solid fa-list-ol"></i></th>
                                 <th scope="col" class="col col-1 ">#</th>
                                 <th scope="col" class="col col-2 ">Club</th>
                                 <th scope="col" class="col col-8 ">Nadadoras</th>

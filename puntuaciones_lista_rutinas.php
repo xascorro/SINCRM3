@@ -51,10 +51,10 @@ include('includes/navbar.php');
 
             $query_run = mysqli_query($connection,$query);
             ?>
-            <table class="table " id="dataTable" width="100%" cellspacing="0">
+            <table class="table " id="nodataTable" width="100%" cellspacing="0">
               <thead>
                 <tr>
-                  <th scope="col">Orden</th>
+                  <th scope="col"><i class="fa-solid fa-list-ol"></i></th>
                   <th scope="col">#</th>
                   <th scope="col">Fase</th>
                  <th scope="col">Club</th>
@@ -97,8 +97,7 @@ include('includes/navbar.php');
                         </td>
                         </tr>
                         <tr>
-                            <td colspan="4"></td>
-                            <td colspan="2">
+                            <td colspan="6">
                                 <?php
                       $query = "SELECT nadadoras.nombre, apellidos FROM rutinas_participantes, nadadoras WHERE id_nadadora = nadadoras.id and id_rutina = ".$row['id'];
                       $nadadoras = mysqli_query($connection,$query);

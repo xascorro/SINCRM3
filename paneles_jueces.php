@@ -43,15 +43,16 @@ include('includes/navbar.php');
           </div>
           <form action="paneles_jueces_code.php" method="POST">
             <div class="modal-body">
+
               <div class="form-group">
                 <?php
-                echo "<label for='id_juez'>Juez</label>";
-                include('./includes/juez_select_option.php');
+				include('./includes/puestos_select_option.php');
                 ?>
               </div>
               <div class="form-group">
                 <?php
-				include('./includes/puestos_select_option.php');
+                echo "<label for='id_juez'>Juez</label>";
+                include('./includes/juez_select_option.php');
                 ?>
               </div>
               
@@ -278,7 +279,7 @@ include('includes/navbar.php');
                 $query = "SELECT fases.id as id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
             else{
-                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -291,7 +292,7 @@ include('includes/navbar.php');
                       <?php echo @$row['nombre']. $row['nombre_categoria']." - ".$row['numero']." - ".$row['nombre_figura']; ?></h5>
                     <?php
                      if(@$row['elementos_coach_card']>0 or $_SESSION['figuras'] == 'si'){
-                        $query = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles_tipo.nombre as panel_tipo from paneles, paneles_tipo where id_paneles_tipo=paneles_tipo.id and obsoleto like 'no'";
+                        $query = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles_tipo.nombre as panel_tipo from paneles, paneles_tipo where id_paneles_tipo=paneles_tipo.id and obsoleto like 'no' and id_competicion = '".$_SESSION['id_competicion_activa']."'";
                         $query_run2 = mysqli_query($connection,$query);
                         while ($row2 = mysqli_fetch_assoc($query_run2)) {
                         ?>
@@ -333,8 +334,47 @@ include('includes/navbar.php');
                         <?php
                         }
                      }else {
-                         echo 'no';
-                     }
+$query = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles_tipo.nombre as panel_tipo from paneles, paneles_tipo where id_paneles_tipo=paneles_tipo.id and obsoleto like 'si' and puntua like 'si' and id_competicion = '".$_SESSION['id_competicion_activa']."'";
+                        $query_run2 = mysqli_query($connection,$query);
+                        while ($row2 = mysqli_fetch_assoc($query_run2)) {
+                        ?>
+                        <table class="table " id="dataTable" width="100%" cellspacing="0">
+                        <tbody>
+                    <tr>
+                      <td> <?php echo $row2['nombre']." ".$row2['panel_tipo']; ?> </td>
+                    </tr>
+                       <?php
+                            for($x=1;$x<=$row2['numero_jueces'];$x++){
+                                $query = "SELECT * from panel_jueces WHERE id_panel = ".$row2['id']." and numero_juez = ".$x." and id_fase = ".$row['id'];
+                                echo "<tr><td>";
+                                $_POST['id_juez'] = @mysqli_fetch_assoc(mysqli_query($connection,$query))['id_juez'];
+                                $id = @mysqli_fetch_assoc(mysqli_query($connection,$query))['id'];
+                                ?>
+                                <form action="paneles_jueces_code.php" method="POST">
+                                <div class="form-group row">
+                                <div class="col">
+                                <?php
+                                include('./includes/juez_select_option.php');?>
+                                <input type="hidden" name="id" value=" <?php echo $id; ?> ">
+                                <input type="hidden" name="numero_juez" value=" <?php echo $x; ?> ">
+                                <input type="hidden" name="id_panel" value=" <?php echo $row2['id']; ?> ">
+                                <input type="hidden" name="id_fase" value=" <?php echo $row['id']; ?> ">
+<!--                                <input type="hidden" name="id_juez" value=" <?php echo $_POST['id_juez']; ?> ">-->
+                                </div>
+                                <div class="col">
+                                <button type="submit" class="btn btn-primary" name="panel_jueces_save_btn">Guardar</button>
+                                </div>
+                            </div>
+                                </form>
+                                </td></tr>
+                                <?php
+                            }
+                        ?>
+                         </tbody>
+                        </table>
+
+                        <?php
+                        }                     }
 
                       }
 

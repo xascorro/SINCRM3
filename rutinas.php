@@ -121,12 +121,13 @@ include('includes/navbar.php');
 					<?php if($_SESSION['id_rol'] != 5){
 	?>
 					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
-					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
+					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
+					<a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion;?>" class="btn btn-info shadow"><i class="fa-solid fa-music"></i> ZIP</a>
 					<?php
                     }else{
 					?>
 					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
-					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
+					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
 					<?php
 					}
 					?>
@@ -332,7 +333,7 @@ if( $enable_musica == ''){
                           ?>
 								<td>
 									<form action="coach_card_composer.php" method="post">
-										<button class="btn btn-warning btn-circle" type="submit" name=""><i class="fa fa-solid fa-puzzle-piece"></i></button>
+										<button class="btn btn-warning btn-circle" type="submit" name="" <?php echo $enable_coach_card;?>><i class="fa fa-solid fa-puzzle-piece"></i></button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']?>">
 										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">

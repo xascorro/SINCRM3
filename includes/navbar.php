@@ -127,10 +127,10 @@ if($_SESSION['id_rol'] == '1'){
               if (@$_SESSION['competicion_figuras'] == ''){
             ?>
     				<a class="collapse-item" href="rutinas.php">
-    					<i class="fa fa-fw fa-balance-scale-right"></i><span>Rutinas</span>
+    					<i class="fa-solid fa-users-line"></i><span> Rutinas</span>
     				</a>
     				<a class="collapse-item" href="sorteo_rutinas.php">
-    					<i class="fa-solid fa-wand-magic-sparkles"></i><span>Orden de salida</span>
+    					<i class="fa-solid fa-wand-magic-sparkles"></i><span> Sorteo</span>
     				</a>
     				<?php
               }else if (@$_SESSION['competicion_figuras'] == 'si'){
@@ -139,13 +139,13 @@ if($_SESSION['id_rol'] == '1'){
     					<i class="fa-regular fa-flag"></i><span> Inscripciones Figuras</span>
     				</a>
     				<a class="collapse-item" href="sorteo_figuras.php">
-    					<i class="fa-solid fa-wand-magic-sparkles"></i><span>Orden de salida</span>
+    					<i class="fa-solid fa-wand-magic-sparkles"></i><span> Sorteo</span>
     				</a>
     				<?php
               }
               ?>
     				<a class="collapse-item" href="puntuaciones_lista_fases.php">
-    					<i class="fas fa-calculator"></i><span>Puntuaciones</span></a>
+    					<i class="fas fa-calculator"></i><span> Puntuaciones</span></a>
     			</div>
     		</div>
     	</li>
