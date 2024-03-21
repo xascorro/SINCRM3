@@ -120,12 +120,15 @@ $error_color = "#E65B5E";
 $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#F7F7F7";
 
+//una rutina
 if(isset($_GET['id_rutina'])){
 	$query = "SELECT id FROM rutinas WHERE id=".$_GET['id_rutina']." ORDER by id_fase";
+//las rutinas de un club
 }elseif(isset($_GET['id_club'])){
-	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion and id_club=".$_GET['id_club']." ORDER by id_fase";
+	$query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion and id_club=".$_GET['id_club']." and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
+//todas las rutinas
 }elseif(isset($_GET['id_competicion'])){
-	$query = "SELECT id FROM rutinas WHERE id_competicion=$id_competicion ORDER by id_fase, rutinas.orden";
+	$query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion  and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
 }
 $query_rutinas = mysqli_query($connection,$query);
 		while ($id_rutina = mysqli_fetch_assoc($query_rutinas)) {
@@ -136,9 +139,9 @@ $query_rutinas = mysqli_query($connection,$query);
 $pdf->AddPage();
 $html = '<table border="1" cellpadding="4" style="font-size:12">';
 $query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades, rutinas WHERE fases.id=rutinas.id_fase and rutinas.id='$id_rutina' and categorias.id = fases.id_categoria and modalidades.id = fases.id_modalidad";
-        $nombres = mysqli_fetch_assoc(mysqli_query($connection,$query));
-        $nombre_modalidad = ".".$nombres['modalidad'];
-        $nombre_categoria = $nombres['categoria'];
+$nombres = mysqli_fetch_assoc(mysqli_query($connection,$query));
+$nombre_modalidad = ".".$nombres['modalidad'];
+$nombre_categoria = $nombres['categoria'];
 
 
 

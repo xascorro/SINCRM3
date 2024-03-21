@@ -157,15 +157,6 @@ include('includes/navbar.php');
                 	$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 
             $query_run = mysqli_query($connection,$query);
-
-
-
-
-
-
-
-
-
             ?>
 					<table class="table " id="dataTable" width="100%" cellspacing="0">
 						<thead>
@@ -301,15 +292,15 @@ if( $enable_musica == ''){
 						  $preswimmer = ' (PRESWIMMER)'
 							?>
 							<tr>
-								<th scope="row"> <?php echo $row['id']; ?> </th>
-								<td> <?php echo $row['nombre_modalidad']." ".$row['nombre_categoria'].$preswimmer ?> </td>
+								<th scope="row" class="align-middle"> <?php echo $row['id']; ?> </th>
+								<td  class="align-middle"> <blockquote class="blockquote"><?php echo $row['nombre_modalidad']." ".$row['nombre_categoria'].$preswimmer.'</blockquote> <figcaption class="blockquote-footer">('.$nombres.')</figcaption>'; ?> </td>
 								<?php if($_SESSION['id_rol'] != 5) {
 
-								echo '<td>'.$row['nombre_club'].' '.$row['nombre_rutina'].'</td>';
+								echo '<td class="align-middle">'.$row['nombre_club'].' '.$row['nombre_rutina'].'</td>';
 								}
 
                       ?>
-								<td>
+								<td  class="align-middle">
 									<form action="./rutinas_participantes.php" method="post">
 										<button class="btn btn-primary" type="submit" name="" <?php echo $enable_inscripcion ?>><i class="fas fa-users"></i></button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
@@ -318,7 +309,7 @@ if( $enable_musica == ''){
 										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
 									</form>
 								</td>
-								<td>
+								<td  class="align-middle">
 									<?php
 									if(file_exists($path.$music_name)){
                                 		$icon = '<i class="fa-solid fa-play"></i>';
@@ -331,7 +322,7 @@ if( $enable_musica == ''){
 								<?php
 								if($row['elementos_coach_card']>0){
                           ?>
-								<td>
+								<td  class="align-middle">
 									<form action="coach_card_composer.php" method="post">
 										<button class="btn btn-warning btn-circle" type="submit" name="" <?php echo $enable_coach_card;?>><i class="fa fa-solid fa-puzzle-piece"></i></button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']?>">
@@ -346,8 +337,16 @@ if( $enable_musica == ''){
 								<?php
                       } else
                           echo "<td></td>";
+					  ?>
+<!--					 //boton de baja rutina aqui-->
+<!--
+					  <td  class="align-middle">
+									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delRutina<?php echo $row['id']?>" <?php echo $enable_inscripcion ?>><i class="fa-regular fa-thumbs-down"></i></button>
+								</td>
+-->
+							<?php
 								if($_SESSION['id_rol'] != 5){ ?>
-								<td>
+								<td  class="align-middle">
 									<form action="rutinas_edit.php" method="post">
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
@@ -360,9 +359,10 @@ if( $enable_musica == ''){
 								}?>
 
 
-								<td>
+								<td  class="align-middle">
 									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delRutina<?php echo $row['id']?>" <?php echo $enable_inscripcion ?>><i class="fa-regular fa-trash-can"></i></button>
 								</td>
+
 							</tr>
 							<?php
                       }

@@ -41,6 +41,8 @@ if(isset($_POST['desbloquear'])){
 			$query = "SELECT id FROM rutinas WHERE orden >= '0' and id_fase=".$fase['id']." $order_by";
 		    $ordenes = mysqli_query($connection,$query);
 		    $orden_listado = "";
+			$orden = '';
+			$orden_ran='';
 		    while ($orden = mysqli_fetch_array($ordenes)){
 			    $orden_rand++;
 			    $query = "UPDATE rutinas SET orden='$orden_rand' where id='".$orden['id']."'";
@@ -48,6 +50,25 @@ if(isset($_POST['desbloquear'])){
 				echo $query;
 
 			}
+			$change='si';
+			echo $change.' '.$orden_rand.' '.$fase['id'];
+			if($change=='si' & $fase['id'] == 82){
+				echo 'ent<br><br>entro<br><br>';
+					$query = "select id from rutinas where orden=4 and id_fase=".$fase['id'];
+				echo $query;
+					$rutina_change = mysqli_result(mysqli_query($connection,$query));
+					$query = "select orden from rutinas where id=159";
+				echo $query;
+					$orden_mx = mysqli_result(mysqli_query($connection,$query));
+				$query = "UPDATE rutinas set orden = $orden_mx WHERE id = $rutina_change";
+				echo $query;
+					mysqli_query($connection,$query);
+				$query="UPDATE rutinas set orden = 4 WHERE id = 159";
+				echo $query;
+					mysqli_query($connection,$query);
+
+
+				}
         //actualiz las fases como sorteadas
         $query = "UPDATE fases SET sorteado='si' WHERE id=".$fase['id'];
         mysqli_query($connection,$query);
@@ -60,39 +81,7 @@ if(isset($_POST['desbloquear'])){
 	}else{
 		$_SESSION['estado'] = 'Error, algo ha salido mal durante el sorteo <br>'.mysqli_error($connection);
 	}
-
-
-
-
-
-
 }
-//
-////Actualizar registro
-//if(isset($_POST['update_btn'])){
-//	$id = $_POST['edit_id'];
-//	$nombre = $_POST['edit_nombre'];
-//	$nombre_corto = $_POST['edit_nombre_corto'];
-//	$codigo = $_POST['edit_codigo'];
-//	$logo = $_POST['edit_logo'];
-//
-//	if($password != $r_password){
-//		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
-//		header('Location: usuarios.php');
-//	}else{
-//		$query = "UPDATE clubes SET nombre ='$nombre', nombre_corto='$nombre_corto', codigo='$codigo', logo='$logo' WHERE id='$id'";
-//		$query_run = mysqli_query($connection,$query);
-//		if(mysqli_error($connection) == ''){
-//			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-//			header('Location: clubes.php');
-//		}else{
-//			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-//			header('Location: clubes.php');
-//		}
-//	}
-//
-//}
-//
 ////Borrar registro
 if(isset($_POST['delete_btn'])){
 	$query = "UPDATE rutinas SET orden = '0' WHERE orden > '0' and id_competicion = '".$_SESSION['id_competicion_activa']."';

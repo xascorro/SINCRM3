@@ -176,12 +176,7 @@ $pdf->SetFont('helvetica', 'B', 14);
 				$puntos_totales += $puntos;
 
 			}
-      if(isset($_GET['resta_peor_puntuacion'])){
-        $query = "select coalesce(min(nota_final_calculada),0) from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
-  			$puntos_minimos = @mysqli_result(mysqli_query($connection,$query),0);
-      }else{
-        $puntos_minimos = 0;
-      }
+
       $query = "select count(nota_final_calculada) as participacion from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
 			$participacion_nadadora = @mysqli_result(mysqli_query($connection,$query),0);
 			//echo 'puntos-minimos'.$puntos_minimos.'participacion'.$participacion_nadadora.'jornadas'.$numero_jornadas_liga.'<br>';

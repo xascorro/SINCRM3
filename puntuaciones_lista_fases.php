@@ -104,7 +104,7 @@ include('includes/navbar.php');
             if($competicion_figuras == 'si')
                 $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, id_modalidad, figuras.nombre as nombre_figura, numero, figuras.grado_dificultad, fases.orden as orden FROM fases, categorias, modalidades, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             else
-                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre_modalidad, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
 
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -112,16 +112,16 @@ include('includes/navbar.php');
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Orden</th>
-                    <th scope="col">Categoría</th>
+                  <th scope="col"><i class="fa-solid fa-list-ol" aria-hidden="true"></i></th>
 
                   <?php
                     if($competicion_figuras == 'si'){
+						echo '<th scope="col">Categoría</th>';
                         echo '<th scope="col">Figura</th>';
                         echo '<th scope="col">Tipo</th>';
                     }else{
-                        echo '<th scope="col">Categoría</th>';
-                        echo '<th scope="col">El. CC</th>';
+                        echo '<th scope="col">Fase</th>';
+//                        echo '<th scope="col">El. CC</th>';
                     }
                     ?>
                   <th colspan=2 scope="col" class="text-center">Acciones</th>
@@ -135,20 +135,30 @@ include('includes/navbar.php');
                     <tr>
                       <th scope="row"> <?php echo $row['id']; ?> </th>
                       <td class="text-center"> <?php echo $row['orden']; ?> </td>
-                      <td> <?php echo $row['nombre_categoria']; ?> </td>
-                      <td> <?php echo $row['numero']." - ".$row['nombre_figura'].' GD:'.$row['grado_dificultad']; ?> </td>
-                      <td> <?php
-                       if($row['elementos_coach_card']>0){
-                        echo 'TRE';
-                          $icono = '<i class="fa-solid fa-square-root-variable"></i>';
-                      }
-                      else{
-                        echo 'FIG';
-                        $icono = '<i class="fa-solid fa-calculator"></i>';
-                      }
-                          ?> </td>
-                      <td>
-                       <?php if($competicion_figuras == 'si'){
+                      <?php
+                    if($competicion_figuras == 'si'){
+						echo '<td scope="col">'.$row['nombre_categoria'].'</td>';
+                        echo '<td scope="col">'.$row['numero'].' - '.$row['nombre_figura'].' GD:'.$row['grado_dificultad'].'</th>';
+                        echo '<td scope="col">Tipo</td>';
+						if($row['elementos_coach_card']>0){
+                        	echo 'TRE';
+                        	$icono = '<i class="fa-solid fa-square-root-variable"></i>';
+                      	}else{
+                        	echo 'FIG';
+                        	$icono = '<i class="fa-solid fa-calculator"></i>';
+                      	}
+						//competicion rutinas
+                    }else{
+						if($row['elementos_coach_card']>0){
+                        	$icono = '<i class="fa-solid fa-square-root-variable"></i>';
+                      	}else{
+                        	$icono = '<i class="fa-solid fa-calculator"></i>';
+                      	}
+                        echo '<td scope="col">'.$row['nombre_modalidad'].' '.$row['nombre_categoria'].'</td>';
+                    }
+
+                     echo '<td>';
+                      if($competicion_figuras == 'si'){
                                if($row['elementos_coach_card'] > 0)
                                     echo '<form action="puntuaciones_lista_figuras_rutinas_tecnicas.php" target="_blank" method="post">';
                                 else

@@ -3,14 +3,7 @@
 require_once('../tcpdf/tcpdf.php');
 include('../security.php');
 include('../lib/my_functions.php');
-//FACTORIZACION
-$f_chomu = 1.0; //leer de la DB más adelante
-$factor_Performance = 1;
-$factor_Transitions = 1;
-$factor_hybrid = 1.0;
-$factor_acro = 0.5;
-$factor_tre = 0.5;
-//FIN FACTORIZACION
+
 
 mysqli_query($connection,"SET NAMES 'utf8'");
 
@@ -45,7 +38,7 @@ class MYPDF extends TCPDF {
     public function Header() {
         // Logo
         $this->SetFont('helvetica', 12);
-        $this->WriteHTML('<img style="border-bottom:1px #cecece;" src="'.$GLOBALS['header_image'].'">', false, false, false, false, '');
+        $this->WriteHTML('<img style="border-bottom:1px #e92662;" src="'.$GLOBALS['header_image'].'">', true, false, true, false, '');
         $this->SetXY(25,12);
         $this->WriteHTML('<div style="text-align:center; font-size:large; font-weight:bold">'.$GLOBALS['titulo_documento']."</div>", false, false, false, false, '');
 
@@ -56,7 +49,7 @@ class MYPDF extends TCPDF {
         // Logo
         $this->SetFont('helvetica', 12);
 $x = 15;
-$y = 270;
+$y = 275;
 $w = '180';
 $h = '';
         $this->Image($GLOBALS['footer_image'], $x, $y, $w, $h, 'JPG', '', '', false, 300, '', false, false, 0, 'L', false, false);
@@ -160,8 +153,8 @@ if(isset($_GET['hoja_tecnica'])){
 		$html_tec .= '<tr style="background-color:#cecece"><th>Jueces de puntuación: </th></tr>';
 
 	//obtengo datos jueces puntuacion
-	$query = "select * from jueces where id in (select id_juez from panel_jueces where id_competicion='".$GLOBALS['id_competicion_activa']."')";
-	$query = "select distinct jueces.* from jueces, panel_jueces where jueces.id in (select id_juez from panel_jueces where id_competicion=".$GLOBALS['id_competicion_activa'].") and panel_jueces.`id_juez` = jueces.id and panel_jueces.id_competicion=".$GLOBALS['id_competicion_activa']." ";
+	$query = "select * from jueces where id != '108' and id in (select id_juez from panel_jueces where id_competicion='".$GLOBALS['id_competicion_activa']."')";
+	$query = "select distinct jueces.* from jueces, panel_jueces where jueces.id != '108' and jueces.id in (select id_juez from panel_jueces where id_competicion=".$GLOBALS['id_competicion_activa'].") and panel_jueces.`id_juez` = jueces.id and panel_jueces.id_competicion=".$GLOBALS['id_competicion_activa']." ";
 	$jueces = mysqli_query($connection,$query);
 	while($juez = mysqli_fetch_array($jueces)){
 		$nombre_panel = mysqli_query($connection,"select nombre from paneles where id_competicion='".$GLOBALS['id_competicion_activa']."' and id in (select id_panel from panel_jueces where id_competicion='".$GLOBALS['id_competicion_activa']."' and id_juez = '".$juez['id']."' )");
@@ -177,8 +170,7 @@ if(isset($_GET['hoja_tecnica'])){
 	}
 
 
-
-	$html_tec .= '<tr><th colspan="2"></th><th colspan="2"><br>Fdo. Juez Árbitro<br></th></tr>';
+	$html_tec .= '<tr><th></th><th colspan="2"><br>Fdo. Juez Árbitro<br></th></tr>';
 	$html_tec .= "</table>";
 	$pdf->writeHTML($html_tec, true, false, true, false, '');
 }
@@ -195,8 +187,11 @@ $puntos = array("0", "19", "16", "14", "13","12", "11", "10", "9", "8","7", "6",
 	$html = "<h2> Clasificación general </h2>";
 	$pdf->writeHTML($html, true, false, true, false, '');
 	$pdf->SetFont('helvetica', '', 7);
-    $query = "select distinct count(*) as repe, fases.*, modalidades.numero_participantes, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria from fases, modalidades, categorias where fases.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id_competicion = '".$GLOBALS['id_competicion_activa']."' and categorias.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id = fases.id_modalidad and categorias.id = fases.id_categoria group by id_modalidad order by numero_participantes, id_modalidad, id_categoria";
-//    echo $query;
+
+    $query = "select distinct count(*) as repe, fases.*, modalidades.numero_participantes, modalidades.nombre as nombre_modalidad, modalidades.id as id_modalidad, categorias.nombre as nombre_categoria from fases, modalidades, categorias where fases.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id_competicion = '".$GLOBALS['id_competicion_activa']."' and categorias.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id = fases.id_modalidad and categorias.id = fases.id_categoria group by id_modalidad order by numero_participantes, id_modalidad, id_categoria";
+    $query = "select distinct count(*) as repe, fases.*, modalidades.numero_participantes, modalidades.nombre as nombre_modalidad, modalidades.id as id_modalidad, categorias.nombre as nombre_categoria from fases, modalidades, categorias, rutinas where rutinas.`id_competicion` = '52' and fases.id_competicion = '52' and modalidades.id = fases.id_modalidad and categorias.id = fases.id_categoria group by fases.id_modalidad order by numero_participantes, fases.id_modalidad, id_categoria";
+		echo $query;
+
     $fases = mysqli_query($connection,$query);
     $html = '<table align="center" border="1">';
 	$html.= '<tr><th rowspan="2" width="8%"></th>';
@@ -206,8 +201,12 @@ $puntos = array("0", "19", "16", "14", "13","12", "11", "10", "9", "8","7", "6",
             $colspan = $colspan*2;
         $html.= '<th colspan="'.$colspan.'">'.$fase['nombre_modalidad'].'</th>';
     }
+	echo 'llego';
+
     $html.= '</tr><tr>';
-    $query = "select distinct fases.*, modalidades.numero_participantes, modalidades.nombre as nombre_modalidad, categorias.nombre_corto from fases, modalidades, categorias where fases.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id_competicion = '".$GLOBALS['id_competicion_activa']."' and categorias.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id = fases.id_modalidad and categorias.id = fases.id_categoria order by numero_participantes, id_modalidad, id_categoria";    $fases = mysqli_query($connection,$query);
+    $query = "select distinct fases.*, modalidades.numero_participantes, modalidades.nombre as nombre_modalidad, categorias.nombre_corto from fases, modalidades, categorias where fases.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id_competicion = '".$GLOBALS['id_competicion_activa']."' and categorias.id_competicion = '".$GLOBALS['id_competicion_activa']."' and modalidades.id = fases.id_modalidad and categorias.id = fases.id_categoria order by numero_participantes, id_modalidad, id_categoria";
+	$fases = mysqli_query($connection,$query);
+	echo '<br>'.$query.'<br>';
     while($fase = mysqli_fetch_array($fases)){
         $colspan = 1;
         if ($fase['numero_participantes'] <= 2)
@@ -216,7 +215,6 @@ $puntos = array("0", "19", "16", "14", "13","12", "11", "10", "9", "8","7", "6",
     }
 //    $html .= '</tr></table>';
     $html .= '</tr>';
-
 $query = "select nombre, nombre_corto, id from clubes where id in (select id_club from rutinas where id_competicion='".$GLOBALS['id_competicion_activa']."')";
 $clasificacion_clubs[] = "";
 $i = 0;
@@ -314,15 +312,30 @@ function cmpPuntosDesc($jugador1, $jugador2)
           return 1;
      return -1;
 }
+
 $error_color = "#E65B5E";
-$rutina_color_par = "#DEDEDE";
-$rutina_color_impar = "#FFFFFF";
+$rutina_color_par = "#FCE4EC";
+$rutina_color_impar = "#F7F7F7";
 
 $condicion_ampliada = "";
 if(isset($_GET['id_fase'])){
 	$condicion_ampliada = "and id = '".$_GET['id_fase']."'";
 	$id_fase = $_GET['id_fase'];
 }
+//FACTORIZACIÓN
+$query = "SELECT fases.id, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre FROM fases WHERE id='$id_fase'";
+$fase = mysqli_query($connection, $query);
+$fase = mysqli_fetch_assoc($fase);
+$id_fase = $fase['id'];
+$f_chomu = $fase['f_chomu'];
+$f_performance = $fase['f_performance'];
+$f_transitions = $fase['f_transitions'];
+$f_hybrid = $fase['f_hybrid'];
+$f_acro = $fase['f_acro'];
+$f_tre = $fase['f_tre'];
+//FIN FACTORIZACIÓN
+
+
 
 $query = "select * from fases where id_competicion = '".$GLOBALS["id_competicion_activa"]."' $condicion_ampliada order by orden";
 $fases = mysqli_query($connection,$query);
@@ -345,7 +358,7 @@ $pdf->AddPage();
 	$html = '<table style="margin-top=10px">';
 	//segun titulo de documento
 	if($titulo =='Clasificación detallada'){
-		$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%"><b>Pos.</b></th><th style="width:28%"><b>Club</b></th><th style="width:18%"><b>Panel</b></th><th style="width:20%"><b>Notas</b></th><th style="width:8%"><b>Puntos</b></th><th style="width:8%"><b>Pen.</b></th><th style="width:8%"><b>Total</b></th><th style="width:7%"><b>Dif</b></th></tr></thead>';
+		$html .= '<thead><tr nobr="true" style="background-color:'.$rutina_color_par.'"><th style="width:5%"><b>Pos.</b></th><th style="width:30%"><b>Club</b></th><th style="width:20%"><b>Panel</b></th><th style="width:20%"><b>Notas</b></th><th align="right" style="width:8%"><b>Puntos</b></th><th align="right" style="width:10%"><b>Total</b></th><th align="right" style="width:7%"><b>Dif</b></th></tr></thead>';
 	}
 	//fin segun titulo documento
 
@@ -374,10 +387,10 @@ $pdf->AddPage();
 				$rutina['posicion'] = "PS";
             if( $rutina['baja']=='si')
 				$rutina['posicion'] = "-";
-
-			$html .='<tr style="background-color:'.$rutina_color.'"><td nobr=true style="width:5%; font-size:14; font-weight:bold;">'.$rutina['posicion'].'</td>';
+			$html .= '<table nobr="true background-color:'.$rutina_color.'">';
+			$html .='<tr nobr="true" style="background-color:'.$rutina_color.'"><td nobr=true style="width:5%; font-size:14; font-weight:bold;">'.$rutina['posicion'].'</td>';
 		}
-		$html.= '<td nobr=true style="width:28%"><b>'.$nombre_rutina.'</b><br>';
+		$html.= '<td style="width:30%"><b>'.$nombre_rutina.'</b><br>';
 		//leer participantes
 		$query = "select * from rutinas_participantes where id_rutina='".$rutina['id']."'";
 		$participantes = mysqli_query($connection,$query);
@@ -395,8 +408,9 @@ $pdf->AddPage();
 
 		}
 		$html.= '</td>';
+	if($baja != 'si'){
 		//leo paneles
-		$html.='<td nobr=true style="width:18%">';
+		$html.='<td nobr=true style="width:20%">';
 		$query = "select * from paneles where id_competicion='".$GLOBALS["id_competicion_activa"]."' and puntua='si' and tecnico = '".$fase['tecnico']."' and obsoleto = '".$fase['obsoleto']."'";
 		$paneles = mysqli_query($connection,$query);
 		while($panel = mysqli_fetch_array($paneles)){
@@ -418,11 +432,11 @@ $pdf->AddPage();
                         $query = "select texto from hibridos_rutina where texto like '%-TRE%' and id_rutina = ".$rutina['id']." and elemento=$x";
                         $nombre = mysqli_result(mysqli_query($connection,$query),0);
                         $nombre = substr($nombre,2,5);
-                        $fm=$factor_tre;
+                        $fm=$f_tre;
                     }elseif($tipo_elemento == 'HYBRID'){
-                        $fm=$factor_hybrid;
+                        $fm=$f_hybrid;
                     }elseif($tipo_elemento == 'ACROBATIC'){
-                        $fm=$factor_acro;
+                        $fm=$f_acro;
                         $tipo_elemento = 'ACRO';
                     }
 
@@ -431,20 +445,20 @@ $pdf->AddPage();
 
                     $html .= "$nombre<br>";
                 }
-                $html .= "<b>Sincronización</b><br>";
+				if($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5)
+                	$html .= "<b>Sincronización</b><br>";
+                $html .= "<b>Penalización Elementos</b><br>";
                 $html .= "<br>";
             }elseif($panel['nombre']=='Artístico' and $panel['obsoleto'] == 'no' ){
-                $query = "SELECT fases.id, fases.f_chomu FROM fases, rutinas WHERE rutinas.id='".$rutina['id']."' and fases.id=id_fase";
-                $f_chomu = mysqli_query($connection,$query);
-                $f_chomu = mysqli_fetch_assoc($f_chomu)['f_chomu'];
-                $html .= "ChoMu F:$f_chomu<br>Performance F:$factor_Performance<br>Transitions F:$factor_Transitions";
+                $html .= "ChoMu F:$f_chomu<br>Performance F:$f_performance<br>Transitions F:$f_transitions<br><b>Penalización Artístico</b>";
             }
-
 		}
+					$html.= "<br><br><b>Penalización Rutina</b>";
+
 		$html.='</td>';
 //leo notas puntuaciones_jueces
 //		if($baja != 'si' & $rutina['orden'] != '-1'){
-		if($baja != 'si'){
+
 //SISTEMA DE PUNTUACIÓN 2022-2026
             if($fase['obsoleto']=='no'){
 		      $html.='<td nobr=true style="width:20%">&nbsp;<br>';
@@ -453,8 +467,7 @@ $pdf->AddPage();
             $query_run = mysqli_query($connection,$query);
             while ($row = mysqli_fetch_assoc($query_run)) {
 
-                      $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 1 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
-//            echo $query_jueces;
+                      $query_jueces = "SELECT * from panel_jueces WHERE id_fase=".$fase['id']." and id_panel in (SELECT id from paneles where id_paneles_tipo = 1 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
                     while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
 
@@ -470,8 +483,9 @@ $pdf->AddPage();
                     }
                 $html .='<br>';
             }
-
-            $html .= '<br><b>Total Elementos</b><br><br>';
+			if($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5)
+				$html .= '<br>';
+				$html .= '<br><b>Total Elementos</b><br><br>';
 //notas chomu
              $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
@@ -517,10 +531,10 @@ $pdf->AddPage();
                             $nota = '<del>'.$nota.'</del>';
                         $html.=  $nota.' ';
                     }
-            $html .= '<br><b>Total Imp. Artística</b>';
+            $html .= '<br><br><b>Total Imp. Artística</b>';
                 $html.='</td>';
 		//leo notas puntuaciones_paneles
-		$html.='<td nobr=true style="width:8%">&nbsp;<br>';
+		$html.='<td align="right" style="width:8%">&nbsp;<br>';
 //		if($baja != 'si' & $rutina['orden'] != '-1'){
 		if($baja != 'si'){
             $query = "SELECT elemento FROM hibridos_rutina, tipo_hibridos WHERE id_rutina = '".$rutina['id']."' and tipo like 'part' and texto not like '3' and texto=tipo_hibridos.id order by elemento";
@@ -533,13 +547,15 @@ $pdf->AddPage();
                 $nota_elementos = $nota_elementos + $nota['nota'];
             }
 
-            //notas sincro
+            //notas sincro, no las muestro si la modalidad es solo libre o solo tecnico
+				if($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5){
+
                     $query = "SELECT nota from errores_sincronizacion WHERE id_rutina=".$rutina['id'];
                     $errores_sincronizacion = mysqli_fetch_assoc(mysqli_query($connection,$query));
-                    $html .= -$errores_sincronizacion['nota'].'<br>';
-                    if($errores_sincronizacion['nota']>$nota_elementos)
-                        $html .= '<b>0</b><br><br>';
-                    $html .= '<b>'.($nota_elementos-$errores_sincronizacion['nota']).'</b><br><br>';
+                    $html .= $rutina['nota_panel_sincro'].'<br>';
+				}
+                    $html .= $rutina['penalizaciones_elementos'].'<br>';
+                    $html .= '<b>'.$rutina['nota_final_panel_elementos'].'</b><br><br>';
             //notas chomu
                     $query = "SELECT DISTINCT nota FROM puntuaciones_elementos WHERE tipo_ia like 'ChoMu' and id_rutina=".$rutina['id'];
                     $nota = mysqli_fetch_assoc(mysqli_query($connection,$query));
@@ -556,12 +572,15 @@ $pdf->AddPage();
                     $html .= $nota['nota'].'<br>';
                     $nota_ia = $nota_ia + $nota['nota'];
             //nota total impresion artistica
-                    $html .= '<b>'.$nota_ia.'</b>';
+                    $html .= $rutina['penalizaciones_ia'].'<br>';
+                    $html .= '<b>'.$rutina['nota_final_panel_ia'].'</b><br>';
+			//nota final rutina
+                    $html .= '<b>'.$rutina['penalizaciones_rutina'].'</b><br>';
 
 		}
 		$html.='</td>';
             }
-            //SISTEMA DE PUNTUACIÓN 2027-2021
+            //SISTEMA DE PUNTUACIÓN 2017-2021
             elseif($fase['obsoleto']=='si'){
 		$html.='<td nobr=true style="width:20%">';
 			$query = "select * from paneles where id_competicion='".$GLOBALS["id_competicion_activa"]."' and puntua='si' and tecnico = '".$fase['tecnico']."' and obsoleto='si'";
@@ -601,26 +620,16 @@ $pdf->AddPage();
 
 		}
 
-		//leo notas penalizaciones_rutinas
-		$html.='<td style="width:8%">';
-		if($baja != 'si' || $rutina['orden'] > 1){
-			$query = "select codigo, puntos from penalizaciones_rutinas, penalizaciones where id_penalizacion = penalizaciones.id and id_rutina='".$rutina['id']."'";
-			$penalizaciones = mysqli_query($connection,$query);
-			while($penalizacion = mysqli_fetch_array($penalizaciones)){
-				$html.= $penalizacion['codigo'].'<br>-'.$penalizacion['puntos'].'<br>';
 
-			}
-		}
-		$html.='</td>';
 		//leo notas puntuacion en rutina
 		if($baja == 'si'){
 			$rutina['nota_final'] = 'BAJA';
 			$rutina['diferencia'] = '';
 		}
 
-		$html.='<td nobr=true style="width:8%"><b>'.$rutina['nota_final'].'</b></td>';
+		$html.='<td align="right" style="width:10%"><b>'.$rutina['nota_final'].'</b></td>';
 		//leo notas diferencia en rutina
-		$html.='<td nobr=true style="width:7%">'.$rutina['diferencia'].'</td>';
+		$html.='<td align="right" style="width:7%">'.$rutina['diferencia'].'</td>';
 		$html .='</tr>';
         if($fase['tecnico'] == 'si'){
             $img_tecnicas = './img_tecnicas/r'.$rutina['id'].'.png';
@@ -628,6 +637,23 @@ $pdf->AddPage();
                 $html .= '<tr><td></td><td></td><td></td><td>'.'<img style="border:10px #cecece;" src="'.$img_tecnicas.'">'.'</td></tr><tr><td></td></tr><tr><td></td></tr>';
             }
         }
+
+		//leo notas penalizaciones_rutinas
+		$penalizaciones_texto = '';
+		if($baja != 'si' || $rutina['orden'] > 1){
+			$query = "select group_CONCAT(codigo separator ', ') as codigos from penalizaciones_rutinas, penalizaciones where id_penalizacion = penalizaciones.id and id_rutina='".$rutina['id']."'";
+			$penalizaciones = mysqli_query($connection,$query);
+			while($penalizacion = mysqli_fetch_array($penalizaciones)){
+				$penalizaciones_texto .= $penalizacion['codigos'].'  ';
+			}
+		}
+		if($penalizaciones_texto != ' ')
+			$html .= '<tr nobr="true" style="background-color:'.$rutina_color.'"><td></td><td></td><td colspan="5">Penalizaciones aplicadas: '.$penalizaciones_texto.'</td></tr>';
+
+		$html .= '<tr nobr="true" style="background-color:'.$rutina_color.'"><td colspan="7"></td></tr>';
+
+					$html .= "</table>";
+
 	}
 
 	$html .= '</table>';

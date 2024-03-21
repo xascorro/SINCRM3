@@ -2,11 +2,16 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
+
 if(isset($_GET['id_rutina'])){
 	$id_rutina = $_GET['id_rutina'];
+}else if(isset($_POST['id_rutina'])){
+	$id_rutina = $_POST['id_rutina'];
 }
 if(isset($_GET['id_fase'])){
-	$id_rutina = $_GET['id_fase'];
+	$id_fase = $_GET['id_fase'];
+}else if(isset($_POST['id_fase'])){
+	$id_fase = $_POST['id_fase'];
 }
 //si no existen elementos de coach card los crea
 $query = "SELECT * FROM hibridos_rutina where id_rutina = '$id_rutina'";
@@ -59,6 +64,17 @@ if(mysqli_num_rows($query_run) == 0){
 	<div id="content">
 		<?php
     include('includes/topbar.php');
+
+		if(isset($_GET['id_rutina'])){
+	$id_rutina = $_GET['id_rutina'];
+}else if(isset($_POST['id_rutina'])){
+	$id_rutina = $_POST['id_rutina'];
+}
+if(isset($_GET['id_fase'])){
+	$id_fase = $_GET['id_fase'];
+}else if(isset($_POST['id_fase'])){
+	$id_fase = $_POST['id_fase'];
+}
     ?>
 		<!-- template -->
 		<!-- Tu código empieza aquí -->

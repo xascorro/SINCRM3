@@ -26,9 +26,7 @@ if(isset($_POST['save_btn'])){
 		  $id_competicion = $_POST['id_competicion'];
 	else
 		  $id_competicion = $_SESSION['id_competicion_activa'];
-
-$query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fase."','".$id_club."','".$id_competicion."')";
-
+	$query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fase."','".$id_club."','".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Rutina añadida con éxito';
@@ -37,8 +35,6 @@ $query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fa
 		$_SESSION['estado'] = 'Error, rutina no añadida <br>'.mysqli_error($connection);
 		header('Location: rutinas.php');
 	}
-
-
 }
 
 //Actualizar rutina
@@ -53,10 +49,8 @@ if(isset($_POST['update_btn'])){
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Rutina actualizada con éxito';
-		//header('Location: rutinas.php');
 	}else{
 		$_SESSION['estado'] = 'Error, la Rutina no se ha actualizado <br>'.mysqli_error($connection);
-//		header('Location: rutinas.php');
 	}
 }
 
@@ -127,6 +121,23 @@ function stripAccents($str) {
 		}
 	}
 }
+
+//Dar de baja/alta rutina
+if(isset($_GET['dar_baja'])){
+	$dar_baja = $_GET['dar_baja'];
+	$id_rutina = $_GET['id_rutina'];
+	$query = "UPDATE rutinas SET baja ='$dar_baja' WHERE id='$id_rutina'";
+
+	$query_run = mysqli_query($connection,$query);
+	if(mysqli_error($connection) == ''){
+		$_SESSION['correcto'] = 'Rutina actualizada con éxito';
+	}else{
+		$_SESSION['estado'] = 'Error, la Rutina no se ha actualizado <br>'.mysqli_error($connection);
+	}
+	header('Location: puntuaciones_lista_rutinas.php?id_fase='.$_GET['id_fase']);
+	exit();
+}
+
 header('Location: rutinas.php');
 
 ?>
