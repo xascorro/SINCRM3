@@ -3,8 +3,8 @@ include('security.php');
 //Añadir registro
 if(isset($_POST['save_btn'])){
 	$licencia = $_POST['licencia'];
-	$apellidos = $_POST['apellidos'];
-	$nombre = $_POST['nombre'];
+	$apellidos = mb_strtoupper($_POST['apellidos'], 'UTF-8');
+	$nombre = mb_strtoupper($_POST['nombre'],  'UTF-8');
 	$fecha_nacimiento = $_POST['fecha_nacimiento'];
 	$club = $_POST['club'];
 
@@ -23,8 +23,8 @@ if(isset($_POST['save_btn'])){
 if(isset($_POST['update_btn'])){
 	$id = $_POST['edit_id'];
 	$licencia = $_POST['edit_licencia'];
-	$apellidos = $_POST['edit_apellidos'];
-	$nombre = $_POST['edit_nombre'];
+	$apellidos = mb_strtoupper($_POST['edit_apellidos'], 'UTF-8');
+	$nombre = mb_strtoupper($_POST['edit_nombre'],  'UTF-8');
 	$fecha_nacimiento = $_POST['fecha_nacimiento'];
 	$club = $_POST['club'];
 
