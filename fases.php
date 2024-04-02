@@ -30,11 +30,15 @@ include('includes/navbar.php');
 							<div class="row">
 								<div class="form-group col">
 									<?php
-                    if($_SESSION['competicion_figuras'] == 'si'){?>
+                    if($_SESSION['figuras'] == 'si'){?>
 									<div class="col">
 										<?php include('includes/categoria_select_option.php');?>
 									</div>
-									<?php include('includes/figura_select_option.php');
+									<div class="col">
+									<?php include('includes/figura_select_option.php');?>
+									</div>
+												 <?php
+
 					}else{
                         include('includes/modalidad_select_option.php');?>
 									<div class="col">
