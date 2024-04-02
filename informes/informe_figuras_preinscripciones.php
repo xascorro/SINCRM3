@@ -3,32 +3,6 @@
  ini_set('display_startup_errors', 1);
 //    error_reporting(E_ALL);
 setlocale(LC_ALL,'es_ES');
-//============================================================+
-// File name   : example_048.php
-// Begin       : 2009-03-20
-// Last Update : 2013-05-14
-//
-// Description : Example 048 for TCPDF class
-//               HTML tables and table headers
-//
-// Author: Nicola Asuni
-//
-// (c) Copyright:
-//               Nicola Asuni
-//               Tecnick.com LTD
-//               www.tecnick.com
-//               info@tecnick.com
-//============================================================+
-
-/**
- * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: HTML tables and table headers
- * @author Nicola Asuni
- * @since 2009-03-20
- */
-
-// Include the main TCPDF liary (search for installation path).
 // Include the main TCPDF liary (search for installation path).
 require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
@@ -156,7 +130,7 @@ $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#FFFFFF";
 
 
-$query = "SELECT * FROM fases WHERE id_competicion = '".$GLOBALS["id_competicion_activa"]."' GROUP BY id_categoria";
+$query = "SELECT * FROM fases WHERE id_competicion = '".$GLOBALS["id_competicion_activa"]."' GROUP BY id_categoria ORDER BY orden ASC";
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
 	$query = "select nombre, id from categorias where id = '".$fase['id_categoria']."'";

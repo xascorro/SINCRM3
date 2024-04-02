@@ -72,14 +72,13 @@ if(isset($_POST['login_btn'])){
 		header('Location: login.php');
 	}
 
-}elseif (isset($_POST['logout_btn'])) {
-		unset($_SESSION);
+}elseif (isset($_POST['logout_btn']) or isset($_GET['logout_btn'])) {
+	unset($_SESSION);
 	session_destroy();
-
-		$_SESSION['estado'] = "Usuario desconectado";
-		$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
-		fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);
-		header('Location: login.php');
+	$_SESSION['estado'] = "Usuario desconectado";
+	$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
+	fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);
+	header('Location: login.php');
 
 
 }elseif (isset($_POST['register_btn'])) {

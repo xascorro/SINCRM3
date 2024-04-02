@@ -150,13 +150,13 @@ include('includes/navbar.php');
 												<tr>
 													<?php
 				if($row['figuras']=='si'){
-                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, orden, grado_dificultad FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$row['id']." ORDER BY orden, fases.id";?>
+                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden as orden, grado_dificultad FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$row['id']." ORDER BY fases.orden, fases.id";?>
 													<th scope="col">Categoria</th>
 													<th scope="col">Figura</th>
 													<th class="d-none d-sm-block" scope="col">GD</th>
 													<?php
 				}else if($row['figuras']=='no'){
-                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre_modalidad, orden, elementos_coach_card, numero_participantes, numero_reservas, f_chomu FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$row['id']." ORDER BY orden, fases.id";?>
+                	$query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre_modalidad, fases.orden as orden, elementos_coach_card, numero_participantes, numero_reservas, f_chomu FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$row['id']." ORDER BY fases.orden, fases.id";?>
 													<th scope="col">Categoria</th>
 													<th scope="col">Modalidad</th>
 													<th scope="col">Participantes</th>

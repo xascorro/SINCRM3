@@ -10,6 +10,7 @@ if(isset($_SESSION['club'])){
 }
 
 $query = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, date_add(fecha, interval -dias_coach_card day) as fecha_coach_card, date_add(fecha, interval -dias_sorteo day) as fecha_sorteo, date_add(fecha, interval -dias_inicio_inscripcion day) as fecha_inicio_inscripcion, date_add(fecha, interval -dias_fin_inscripcion day) as fecha_fin_inscripcion FROM competiciones WHERE id='.$id_competicion;
+		$fechas = mysqli_fetch_assoc(mysqli_query($connection, $query));
 		//habilito o deshabilito coach_card
 		$fecha_coach_card = $fechas['fecha_coach_card'];
 		if(date('Y-m-d') > $fecha_coach_card & $_SESSION['id_rol'] != 1 )
@@ -101,6 +102,7 @@ $query = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, dat
 					?>
                     <a target="_blank" href="./informes/informe_figuras_preinscripciones.php?id_competicion=<?php echo $_SESSION['id_competicion_activa']?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
                     <?php
+
 					}
 					?>
                     <a href="./index.php" class="btn  btn-primary shadow"><i class="fa fa-chevron-left" aria-hidden="true"></i> Volver</a>
