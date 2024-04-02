@@ -2,7 +2,7 @@
 //funciona bien x 4
 //if($_SESSION['competicion_figuras'] == 'si'){
 if($figuras == 'si'){
-	$query = "SELECT fases.id, id_categoria, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria FROM fases, modalidades, categorias where fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$id_competicion." GROUP BY id_categoria";
+	$query = "SELECT fases.id, id_categoria, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria FROM fases, modalidades, categorias where fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$id_competicion." GROUP BY id_categoria ORDER BY categorias.orden ASC";
 }else{
 	$query = "SELECT fases.id, id_categoria, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria FROM fases, modalidades, categorias where fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$id_competicion;
 }
