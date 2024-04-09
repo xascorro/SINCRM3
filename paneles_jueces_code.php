@@ -60,10 +60,6 @@ if(isset($_POST['save_btn_panel'])){
     $descripcion = $_POST['descripcion'];
     $puntua = $_POST['puntua'];
     $color = $_POST['color'];
-
-
-
-
 	$query="INSERT INTO paneles (nombre, numero_jueces, peso, descripcion, puntua, color, id_competicion) VALUES ('".$nombre."','".$numero_jueces."', '".$peso."','".$descripcion."','".$puntua."','".$color."','".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
@@ -97,7 +93,7 @@ if(isset($_POST['update_btn_panel'])){
 	}
 }
 
-//Borrar registro
+//Borrar panel de jueces
 if(isset($_POST['delete_btn_panel'])){
 	$id = $_POST['delete_id'];
 
@@ -112,10 +108,6 @@ if(isset($_POST['delete_btn_panel'])){
 	}
 }
 
-
-
-
-
 //Añadir panel_jueces
 if(isset($_POST['panel_jueces_save_btn'])){
 	$id = $_POST['id'];
@@ -123,9 +115,6 @@ if(isset($_POST['panel_jueces_save_btn'])){
 	$id_juez = $_POST['id_juez'];
     $numero_juez = $_POST['numero_juez'];
     $id_panel = $_POST['id_panel'];
-
-
-
     if($id == '  ' and $id_juez <> ''){
            $query="INSERT INTO panel_jueces (id_fase, id_juez, numero_juez, id_panel, id_competicion) VALUES ('".$id_fase."','".$id_juez."', '".$numero_juez."','".$id_panel."','".$id_competicion."')";
         $query_run = mysqli_query($connection,$query);
@@ -150,4 +139,38 @@ if(isset($_POST['panel_jueces_save_btn'])){
         $_SESSION['correcto'] = 'No se ha seleccionado ningún juez';
         header('Location: paneles_jueces.php');
 }
-	?>
+//clonar panel de jueces
+if(isset($_GET['panel_jueces_clonar_btn'])){
+    $id_competicion =  $GLOBALS["id_competicion_activa"];
+	echo '<h1>Cierra esta página y actualiza la página de los paneles de jueces</h1>';
+//include('lib/conexion_abre.php');
+	$query = "select * from panel_jueces where id_panel='".$_GET['id_panel']."' order by numero_juez";
+    $panel_jueces = mysqli_query($connection,$query);
+    while ($componentes = mysqli_fetch_array($panel_jueces)){
+		$valores = "";
+
+		$sql = "SELECT id from fases where id_competicion = ".$componentes['id_competicion'].' LIMIT 1,1000';
+		$fases_figuras = mysqli_query($connection,$sql);
+		while($fase = mysqli_fetch_array($fases_figuras)){
+			$valor = '('.$componentes['id_juez'].',';
+			$valor .= $componentes['numero_juez'].',';
+			$valor .= $componentes['id_panel'].',';
+			$valor .= $fase['id'].',';
+			$valor .= 'NULL,';
+			$valor .= $componentes['id_competicion'].'), ';
+			$valores .= $valor;
+		}
+		$valores = substr($valores, 0, -2);
+
+		$sql_final = "INSERT INTO panel_jueces ( id_juez, numero_juez, id_panel, id_fase, id_fase_figuras, id_competicion ) VALUES $valores";
+		if(mysqli_num_rows(mysqli_query($connection,'select id_juez from panel_jueces where id_juez='.$componentes['id_juez'].' and id_competicion = '.$componentes['id_competicion'])) > 1 ) {
+			echo '<br>No se clona, borra el contenido del resto de paneles para utilizar está función.<br>'.$sql_final.'<br>';
+		}else{
+			echo '<br>Ejecuto: '.$sql_final.'<br>';
+			mysqli_query($connection,$sql_final);
+		}
+  	   }
+//include('lib/conexion_cierra.php');
+}
+
+?>
