@@ -144,7 +144,6 @@ include('includes/navbar.php');
                         	echo 'TRE';
                         	$icono = '<i class="fa-solid fa-square-root-variable"></i>';
                       	}else{
-                        	echo 'FIG';
                         	$icono = '<i class="fa-solid fa-calculator"></i>';
                       	}
 						//competicion rutinas

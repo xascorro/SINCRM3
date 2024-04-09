@@ -110,7 +110,7 @@ include('includes/navbar.php');
           ?>
                 <div class="table-responsive">
                     <?php
-            $query = "SELECT DISTINCT fases.id as id_fase, fases.id_categoria, categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades WHERE fases.id_modalidad=modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." order by orden";
+            $query = "SELECT DISTINCT fases.id as id_fase, fases.id_categoria, categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades WHERE fases.id_modalidad=modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." order by fases.orden";
             $query_categorias = mysqli_query($connection,$query);
             $numero_categorias = $query_categorias->num_rows;
             while ($row_fases = mysqli_fetch_assoc($query_categorias)) {

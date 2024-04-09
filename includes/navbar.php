@@ -5,22 +5,8 @@ if($_SESSION['id_rol'] == '1'){
 
     <!-- Sidebar -->
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion sidebar-toogled toogled" id="accordionSidebar">
-
-    	<!-- Sidebar - Brand -->
-    	<!--
-        <div class="sidebar-brand-icon rotate-n-15">
-          <i class="fas fa-water"></i>
-        </div>
-        <div class="sidebar-brand-text mx-3">SINC<span style="color:#FF6C60">RM</span> <sup>3</sup></div>
--->
-    	<!--
-        <div class="text-center">
-         <img src="./images/logo_sincrm_removebg.png" alt="" width="230px" >
-</div>
--->
     	<!-- Divider -->
     	<hr class="sidebar-divider my-0">
-
     	<!-- Nav Item - Dashboard -->
     	<li class="nav-item active">
     		<a class="nav-link" href="index.php">
@@ -124,7 +110,7 @@ if($_SESSION['id_rol'] == '1'){
     					<span>Puestos y paneles</span>
     				</a>
     				<?php
-              if (@$_SESSION['competicion_figuras'] == ''){
+              if (@$_SESSION['figuras'] == 'no'){
             ?>
     				<a class="collapse-item" href="rutinas.php">
     					<i class="fa-solid fa-users-line"></i><span> Rutinas</span>
@@ -133,7 +119,7 @@ if($_SESSION['id_rol'] == '1'){
     					<i class="fa-solid fa-wand-magic-sparkles"></i><span> Sorteo</span>
     				</a>
     				<?php
-              }else if (@$_SESSION['competicion_figuras'] == 'si'){
+              }else if (@$_SESSION['figuras'] == 'si'){
             ?>
     				<a class="collapse-item" href="inscripciones_figuras.php?id_competicion=49">
     					<i class="fa-regular fa-flag"></i><span> Inscripciones Figuras</span>
