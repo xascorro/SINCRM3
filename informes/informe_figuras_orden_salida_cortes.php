@@ -123,7 +123,7 @@ $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#FFFFFF";
 
 
-$query = "SELECT * FROM fases WHERE id_competicion = '".$GLOBALS["id_competicion_activa"]."' GROUP BY id_categoria";
+$query = "SELECT * FROM fases WHERE id_competicion = '".$GLOBALS["id_competicion_activa"]."' GROUP BY id_categoria ORDER BY orden";
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
 	$query = "select nombre, id from categorias where id = '".$fase['id_categoria']."'";

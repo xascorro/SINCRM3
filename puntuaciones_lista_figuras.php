@@ -86,7 +86,7 @@ include('includes/navbar.php');
                             $class='';
                       }
                     ?>
-                    <tr <?php echo $class;?>>
+                    <tr id="<?php echo $row['id'];?>" <?php echo $class;?>>
                       <th scope="row" > <?php echo $row['orden']; ?> </th>
                       <th scope="row" > <?php echo $row['id']; ?> </th>
                       <td > <?php echo $row['apellidos_nadadora'].', '.$row['nombre_nadadora']; ?> </td>
@@ -99,12 +99,15 @@ include('includes/navbar.php');
                         $jueces = mysqli_query($connection,$query);
                         $i = 0;
                         while($juez = mysqli_fetch_assoc($jueces)){
-                                                  $nota = 0;
-
+                            $nota = 0;
+							if($juez['id_juez'] == '108'){
+								$class = ' table-warning';
+							}else
+								$class = '';
                             $query = "SELECT nota FROM puntuaciones_jueces WHERE id_panel_juez= ".$juez['id']." and id_inscripcion_figuras = ".$row['id'];
                             $nota = mysqli_result(mysqli_query($connection,$query),0);
                             $i++;
-                            echo '<td><input class="form-control form-control-sm" size="2" name="nota['.$juez['numero_juez'].'][nota]"  step="0.1" type="number" value="'.$nota.'"></td>';
+                            echo '<td class='.$class.'><input class="form-control form-control-sm'.$class.'" size="2" name="nota['.$juez['numero_juez'].'][nota]"  step="0.1" type="number" value="'.$nota.'"></td>';
                             echo '<input type="hidden" name="nota['.$juez['numero_juez'].'][id_juez]" value="'.$juez['id_juez'].'">';
                             echo '<input type="hidden" name="nota['.$juez['numero_juez'].'][id_panel_jueces]" value="'.$juez['id'].'">';
 
@@ -140,15 +143,4 @@ include('includes/navbar.php');
             include('includes/footer.php');
             ?>
 
-<!--
-
-<script>
-	$('.notas').on("submit", function() {
-
-    setTimeout( function () {
-  location.reload();
-    }, 300);
-
-});
-</script>
--->
+			<script type="text/javascript" src="./puntuaciones_lista_figuras.js"></script>

@@ -12,11 +12,12 @@ $GD = $_POST['grado_dificultad'];
 if(isset($_POST['puntuar_btn'])){
     $query="SELECT numero_juez FROM panel_jueces WHERE id_fase=".$id_fase;
     $numero_de_jueces = mysqli_query($connection,$query);
+	$numero_jueces = mysqli_num_rows($numero_de_jueces);
+	echo '<br>numero_jueces = '.$numero_jueces;
     $nota_total = '';
     $i=1;
     while($numero_de_juez = mysqli_fetch_assoc($numero_de_jueces)){
         $nota = $_POST['nota'][$i]['nota'];
-
         if($nota > 10)
             $nota = $nota/10;
         $id_panel_jueces = $_POST['nota'][$i]['id_panel_jueces'];
@@ -33,46 +34,58 @@ if(isset($_POST['puntuar_btn'])){
         $i++;
     }
     if($numero_jueces>3){
-    //saco minima
-    $query = "SELECT min(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras";
-    $nota_menor = mysqli_result(mysqli_query($connection,$query),0);
-    $query = "UPDATE puntuaciones_jueces set nota_menor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_menor limit 1";
-    mysqli_query($connection,$query);
-    //saco máxima
-    $query = "SELECT max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras";
-    $nota_mayor = mysqli_result(mysqli_query($connection,$query),0);
-    $query = "UPDATE puntuaciones_jueces set nota_mayor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_mayor and nota_menor IS NULL limit 1";
-    mysqli_query($connection,$query);
-    //saco media si es necesario
-    $query = "SELECT nota FROM puntuaciones_jueces WHERE nota > 0 and id_inscripcion_figuras = $id_inscripcion_figuras";
-    $notas_no_cero = mysqli_num_rows(mysqli_query($connection,$query));
-    if ($notas_no_cero > 0){
-        $query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE nota > 0 and id_inscripcion_figuras = $id_inscripcion_figuras";
-        $nota_media = mysqli_result(mysqli_query($connection,$query),0)/$notas_no_cero;
-        $nota_media = round($nota_media, 1, PHP_ROUND_HALF_UP);
-        $query = "UPDATE puntuaciones_jueces set nota = $nota_media WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = 0";
-        mysqli_query($connection,$query);
-    }
+		//saco minima
+		$query = "SELECT min(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras";
+		echo '<br>'.$query;
+		$nota_menor = mysqli_result(mysqli_query($connection,$query),0);
+		$query = "UPDATE puntuaciones_jueces set nota_menor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_menor limit 1";
+		echo '<br>'.$query;
+		mysqli_query($connection,$query);
+		//saco máxima
+		$query = "SELECT max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras";
+		echo '<br>'.$query;
+		$nota_mayor = mysqli_result(mysqli_query($connection,$query),0);
+		$query = "UPDATE puntuaciones_jueces set nota_mayor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_mayor and nota_menor IS NULL limit 1";
+		echo '<br>'.$query;
+		mysqli_query($connection,$query);
+		//saco media si es necesario
+		$query = "SELECT nota FROM puntuaciones_jueces WHERE nota > 0 and id_inscripcion_figuras = $id_inscripcion_figuras";
+		$notas_no_cero = mysqli_num_rows(mysqli_query($connection,$query));
+		if ($notas_no_cero > 0){
+			$query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE nota > 0 and id_inscripcion_figuras = $id_inscripcion_figuras";
+			echo '<br>'.$query;
+			$nota_media = mysqli_result(mysqli_query($connection,$query),0)/$notas_no_cero;
+			$nota_media = round($nota_media, 1, PHP_ROUND_HALF_UP);
+			$query = "UPDATE puntuaciones_jueces set nota = $nota_media WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = 0";
+			echo '<br>'.$query;
+			mysqli_query($connection,$query);
+		}
     }
     //actualizo nota de figura
-        $query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL) limit 1";
-        $nota_total = mysqli_result(mysqli_query($connection,$query),0);
-        $query = "SELECT sum(nota)/3 FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL)";
-        $nota_media = mysqli_result(mysqli_query($connection,$query),0);
-        $nota_final = $nota_media*$GD;
-        $query = "UPDATE inscripciones_figuras SET nota_media = $nota_media,nota_total = $nota_total, nota_final= $nota_final WHERE id = $id_inscripcion_figuras";
-        mysqli_query($connection,$query);
+	$query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL) limit 1";
+	echo '<br>'.$query;
+	$nota_total = mysqli_result(mysqli_query($connection,$query),0);
+	$query = "SELECT sum(nota)/3 FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL)";
+	echo '<br>'.$query;
+	$nota_media = mysqli_result(mysqli_query($connection,$query),0);
+	$nota_final = $nota_media*$GD;
+	echo '<br><b>nota_total</b> es la suma de todas las notas menos menor y mayor';
+	echo '<br><b>nota_media</b> es la media de la nota_total';
+	echo '<br><b>nota_final</b> es la nota_media por el grado de dificultad';
+	$query = "UPDATE inscripciones_figuras SET nota_media = $nota_media, nota_total = $nota_total, nota_final= $nota_final WHERE id = $id_inscripcion_figuras";
+	echo '<br>'.$query;
+	mysqli_query($connection,$query);
 
 ?>
 
 "<script>window.close();</script>
 <?php
 }
-if(mysqli_error($connection) == ''){
-			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-			header('Location: puntuaciones_lista_figuras.php');
-		}else{
-			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-			header('Location: puntuaciones_lista_figuras.php');
-		}
+//if(mysqli_error($connection) == ''){
+//			$_SESSION['correcto'] = 'Datos actualizados con éxito';
+//			header('Location: puntuaciones_lista_figuras.php');
+//		}else{
+//			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
+//			header('Location: puntuaciones_lista_figuras.php');
+//		}
 ?>

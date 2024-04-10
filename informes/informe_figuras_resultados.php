@@ -194,7 +194,7 @@ $rutina_color_impar = '#FCE4EC';
 
 //RESULTADO PARA FIGURAS, NO RUTINAS TECNICAS DE FIGURAS
 /*************************/
-$query = "select resultados_figuras.id_categoria from resultados_figuras, fases WHERE fases.id_categoria = resultados_figuras.id_categoria and fases.elementos_coach_card < 1 and fases.id_competicion ='".$_SESSION["id_competicion_activa"]."' group by resultados_figuras.id_categoria";
+$query = "SELECT resultados_figuras.id_categoria FROM resultados_figuras, fases, categorias WHERE fases.id_categoria = categorias.id and fases.id_categoria = resultados_figuras.id_categoria and fases.elementos_coach_card < 1 and fases.id_competicion ='".$_SESSION["id_competicion_activa"]."' GROUP BY resultados_figuras.id_categoria ORDER BY categorias.orden";
 $categorias = mysqli_query($connection,$query);
 while($categoria = mysqli_fetch_array($categorias)){
 	$query = "select nombre, id from categorias where id = '".$categoria['id_categoria']."'";
@@ -263,7 +263,7 @@ $html .= '<table style="margin-top=10px">';
 		    $puntuaciones_jueces = mysqli_query($connection,$query);
 		    while($puntuacion_juez = mysqli_fetch_array($puntuaciones_jueces)){
                 if($puntuacion_juez['nota_menor'] == 'si' or $puntuacion_juez['nota_mayor'] == 'si')
-                    $celda_puntuaciones_jueces .= '<span style="text-decoration:line-through">'.substr($puntuacion_juez['nota'],0,3)." </span>";
+                    $celda_puntuaciones_jueces .= '<span style="text-decoration:line-through">'.substr($puntuacion_juez['nota'],0,3)."</span> ";
                 else
                     $celda_puntuaciones_jueces .= substr($puntuacion_juez['nota'],0,3).' ';
 
