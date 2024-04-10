@@ -57,7 +57,12 @@ $('input[type="number"]').blur(function() {
 			this.value = this.value/10;
 		if (!Number.isInteger(this.value/0.1)){
 			$(this).css({'background-color':'#bee5eb', 'color':'black'});
-			this.value = Math.round( this.value/0.1 , 0) * 0.1;
+			console.log(this.value);
+			var nota = parseFloat(this.value);
+			console.log('parseFloat(nota):'+nota);
+			nota = nota.toFixed(1);
+			this.value = nota;
+			console.log('nota formateada:'+nota);
 
 		} else{
 			   $(this).css({'background-color':'#c3e6cb', 'color':'black'});
@@ -77,5 +82,4 @@ $('input[type="number"]').blur(function() {
 
 
      }
-
  });
