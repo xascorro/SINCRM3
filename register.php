@@ -23,7 +23,7 @@ include('includes/header.php');
 							<div class="p-5">
 								<div class="text-center">
 									<h1 class="text-gray-900 mb-4">Hola!!</h1>
-									<h4 class="text-gray-900 mb-4">Vamos a crear tu usuaio para SINCRM</h3>
+									<h4 class="text-gray-900 mb-4">Vamos a crear tu cuenta para SINCRM</h3>
 								</div>
 								<?php
 									if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
@@ -33,18 +33,18 @@ include('includes/header.php');
 									?>
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
-										<label for="username">Nombre de usuario</label>
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." maxlength="40"  required>
+<!--										<label for="username">Nombre de usuario</label>-->
+										<input type="hidden" name="username" class="form-control form-control-user" placeholder="Nombre de usuario..." maxlength="40" value="deprecated username" required>
+									</div>
+									<div class="form-group">
+  										<label for="email" class="form-label">Email</label>
+  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" maxlength="40" required>
 									</div>
 									<div class="form-group">
 										<label for="password">Contraseña</label>
 										<input type="password" name="password" class="form-control form-control-user" id="InputPassword" placeholder="Password" required>
 										<label for="password_r">Repite tu contraseña</label>
 										<input type="password" name="password_r" class="form-control form-control-user" id="InputPassword_r" placeholder="Password" required>
-									</div>
-									<div class="form-group">
-  										<label for="email" class="form-label">Email</label>
-  										<input type="email" name="email" class="form-control form-control-user" id="email" placeholder="name@example.com" maxlength="40" required>
 									</div>
  										<div class="form-group">
   										<label for="telefono" class="form-label">Teléfono</label>

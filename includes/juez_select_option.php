@@ -1,5 +1,5 @@
 <?php  
-$query = "SELECT id, nombre, apellidos FROM jueces";
+$query = "SELECT id, nombre, apellidos FROM jueces ORDER BY nombre, apellidos";
 $query_run111 = mysqli_query($connection,$query);
 $select = "<select name='id_juez' class='form-control'>";
 $select .= "<option value=' '> --- </option>";

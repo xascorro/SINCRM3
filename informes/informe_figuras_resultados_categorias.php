@@ -203,9 +203,9 @@ $rutina_color_impar = '#FCE4EC';
 $query = "SELECT resultados_figuras_categorias.id_categoria FROM resultados_figuras_categorias, fases, categorias WHERE categorias.id = fases.id_categoria and fases.id_categoria = resultados_figuras_categorias.id_categoria and fases.elementos_coach_card < 1 and fases.id_competicion ='".$_SESSION["id_competicion_activa"]."' GROUP BY resultados_figuras_categorias.id_categoria ORDER BY categorias.orden";
 $categorias = mysqli_query($connection,$query);
 while($categoria = mysqli_fetch_array($categorias)){
-	if($categoria['id_categoria'] == '234' or $categoria['id_categoria'] == '235')
-		$id_categoria = '241';
-	else
+//	if($categoria['id_categoria'] == '234' or $categoria['id_categoria'] == '235')
+//		$id_categoria = '241';
+//	else
 		$id_categoria = $categoria['id_categoria'];
 	$query = "select nombre, id from categorias where id = '".$id_categoria."'";
     $nombre_categoria=mysqli_result(mysqli_query($connection,$query),0);
@@ -347,7 +347,7 @@ while($categoria = mysqli_fetch_array($categorias)){
 
 
 $html .= '<table style="margin-top=10px">';
-	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:31%">Nadadora</th><th style="width:14%">T-TRE</th><th style="width:18%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
+	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:21%">Nadadora</th><th style="width:19%">T-TRE</th><th style="width:20%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
 	$par=0;
 	$query = "select * from resultados_figuras_categorias where id_categoria='".$categoria['id_categoria']."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' order by posicion asc, nota_final_calculada desc";
 	$resultados_figuras_categorias = mysqli_query($connection,$query);
@@ -386,12 +386,12 @@ $html .= '<table style="margin-top=10px">';
 
 		$html .= '<tr><td style="width:5%; font-size:14; font-weight:bold;">'.$resultado_figuras['posicion'].'</td>';
 //		$html .= '<td style="width:34%">'.$nombre_nadadora.' ('.$licencia_nadadora.')<br>'.$club_nadadora.'</td>';
-		$html .= '<td style="width:31%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
-		$html .= '<td style="width:14%">';
+		$html .= '<td style="width:21%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
+		$html .= '<td style="width:19%">';
 		$html .= $figuras_texto;
 
 		$html .= '</td>';
-		$celda_puntuaciones_jueces = '<td style="width:18%">';
+		$celda_puntuaciones_jueces = '<td style="width:20%">';
 		$celda_puntuaciones_paneles = '<td style="width:7%">';
 		$celda_penalizacion_paneles = '<td style="width:8%">';
 		$id_inscripcion_figuras = "";
@@ -411,8 +411,8 @@ $html .= '<table style="margin-top=10px">';
                     $celda_puntuaciones_jueces .= '<span style="text-decoration:line-through">'.substr($puntuacion_juez['nota'],0,3)." </span>";
                 else
                     $celda_puntuaciones_jueces .= substr($puntuacion_juez['nota'],0,3).' ';
-//                if($i == 5){
-                if($i == 3){
+                if($i == 5){
+//                if($i ==3){
                     $celda_puntuaciones_jueces .= "<br>";
                     $i=0;
                 }

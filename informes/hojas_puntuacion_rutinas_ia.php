@@ -158,6 +158,8 @@ while($fase = mysqli_fetch_array($fases)){
 	   	//saco orden de salida nadadoras
 	   	$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' order by orden";
 	   	$ordenes = mysqli_query($connection,$query);
+		$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' and orden > 0 order by orden";
+		$orden_maximo = mysqli_num_rows(mysqli_query($connection,$query));
 	   	while($orden = mysqli_fetch_assoc($ordenes)){
 			if($orden['orden'] == '-1')
 				$orden['orden'] = 'PS';
@@ -166,7 +168,7 @@ while($fase = mysqli_fetch_array($fases)){
             $html = '<br>';
 			$html .= '<table align="center" border="2" width="100%">';
 			$html .= '<tr><th colspan="2"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
-			$html .= '<tr><th colspan="2">'.'<span style="font-size:16">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
+			$html .= '<tr><th colspan="2">'.'<span style="font-size:14">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].' de '.$orden_maximo.'</span>'.'</th></tr>';
 			$html .= '<tr><th>'.'<span>IMP. ARTÍSTICA</span></th><th>'.'<span>NOTA</span>'.'</th></tr>';
 
             $html .= "<tr><td style='align:left'>ChoMu<br></td><td></td></tr>";
@@ -180,22 +182,22 @@ while($fase = mysqli_fetch_array($fases)){
 			$html .= '</table>';			//diseño 2 x 2
 			if($contador_hojas_por_pagina == 0){
 				$pdf->AddPage();
-				$html2 .= '<table><tr><td>'.$html.'</td>';
+				$html2 .= '<table><tr><td  width="48%">'.$html.'</td><td width="4%"></td>';
 				$contador_hojas_por_pagina++;
 //			}elseif ($contador_hojas_por_pagina < 2){
 //				$html2 .= '<td>'.$html.'</td>';
 //				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 1){
-				$html2 .= '<td>'.$html.'</td></tr><tr><td colspan=3></td></tr>';
+				$html2 .= '<td  width="48%">'.$html.'</td></tr><tr><td colspan=3></td></tr>';
 				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 2){
-				$html2 .= '<tr><td>'.$html.'</td>';
+				$html2 .= '<tr><td  width="48%">'.$html.'</td><td width="4%"></td>';
 				$contador_hojas_por_pagina++;
 //			}elseif ($contador_hojas_por_pagina == 4){
 //				$html2 .= '<td>'.$html.'</td>';
 //				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 3){
-				$html2 .= '<td>'.$html.'</td></tr></table>';
+				$html2 .= '<td  width="48%">'.$html.'</td></tr></table>';
 				$contador_hojas_por_pagina = 0;
 				$pdf->writeHTML($html2, true, false, false, false, '');
 				$html2 = "";

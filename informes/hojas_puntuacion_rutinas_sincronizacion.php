@@ -143,7 +143,7 @@ $html = "";
 
 // -----------------------------------------------------------------------------
 //saco fases_figuras
-$query = "select id_categoria, id_modalidad, id, orden, elementos_coach_card from fases where id_competicion ='".$GLOBALS["id_competicion_activa"]."' order by orden";
+$query = "select id_categoria, id_modalidad, id, orden, elementos_coach_card from fases where id_competicion ='".$GLOBALS["id_competicion_activa"]."' and id_modalidad != '1' and id_modalidad != '5' and id_modalidad != '10' order by orden";
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
 	$query = "select nombre from categorias where id = '".$fase['id_categoria']."'";
@@ -153,6 +153,8 @@ while($fase = mysqli_fetch_array($fases)){
     	   	//saco orden de salida nadadoras
 	   	$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' order by orden";
 	   	$ordenes = mysqli_query($connection,$query);
+		$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' and orden > 0 order by orden";
+		$orden_maximo = mysqli_num_rows(mysqli_query($connection,$query));
 	   	while($orden = mysqli_fetch_assoc($ordenes)){
 			if($orden['orden'] == '-1')
 				$orden['orden'] = 'PS';
@@ -162,7 +164,7 @@ while($fase = mysqli_fetch_array($fases)){
 			$html .= '<table align="center" border="3" width="100%">';
 			$html .= '<tr><th colspan="3"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
 			$html .= '<tr><th colspan="3">'.'<span style="font-size:16">ERRORES DE SINCRONIZACIÓN</span></th></tr>';
-			$html .= '<tr><th colspan="3">'.'<span style="font-size:16">'.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
+			$html .= '<tr><th colspan="3">'.'<span style="font-size:16">'.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].' de '.$orden_maximo.'</span>'.'</th></tr>';
 
             			$html .= '<tr><th><span>PEQUEÑOS</span></th><th><span>OBVIOS</span></th><th><span>MAYORES</span></th></tr>';
 

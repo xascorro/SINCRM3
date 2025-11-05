@@ -8,7 +8,7 @@
 //incluimos conexión base de datos
 include('database/dbconfig.php');
 //si no esta logeado
-if(!$_SESSION['username']){
+if(!$_SESSION['email']){
 	header('Location: login.php');
 //si esta logeado
 }else{
@@ -33,6 +33,11 @@ if(!$_SESSION['username']){
 		$_SESSION['id_competicion_usuario'] = $_POST['id_competicion'];
 	}elseif(isset($_SESSION['id_competicion_usuario'])){
 		$id_competicion=$_SESSION['id_competicion_usuario'];
+		$query = "SELECT nombre, color, figuras FROM competiciones WHERE id = $id_competicion";
+		$query_run = mysqli_query($connection,$query);
+		$competicion = mysqli_fetch_assoc($query_run);
+		$_SESSION['nombre_competicion_usuario']= $competicion['nombre'];
+
 	}else{
 		$id_competicion=$_SESSION['id_competicion_activa'];
 	}

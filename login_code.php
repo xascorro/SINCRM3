@@ -1,17 +1,28 @@
 <?php
-include('security.php');
-include('./lib/my_functions.php');
+//include('security.php');
 
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    setlocale(LC_ALL,'es_ES');
+    @session_start();
+//incluimos conexión base de datos
+include('database/dbconfig.php');
+
+
+
+include('./lib/my_functions.php');
 	//Login
 if(isset($_POST['login_btn'])){
 	$login_username = $_POST['username'];
 	$login_password = $_POST['password'];
-	@$login_email = $_POST['email'];
-	$query = "SELECT usuarios.id as id_usuario, id_rol, club, hash, roles.nombre as nombre_rol, icono FROM usuarios, roles WHERE (username ='$login_username' or email='$login_username') and usuarios.id_rol = roles.id";
+	$login_email = $_POST['email'];
+	$query = "SELECT usuarios.id as id_usuario, id_rol, club, hash, roles.nombre as nombre_rol, icono FROM usuarios, roles WHERE email='$login_email' and usuarios.id_rol = roles.id";
 	$query_run = mysqli_query($connection,$query);
 	$usuario = mysqli_fetch_array($query_run);
 	if($usuario != NULL){
-        $_SESSION['username'] = $login_username;
+        $_SESSION['username'] = $login_email;
+        $_SESSION['email'] = $login_email;
         $_SESSION['id_usario'] = $usuario['id_usuario'];
         $_SESSION['rol'] = $usuario['nombre_rol'];
         $_SESSION['id_rol'] = $usuario['id_rol'];
@@ -23,7 +34,7 @@ if(isset($_POST['login_btn'])){
 		}
 		if (password_verify($login_password, $usuario['hash'])) {
 			$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
-			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha conectado") or die("Error escribiendo en el archivo");fclose($logFile);
+			fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['email']." se ha conectado") or die("Error escribiendo en el archivo");fclose($logFile);
 			//admin
 			if($_SESSION['id_rol'] == '1'){
 				$_SESSION['startPage'] = 'index.php';
@@ -67,7 +78,7 @@ if(isset($_POST['login_btn'])){
 			header('Location: login.php');
 		}
 	}else{
-		unset($_SESSION['username']);
+		unset($_SESSION['email']);
 		$_SESSION['estado'] = "Este usuario no está registrado";
 		header('Location: login.php');
 	}
@@ -77,7 +88,7 @@ if(isset($_POST['login_btn'])){
 	session_destroy();
 	$_SESSION['estado'] = "Usuario desconectado";
 	$logFile = fopen("./log/log.txt", 'a') or die("Error creando archivo");
-	fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['username']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);
+	fwrite($logFile, "\n".date("d/m/Y H:i:s")." El usuario ".$_SESSION['email']." se ha desconectado") or die("Error escribiendo en el archivo");fclose($logFile);
 	header('Location: login.php');
 
 
@@ -88,21 +99,15 @@ if(isset($_POST['login_btn'])){
 	$register_comentario = $_POST['comentario'];
 	$register_password = $_POST['password'];
 	$register_password_r = $_POST['password_r'];
-	$query = "SELECT * FROM usuarios WHERE username ='$register_username'";
-	$query_run = mysqli_query($connection, $query);
-	$usuario = mysqli_fetch_assoc($query_run);
+
+	$query = "SELECT * FROM usuarios WHERE email ='$register_email'";
+	$query_run = mysqli_query($connection,$query);
 	if (mysqli_num_rows($query_run) > 0 ){
-		$_SESSION['estado'] = "Ya existe un usuario registrado con ese nombre";
+		$_SESSION['estado'] = "Ya existe un usuario registrado con ese email";
 		header('Location: register.php');
-	}else{
-		$query = "SELECT * FROM usuarios WHERE email ='$register_email'";
-		$query_run = mysqli_query($connection,$query);
-		if (mysqli_num_rows($query_run) > 0 ){
-			$_SESSION['estado'] = "Ya existe un usuario registrado con ese email";
-			header('Location: register.php');
-			exit();
-		}
+		exit();
 	}
+
 	if ($register_password != $register_password_r){
 			$_SESSION['estado'] = "Las contraseñas no coinciden";
 			header('Location: register.php');
@@ -127,4 +132,4 @@ if(isset($_POST['login_btn'])){
 		header('Location: login.php');
 	}
 }
-?>	
+?>

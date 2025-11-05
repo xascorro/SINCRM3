@@ -119,6 +119,26 @@ $('input[type="number"]').blur(function() {
 			notaMedia = Math.round( notaMedia/0.25 , 0) * 0.25;
 			$('#notaE9J5').val(notaMedia);
 			console.log('notaMedia:'+notaMedia);
+		}else if (blurId == 'notaE10J5'){
+			var notaMedia = 0;
+			var n1 = parseFloat($('#notaE10J1').val());
+			var n2 = parseFloat($('#notaE10J2').val());
+			var n3 = parseFloat($('#notaE10J3').val());
+			var n4 = parseFloat($('#notaE10J4').val());
+			notaMedia = (n1+n2+n3+n4)/4;
+			notaMedia = Math.round( notaMedia/0.25 , 0) * 0.25;
+			$('#notaE10J5').val(notaMedia);
+			console.log('notaMedia:'+notaMedia);
+		}else if (blurId == 'notaE11J5'){
+			var notaMedia = 0;
+			var n1 = parseFloat($('#notaE11J1').val());
+			var n2 = parseFloat($('#notaE11J2').val());
+			var n3 = parseFloat($('#notaE11J3').val());
+			var n4 = parseFloat($('#notaE11J4').val());
+			notaMedia = (n1+n2+n3+n4)/4;
+			notaMedia = Math.round( notaMedia/0.25 , 0) * 0.25;
+			$('#notaE11J5').val(notaMedia);
+			console.log('notaMedia:'+notaMedia);
 		}else if (blurId == 'notaChoMuJ5'){
 			console.log('ChoMu');
 			var notaMedia = 0;

@@ -22,16 +22,18 @@ include('security.php');
 if(isset($_POST['save_btn'])){
 	$id = $_POST['id'];
 	$id_nadadora = $_POST['id_nadadora'];
-//	$id_rutina = $_POST['id_rutina'];
-	$reserva = $_POST['reserva'];
+	if($id_nadadora > 0){
+	//	$id_rutina = $_POST['id_rutina'];
+		$reserva = $_POST['reserva'];
 
-	$query="INSERT INTO rutinas_participantes (id_nadadora, id_rutina, reserva, id_competicion) VALUES ('".$id_nadadora."','".$id_rutina."', '".$reserva."', '".$id_competicion."')";
-	echo $query;
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Participante añadida con éxito';
-	}else{
-		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
+		$query="INSERT INTO rutinas_participantes (id_nadadora, id_rutina, reserva, id_competicion) VALUES ('".$id_nadadora."','".$id_rutina."', '".$reserva."', '".$id_competicion."')";
+		echo $query;
+		$query_run = mysqli_query($connection,$query);
+		if(mysqli_error($connection) == ''){
+			$_SESSION['correcto'] = 'Participante añadida con éxito';
+		}else{
+			$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
+		}
 	}
 	header('Location: rutinas_participantes.php');
 
@@ -41,16 +43,19 @@ if(isset($_POST['save_btn'])){
 if(isset($_POST['update_btn'])){
 	$id = $_POST['id'];
 	$id_nadadora = $_POST['id_nadadora'];
-//	$id_rutina = $_POST['id_rutina'];
-	$reserva = $_POST['reserva'];
+	if($id_nadadora > 0){
+
+	//	$id_rutina = $_POST['id_rutina'];
+		$reserva = $_POST['reserva'];
 
 
-	$query = "UPDATE rutinas_participantes SET id_nadadora ='$id_nadadora' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Participante actualizada con éxito';
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+		$query = "UPDATE rutinas_participantes SET id_nadadora ='$id_nadadora' WHERE id='$id'";
+		$query_run = mysqli_query($connection,$query);
+		if(mysqli_error($connection) == ''){
+			$_SESSION['correcto'] = 'Participante actualizada con éxito';
+		}else{
+			$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+		}
 	}
 	header('Location: rutinas_participantes.php');
 

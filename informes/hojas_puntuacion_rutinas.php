@@ -152,23 +152,25 @@ while($fase = mysqli_fetch_array($fases)){
 	$query = "select nombre from modalidades where id = '".$fase['id_modalidad']."'";
     $nombre_modalidad=mysqli_result(mysqli_query($connection,$query),0);
     //saco numeros de juez del panel tipo 1 (Elementos) y quito si hay un juez de con nombre Media
-   	$query = "select paneles.nombre, numero_juez from panel_jueces, paneles, jueces where id_fase = '".$fase['id']."' and id_panel = paneles.id and paneles.id_paneles_tipo = 2 and jueces.id = panel_jueces.id_juez and jueces.nombre not like 'Media' order by numero_juez";
+   	$query = "select paneles.nombre, numero_juez from panel_jueces, paneles, jueces where id_fase = '".$fase['id']."' and id_panel = paneles.id and paneles.id_paneles_tipo = 1 and jueces.id = panel_jueces.id_juez and jueces.nombre not like 'Media' order by numero_juez";
 
    	$jueces = mysqli_query($connection,$query);
    	while($juez = mysqli_fetch_array($jueces)){
 	   	//saco orden de salida nadadoras
 	   	$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' order by orden";
 	   	$ordenes = mysqli_query($connection,$query);
-	   	while($orden = mysqli_fetch_assoc($ordenes)){
+		$query = "select orden, id from rutinas where id_fase = '".$fase['id']."' and orden > 0 order by orden";
+		$orden_maximo = mysqli_num_rows(mysqli_query($connection,$query));
+		while($orden = mysqli_fetch_assoc($ordenes)){
 			if($orden['orden'] == '-1')
 				$orden['orden'] = 'PS';
 			//imprimo
 			$pdf->SetFont('helvetica', '', 18);
             $html = '<br>';
 			$html .= '<table align="center" border="2" width="100%" cellpadding="5">';
-			$html .= '<tr><th colspan="2"><span style="font-size:24px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
-			$html .= '<tr><th colspan="2">'.'<span style="font-size:16">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].'</span>'.'</th></tr>';
-			$html .= '<tr><th width="60%">'.'<span>ELEMENTO</span></th><th width="40%">'.'<span>NOTA</span>'.'</th></tr>';
+			$html .= '<tr><th colspan="2"><span style="font-size:18px">'.$GLOBALS["nombre_competicion_activa"].'</span></th></tr>';
+			$html .= '<tr><th colspan="2">'.'<span style="font-size:16px">J'.$juez['numero_juez'].' - '.$nombre_modalidad.' '.$nombre_categoria.' - Orden '.$orden['orden'].' de '.$orden_maximo.'</span>'.'</th></tr>';
+			$html .= '<tr><th width="60%">'.'<span style="font-size:18px">ELEMENTO</span></th><th width="40%">'.'<span style="font-size:18px">NOTA</span>'.'</th></tr>';
 			$x=1;
             for ($x;$x<=$fase['elementos_coach_card'];$x++){
                 $query = "SELECT nombre, texto FROM hibridos_rutina, tipo_hibridos WHERE tipo like 'part' and texto=tipo_hibridos.id and nombre not like 'TRANSITION' and id_rutina = ".$orden['id']." and elemento=$x";
@@ -181,10 +183,14 @@ while($fase = mysqli_fetch_array($fases)){
                 }else if($tipo_elemento == 'ACROBATIC'){
                     $query = "SELECT texto FROM hibridos_rutina WHERE tipo like 'basemark' and id_rutina = ".$orden['id']." and elemento=$x";
                     $nombre = mysqli_result(mysqli_query($connection,$query),0);
+					$query = "select texto from hibridos_rutina WHERE texto in (select codigo from dificultad_acropair where descripcion like '%Subgrupo%') and id_rutina = ".$orden['id']." and elemento=$x";
+                   	$nombre_subgrupo = mysqli_result(mysqli_query($connection,$query),0);
+					if ($nombre_subgrupo != '')
+						$nombre .= ' ('.$nombre_subgrupo.')';
                 }else{
                     $nombre = $tipo_elemento;
                 }
-                $html .= '<tr align="left"><td> '.$x.' - '.$nombre.'</td><td></td></tr>';
+                $html .= '<tr align="left"><td><span style="font-size:18px"> '.$x.' - '.$nombre.'</span></td><td></td></tr>';
             }
 
 			if($x<8){
@@ -203,22 +209,22 @@ while($fase = mysqli_fetch_array($fases)){
 			//diseño 2 x 2
 			if($contador_hojas_por_pagina == 0){
 				$pdf->AddPage();
-				$html2 .= '<table><tr><td>'.$html.'</td>';
+				$html2 .= '<table><tr><td  width="48%">'.$html.'</td><td width="4%"></td>';
 				$contador_hojas_por_pagina++;
 //			}elseif ($contador_hojas_por_pagina < 2){
 //				$html2 .= '<td>'.$html.'</td>';
 //				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 1){
-				$html2 .= '<td>'.$html.'</td></tr><tr><td colspan=3></td></tr>';
+				$html2 .= '<td  width="48%">'.$html.'</td></tr><tr><td colspan=3></td></tr>';
 				$contador_hojas_por_pagina++;
-			}elseif ($contador_hojas_por_pagina == 2){
-				$html2 .= '<tr><td>'.$html.'</td>';
+			}elseif ($contador_hojas_por_pagina == 2 ){
+				$html2 .= '<tr><td  width="48%">'.$html.'</td><td width="4%"></td>';
 				$contador_hojas_por_pagina++;
 //			}elseif ($contador_hojas_por_pagina == 4){
 //				$html2 .= '<td>'.$html.'</td>';
 //				$contador_hojas_por_pagina++;
 			}elseif ($contador_hojas_por_pagina == 3){
-				$html2 .= '<td>'.$html.'</td></tr></table>';
+				$html2 .= '<td  width="48%">'.$html.'</td></tr></table>';
 				$contador_hojas_por_pagina = 0;
 				$pdf->writeHTML($html2, true, false, false, false, '');
 				$html2 = "";

@@ -1,5 +1,7 @@
 <?php
 include('security.php');
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 //actualizar tema rutina
 if(isset($_POST['update_tematica_btn'])){
 	foreach($_POST as $nombre_campo => $valor){
@@ -46,15 +48,16 @@ if(isset($_POST['update_btn'])){
 		$_SESSION['estado'] .= 'Error, la PART no se ha actualizado <br>'.mysqli_error($connection);
 	}
 	//actualizar TIPO DE BASEMARK
-	$query = "SELECT valor from dificultad_basemark WHERE codigo = '$Basemark0'";
+	$query = "SELECT valor, codigo from dificultad_basemark WHERE id = '$Basemark0'";
 	$query_run2 = mysqli_query($connection,$query);
 	$valor = mysqli_fetch_assoc($query_run2);
+	$texto = @$valor['codigo'];
 	$valor = @$valor['valor'];
 	if($valor != '')
 			$valor = ", valor = '$valor' ";
 	if($Basemark0 == '')
 		$valor = ", valor = NULL ";
-	$query = "UPDATE hibridos_rutina SET texto = '$Basemark0' $valor WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+	$query = "UPDATE hibridos_rutina SET texto = '$texto' $valor WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'Basemark actualizado con éxito. ';
@@ -77,8 +80,10 @@ if(isset($_POST['update_btn'])){
 			$ddValue = str_replace("XX", "\'", $ddValue);
 //        	if ($ddValue != '') {
 				$query = "SELECT valor from $tabla WHERE codigo = '$ddValue'";
+				$query = "SELECT codigo, valor from $tabla WHERE id = '$ddValue'";
 				$query_run2 = mysqli_query($connection,$query);
 				$valor = mysqli_fetch_assoc($query_run2);
+				$texto = @$valor['codigo'];
 				$valor = @$valor['valor'];
 				if($valor == '')
 					$valor = 'NULL';
@@ -86,7 +91,7 @@ if(isset($_POST['update_btn'])){
 				$query_run2 = mysqli_query($connection,$query);
 				$id = mysqli_fetch_assoc($query_run2);
 				$id = @$id['id'];
-			$query = "UPDATE hibridos_rutina SET texto = '".$ddValue."', valor=".$valor." WHERE id='$id'";
+			$query = "UPDATE hibridos_rutina SET id_dificultad = '".$id."', texto = '".$texto."', valor=".$valor." WHERE id='$id'";
 				$query_run = mysqli_query($connection,$query);
 }
 		if(mysqli_error($connection) == ''){
@@ -97,57 +102,63 @@ if(isset($_POST['update_btn'])){
 	}
 
         //actualizar TIPO DE HIBRIDO (BONUS)
-			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus0'";
+			$query = "SELECT codigo, valor from dificultad_hibridos WHERE id = '$bonus0'";
 			$query_run2 = mysqli_query($connection,$query);
 			$valor = mysqli_fetch_assoc($query_run2);
+			$texto = @$valor['codigo'];
 			$valor = @$valor['valor'];
 			if($bonus0 == '')
 				$valor = " NULL ";
 			$query = "UPDATE hibridos_rutina SET texto = '$bonus0', valor = $valor WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+			$query = "UPDATE hibridos_rutina SET id_dificultad = '$bonus0', texto = '$texto', valor = '$valor' WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+//	echo $query;
 			$query_run = @mysqli_query($connection,$query);
-			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus1'";
-			$query_run2 = mysqli_query($connection,$query);
-			$valor = mysqli_fetch_assoc($query_run2);
-			$valor = @$valor['valor'];
-			if($bonus1 == '')
-				$valor = " NULL ";
-			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1,1";
-			$query_run2 = mysqli_query($connection,$query);
-			$id = mysqli_fetch_assoc($query_run2);
-			$id = $id['id'];
-			$query = "UPDATE hibridos_rutina SET texto = '$bonus1', valor = $valor WHERE id='$id'";
-			$query_run = @mysqli_query($connection,$query);
-
-			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus2'";
-			$query_run2 = mysqli_query($connection,$query);
-			$valor = mysqli_fetch_assoc($query_run2);
-			$valor = @$valor['valor'];
-			if($bonus2 == '')
-				$valor = " NULL ";
-			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 2,1";
-			$query_run2 = mysqli_query($connection,$query);
-			$id = mysqli_fetch_assoc($query_run2);
-			$id = $id['id'];
-			$query = "UPDATE hibridos_rutina SET texto = '$bonus2', valor = $valor WHERE id='$id'";
-			$query_run = @mysqli_query($connection,$query);
-
-			$query = "SELECT valor from dificultad_hibridos WHERE codigo = '$bonus3'";
-			$query_run2 = mysqli_query($connection,$query);
-			$valor = mysqli_fetch_assoc($query_run2);
-			$valor = @$valor['valor'];
-			if($bonus3 == '')
-				$valor = " NULL ";
-			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 3,1";
-			$query_run2 = mysqli_query($connection,$query);
-			$id = mysqli_fetch_assoc($query_run2);
-			$id = $id['id'];
-			$query = "UPDATE hibridos_rutina SET texto = '$bonus3', valor = $valor WHERE id='$id'";
-			$query_run = @mysqli_query($connection,$query);
-		if(mysqli_error($connection) == ''){
-			$_SESSION['correcto'] .= 'Bonus actualizado con éxito. ';
-		}else{
-			$_SESSION['estado'] .= 'Error, el Bonus no se ha actualizado <br>'.mysqli_error($connection);
-		}
+//			$query = "SELECT codigo, valor from dificultad_hibridos WHERE id = '$bonus1'";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$valor = mysqli_fetch_assoc($query_run2);
+//			$texto = @$valor['codigo'];
+//			$valor = @$valor['valor'];
+//			if($bonus1 == '')
+//				$valor = " NULL ";
+//			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1,1";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$id = mysqli_fetch_assoc($query_run2);
+//			$id = $id['id'];
+//			$query = "UPDATE hibridos_rutina SET id_dificultad = '$bonus1', texto = '$texto', valor = '$valor' WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+//			$query_run = @mysqli_query($connection,$query);
+//
+//			$query = "SELECT codigo, valor from dificultad_hibridos WHERE id = '$bonus2'";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$valor = mysqli_fetch_assoc($query_run2);
+//			$texto = @$valor['codigo'];
+//			$valor = @$valor['valor'];
+//			if($bonus2 == '')
+//				$valor = " NULL ";
+//			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 2,1";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$id = mysqli_fetch_assoc($query_run2);
+//			$id = $id['id'];
+//			$query = "UPDATE hibridos_rutina SET id_dificultad = '$bonus2', texto = '$texto', valor = '$valor' WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+//			$query_run = @mysqli_query($connection,$query);
+//
+//			$query = "SELECT codigo, valor from dificultad_hibridos WHERE id = '$bonus3'";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$valor = mysqli_fetch_assoc($query_run2);
+//			$texto = @$valor['codigo'];
+//			$valor = @$valor['valor'];
+//			if($bonus3 == '')
+//				$valor = " NULL ";
+//			$query = "SELECT id from hibridos_rutina WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 3,1";
+//			$query_run2 = mysqli_query($connection,$query);
+//			$id = mysqli_fetch_assoc($query_run2);
+//			$id = $id['id'];
+//			$query = "UPDATE hibridos_rutina SET id_dificultad = '$bonus3', texto = '$texto', valor = '$valor' WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+//			$query_run = @mysqli_query($connection,$query);
+//		if(mysqli_error($connection) == ''){
+//			$_SESSION['correcto'] .= 'Bonus actualizado con éxito. ';
+//		}else{
+//			$_SESSION['estado'] .= 'Error, el Bonus no se ha actualizado <br>'.mysqli_error($connection);
+//		}
         //actualizar TIPO DE HIBRIDO (TOTAL)
         $query = "SELECT sum(valor) as total from hibridos_rutina WHERE tipo!='total' and id_rutina ='$id_rutina' and elemento='$elemento'";
         $query_run = mysqli_query($connection,$query);
@@ -162,7 +173,15 @@ if(isset($_POST['update_btn'])){
 		}else{
 			$_SESSION['estado'] .= 'Error, el Total no se ha actualizado <br>'.mysqli_error($connection);
 		}
-//		header('Location: coach_card_composer.php');
+		//actualizar dd_total de la rutina
+        $query = "UPDATE rutinas SET dd_total = (SELECT sum(valor) FROM hibridos_rutina WHERE id_rutina = '$id_rutina' and tipo = 'total') WHERE id='$id_rutina'";
+        $query_run = mysqli_query($connection,$query);
+		$query_run = @mysqli_query($connection,$query);
+		if(mysqli_error($connection) == ''){
+			$_SESSION['correcto'] .= 'DD rutina actualizado con éxito. ';
+		}else{
+			$_SESSION['estado'] .= 'Error, el DD de la rutina no se ha actualizado <br>'.mysqli_error($connection);
+		}
 }
 
 
@@ -192,9 +211,20 @@ if(isset($_POST['dlt_btn_transicion'])){
 	}else{
 		$_SESSION['estado'] = 'Error. La Transición no se ha eliminado <br>'.mysqli_error($connection);
 	}
-//	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
-
 }
+//Añadir transiciones mágicas
+//if(isset($_POST['magic_transitions'])){
+//	$elemento = $_POST['elemento_transicion'];
+//	$id_tipo_hibrido = 3;
+//
+//	$query="INSERT INTO hibridos_rutina (id_rutina, elemento, tipo, texto) VALUES ('$id_rutina','$elemento', 'part', '$id_tipo_hibrido')";
+//	//$query_run = mysqli_query($connection,$query);
+//	if(mysqli_error($connection) == ''){
+//		$_SESSION['correcto'] = 'Transiciones añadidas con éxito';
+//	}else{
+//		$_SESSION['estado'] = 'Error, Transiciones no añadidas, ha fallado la magia <br>'.mysqli_error($connection);
+//	}
+//}
 	header('Location: coach_card_composer.php?id_rutina='.$id_rutina.'&id_fase='.$id_fase);
 
 ?>

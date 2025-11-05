@@ -20,7 +20,7 @@ include('includes/navbar.php');
 
 			<!-- Titulo página y pdf -->
 			<div class="d-sm align-items-center mb-12 border-bottom-primary">
-				<h2 class="font-weight-bold text-primary text-center"><i class="fas fa-fw fa-bomb"></i> Informes Rutinas</h2>
+				<h2 class="font-weight-bold text-primary text-center"><i class="fa-solid fa-users-line"></i> Informes Rutinas</h2>
 
 			</div>
 
@@ -29,6 +29,11 @@ include('includes/navbar.php');
 				<div class="d-sm-flex align-items-center justify-content-between mb-12">
 					<a target="_blank" href="informes/inscripciones_numericas_rutinas.php?titulo=Rutinas">
 						<h4 class="font-weight-bold text-gray-900"><i class="fa-solid fa-users-line"></i> Inscripciones númericas de Rútinas</h4>
+					</a>
+				</div>
+				<div class="d-sm-flex align-items-center justify-content-between mb-12">
+					<a target="_blank" href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas">
+						<h4 class="font-weight-bold text-gray-900"><i class="fa-solid fa-users-line"></i> Nadadoras inscritas</h4>
 					</a>
 				</div>
 
@@ -52,6 +57,16 @@ include('includes/navbar.php');
 				<div class="d-sm-flex align-items-center justify-content-between mb-12">
 					<a target="_blank" href="informes/hojas_puntuacion_rutinas_ia.php">
 						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Hojas puntuación IA</h4>
+					</a>
+				</div>
+				<div class="d-sm-flex align-items-center justify-content-between mb-12">
+					<a target="_blank" href="informes/hojas_puntuacion_rutinas_no_cc.php">
+						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Hojas puntuación rutinas no CC (reglamento anterior)</h4>
+					</a>
+				</div>
+				<div class="d-sm-flex align-items-center justify-content-between mb-12">
+					<a target="_blank" href="informes/informe_rutinas_notas_anotadores.php?titulo=Anotadores">
+						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Hojas puntuación anotadores no CC (reglamento anterior)</h4>
 					</a>
 				</div>
 				<hr class="sidebar-divider">

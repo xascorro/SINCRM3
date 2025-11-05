@@ -8,7 +8,7 @@ include('../database/dbconfig.php');
 include('../lib/my_functions.php');
 session_start();
 
-if(!$_SESSION['username']){
+if(!$_SESSION['email']){
 	header('Location: ../login.php');
 }
 $query = "SELECT * FROM competiciones WHERE activo = 'si'";
@@ -119,7 +119,7 @@ $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#F7F7F7";
 
 
-$query = "select * from fases where id_competicion = '".$_SESSION["id_competicion_activa"]."' ORDER BY orden";
+$query = "select * from fases where id_competicion = '".$_SESSION["id_competicion_activa"]."' ORDER BY fases.orden";
 
 $fases = mysqli_query($connection,$query);
 while($fase = mysqli_fetch_array($fases)){
@@ -182,8 +182,15 @@ while($fase = mysqli_fetch_array($fases)){
 			}else if($rutina['orden']=='-2'){
 				$preswimmer = " (EXHIBICIÓN)";
 				$rutina['orden'] = '';
+//			}else if($rutina['dd_total']>0){
+//				$dificultad_declarada = " </h3></td><td width=30%>DD: ".$rutina['dd_total'];
+//			}else{
+//				$dificultad_declarada = " </h3></td><td width=30%>";
 			}
-			$html .='<tr style="background-color:'.$rutina_color.'"><td width="10%"><h2>'.$rutina['orden'].'</h2></td><td width="90%"><h3>'.$nombre_rutina.$preswimmer.'</h3></td></tr>';
+			$dificultad_declarada = " </h3></td><td width=30%>DD: ".$rutina['dd_total'];
+
+			$html .='<tr style="background-color:'.$rutina_color.'"><td width="10%"><h2>'.$rutina['orden'].'</h2></td><td width="70%"><h3>'.$nombre_rutina.$preswimmer.$dificultad_declarada.'</td></tr>';
+
 //		}elseif($titulo =='Rutinas'){
 		}else{
 			$preswimmer = '';
@@ -210,7 +217,7 @@ while($fase = mysqli_fetch_array($fases)){
 				$year=$participante['año_nacimiento'];
 				 //segun titulo de documento
 				if($titulo =='Orden de salida'){
-					$html .='<tr style="background-color:'.$rutina_color.'"><td></td><td>&nbsp;&nbsp;&nbsp;&nbsp;'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td></tr>';
+					$html .='<tr style="background-color:'.$rutina_color.'"><td></td><td>&nbsp;&nbsp;&nbsp;&nbsp;'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td><td></td></tr>';
 //				}elseif($titulo =='Rutinas'){
 				}else{
 					$html .='<tr style="background-color:'.$rutina_color.'"><td>'.$apellidos_participante.', '.$nombre_participante.' '.$titular.' ('.$year.')</td><td></td></tr>';

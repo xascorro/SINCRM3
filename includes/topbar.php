@@ -8,6 +8,8 @@ if($_SESSION['id_rol'] == 1 or $_SESSION['id_rol'] == 2){
 	echo '<button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
     <i class="fa fa-bars"></i>
   </button>';
+	echo 'Admin_nombre:'.@$_SESSION['nombre_competicion_activa'];
+	echo 'Admin_id:'.@$_SESSION['id_competicion_activa'];
 }
  ?>
   <!-- Sidebar Toggle (Topbar) -->
@@ -15,10 +17,7 @@ if($_SESSION['id_rol'] == 1 or $_SESSION['id_rol'] == 2){
          <img src="./images/logo_sincrm_removebg.png" alt="" width="110px" >
  <p class="text-dark">
  <?php
-  echo 'A_n:'.@$_SESSION['nombre_competicion_activa'];
-  echo 'A_id:'.@$_SESSION['id_competicion_activa'];
-  echo 'C_n:'.@$_SESSION['nombre_competicion_usuario'];
-  echo 'C_id:'.@$_SESSION['id_competicion_usuario'];
+  echo 'Competición:'.@$_SESSION['id_competicion_usuario'].' '.@$_SESSION['nombre_competicion_usuario'];
   ?>
   </p>
 

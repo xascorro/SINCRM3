@@ -25,7 +25,7 @@ include('includes/navbar.php');
 
             <div class="card-body">
                 <?php
-//Editar nadadora
+//Editar panel
 				if(isset($_POST['edit_btn'])){
 					$id = $_POST['edit_id'];
 
@@ -67,18 +67,18 @@ include('includes/navbar.php');
 					$query = "SELECT id, nombre, numero_jueces, peso, color, descripcion FROM paneles WHERE id = '$id'";
 					$query_run = mysqli_query($connection,$query);
 					foreach ($query_run as $row) {
-						$_POST['id_panel'] = $row['id_panel'];
+						$_POST['id_panel'] = $row['id'];
 						?>
                         <form action="paneles_jueces_code.php" method="POST">
                             <input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
                             <div class="form-group row">
                                 <div class="col-7">
                                     <label for="edit_nombre">Nombre</label>
-                                    <input type="text" class="form-control" name="edit_nombre" value="<?echo $row['nombre'];?>">
+                                    <input type="text" class="form-control" name="edit_nombre" value="<?php echo $row['nombre'];?>">
                                 </div>
                                 <div class="col-1">
                                     <label for="edit_numero_jueces">Jueces</label>
-                                    <input type="number" class="form-control" name="edit_numero_jueces" value="<?echo $row['numero_jueces'];?>">
+                                    <input type="number" class="form-control" name="edit_numero_jueces" value="<?php echo $row['numero_jueces'];?>">
                                 </div>
                                 <div class="col-2">
                                     <label for="edit_peso">% Nota</label>
@@ -86,17 +86,18 @@ include('includes/navbar.php');
                                 </div>
                                 <div class="col-2">
                                     <label for="edit_color">Color</label>
-                                    <input type="text" class="form-control" name="edit_color" placeholder="#CECECE" value="<? echo $row['color'];?>">
+                                    <input type="text" class="form-control" name="edit_color" placeholder="#CECECE" value="<?php echo $row['color'];?>">
                                 </div>
                             </div>
                             <div class="form-group row">
                                <div class="col-3">
-                                    <? include('includes/paneles_tipo_select_option.php');?>
+                                    <?php
+									include('includes/paneles_tipo_select_option.php');?>
                                 </div>
                                 <div class="col-9">
 
                                 <label for="edit_descripcion">Descripción</label>
-                                <input type="text" class="form-control" name="edit_descripcion" value="<? echo $row['descripcion'];?>">
+                                <input type="text" class="form-control" name="edit_descripcion" value="<?php echo $row['descripcion'];?>">
                                 </div>
 
                             </div>

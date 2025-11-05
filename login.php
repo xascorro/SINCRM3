@@ -1,4 +1,5 @@
 <?php
+session_destroy();
 session_start();
 include('includes/header.php');
 ?>
@@ -16,7 +17,7 @@ include('includes/header.php');
 							<div class="p-5">
 								<div class="text-center">
 									<h1 class="text-gray-900 mb-4">Hola de nuevo!!</h1>
-									<h4 class="text-gray-900 mb-4">Introduce tu nombre de usuario y contraseña</h3>
+									<h4 class="text-gray-900 mb-4">Introduce tus credenciales</h3>
 									<?php
 									if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
 										echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
@@ -30,8 +31,8 @@ include('includes/header.php');
 								</div>
 								<form class="user" action="login_code.php" method="POST">
 									<div class="form-group">
-									<label for="username">Email o usuario</label>
-										<input type="username" name="username" class="form-control form-control-user" placeholder="Email o usuario..." required>
+									<label for="email">Email</label>
+										<input type="email" name="email" class="form-control form-control-user" placeholder="example@dominio.com" required>
 									</div>
 									<div class="form-group">
 									<label for="password">Contraseña</label>

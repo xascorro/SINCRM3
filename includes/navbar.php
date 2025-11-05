@@ -22,6 +22,11 @@ if($_SESSION['id_rol'] == '1'){
     	</div>
     	<!-- Nav Item - Pages Collapse Menu -->
     	<li class="nav-item">
+    		<a class="nav-link" href="tools.php">
+			<i class="fa-solid fa-screwdriver-wrench"></i>
+   	    	<span>Herramientas</span></a>
+    	</li>
+    	<li class="nav-item">
     		<a class="nav-link" href="db_setup.php">
     			<i class="fas fa-fw fa-server"></i>
     			<span>Configuración DB</span></a>

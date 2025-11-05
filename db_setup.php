@@ -24,9 +24,25 @@ include('includes/navbar.php');
 				<h4 class="font-weight-bold text-danger text-center">Puedes romper algo si no sabes lo que estas haciendo</h4>
 			</div>
 			<div class="d-sm-flex align-items-center justify-content-between mb-12">
-				<h2 class="font-weight-bold text-primary"><i class="fas fa-fw fa-database"></i> Conexión a la Base de Datos</h2>
+				<h2 class="font-weight-bold text-primary"><i class="fas fa-exclamation-triangle"></i> Ajustes de Visualización de Errores</h2>
+			</div>
+			<div class="card-body">
+				sin implementar
+				<div class="row">
+
+					<form action="db_code.php" method="POST">
+						<label for="show_errors">Mostrar Errores:</label>
+						<input type="checkbox" id="show_errors" name="show_errors" value="1" <?php echo (isset($_POST['show_errors'])) ? 'checked' : ''; ?>>
+						<br>
+						<input class="btn btn-primary" type="submit" value="Guardar Ajustes">
+					</form>
+				</div>
 			</div>
 
+
+			<div class="d-sm-flex align-items-center justify-content-between mb-12">
+				<h2 class="font-weight-bold text-primary"><i class="fas fa-fw fa-database"></i> Conexión a la Base de Datos</h2>
+			</div>
 			<div class="card-body">
 				<form action="db_code.php" method="POST">
 					<div class="row">
@@ -70,7 +86,7 @@ include('includes/navbar.php');
 			<div class="card-body">
 				<form action="db_code.php" method="POST">
 					<div class="row">
-					<div class="form-group col-6">
+						<div class="form-group col-6">
 							<label for="descripcion">Nombre de archivo</label>
 							<input type="text" class="form-control" name="descripcion" placeholder="Descripción del archivo de backup">
 						</div>

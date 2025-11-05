@@ -79,7 +79,7 @@ include('includes/navbar.php');
           </div>
           <form action="paneles_jueces_code.php" method="POST">
             <div class="modal-body">
-              <div class="form-group">
+              <div class="form-group row">
                 <div class="col">
                   <label for="nombre">Nombre</label>
                   <input type="text" class="form-control" name="nombre">
@@ -215,7 +215,7 @@ include('includes/navbar.php');
 
                 <div class="table-responsive">
                   <?php
-                  $query = "SELECT paneles.color, paneles.nombre, paneles.id, paneles.numero_jueces, paneles_tipo.nombre as tipo_panel, paneles_tipo.id as id_tipo from paneles, paneles_tipo where paneles.id_paneles_tipo = paneles_tipo.id and id_competicion = '".$_SESSION['id_competicion_activa']."'";
+                  $query = "SELECT paneles.color, paneles.nombre, paneles.id, paneles.peso, paneles.descripcion, paneles.numero_jueces, paneles_tipo.nombre as tipo_panel, paneles_tipo.id as id_tipo from paneles, paneles_tipo where paneles.id_paneles_tipo = paneles_tipo.id and id_competicion = '".$_SESSION['id_competicion_activa']."'";
                   $query_run = mysqli_query($connection,$query); 
                   ?>
                   <table class="table table-striped" id="dataTable" width="100%" cellspacing="0">
@@ -279,7 +279,7 @@ include('includes/navbar.php');
                 $query = "SELECT fases.id as id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY fases.orden, fases.id";
             }
             else{
-                $query = "SELECT fases.id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id as id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, fases.orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -289,7 +289,7 @@ include('includes/navbar.php');
                   while ($row = mysqli_fetch_assoc($query_run)) {
                     ?>
                     <h5>Jueces
-                      <?php echo @$row['nombre']. $row['nombre_categoria']." - ".$row['numero']." - ".$row['nombre_figura']; ?></h5>
+                      <?php echo @$row['nombre'].' '.$row['nombre_categoria']." - ".$row['numero']." - ".$row['nombre_figura']." #".$row['id']; ?></h5>
                     <?php
                      if(@$row['elementos_coach_card']>0 or $_SESSION['figuras'] == 'si'){
                         $query = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles_tipo.nombre as panel_tipo from paneles, paneles_tipo where id_paneles_tipo=paneles_tipo.id and obsoleto like 'no' and id_competicion = '".$_SESSION['id_competicion_activa']."'";

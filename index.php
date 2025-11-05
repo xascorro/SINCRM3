@@ -1,5 +1,10 @@
 <?php
+
 session_start();
+//  date_default_timezone_set('Europe/Madrid'); // Establece la zona horaria a Madrid, España
+//  $fecha_hora_actual = date("d/m/Y H:i:s");
+//  echo "La fecha y hora actual es: " . $fecha_hora_actual;
+
 //unset($_SESSION['id_competicion_usuario']); el favicon no me solita esta pagina
 //exit();
 //include('security.php');
@@ -46,7 +51,7 @@ include('includes/navbar.php');
                   $query_run = mysqli_query($connection,$query);
                   $usuario = mysqli_fetch_array($query_run);
                   ?>
-									<div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $usuario['username']?></div>
+<!--									<div class="h5 mb-0 font-weight-bold text-gray-800"><?php //echo $usuario['username']?></div>-->
 									<div class="h5 mb-0 font-weight-bold text-gray-800"><i class="fa-regular fa-envelope"></i> <?php echo @$usuario['email']?></div>
 									<div class="h5 mb-0 font-weight-bold text-gray-800"><i class="fa-solid fa-phone"></i> <?php echo @$usuario['telefono']?></div>
 								</div>
@@ -127,10 +132,10 @@ include('includes/navbar.php');
 						<div class="card-body">
 							<div class="row no-gutters align-items-center">
 								<div class="col mr-2">
-									<div class="font-weight-bold text-info text-uppercase mb-1">Próxima competición</div>
+									<div class="font-weight-bold text-info text-uppercase mb-1">Próximas competiciones</div>
 									<?php
 //                    $query = 'SELECT * FROM competiciones WHERE activo like "si" and fecha >= now() ORDER BY fecha asc';
-                    	$query = 'SELECT * FROM competiciones WHERE fecha >= (SELECT CURDATE() AS Today) ORDER BY fecha asc limit 2';
+                    	$query = 'SELECT * FROM competiciones WHERE fecha >= (SELECT CURDATE() AS Today) ORDER BY fecha asc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -209,37 +214,48 @@ include('includes/navbar.php');
 									</div>
 									<div class="row">
 										<?php
-					if((date("Y-m-d") >= $row['fecha_inicio_inscripcion'])){
+								$fecha_inicio_inscripcion = date("Y-m-d", strtotime("-".$row['dias_inicio_inscripcion']." days", strtotime($row['fecha'])));
+								$fecha_fin_inscripcion = date("Y-m-d", strtotime("-".($row['dias_fin_inscripcion']+1)." days", strtotime($row['fecha'])));
+								$fecha_sorteo = date("Y-m-d", strtotime("-".$row['dias_sorteo']." days", strtotime($row['fecha'])));
+								$hoy = date("Y-m-d");
+//					if($hoy >= $fecha_inicio_inscripcion && $hoy <=$fecha_fin_inscripcion ){
+					if($hoy >= $fecha_inicio_inscripcion){
 					?>
 										<div class="col col-12 col-md-6 mb-4">
 										<form action="<?php echo $enlace_inscripcion;?>" method="post">
-										<label for="inscripciones">Del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion']).'<br>';?></label>
+										<label for="inscripciones">Del <?php echo dateAFecha($fecha_inicio_inscripcion).' al '.dateAFecha($fecha_fin_inscripcion).'<br>';?></label>
 										<input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
 										<input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
 										<input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-											<input name="inscripciones" class="btn btn-info form-control" type="submit" value="Inscribirse">
+											<input name="inscripciones" class="btn btn-info form-control" type="submit" value="Inscripciones">
 										</form>
 										</div>
 										<?php
 
-					}else if((date("Y-m-d") < $row['fecha_inicio_inscripcion'])){
+					}else{
 						?>
 										<div class="col col-12 col-md-6 mb-4">
-											<span class="text text-info">La inscripción se abrirá del <?php echo dateAFecha($row['fecha_inicio_inscripcion']).' al '.dateAFecha($row['fecha_fin_inscripcion'])?>
+											<span class="text text-info">La inscripción se abrirá del <?php echo dateAFecha($fecha_inicio_inscripcion).' al '.dateAFecha($fecha_fin_inscripcion)?>
 											</span>
 										</div>
 
 										<?php
 					}
 								?>
+
 										<div class="col col-12 col-md-6 mb-4">
-										<label for="sorteo">El sorteo se realizará el <?php echo dateAFecha($row['fecha_sorteo']);?></label>
+										<label for="sorteo">El sorteo se realizará el <?php echo dateAFecha($fecha_sorteo);?></label>
 											<a href="<?php echo $row['enlace_sorteo'];?>" class="btn btn-info form-control" name="sorteo">Unirse <i class="fa-solid fa-video"></i></a>
+
 										</div>
 									</div>
 									<?php
 								echo '<div class="row">';
-                                $filename = './docs/'.$row['id'].'-inscripciones.pdf';
+                                $filename = './docs/'.$row['id'].'-nadadoras.pdf';
+                                if (file_exists($filename)) {
+                                    echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Nadadoras</a></div>';
+                                }
+								$filename = './docs/'.$row['id'].'-inscripciones.pdf';
                                 if (file_exists($filename)) {
                                     echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Inscripciones</a></div>';
                                 }
@@ -281,6 +297,7 @@ include('includes/navbar.php');
 									<div class="font-weight-bold text-success text-uppercase mb-1">Competiciones programadas</div>
 									<?php
                     $query = 'select * FROM competiciones WHERE activo like "no" and fecha >= (SELECT CURDATE() + 1) ORDER BY fecha asc';
+                    $query = 'select * FROM competiciones WHERE fecha >= (SELECT CURDATE() + 1) ORDER BY fecha asc';
                         $query_run = mysqli_query($connection,$query);
                         if(mysqli_num_rows($query_run) > 0){
                             while ($row = mysqli_fetch_assoc($query_run)) {
@@ -343,6 +360,9 @@ include('includes/navbar.php');
                                     echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Liga</a></div>';
                                 }
                                 echo '</div>';
+                                echo '<br>';
+                                echo '<br>';
+
                             }
                         }
                         ?>

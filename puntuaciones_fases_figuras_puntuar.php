@@ -41,7 +41,7 @@ while($fase_figuras = mysqli_fetch_array($fases)){
 			if(!isset($resultado_nadadora['sum_nota_final']))
 				$resultado_nadadora['sum_nota_final']=0;
             $query = "insert into resultados_figuras (id_nadadora, id_categoria, año, gd_acumulado, puntos_penalizacion, nota_final, nota_final_calculada, baja, preswimmer, id_competicion) values ('".$resultado_nadadora['id_nadadora']."', '".$fase_figuras['id_categoria']."', '$anio_nadadora', '$gd_acumulado"."', '$puntos_penalizacion', '".$resultado_nadadora['sum_nota_final']."', '$nota_final_calculada', '".$resultado_nadadora['baja']."','".$resultado_nadadora['preswimmer']."','$id_competicion' )";
-		echo "<br>".$query;
+			echo "<br>".$query;
 		mysqli_query($connection,$query);
         }
 

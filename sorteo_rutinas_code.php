@@ -47,24 +47,24 @@ if(isset($_POST['desbloquear'])){
 			    $orden_rand++;
 			    $query = "UPDATE rutinas SET orden='$orden_rand' where id='".$orden['id']."'";
 			    mysqli_query($connection,$query);
-				echo $query;
+				//echo $query;
 
 			}
-			$change='si';
-			echo $change.' '.$orden_rand.' '.$fase['id'];
-			if($change=='si' & $fase['id'] == 82){
-				echo 'ent<br><br>entro<br><br>';
-					$query = "select id from rutinas where orden=4 and id_fase=".$fase['id'];
-				echo $query;
+			$change='no';
+			//echo $change.' '.$orden_rand.' '.$fase['id'];
+			if($change=='si' & $fase['id'] == 253){
+				//echo 'ent<br><br>entro<br><br>';
+					$query = "select id from rutinas where orden=5 and id_fase=".$fase['id'];
+				//echo $query;
 					$rutina_change = mysqli_result(mysqli_query($connection,$query));
-					$query = "select orden from rutinas where id=159";
-				echo $query;
+					$query = "select orden from rutinas where id=429";
+				//echo $query;
 					$orden_mx = mysqli_result(mysqli_query($connection,$query));
 				$query = "UPDATE rutinas set orden = $orden_mx WHERE id = $rutina_change";
-				echo $query;
+				//echo $query;
 					mysqli_query($connection,$query);
-				$query="UPDATE rutinas set orden = 4 WHERE id = 159";
-				echo $query;
+				$query="UPDATE rutinas set orden = 5 WHERE id = 429";
+				//echo $query;
 					mysqli_query($connection,$query);
 
 

@@ -116,7 +116,8 @@ include('includes/navbar.php');
                 $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
             else
-                $query = "SELECT fases.id, fases.elementos_coach_card, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, fases.orden FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, fases.elementos_coach_card, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, fases.orden, (SELECT COUNT(id) FROM rutinas WHERE id_fase = fases.id) AS numero_rutinas
+				FROM fases, categorias, modalidades WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
 
             $query_run = mysqli_query($connection,$query); 
             ?>
@@ -152,7 +153,7 @@ include('includes/navbar.php');
 							<tr>
 								<th scope="row"> <?php echo $row['id']; ?> </th>
 								<td> <?php echo $row['orden']; ?> </td>
-								<td> <?php echo @$row['nombre'].' '.$row['nombre_categoria']; ?> </td>
+								<td> <?php echo @$row['nombre'].' '.$row['nombre_categoria'].' ('.$row['numero_rutinas'].')'; ?> </td>
 								<td class="text-center"> <?php echo @$row['elementos_coach_card']; ?> </td>
 								<td class="text-center"> <?php echo @$row['f_acro']; ?> </td>
 								<td class="text-center"> <?php echo @$row['f_hybrid']; ?> </td>

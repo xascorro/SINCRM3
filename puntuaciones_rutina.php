@@ -1,12 +1,10 @@
 <?php
 //FACTORIZACION
-//$f_chomu = 1.0; //leer de la DB más adelante
-//$factor_Performance = 1;
-//$factor_Transitions = 1;
-//$factor_hybrid = 1.0;
-//$factor_acro = 0.5;
-//$factor_tre = 0.5;
+//se lee de la base de datos
 //FIN FACTORIZACION
+//VALOR ERRORES SINCRONIZACIÓN
+//	se lee de la base de datos
+//FIN VALOR ERRORES SINCRONIZACIÓN
 
 
 include('security.php');
@@ -30,7 +28,7 @@ include('includes/navbar.php');
     else{
         $id_rutina = $_GET['id_rutina'];
     }
-	$query = "SELECT fases.id, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre FROM fases, rutinas WHERE rutinas.id='$id_rutina' and fases.id=id_fase";
+	$query = "SELECT fases.id, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre, error_xs, error_ob, error_xl FROM fases, rutinas WHERE rutinas.id='$id_rutina' and fases.id=id_fase";
 	$fase = mysqli_query($connection, $query);
 	$fase = mysqli_fetch_assoc($fase);
 	$id_fase = $fase['id'];
@@ -40,6 +38,9 @@ include('includes/navbar.php');
 	$f_hybrid = $fase['f_hybrid'];
 	$f_acro = $fase['f_acro'];
 	$f_tre = $fase['f_tre'];
+	$error_xs = $fase['error_xs'];
+	$error_ob = $fase['error_ob'];
+	$error_xl = $fase['error_xl'];
 
 //    if(isset($_POST['id_fase']))
 //        $id_fase = $_POST['id_fase'];
@@ -54,13 +55,14 @@ include('includes/navbar.php');
     $nombre_club = $_POST['nombre_club'];
     $nombre_rutina = $_POST['nombre_rutina'];
 
-		$query = "SELECT rutinas.id, rutinas.orden as orden, rutinas.nombre as nombre_rutina, rutinas.id_club, baja, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, modalidades.id as id_modalidad FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = ".$id_rutina." and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY rutinas.orden, rutinas.id, fases.orden, fases.id";
+		$query = "SELECT rutinas.id, rutinas.orden as orden, rutinas.nombre as nombre_rutina, rutinas.id_club, baja, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, modalidades.id as id_modalidad, rutinas.dd_total FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = ".$id_rutina." and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY rutinas.orden, rutinas.id, fases.orden, fases.id";
 
         $query_run = mysqli_query($connection,$query);
 		$nombre_modalidad = mysqli_result($query_run,0,6);
 		$nombre_categoria = mysqli_result($query_run,0,7);
 		$nombre_club = mysqli_result($query_run,0,5);
 		$id_modalidad = mysqli_result($query_run,0,10);
+		$dd_total = mysqli_result($query_run,0,11);
 		$orden = mysqli_result($query_run,0,1);
       ?>
 
@@ -74,9 +76,9 @@ include('includes/navbar.php');
 			?>
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag-checkered"></i>Puntuar <td class="align-middle">
-									<blockquote class="blockquote"><?php echo '#'.$id_rutina.' '.$nombre_modalidad.' ' .$nombre_categoria.' '.$nombre_club.' Orden:'.$orden.'</blockquote> <figcaption class="blockquote-footer">('.$nombres.')</figcaption>';
+						<blockquote class="blockquote"><?php echo ' Orden:'.$orden. ' #'.$id_rutina.' '.$nombre_modalidad.' ' .$nombre_categoria.' '.$nombre_club.' DD:'.$dd_total.'</blockquote> <figcaption class="blockquote-footer">('.$nombres.')</figcaption>';
 										?>
-								</td>
+					</td>
 
 
 				</h4>
@@ -108,6 +110,8 @@ include('includes/navbar.php');
 							<tr class="table-info">
 								<th colspan=10>
 									<h4>Elementos</h4>
+									<code>Factor de corrección del elemento * (BM 0 DD) * X̅</code>
+
 								</th>
 							</tr>
 							<tr>
@@ -188,7 +192,7 @@ include('includes/navbar.php');
 							$class = ' table-warning';
 						}else
 							$class = '';
-                        echo  "<th class='$class' scope='col'><input name='notaE".$row['elemento']."J".$row_jueces['numero_juez']."' id='notaE".$row['elemento']."J".$row_jueces['numero_juez']."' tabindex='".($tab_index+($row_jueces['numero_juez']*9))."' type=number step=0.25 class='form-control $class' value=".$nota." ".$style."></th>";
+                        echo  "<th class='$class' scope='col'><input name='notaE".$row['elemento']."J".$row_jueces['numero_juez']."' id='notaE".$row['elemento']."J".$row_jueces['numero_juez']."' tabindex='".($tab_index+($row_jueces['numero_juez']*15))."' type=number step=0.25 class='form-control $class' value=".$nota." ".$style."></th>";
                         ?>
 									<input type="hidden" name="id_panel_juez<?php echo $row_jueces['numero_juez'];?>" value="<?php echo $row_jueces['id']; ?>">
 									<?php
@@ -215,7 +219,7 @@ include('includes/navbar.php');
 								<th><?php echo $nota_elementos;?></th>
 							</tr>
 
-<?php
+							<?php
 					$class = '';
 					if($id_modalidad == 1 or $id_modalidad == 5){
 						$class = 'd-none';
@@ -229,20 +233,20 @@ include('includes/navbar.php');
 							<?php
                     $query = "SELECT * from errores_sincronizacion WHERE id_rutina=$id_rutina";
                     $errores_sincronizacion = mysqli_fetch_assoc(mysqli_query($connection,$query));
-                    $penalizacion_sincronizacion = -($errores_sincronizacion['errores_pequenos']*0.1 + $errores_sincronizacion['errores_obvios']*0.5 + $errores_sincronizacion['errores_mayores']*3);
+                    $penalizacion_sincronizacion = ($errores_sincronizacion['errores_pequenos']*$error_xs + $errores_sincronizacion['errores_obvios']*$error_ob + $errores_sincronizacion['errores_mayores']*$error_xl);
                     $tab_index=100;
                     ?>
 							<tr class="<?php echo $class;?>">
 								<td colspan="2">
-									<label for='errores_pequenos'>Pequeños (0.1)</label>
+									<label for='errores_pequenos'>Pequeños (<?php echo $error_xs;?>)</label>
 									<input tabindex=<?php echo $tab_index;?> class=form-control type=number id='errores_pequenos' name='errores_pequenos' value='<?php echo $errores_sincronizacion['errores_pequenos'];?>'>
 								</td>
 								<td colspan="3">
-									<label for='errores_obvios'>Obvios (0.5)</label>
+									<label for='errores_obvios'>Obvios (<?php echo $error_ob;?>)</label>
 									<input tabindex=<?php echo $tab_index;?> class=form-control type=number id='errores_obvios' name='errores_obvios' value='<?php echo $errores_sincronizacion['errores_obvios'];?>'>
 								</td>
 								<td colspan="2">
-									<label for='errores_mayores'>Mayores (3)</label>
+									<label for='errores_mayores'>Mayores (<?php echo $error_xl;?>)</label>
 									<input tabindex=<?php echo $tab_index;?> class=form-control type=number id='errores_mayores' name='errores_mayores' value='<?php echo $errores_sincronizacion['errores_mayores'];?>'>
 								</td>
 								<td></td>
@@ -288,10 +292,13 @@ include('includes/navbar.php');
 							<tr class="table-success">
 								<th colspan=10>
 									<h4>Impresión Artística</h4>
+									<code>Factor de corrección * ∑</code>
 								</th>
 							</tr>
 							<tr>
 								<td></td>
+								<th></th>
+
 								<th>F</th>
 								<?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
@@ -300,15 +307,17 @@ include('includes/navbar.php');
                         echo  "<th scope='col'>J".$row_jueces['numero_juez']."</th>";
 
                     }
-                    echo "<th></th><th></th><th>P</th>";
+                    echo "<th>∑</th><th>P</th>";
                     echo "<tr>";
                     echo "<th>ChoMu</th>";
+                    echo "<td></td>";
                     echo "<td>".$f_chomu."</td>";
                     ?>
 								<input type="hidden" name="f_chomu" value="<?php echo $f_chomu; ?>">
 								<?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
+					$nota_panel = 0;
                     while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
                         $query = "SELECT nota, id, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_rutina='$id_rutina' and id_panel_juez=".$row_jueces['id']." and tipo_ia='ChoMu'";
                         $nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
@@ -316,8 +325,11 @@ include('includes/navbar.php');
                         $nota_menor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_menor'];
                         $nota_mayor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_mayor'];
                         $style='';
-                        if($nota_menor == 'si' or $nota_mayor == 'si')
+                        if($nota_menor == 'si' or $nota_mayor == 'si'){
                             $style = 'style="text-decoration:line-through"';
+                        }else{
+							$nota_panel +=$nota;
+                        }
 						if($row_jueces['id_juez'] == '108'){
 							$class = ' table-warning';
 						}else
@@ -332,8 +344,7 @@ include('includes/navbar.php');
                     $nota = mysqli_fetch_assoc(mysqli_query($connection,$query));
 
                       ?>
-								<td></td>
-								<td></td>
+								<td><?php echo $nota_panel;?></td>
 								<td><?php echo $nota['nota'];?></td>
 							</tr>
 
@@ -342,12 +353,14 @@ include('includes/navbar.php');
                       $nota_ia = $nota_ia + $nota['nota'];
                     echo "<tr>";
                     echo "<th>Performance</th>";
+					echo "<td></td>";
                     echo "<td>$f_performance</td>";
                     ?>
 							<input type="hidden" name="factor_Performance" value="<?php echo $f_performance; ?>">
 							<?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
+					$nota_panel = 0;
                     while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
                         $query = "SELECT nota, id, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_rutina='$id_rutina' and id_panel_juez=".$row_jueces['id']." and tipo_ia='Performance'";
                         $nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
@@ -355,12 +368,16 @@ include('includes/navbar.php');
                         $nota_menor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_menor'];
                         $nota_mayor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_mayor'];
                         $style='';
-                        if($nota_menor == 'si' or $nota_mayor == 'si')
+                        if($nota_menor == 'si' or $nota_mayor == 'si'){
                             $style = 'style="text-decoration:line-through"';
+                        }else{
+							$nota_panel +=$nota;
+                        }
 						if($row_jueces['id_juez'] == '108'){
 							$class = ' table-warning';
 						}else
 							$class = '';
+
                         echo  "<th class='$class' scope='col'><input name='notaPerformanceJ".$row_jueces['numero_juez']."' id='notaPerformanceJ".$row_jueces['numero_juez']."' tabindex='".($tab_index+($row_jueces['numero_juez']*5))."' type=number step=0.25 class='form-control $class' value=".$nota." ".$style."></th>";
                         ?>
 							<input type="hidden" name="id_panel_juez_Performance<?php echo $row_jueces['numero_juez'];?>" value="<?php echo $row_jueces['id']; ?>">
@@ -371,8 +388,7 @@ include('includes/navbar.php');
                     $nota = mysqli_fetch_assoc(mysqli_query($connection,$query));
 
                       ?>
-							<td></td>
-							<td></td>
+							<td><?php echo $nota_panel;?></td>
 							<td><?php echo $nota['nota'];?></td>
 							</tr>
 
@@ -382,21 +398,26 @@ include('includes/navbar.php');
 
                     echo "<tr>";
                     echo "<th>Transitions</th>";
+                    echo "<th></th>";
                     echo "<td>$f_transitions</td>";
                     ?>
 							<input type="hidden" name="factor_Transitions" value="<?php echo $f_transitions; ?>">
 							<?php
                     $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_panel in (SELECT id from paneles where id_paneles_tipo = 2 and id_competicion=".$_SESSION['id_competicion_activa'].") order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
-                    while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
+                    $nota_panel = 0;
+					while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
                         $query = "SELECT nota, id, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_rutina='$id_rutina' and id_panel_juez=".$row_jueces['id']." and tipo_ia='Transitions'";
                         $nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
                         $id = mysqli_fetch_assoc(mysqli_query($connection,$query))['id'];
                         $nota_menor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_menor'];
                         $nota_mayor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_mayor'];
                         $style='';
-                        if($nota_menor == 'si' or $nota_mayor == 'si')
+                        if($nota_menor == 'si' or $nota_mayor == 'si'){
                             $style = 'style="text-decoration:line-through"';
+                        }else{
+							$nota_panel +=$nota;
+                        }
 						if($row_jueces['id_juez'] == '108'){
 							$class = ' table-warning';
 						}else
@@ -411,8 +432,7 @@ include('includes/navbar.php');
                     $nota = mysqli_fetch_assoc(mysqli_query($connection,$query));
 
                       ?>
-							<td></td>
-							<td></td>
+							<td><?php echo $nota_panel;?></td>
 							<td><?php echo $nota['nota'];?></td>
 							<?php
                         $nota_ia = $nota_ia + $nota['nota'];

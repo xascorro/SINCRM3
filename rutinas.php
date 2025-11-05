@@ -1,4 +1,9 @@
 <?php
+  date_default_timezone_set('Europe/Madrid'); // Establece la zona horaria a Madrid, España
+  $fecha_hora_actual = date("d/m/Y H:i:s");
+//  echo "La fecha y hora actual es: " . $fecha_hora_actual;
+?>
+<?php
 //include('security.php');
 session_start();
 
@@ -74,7 +79,7 @@ include('includes/navbar.php');
 								</div>
 							</div>
 							<div class="modal-footer">
-							    <input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
+								<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
 
 								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 								<button type="submit" class="btn btn-primary" name="save_btn">Guardar</button>
@@ -128,6 +133,8 @@ include('includes/navbar.php');
 					?>
 					<a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="btn btn-primary shadow"><i class="fas fa-download fa-sm text-white-50"></i> PDF</a>
 					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
+					<a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion.'&id_club='.$_SESSION['club'];?>" class="btn btn-info shadow"><i class="fa-solid fa-music"></i> ZIP</a>
+
 					<?php
 					}
 					?>
@@ -154,7 +161,7 @@ include('includes/navbar.php');
 					$condicion = '';
 					if(isset($_SESSION['club']))
 						$condicion = ' and rutinas.id_club ='.$_SESSION['club'];
-                	$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
+                	$query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -227,24 +234,24 @@ include('includes/navbar.php');
 							<!--			Inicio modal musica -->
 							<?php
 					  $path = './public/music/'.$id_competicion.'/';
-$music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
-					  				if($figuras == 'no'){
+					  $music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
+					  		if($figuras == 'no'){
 ?>
 							<div class="modal fade" id="player<?php echo $row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
 									<div class="modal-content">
 										<div class="modal-body align-center">
 											<?php
-if(file_exists($path.$music_name)){
+if(file_exists($path.$row['id'].'.mp3')){
 ?>
 											<div class="card" style="">
 												<img class="card-img-center" src="<?php echo $row['logo']?>" alt="Logo club">
 												<div class="card-body text-center">
 													<h5 class="card-title"><?php echo $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club']?></h5>
 													<p class="card-text"><?php echo $nombres?></p>
-													<div><audio src="<?php echo $path.$music_name;
+													<div><audio src="<?php echo $path.$row['id'].'.mp3';
 ?>" controls preload="none"></audio></div>
-											<h7 class="card-title"><?php echo $row['music_original_name']?></h7>
+													<h7 class="card-title"><?php echo $row['music_original_name']?></h7>
 												</div>
 											</div>
 											<?php
@@ -262,7 +269,7 @@ if( $enable_musica == ''){
 													<input type="hidden" name="club" value="<?php echo $row['id_club']?>">
 													<div class="col-12 ">
 														<label for="musica"><?php echo $anadir_actualizar; ?> acompañamiento musical</label>
-														<input type="file" class="" id="customFile" name="musica" accept=".mp3" required/>
+														<input type="file" class="" id="customFile" name="musica" accept=".mp3" required />
 													</div>
 													<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
 													<input type="hidden" name="edit_id" value="<?php echo $row['id'];?>">
@@ -286,21 +293,25 @@ if( $enable_musica == ''){
 
 
 
-<?php
+							<?php
 							$preswimmer= '';
 					  if($row['orden'] == -1)
-						  $preswimmer = ' (PRESWIMMER)'
+						  $preswimmer = ' (PRESWIMMER)';
+					else if($row['orden'] == -2)
+						  $preswimmer = ' (EXHIBICIÓN)';
 							?>
 							<tr>
 								<th scope="row" class="align-middle"> <?php echo $row['id']; ?> </th>
-								<td  class="align-middle"> <blockquote class="blockquote"><?php echo $row['nombre_modalidad']." ".$row['nombre_categoria'].$preswimmer.'</blockquote> <figcaption class="blockquote-footer">('.$nombres.')</figcaption>'; ?> </td>
+								<td class="align-middle">
+									<blockquote class="blockquote"><?php echo $row['nombre_modalidad']." ".$row['nombre_categoria'].$preswimmer.'</blockquote> <figcaption class="blockquote-footer">('.$nombres.')</figcaption>'; ?>
+								</td>
 								<?php if($_SESSION['id_rol'] != 5) {
 
 								echo '<td class="align-middle">'.$row['nombre_club'].' '.$row['nombre_rutina'].'</td>';
 								}
 
                       ?>
-								<td  class="align-middle">
+								<td class="align-middle">
 									<form action="./rutinas_participantes.php" method="post">
 										<button class="btn btn-primary" type="submit" name="" <?php echo $enable_inscripcion ?>><i class="fas fa-users"></i></button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
@@ -309,9 +320,9 @@ if( $enable_musica == ''){
 										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
 									</form>
 								</td>
-								<td  class="align-middle">
+								<td class="align-middle">
 									<?php
-									if(file_exists($path.$music_name)){
+									if(file_exists($path.$row['id'].'.mp3')){
                                 		$icon = '<i class="fa-solid fa-play"></i>';
                                 	}else{
                                 		$icon = '<i class="fa-solid fa-file-audio"></i>';
@@ -322,9 +333,13 @@ if( $enable_musica == ''){
 								<?php
 								if($row['elementos_coach_card']>0){
                           ?>
-								<td  class="align-middle">
+								<td class="align-middle">
 									<form action="coach_card_composer.php" method="post">
-										<button class="btn btn-warning btn-circle" type="submit" name="" <?php echo $enable_coach_card;?>><i class="fa fa-solid fa-puzzle-piece"></i></button>
+										<button class="btn btn-warning" type="submit" name="" <?php echo $enable_coach_card;?>>
+											<i class="fa fa-solid fa-puzzle-piece"></i>
+											<span class="badge text-bg-secondary" style="font-size: 0.9em;"><?php echo $row['dd_total'];?></span>
+										</button>
+										</button>
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']?>">
 										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
@@ -338,15 +353,15 @@ if( $enable_musica == ''){
                       } else
                           echo "<td></td>";
 					  ?>
-<!--					 //boton de baja rutina aqui-->
-<!--
+								<!--					 //boton de baja rutina aqui-->
+								<!--
 					  <td  class="align-middle">
 									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delRutina<?php echo $row['id']?>" <?php echo $enable_inscripcion ?>><i class="fa-regular fa-thumbs-down"></i></button>
 								</td>
 -->
-							<?php
+								<?php
 								if($_SESSION['id_rol'] != 5){ ?>
-								<td  class="align-middle">
+								<td class="align-middle">
 									<form action="rutinas_edit.php" method="post">
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
@@ -359,7 +374,7 @@ if( $enable_musica == ''){
 								}?>
 
 
-								<td  class="align-middle">
+								<td class="align-middle">
 									<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#delRutina<?php echo $row['id']?>" <?php echo $enable_inscripcion ?>><i class="fa-regular fa-trash-can"></i></button>
 								</td>
 

@@ -218,11 +218,11 @@ while($categoria = mysqli_fetch_array($categorias)){
 	$query = "select año from resultados_figuras where id_categoria='".$categoria['id_categoria']."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' group by año order by año desc";
 	$años = mysqli_query($connection,$query);
 	while($año = mysqli_fetch_array($años)){
-	$html = "<h2> Año ".$año['año']."</h2>";
+		$html = "<h2> Año ".$año['año']."</h2>";
 
 
 $html .= '<table style="margin-top=10px">';
-	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:34%">Nadadora</th><th style="width:11%">Figura</th><th style="width:18%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
+	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:25%">Nadadora</th><th style="width:11%">Figura</th><th style="width:22%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
 	$par=0;
 	$query = "select * from resultados_figuras where id_categoria='".$categoria['id_categoria']."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' and año='".$año['año']."' order by posicion asc, nota_final_calculada desc";
 	$resultados_figuras = mysqli_query($connection,$query);
@@ -245,12 +245,12 @@ $html .= '<table style="margin-top=10px">';
 		$club_nadadora = mysqli_result(mysqli_query($connection,"select nombre_corto from clubes where id = '".mysqli_result($query, 0,3)."'"),0);
 		$html .= '<tr><td style="width:5%; font-size:14; font-weight:bold;">'.$resultado_figuras['posicion'].'</td>';
 //		$html .= '<td style="width:34%">'.$nombre_nadadora.' ('.$licencia_nadadora.')<br>'.$club_nadadora.'</td>';
-		$html .= '<td style="width:34%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
+		$html .= '<td style="width:25%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
 		$html .= '<td style="width:11%">';
 		$html .= $figuras_texto;
 
 		$html .= '</td>';
-		$celda_puntuaciones_jueces = '<td style="width:18%">';
+		$celda_puntuaciones_jueces = '<td style="width:22%">';
 		$celda_puntuaciones_paneles = '<td style="width:7%">';
 		$celda_penalizacion_paneles = '<td style="width:8%">';
 		$id_inscripcion_figuras = "";
@@ -341,7 +341,7 @@ while($categoria = mysqli_fetch_array($categorias)){
 
 
 $html .= '<table style="margin-top=10px">';
-	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:31%">Nadadora</th><th style="width:14%">T-TRE</th><th style="width:18%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
+	$html .= '<thead><tr style="background-color:'.$rutina_color_par.'"><th style="width:5%">Pos.</th><th style="width:21%">Nadadora</th><th style="width:19%">T-TRE</th><th style="width:20%">Jueces</th><th style="width:7%">Nota</th><th style="width:8%">Pen.</th><th style="width:8%">Total</th><th style="width:7%">Dif</th><th style="width:7%">Puntos</th></tr></thead>';
 	$par=0;
 	$query = "select * from resultados_figuras where id_categoria='".$categoria['id_categoria']."' and id_competicion = '".$_SESSION["id_competicion_activa"]."' and año='".$año['año']."' order by posicion asc, nota_final_calculada desc";
 	$resultados_figuras = mysqli_query($connection,$query);
@@ -380,12 +380,12 @@ $html .= '<table style="margin-top=10px">';
 
 		$html .= '<tr><td style="width:5%; font-size:14; font-weight:bold;">'.$resultado_figuras['posicion'].'</td>';
 //		$html .= '<td style="width:34%">'.$nombre_nadadora.' ('.$licencia_nadadora.')<br>'.$club_nadadora.'</td>';
-		$html .= '<td style="width:31%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
-		$html .= '<td style="width:14%">';
+		$html .= '<td style="width:21%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
+		$html .= '<td style="width:19%">';
 		$html .= $figuras_texto;
 
 		$html .= '</td>';
-		$celda_puntuaciones_jueces = '<td style="width:18%">';
+		$celda_puntuaciones_jueces = '<td style="width:20%">';
 		$celda_puntuaciones_paneles = '<td style="width:7%">';
 		$celda_penalizacion_paneles = '<td style="width:8%">';
 		$id_inscripcion_figuras = "";
@@ -406,7 +406,7 @@ $html .= '<table style="margin-top=10px">';
                 else
                     $celda_puntuaciones_jueces .= substr($puntuacion_juez['nota'],0,4).' ';
 //                if($i == 5){
-                if($i == 3){
+                if($i == 5){
                     $celda_puntuaciones_jueces .= "<br>";
                     $i=0;
                 }

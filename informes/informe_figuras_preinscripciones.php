@@ -10,7 +10,7 @@ include('../lib/my_functions.php');
 
 session_start();
 
-if(!$_SESSION['username']){
+if(!$_SESSION['email']){
 	header('Location: login.php');
 }else{
 	$query = "SELECT * FROM competiciones WHERE activo = 'si'";
@@ -156,7 +156,7 @@ while($fase = mysqli_fetch_array($fases)){
 	//muestro solo las nadadoras del club que envio
 	if(isset($_GET['club']))
 		$condicion = ' and club = '.$_GET['club'].' ';
-    $query = "select id_nadadora, apellidos, nadadoras.nombre, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club $condicion order by club, apellidos";
+    $query = "select id_nadadora, apellidos, nadadoras.nombre, inscripciones_figuras.baja as baja, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club $condicion order by club, apellidos";
 	$rutinas = mysqli_query($connection,$query);
 	while($rutina = mysqli_fetch_array($rutinas)){
 		$numero_rutinas++;
@@ -178,7 +178,10 @@ while($fase = mysqli_fetch_array($fases)){
             $tre .= " * ".mysqli_result($query_run,3,0)." GD:". mysqli_result($query_run,3,1);
             $tre .= " * ".mysqli_result($query_run,4,0)." GD:". mysqli_result($query_run,4,1).'</h6>';
         }
-
+		if($rutina['baja'] == 'si'){
+			$rutina_color = '#ffeeba';
+			$rutina['nombre'] .= ' (BAJA)';
+		}
 		$html .='<tr nobr="true" style="background-color:'.$rutina_color.'"><td width="72%">'.$numero.$rutina['apellidos'].', '.$rutina['nombre'].'</td><td width="10%">'.$rutina['año_nacimiento'].'</td><td width="16%" style="text-align:right;">'.$rutina['nombre_corto'].$tre.'</td></tr>';
 
 	}

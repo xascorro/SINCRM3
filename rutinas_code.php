@@ -58,8 +58,8 @@ if(isset($_POST['update_btn'])){
 if(isset($_POST['delete_btn'])){
 	$id = $_POST['delete_id'];
 	$query = "SELECT id_competicion, music_name FROM rutinas WHERE id=$id";
-	$query_run = mysqli_query($connection,$query);
-	$archivo_a_borrar = './public/music/'.mysqli_result($query_run,0,0).'/'.mysqli_result($query_run,0,1);
+//	$query_run = mysqli_query($connection,$query);
+	$archivo_a_borrar = './public/music/'.mysqli_result($query_run,0,0).'/'.$id.'.mp3';
 	//borro participantes
 	$query = "DELETE FROM rutinas_participantes WHERE id_rutina ='$id'";
 	$query_run = mysqli_query($connection,$query);
@@ -106,6 +106,7 @@ function stripAccents($str) {
     return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
 }
 	$query = "UPDATE rutinas SET music_name='$music_name', music_original_name='".stripAccents($_FILES['musica']['name'])."' WHERE id='$id'";
+	echo $query;
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Acompañamiento músical añadido';
@@ -117,7 +118,8 @@ function stripAccents($str) {
 		if (!is_dir($path)) {
     		mkdir($path, 0777, true);
 		}else{
-			move_uploaded_file($_FILES["musica"]["tmp_name"],$path.$music_name);
+			move_uploaded_file($_FILES["musica"]["tmp_name"],$path.$id.'.mp3');
+			echo $path.$id;
 		}
 	}
 }

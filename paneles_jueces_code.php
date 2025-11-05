@@ -163,7 +163,9 @@ if(isset($_GET['panel_jueces_clonar_btn'])){
 		$valores = substr($valores, 0, -2);
 
 		$sql_final = "INSERT INTO panel_jueces ( id_juez, numero_juez, id_panel, id_fase, id_fase_figuras, id_competicion ) VALUES $valores";
-		if(mysqli_num_rows(mysqli_query($connection,'select id_juez from panel_jueces where id_juez='.$componentes['id_juez'].' and id_competicion = '.$componentes['id_competicion'])) > 1 ) {
+		$query_existe = 'select id_juez from panel_jueces where id_juez='.$componentes['id_juez'].' and id_competicion = '.$componentes['id_competicion'];
+		echo $query_existe;
+		if(mysqli_num_rows(mysqli_query($connection,$query_existe)) > 1 ) {
 			echo '<br>No se clona, borra el contenido del resto de paneles para utilizar está función.<br>'.$sql_final.'<br>';
 		}else{
 			echo '<br>Ejecuto: '.$sql_final.'<br>';

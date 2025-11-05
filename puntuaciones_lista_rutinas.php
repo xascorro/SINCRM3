@@ -50,7 +50,7 @@ if(isset($_GET['id_fase']))
 
 				<div class="table-responsive">
 					<?php
-                $query = "SELECT rutinas.id, rutinas.orden as orden, rutinas.nombre as nombre_rutina, rutinas.id_club, nota_final, baja, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE fases.id = ".$_POST['id_fase'] ." and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY rutinas.orden, rutinas.id, fases.orden, fases.id";
+                $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.orden as orden, rutinas.nombre as nombre_rutina, rutinas.id_club, nota_final, baja, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE fases.id = ".$_POST['id_fase'] ." and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY rutinas.orden, rutinas.id, fases.orden, fases.id";
 
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -97,9 +97,11 @@ if(isset($_GET['id_fase']))
 									<a target="_blank" href="./coach_card_composer.php?id_rutina=<?php echo $row['id']; ?>&id_fase=<?php echo $row['id_fase'];?>" class=" btn btn-warning btn-circle btn">
 										<i class="fa-solid fa-puzzle-piece"></i>
 									</a>
+									<span class="badge text-bg-secondary font-size-sm"><?php echo $row['dd_total'];?></span>
+
 								</td>
 								<td class="align-middle">
-								<?php
+									<?php
 						  if($row['baja']=='no'){
 
 
@@ -107,7 +109,7 @@ if(isset($_GET['id_fase']))
 									<a target="_self" href="./rutinas_code.php?id_rutina=<?php echo $row['id'];?>&dar_baja=si&id_fase=<?php echo $_POST['id_fase'];?>" class=" btn btn-danger btn-circle btn">
 										<i class="fa-regular fa-thumbs-down"></i>
 									</a>
-							<?php
+									<?php
 						  }else{
 								  ?>
 									<a target="_self" href="./rutinas_code.php?id_rutina=<?php echo $row['id'];?>&dar_baja=no&id_fase=<?php echo $_POST['id_fase'];?>" class=" btn btn-info btn-circle btn">

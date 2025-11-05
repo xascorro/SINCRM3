@@ -11,6 +11,7 @@ $reload = 'no';
 if(isset($id_penalizaciones_rutinas)){
 	$query = "DELETE FROM penalizaciones_rutinas WHERE id=$id_penalizaciones_rutinas";
 	mysqli_query($connection, $query);
+	echo '<br>'.$query.'<br>';
 	$reload='si';
 			header("Location: puntuaciones_rutina.php?id_rutina=$id_rutina&id_fase=$id_fase&reload=$reload");
 
@@ -20,13 +21,16 @@ if(isset($id_penalizacion) && $id_penalizacion > 0){
 	$query = "INSERT INTO penalizaciones_rutinas (id_rutina, id_penalizacion) VALUES
 	('$id_rutina', '$id_penalizacion')";
 	mysqli_query($connection, $query);
+	echo '<br>'.$query.'<br>';
 }
 
-//Añadir calcular notas
+//Calcular notas
 if(isset($_POST['save_btn'])){
 	$id_club = $_POST['id_club'];
 
     $query = "DELETE FROM puntuaciones_jueces WHERE id_rutina = $id_rutina";
+	echo '<br>'.$query.'<br>';
+
     $query_run = mysqli_query($connection,$query);
 
 	$query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES
@@ -34,17 +38,16 @@ if(isset($_POST['save_btn'])){
     ('".$id_panel_juez4."','".$id_rutina."','1','".$notaE1J4."'),
     ('".$id_panel_juez5."','".$id_rutina."','1','".$notaE1J5."');";
     $query_run = mysqli_query($connection,$query);
-    $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
-   // mysqli_query($connection,$query);
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=1";
+	echo $query.'<br>';
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
     $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
+	echo '<br>'.$query.'<br>';
     mysqli_query($connection,$query);
     $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
+	echo $query.'<br>';
     mysqli_query($connection,$query);
-    $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
-    //mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES
 	('".$id_panel_juez1."','".$id_rutina."','2','".$notaE2J1."'),('".$id_panel_juez2."','".$id_rutina."','2','".$notaE2J2."'),('".$id_panel_juez3."','".$id_rutina."','2','".$notaE2J3."'),
@@ -58,8 +61,6 @@ if(isset($_POST['save_btn'])){
     mysqli_query($connection,$query);
     $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=2 limit 1";
     mysqli_query($connection,$query);
-    $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
-    //mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES
 	('".$id_panel_juez1."','".$id_rutina."','3','".$notaE3J1."'),('".$id_panel_juez2."','".$id_rutina."','3','".$notaE3J2."'),('".$id_panel_juez3."','".$id_rutina."','3','".$notaE3J3."'),
@@ -172,6 +173,38 @@ if(isset($_POST['save_btn'])){
         //mysqli_query($connection,$query);
     }
 
+	if(isset($notaE10J1)){
+        $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_rutina."','10','".$notaE10J1."'),('".$id_panel_juez2."','".$id_rutina."','10','".$notaE10J2."'),('".$id_panel_juez3."','".$id_rutina."','10','".$notaE10J3."'),
+        ('".$id_panel_juez4."','".$id_rutina."','10','".$notaE10J4."'),
+        ('".$id_panel_juez5."','".$id_rutina."','10','".$notaE10J5."');";
+        $query_run = mysqli_query($connection,$query);
+        $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=10";
+        $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
+        $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
+        mysqli_query($connection,$query);
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
+        mysqli_query($connection,$query);
+        $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
+        //mysqli_query($connection,$query);
+    }
+
+	if(isset($notaE11J1)){
+        $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_rutina."','11','".$notaE11J1."'),('".$id_panel_juez2."','".$id_rutina."','11','".$notaE11J2."'),('".$id_panel_juez3."','".$id_rutina."','11','".$notaE11J3."'),
+        ('".$id_panel_juez4."','".$id_rutina."','11','".$notaE11J4."'),
+        ('".$id_panel_juez5."','".$id_rutina."','11','".$notaE11J5."');";
+        $query_run = mysqli_query($connection,$query);
+        $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=11";
+        $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
+        $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
+        mysqli_query($connection,$query);
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
+        mysqli_query($connection,$query);
+        $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
+        //mysqli_query($connection,$query);
+    }
+
     /////////////////////
     $query = "DELETE FROM puntuaciones_elementos WHERE id_rutina = $id_rutina";
     $query_run = mysqli_query($connection,$query);
@@ -184,6 +217,7 @@ if(isset($_POST['save_btn'])){
 	}
     $query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=1), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=1)*$dd1*$factor1, id_rutina=$id_rutina, elemento=1";
     mysqli_query($connection,$query);
+	echo '<br>'.$query.'<br>';
 
 	if(isset($BM2)){
             $dd2=$BM2;
@@ -192,8 +226,8 @@ if(isset($_POST['save_btn'])){
 	    $llevado_BM = "";
 	}
     $query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=2), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=2)*$dd2*$factor2, id_rutina=$id_rutina, elemento=2";
-
     mysqli_query($connection,$query);
+	echo '<br>'.$query.'<br>';
 
     if(isset($BM3)){
             $dd3=$BM3;
@@ -203,6 +237,7 @@ if(isset($_POST['save_btn'])){
 	}
     $query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=3), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=3)*$dd3*$factor3, id_rutina=$id_rutina, elemento=3";
     mysqli_query($connection,$query);
+	echo '<br>'.$query.'<br>';
 
     if(isset($BM4)){
             $dd4=$BM4;
@@ -247,7 +282,7 @@ if(isset($_POST['save_btn'])){
     }
 
     if(isset($dd8)){
-		if($BM8>0){
+		if(isset($BM8)){
 			$dd8=$BM8;
 			$llevado_BM = "llevado_BM='si',";
 		}else{
@@ -258,13 +293,33 @@ if(isset($_POST['save_btn'])){
 
     }
     if(isset($dd9)){
-		if($BM9>0){
+		if(isset($BM9)){
 			$dd9=$BM9;
 			$llevado_BM = "llevado_BM='si',";
 		}else{
 			$llevado_BM = "";
 		}
 		$query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=9), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=9)*$dd9*$factor9, id_rutina=$id_rutina, elemento=9";
+		mysqli_query($connection,$query);
+	}
+	if(isset($dd10)){
+		if(isset($BM10)){
+			$dd10=$BM10;
+			$llevado_BM = "llevado_BM='si',";
+		}else{
+			$llevado_BM = "";
+		}
+		$query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=10), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=10)*$dd10*$factor10, id_rutina=$id_rutina, elemento=10";
+		mysqli_query($connection,$query);
+	}
+	if(isset($dd11)){
+		if(isset($BM11)){
+			$dd11=$BM11;
+			$llevado_BM = "llevado_BM='si',";
+		}else{
+			$llevado_BM = "";
+		}
+		$query="INSERT puntuaciones_elementos SET $llevado_BM nota_media = (SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=11), nota=(SELECT (sum(nota)-min(nota)-max(nota))/(count(nota)-2) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=11)*$dd11*$factor11, id_rutina=$id_rutina, elemento=11";
 		mysqli_query($connection,$query);
 	}
 //    SINCRONIZACIÓN
@@ -276,7 +331,13 @@ if(isset($_POST['save_btn'])){
 		$errores_obvios = 0;
 	if($errores_mayores == '')
 		$errores_mayores = 0;
-    $nota_errores_sincronizacion = $errores_pequenos*-0.1+$errores_obvios*-0.5+$errores_mayores*-3;
+	$query = "SELECT error_xs, error_ob, error_xl FROM fases, rutinas WHERE rutinas.id='$id_rutina' and fases.id=id_fase";
+	$errores_fase = mysqli_query($connection, $query);
+	$errores_fase = mysqli_fetch_assoc($errores_fase);
+	$error_xs = $errores_fase['error_xs'];
+	$error_ob = $errores_fase['error_ob'];
+	$error_xl = $errores_fase['error_xl'];
+    $nota_errores_sincronizacion = $errores_pequenos*$error_xs+$errores_obvios*$error_ob+$errores_mayores*$error_xl;
     $query = "INSERT INTO errores_sincronizacion (id_rutina, errores_pequenos, errores_obvios, errores_mayores, nota) VALUES ('$id_rutina', '$errores_pequenos', '$errores_obvios', '$errores_mayores', '$nota_errores_sincronizacion')";
     mysqli_query($connection,$query);
 // IMPRESIÓN ARTÍSTICA

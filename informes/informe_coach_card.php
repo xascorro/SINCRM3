@@ -145,7 +145,7 @@ $nombre_categoria = $nombres['categoria'];
 
 
 
-$query = "SELECT rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, rutinas.orden as orden, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
+$query = "SELECT rutinas.marca_cc, rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, rutinas.orden as orden, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 $nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = $id_rutina";
 $nombres = mysqli_result(mysqli_query($connection,$nombres));
 $nombres_reservas = "SELECT group_concat(nadadoras.nombre, ' (R)' SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'si' and id_rutina = $id_rutina";
@@ -160,8 +160,8 @@ if(mysqli_num_rows($query_run) > 0){
 	//nombre club
 	$html .= "<tr>";
 	$html .= '<td colspan="2" width="20%">Club</td>';
-	$html .= '<td colspan="4" width="69%">'.$row['nombre_club'].'</td>';
-	$html .= '<td align="right" colspan="2" width="11%">#'.$row['id'].'</td>';
+	$html .= '<td colspan="4" width="53%">'.$row['nombre_club'].'</td>';
+	$html .= '<td align="right" colspan="2" width="27%">'.$row['marca_cc'].' #'.$row['id'].'</td>';
 	$html .= "</tr>";
 
 	//	//nombre participantes
@@ -196,7 +196,7 @@ if(mysqli_num_rows($query_run) > 0){
 	$html .= '<br>&nbsp;<br>';
 
 	//	//texto
-	$html .= '<table border="1" cellpadding="4" style="margin-top:3px, font-size:12">';
+	$html .= '<table border="1" cellpadding="4" style="margin-top:3px, font-size:14">';
 	$html .= '<tr>';
 	$html .= '<td colspan="8" align="center">ELEMENTOS EN ORDEN DE EJECUCIÓN</td>';
 	$html .= '</tr>';
@@ -206,28 +206,33 @@ if(mysqli_num_rows($query_run) > 0){
 
 	//cabecera tabla
 	$html .= '<table border="1" cellpadding="4" style="margin-top:3px, font-size:12">';
-	$html .= '<tr align="center" style="font-size:8">';
-	$html .= '<td width="10%">TIME</td><td width="10%">PART</td><td width="4%">EL</td><td width="9%">BM</td><td width="40%">DIFFICULTAD DECLARADA</td><td width="16%">BONUS</td><td width="5%">DD</td><td width="6%" style="background-color:#CECECE">TC</td>';
+	$html .= '<tr align="center" style="font-size:10">';
+//	$html .= '<td width="4%">EL</td><td width="10%">TIME</td><td width="10%">PART</td><td width="9%">BM</td><td width="40%">DIFFICULTAD DECLARADA</td><td width="16%">BONUS</td><td width="5%">DD</td><td width="6%" style="background-color:#CECECE">TC</td>';
+	$html .= '<td width="4%">EL</td><td width="10%">TIME</td><td width="10%">PART</td><td width="9%">BM</td><td width="55%">DIFFICULTAD DECLARADA</td><td width="6%">DD</td><td width="6%" style="background-color:#CECECE">TC</td>';
 	$html .= '</tr>';
 
 	//fila de declaración del hibrido
 	$i = 1;
+			$dd_total = 0;
+
 	for($row['elementos_coach_card'];$i<=$row['elementos_coach_card'];$i++){
 		$query = "SELECT nombre, color, tipo_hibridos.id from hibridos_rutina, tipo_hibridos where hibridos_rutina.texto = tipo_hibridos.id and tipo='part' and texto = 3 and id_rutina=$id_rutina and elemento = $i";
 		$query_elementos = mysqli_query($connection,$query);
 		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
 //			$html .= '<tr align="center" style="font-size:10"><td colspan="7" style="background-color:'.$elemento['color'].'">';
-			$html .= '<tr align="center" style="font-size:10"><td colspan="7">';
+			$html .= '<tr align="center" style="font-size:10; color:gray"><td colspan="7">';
 			$html .= $elemento['nombre'];
 			$id_tipo_hibrido = $elemento['id'];
 			$html .= '</td>';
-			$html .= '<td style="background-color:#CECECE">';
-			$html .= '</td>';
+//			$html .= '<td style="background-color:#CECECE">';
+//			$html .= '</td>';
 			$html .= '</tr>';
 		}
 
 		//tiempos
 		$html .= '<tr style="font-size:7">';
+		//numero elemento
+		$html .= '<th align="center" style="font-size:10">'.$i.'</th>';
 		$query = "SELECT texto from hibridos_rutina where tipo='time_inicio' and id_rutina=$id_rutina and elemento = $i";
 		$query_elementos = mysqli_query($connection,$query);
 		$html .= "<td>";
@@ -252,19 +257,19 @@ if(mysqli_num_rows($query_run) > 0){
 			$id_tipo_hibrido = $elemento['id'];
 		}
 
-		//numero elemento
-		$html .= '<th align="center">'.$i.'</th>';
+
 
 		//basemark
-		$query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i and valor>0";
+		$basemark = 0;
 		$query = "SELECT texto, valor from hibridos_rutina where tipo='basemark' and id_rutina=$id_rutina and elemento = $i";
 		$query_elementos = mysqli_query($connection,$query);
-		$html .= '<td align="center">';
+		$html .= '<td align="center" style="font-size:8">';
 		if(@$elemento['valor'] != '')
 			$elemento['valor'] = "(".$elemento['valor'].") ";
 		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
 			$nombre_basemark = $elemento['texto'];
 			$html .= $elemento['texto'];
+			$basemark = $elemento['valor'];
 		}
 		$html .=  "</td>";
 
@@ -272,7 +277,7 @@ if(mysqli_num_rows($query_run) > 0){
 		$query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and valor>0";
 		$query = "SELECT texto, valor from hibridos_rutina where tipo='dd' and id_rutina=$id_rutina and elemento = $i and texto <> ''";
 		$query_elementos = mysqli_query($connection,$query);
-		$html .= '<td style="font-size:8">';
+		$html .= '<td style="font-size:10">';
 		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
 			$html .= $elemento['texto'].'&nbsp;';
 
@@ -280,27 +285,29 @@ if(mysqli_num_rows($query_run) > 0){
 		$html .=  "</td>";
 
 		//bonus
-		$query = "SELECT texto, valor from hibridos_rutina where tipo='bonus' and id_rutina=$id_rutina and elemento = $i and valor>0";
-		$query_elementos = mysqli_query($connection,$query);
-		$html .= "<td>";
-		if(@$elemento['valor'] != '')
-		$elemento['valor'] = "(".$elemento['valor'].") ";
-		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-		$html .= $elemento['texto'].'&nbsp;';
-		}
-		$html .=  "</td>";
+//		$query = "SELECT texto, valor from hibridos_rutina where tipo='bonus' and id_rutina=$id_rutina and elemento = $i and valor>0";
+//		$query_elementos = mysqli_query($connection,$query);
+//		$html .= "<td>";
+//		if(@$elemento['valor'] != '')
+//		$elemento['valor'] = "(".$elemento['valor'].") ";
+//		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
+//		$html .= $elemento['texto'].'&nbsp;';
+//		}
+//		$html .=  "</td>";
 
 		//dd total
 		$query = "SELECT valor from hibridos_rutina where tipo='total' and id_rutina=$id_rutina and elemento = $i";
 		$html .= '<td align="center">';
 		$query_elementos = mysqli_query($connection,$query);
 		while ($elemento = mysqli_fetch_assoc($query_elementos)) {
-		$html .= $elemento['valor'];
+//			$html .= $elemento['valor']-$basemark;
+			$html .= $elemento['valor'];
+			$dd_total += $elemento['valor'];
 		}
 		$html .= "</td>";
 
 		//gris
-		$html .= '<td style="background-color:#CECECE"></td>';
+		$html .= '<td style="background-color:#EEEEEE"></td>';
 
 
 $html .= "</tr>";
@@ -315,7 +322,7 @@ $html .= "</tr>";
 
 }
 $html .= "</table>";
-
+$html .= '<br><br>Dificultad declarada: '.$dd_total;
 $pdf->writeHTML($html, true, false, false, false, '');
 }
 $pdf->Output($nombre_documento, 'I');
