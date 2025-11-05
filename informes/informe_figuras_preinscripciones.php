@@ -177,6 +177,8 @@ while($fase = mysqli_fetch_array($fases)){
             $tre .= " * ".mysqli_result($query_run,2,0)." GD:". mysqli_result($query_run,2,1);
             $tre .= " * ".mysqli_result($query_run,3,0)." GD:". mysqli_result($query_run,3,1);
             $tre .= " * ".mysqli_result($query_run,4,0)." GD:". mysqli_result($query_run,4,1).'</h6>';
+        }else{
+        	$tre = '';
         }
 		if($rutina['baja'] == 'si'){
 			$rutina_color = '#ffeeba';
