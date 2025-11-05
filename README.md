@@ -1,25 +1,38 @@
-# SINCRM3
+# 🏊‍♀️ SINCRM3  
+### Sistema Integral para la Gestión de Campeonatos de **Natación Artística**
 
-SINCRM3 es un programa para la gestión de campeonatos de Natación Artística.
+![Natación Artística](https://via.placeholder.com/800x200/007ACC/FFFFFF?text=SINCRM3+-+Gesti%C3%B3n+de+Campeonatos)  
+> *Organiza, evalúa y administra competencias con precisión y estilo.*
 
-## Tecnologías
-SINCRM3 está desarrollado en HTML, PHP, MySQL y JQuery
+---
 
-## Requisitos
+## 🌟 Descripción
 
+**SINCRM3** es una aplicación completa diseñada para facilitar la organización y gestión de campeonatos de **natación artística**.  
+Ideal para federaciones, clubes o eventos escolares, permite manejar participantes, jueces, rutinas, puntuaciones y resultados de forma eficiente.
 
-Para hacer funcionar SINCRM3 necesitamos un servidor Apache, PHP, MySQL, puedes instalarlo todo mediante MAMP, LAMP o WAMP según tu sistema operativo.
+---
 
-## Uso
+## 🛠️ Tecnologías utilizadas
 
-```sql
-select someone from thing;
-```
+- **Frontend**: HTML5 + jQuery  
+- **Backend**: PHP  
+- **Base de datos**: MySQL  
+- **Servidor**: Apache  
 
-## Contribuir
-Se aceptan Pull request. Para cambios mayores, por favor, abre un issue y hablamos sobre lo que te gustaria modificar.
+✅ Totalmente compatible con entornos locales como **MAMP**, **WAMP** o **LAMP**.
 
-Por favor, asegurate de que tu código funciona correctamente.
+---
 
-## Licencia
-[MIT](https://choosealicense.com/licenses/mit/)
+## 🚀 Instalación
+
+Sigue estos pasos para tener SINCRM3 funcionando en tu computadora:
+
+1. **Instala un entorno local**:
+   - 🍏 **macOS**: [MAMP](https://www.mamp.info/)
+   - 🪟 **Windows**: [WAMP](http://www.wampserver.com/)
+   - 🐧 **Linux**: LAMP (Apache + PHP + MySQL)
+
+2. **Clona o descarga** este repositorio en la carpeta raíz de tu servidor (por ejemplo, `htdocs`):
+   ```bash
+   git clone https://github.com/xascorro/SINCRM3.git
