@@ -6,14 +6,15 @@ session_start();
 if(isset($_POST['save_btn'])){
 	$orden = $_POST['orden'];
 	$categoria = $_POST['categoria'];
-	$figura = $_POST['figura'];
+	$figura = @$_POST['figura'];
 	$modalidad = $_POST['modalidad'];
 	$f_chomu = $_POST['f_chomu'];
 	
-    if($figura <> NULL)
-	   $query="INSERT INTO fases (orden,id_categoria,id_figura, id_competicion) VALUES ('".$orden."','".$categoria."','".$figura."','".$_SESSION['id_competicion_activa']."')";
-    if($modalidad <> NULL)
-        $query="INSERT INTO fases (orden,id_categoria,id_modalidad, f_chomu, id_competicion) VALUES ('".$orden."','".$categoria."','".$modalidad."','".$f_chomu."','".$_SESSION['id_competicion_activa']."')";
+//    if($figura <> NULL)
+//	   $query="INSERT INTO fases (orden,id_categoria,id_figura, id_competicion) VALUES ('".$orden."','".$categoria."','".$figura."','".$_SESSION['id_competicion_activa']."')";
+//    if($modalidad <> NULL)
+//        $query="INSERT INTO fases (orden,id_categoria,id_modalidad, f_chomu, id_competicion) VALUES ('".$orden."','".$categoria."','".$modalidad."','".$f_chomu."','".$_SESSION['id_competicion_activa']."')";
+	$query="INSERT INTO fases (orden,id_categoria, id_modalidad, id_figura, f_chomu, id_competicion) VALUES ('".$orden."','".$categoria."','".$modalidad."','".$figura."','".$f_chomu."','".$_SESSION['id_competicion_activa']."')";
 
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){

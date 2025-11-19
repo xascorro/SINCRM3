@@ -59,7 +59,7 @@ if(isset($_POST['delete_btn'])){
 		header('Location: competiciones.php');
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+		header('Location: competiciones.php');
 	}
 }
 

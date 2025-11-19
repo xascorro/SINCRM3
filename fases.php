@@ -29,15 +29,24 @@ include('includes/navbar.php');
 						<div class="modal-body">
 							<div class="row">
 								<div class="form-group col">
-									<?php
+									<div class="row">
+										<?php
+
                     if($_SESSION['figuras'] == 'si'){?>
-									<div class="col">
-										<?php include('includes/categoria_select_option.php');?>
+										<div class="col-6">
+											<?php include('includes/modalidad_select_option.php');?>
+
+										</div>
+										<div class="col-6">
+											<?php include('includes/categoria_select_option.php');?>
+										</div>
 									</div>
-									<div class="col">
-									<?php include('includes/figura_select_option.php');?>
+									<div class="row">
+										<div class="col-12">
+											<?php include('includes/figura_select_option.php');?>
+										</div>
 									</div>
-												 <?php
+									<?php
 
 					}else{
                         include('includes/modalidad_select_option.php');?>
@@ -165,7 +174,7 @@ include('includes/navbar.php');
 								<?php
 					  			if(@$competicion_figuras == 'si'){
 								?>
-									<td> <?php echo @$row['numero']." - ".@$row['nombre_figura']; ?> </td>
+								<td> <?php echo @$row['numero']." - ".@$row['nombre_figura']; ?> </td>
 								<?php
 								}
 								?>
