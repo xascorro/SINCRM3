@@ -52,11 +52,11 @@ if(isset($_POST['update_btn'])){
 if(isset($_POST['delete_btn'])){
 	$id = $_POST['delete_id'];
 
-	$query = "DELETE FROM nadadoras WHERE id ='$id'"; 
+	$query = "DELETE FROM competiciones WHERE id ='$id'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: nadadoras.php');
+		header('Location: competiciones.php');
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
 		header('Location: nadadoras.php');	
