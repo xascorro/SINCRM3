@@ -1,5 +1,4 @@
 <?php
-
 include('security.php');
 //control de acceso
 $allowedRoles = ['Administrador','Secretario'];
@@ -9,13 +8,6 @@ if (!array_key_exists('rol', $_SESSION) || !in_array($_SESSION['rol'], $allowedR
 }
 include('includes/header.php');
 include('includes/navbar.php');
-
-
-
-
-
-
-
 ?>
 
 
@@ -68,6 +60,7 @@ include('includes/navbar.php');
       </div>
     </div>
     <!-- Final Modal -->
+    <!-- Modal -->
     <div class="modal fade" id="addPanel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -80,9 +73,12 @@ include('includes/navbar.php');
           <form action="paneles_jueces_code.php" method="POST">
             <div class="modal-body">
               <div class="form-group row">
-                <div class="col">
+                <div class="col-6">
                   <label for="nombre">Nombre</label>
                   <input type="text" class="form-control" name="nombre">
+                </div>
+                <div class="col-6">
+                	<?php include("./includes/paneles_tipo_select_option.php"); ?>
                 </div>
               </div>
               <div class="form-group row">

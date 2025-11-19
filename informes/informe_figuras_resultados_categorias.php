@@ -225,7 +225,6 @@ while($categoria = mysqli_fetch_array($categorias)){
 		$figuras4 = mysqli_fetch_row($figuras3);
 		$figuras_texto .= $figuras4[0].' GD:'.$figuras4[1].'<br>';
 	}
-	$html = "";
 
 
 $html .= '<table style="margin-top=10px">';
@@ -255,7 +254,6 @@ $html .= '<table style="margin-top=10px">';
 		$html .= '<td style="width:34%">'.$nombre_nadadora.'<br>'.$club_nadadora.'</td>';
 		$html .= '<td style="width:11%">';
 		$html .= $figuras_texto;
-
 		$html .= '</td>';
 		$celda_puntuaciones_jueces = '<td style="width:18%">';
 		$celda_puntuaciones_paneles = '<td style="width:7%">';

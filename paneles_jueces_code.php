@@ -55,12 +55,13 @@ if(isset($_POST['delete_btn'])){
 //Añadir panel jueces
 if(isset($_POST['save_btn_panel'])){
 	$nombre = $_POST['nombre'];
+	$id_paneles_tipo = $_POST['id_paneles_tipo'];
 	$numero_jueces = $_POST['numero_jueces'];
     $peso = $_POST['peso'];
     $descripcion = $_POST['descripcion'];
     $puntua = $_POST['puntua'];
     $color = $_POST['color'];
-	$query="INSERT INTO paneles (nombre, numero_jueces, peso, descripcion, puntua, color, id_competicion) VALUES ('".$nombre."','".$numero_jueces."', '".$peso."','".$descripcion."','".$puntua."','".$color."','".$id_competicion."')";
+	$query="INSERT INTO paneles (nombre, id_paneles_tipo, numero_jueces, peso, descripcion, puntua, color, id_competicion) VALUES ('".$nombre."','".$id_paneles_tipo."','".$numero_jueces."', '".$peso."','".$descripcion."','".$puntua."','".$color."','".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Panel añadido con éxito';
