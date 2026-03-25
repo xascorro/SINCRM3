@@ -156,23 +156,53 @@ include('includes/navbar.php');
                         echo '<td scope="col">'.$row['nombre_modalidad'].' '.$row['nombre_categoria'].'</td>';
                     }
 
-                     echo '<td>';
+                     echo '<td class="text-nowrap">';
                       if($competicion_figuras == 'si'){
-                               if($row['elementos_coach_card'] > 0)
+                               if($row['elementos_coach_card'] > 0) {
                                     echo '<form action="puntuaciones_lista_figuras_rutinas_tecnicas.php" target="_blank" method="post">';
-                                else
-                                    echo '<form action="puntuaciones_lista_figuras.php" target="_blank" method="post">';
-                        }else{?>
-                                <form action="puntuaciones_lista_rutinas.php" target="_blank" method="post">
-                         <?php
-                        }?>
+                                    ?>
                           <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
                           <input type="hidden" name="id_figura" value="<?php echo $row['id_figura']; ?>">
                           <input type="hidden" name="id_modalidad" value="<?php echo $row['id_modalidad']; ?>">
                           <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
                           <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
-                          <button class="btn btn-success" type="submit" name="edit_btn"><?php echo $icono;?></btn>
+                          <button class="btn btn-success" type="submit" name="edit_btn"><?php echo $icono;?></button>
                           </form>
+                                    <?php
+                               } else {
+                                    echo '<form class="d-inline mr-1" action="puntuaciones_lista_figuras.php" target="_blank" method="post">';
+                                    ?>
+                          <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
+                          <input type="hidden" name="id_figura" value="<?php echo $row['id_figura']; ?>">
+                          <input type="hidden" name="id_modalidad" value="<?php echo $row['id_modalidad']; ?>">
+                          <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
+                          <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
+                          <button class="btn btn-success" type="submit" name="edit_btn" title="Puntuacion (clasica)"><?php echo $icono;?></button>
+                          </form>
+                                    <?php
+                                    echo '<form class="d-inline" action="puntuaciones_lista_figuras2.php" target="_blank" method="post">';
+                                    ?>
+                          <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
+                          <input type="hidden" name="id_figura" value="<?php echo $row['id_figura']; ?>">
+                          <input type="hidden" name="id_modalidad" value="<?php echo $row['id_modalidad']; ?>">
+                          <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
+                          <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
+                          <button class="btn btn-outline-success" type="submit" name="edit_btn_v2" title="Puntuacion (vista mejorada)"><?php echo $icono;?> <span class="badge badge-success">v2</span></button>
+                          </form>
+                                    <?php
+                               }
+                        } else { ?>
+                                <form action="puntuaciones_lista_rutinas.php" target="_blank" method="post">
+                          <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
+                          <input type="hidden" name="id_figura" value="<?php echo $row['id_figura']; ?>">
+                          <input type="hidden" name="id_modalidad" value="<?php echo $row['id_modalidad']; ?>">
+                          <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
+                          <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
+                          <button class="btn btn-success" type="submit" name="edit_btn"><?php echo $icono;?></button>
+                          </form>
+                        <?php
+                        }
+                        ?>
                         </td>
                         <td>
                           <a class="btn btn-primary" target="_blank"href="./informes/informe_puntuaciones.php?titulo=Clasificaci%C3%B3n%20detallada&id_fase=<?php echo $row['id'];?>"><i class="fa-solid fa-file-pdf"></i></a>

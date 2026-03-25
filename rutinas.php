@@ -235,7 +235,7 @@ include('includes/navbar.php');
 							<?php
 					  $path = './public/music/'.$id_competicion.'/';
 					  $music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
-					  		if($figuras == 'no'){
+					  		if(@$figuras == 'no'){
 ?>
 							<div class="modal fade" id="player<?php echo $row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog" role="document">
@@ -346,6 +346,27 @@ if( $enable_musica == ''){
 
 
 									</form>
+									<?php
+							  		if(!isset($_SESSION['club'])){
+										?>
+									<form action="..php" method="post" style="display:inline-block; margin: 0 2px;">
+										<button class="btn btn-warning" type="submit" name="audit_btn" title="Auditar Normativa">
+											<span style="position: relative; display: inline-block; width: 1.2em; text-align: center;">
+												<i class="fa fa-solid fa-puzzle-piece text-dark" aria-hidden="true"></i>
+												<i class="fa fa-solid fa-magnifying-glass text-white" style="position: absolute; bottom: -4px; right: -6px; font-size: 0.65em; -webkit-text-stroke: 2px;" aria-hidden="true"></i>
+											</span>
+										</button>
+
+										<input type="hidden" name="id_rutina" value="647">
+										<input type="hidden" name="id_fase" value="354">
+										<input type="hidden" name="id_competicion" value="78">
+									</form>
+									<?php
+							  			
+							  		}
+									?>
+
+
 								</td>
 
 

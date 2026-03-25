@@ -16,7 +16,6 @@ if(!$_SESSION['username']){
 	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
 	$_SESSION['color_competicion_activa']= $competicion['color'];
 }
-
     $GLOBALS["id_competicion_activa"] = 0;
 	$GLOBALS["nombre_competicion_activa"] = "No hay competición activa";
     $query = "select * from competiciones where activo='si'";     // Esta linea hace la consulta
@@ -127,16 +126,19 @@ $pdf->SetFont('helvetica', 'B', 14);
     $j4_color = '#C5CAE9';
     $total_color = '#DCEDC8';
 	$clave_liga = $GLOBALS['clave_liga'];
-	$query = "select id_categoria from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') group by id_categoria order by id_categoria asc";
+	$query = "SELECT id_categoria from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') group by id_categoria order by id_categoria asc";
 	$id_categorias = mysqli_query($connection,$query);
 	while($id_categoria = mysqli_fetch_array($id_categorias)){
         $query = "select nombre_corto, fecha, lugar, color from competiciones where clave_liga like '$clave_liga' order by id asc";
 	$jornadas_liga = mysqli_query($connection,$query);
-    // add a page
-	if($id_categoria['id_categoria'] == '234' or $id_categoria['id_categoria'] == '235')
-				$categoria = '241';
-	else
-		$id_categoria['id_categoria'] = $categoria;
+		// add a page
+    if($id_categoria['id_categoria'] == '234' or $id_categoria['id_categoria'] == '235'){
+        $categoria = '241';
+    } else {
+        // CORRECCIÓN AQUÍ: Asignamos el valor del array a la variable, no al revés.
+        $categoria = $id_categoria['id_categoria']; 
+    }
+    
     $query = "select nombre from categorias where id = '".$categoria."'";
     $GLOBALS['nombre_categoria'] = mysqli_result(mysqli_query($connection,$query),0);
 	$pdf->AddPage('L');
@@ -146,7 +148,7 @@ $pdf->SetFont('helvetica', 'B', 14);
 	$pdf->writeHTML($html, true, false, true, false, '');
 	$pdf->SetFont('helvetica', '', 12);
 	$html = '<table align="center" border="1" cellpadding="4">';
-	$html.= '<tr style= "font-weight:bold;"><th style="width:3%;"><span>&nbsp;</span><br><span style="font-size:18px">P</span></th><th style="width:36%"><span>&nbsp;</span><br><span style="font-size:18px">Nadadora</span></th><th width="23%"><span>&nbsp;</span><br><span style="font-size:18px">Club</span></th>';
+	$html.= '<tr style= "font-weight:bold;"><th style="width:3%;"><span>&nbsp;</span><br><span style="font-size:18px">P</span></th><th style="width:26%"><span>&nbsp;</span><br><span style="font-size:18px">Nadadora</span></th><th width="23%"><span>&nbsp;</span><br><span style="font-size:18px">Club</span></th>';
 	while($jornada_liga = mysqli_fetch_array($jornadas_liga)){
 	   $html .= '<th width="10%" style="background-color:'.$jornada_liga['color'].'">'.$jornada_liga['nombre_corto'].'<br><span style="font-size:10px">'.dateAFecha($jornada_liga['fecha']).'</span><br><span style="font-size:10px">'.$jornada_liga['lugar'].'</span></th>';
 	}
@@ -164,6 +166,9 @@ $pdf->SetFont('helvetica', 'B', 14);
 			$query = "select nombre from nadadoras where id = '".$nadadora['id_nadadora']."'";
 			$nombre_nadadora .= ", ".mysqli_result(mysqli_query($connection,$query),0);
 			$clasificacion_nadadoras[$i]['nombre'] =$nombre_nadadora;
+			$query = "select año_nacimiento from nadadoras where id = '".$nadadora['id_nadadora']."'";
+			$año_nadadora = mysqli_result(mysqli_query($connection,$query),0);
+			$clasificacion_nadadoras[$i]['nombre'] .= " (".$año_nadadora.")";
 			$query = "select nombre from clubes where id in (select club from nadadoras where id = '".$nadadora['id_nadadora']."')";
 			$nombre_club = mysqli_result(mysqli_query($connection,$query),0);
 			//$html .= '<tr><td>'.$nombre_nadadora.'</td><td>'.$nombre_club.'</td>';
@@ -219,12 +224,12 @@ $pdf->SetFont('helvetica', 'B', 14);
                 $bgcolor2 = $bgcolor;
             }
             $html .= '<tr style="background-color:'.$bgcolor.'">';
-            $html .= '<td style="width:3%; font-size:14px; font-weight:bold; background-color:'.$bgcolor.'">'.$posicion.'</td>';
+            $html .= '<td style="width:3%; font-size:10px; font-weight:bold; background-color:'.$bgcolor.'">'.$posicion.'</td>';
 		  	$puntos_anterior=$clasificacion_nadadora['puntos_clasificacion'];
             $color = '';
 		  	foreach($clasificacion_nadadora as $jornada => $valor){
                 if(strpos($valor, '#') === false and $valor != ''){
-                    $html .= '<td style="font-size:14px; background-color:'.$color.'">'.$valor.'</td>';
+                    $html .= '<td style="font-size:10px; background-color:'.$color.'">'.$valor.'</td>';
                     $color = '';
                 }else{
                     $color = $valor;
@@ -239,11 +244,10 @@ $pdf->SetFont('helvetica', 'B', 14);
 		   	$html .= '</table>';
 	$pdf->writeHTML($html, true, false, false, false, '');
     /*	explicar metodo puntuacion, 4 jornadas con desempate */
-	$html = "En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (Primer puesto 19 puntos, segundo puesto 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada y restando los puntos de la jornada con peor puntuación. En caso de empate la posición final la decidirá la jornada eliminada con peor puntuación.";
-    $html .= "<br>Si ocurriera un empate en la puntuación final se sumaran las notas finales calculadas dadas por los jueces en cada jornada de liga exceptuando la peor nota final calculada.";
+	$html = '<p style="font-size:10px;">En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (1ª 19 puntos, 2ª 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada y restando los puntos de la jornada con peor puntuación. En caso de empate la posición la decidirá la jornada eliminada con peor puntuación. Si ocurriera un empate en la puntuación final se sumaran las notas finales calculadas dadas por los jueces en cada jornada de liga exceptuando la peor nota final calculada.</p>';
     /* explicar método de puntuación, 3 jornadas, sin restar notas ni desempate */
-	$html = "En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (Primer puesto 19 puntos, segundo puesto 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada. No se contempla el desempate.";
-	$pdf->SetFont('helvetica', 14);
+	//$html = "En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (Primer puesto 19 puntos, segundo puesto 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada. No se contempla el desempate.";
+	$pdf->SetFont('helvetica', 10);
     $pdf->writeHTML($html, true, false, false, false, '');
 
 

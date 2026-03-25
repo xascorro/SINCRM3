@@ -133,10 +133,31 @@ if(isset($_GET['id_fase'])){
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
 					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_rutina=<?php echo $id_rutina;?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
+					<?php
+							  		if(!isset($_SESSION['club'])){
+										?>
+									<form target='_blank' action="../coach_card_auditor.php" method="post" style="display:inline-block; margin: 0 2px;">
+										<button class="btn btn-warning" type="submit" name="audit_btn" title="Auditar Normativa">
+											<span style="position: relative; display: inline-block; width: 1.2em; text-align: center;">
+												<i class="fa fa-solid fa-puzzle-piece text-dark" aria-hidden="true"></i>
+												<i class="fa fa-solid fa-magnifying-glass text-white" style="position: absolute; bottom: -4px; right: -6px; font-size: 0.65em; -webkit-text-stroke: 2px;" aria-hidden="true"></i>
+											</span>
+										</button>
+
+										<input type="hidden" name="id_rutina" value="<?php echo $id_rutina;?>">
+<!--
+										<input type="hidden" name="id_fase" value="354">
+										<input type="hidden" name="id_competicion" value="78">
+-->
+									</form>
+									<?php
+							  			
+							  		}
+									?>
 				</h4>
 
 				<?php
-				if ($figuras == 'si')
+				if (@$figuras == 'si')
 					$link = './inscripciones_figuras.php';
 				else
 					$link = './rutinas.php';
@@ -167,7 +188,7 @@ if(isset($_GET['id_fase'])){
 				<div class="table-responsive">
 					<?php
 
-				if($figuras == 'si'){
+				if(@$figuras == 'si'){
 					$query = "SELECT inscripciones_figuras.id, inscripciones_figuras.id_fase, inscripciones_figuras.id_nadadora, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, clubes.nombre_corto as nombre_club, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras, clubes WHERE inscripciones_figuras.id = '$id_rutina' and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and nadadoras.club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
 				}else{
 					$query = "SELECT rutinas.id, tematica, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, rutinas.dd_total FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id = '$id_rutina' and rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion." ORDER BY fases.orden, fases.id";
@@ -337,7 +358,7 @@ if(isset($_GET['id_fase'])){
                         $query_elementos = mysqli_query($connection,$query);
                             while ($elemento = mysqli_fetch_assoc($query_elementos)) {
                                 echo $elemento['valor'];
-								$dd_total += $elemento['valor'];
+								@$dd_total += $elemento['valor'];
                             }
                             echo "</th>";
 
@@ -377,7 +398,7 @@ if(isset($_GET['id_fase'])){
 
 
 			<!-- template -->
-			<?php
+<?php
 include('includes/scripts.php');
 include('includes/footer.php');
 ?>

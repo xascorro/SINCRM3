@@ -11,10 +11,6 @@ include('includes/navbar.php');
 		<?php
     include('includes/topbar.php');
     ?>
-		<!-- template -->
-		<!-- Tu código empieza aquí -->
-
-
 		<!-- Modal -->
 		<div class="modal fade" id="addUserProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			<div class="modal-dialog" role="document">
@@ -35,7 +31,6 @@ include('includes/navbar.php');
                     if($_SESSION['figuras'] == 'si'){?>
 										<div class="col-6">
 											<?php include('includes/modalidad_select_option.php');?>
-
 										</div>
 										<div class="col-6">
 											<?php include('includes/categoria_select_option.php');?>
@@ -43,15 +38,19 @@ include('includes/navbar.php');
 									</div>
 									<div class="row">
 										<div class="col-12">
-											<?php include('includes/figura_select_option.php');?>
+											<?php 
+											include('includes/figura_select_option.php');?>
 										</div>
 									</div>
 									<?php
 
-					}else{
-                        include('includes/modalidad_select_option.php');?>
-									<div class="col">
-										<?php include('includes/categoria_select_option.php');?>
+					}else{?>
+									<div class="col-6">
+											<?php include('includes/modalidad_select_option.php');?>
+										</div>
+										<div class="col-6">
+											<?php include('includes/categoria_select_option.php');?>
+										</div>
 									</div>
 									<?php
 									}
@@ -122,7 +121,7 @@ include('includes/navbar.php');
 					<?php
             if($_SESSION['figuras']=='si'){
                 $competicion_figuras ='si';
-                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
+                $query = "SELECT fases.id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, grado_dificultad, numero, fases.orden FROM fases, categorias, figuras WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY orden, fases.id";
             }
             else
                 $query = "SELECT fases.id, fases.elementos_coach_card, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_modalidad, modalidades.nombre as nombre, fases.orden, (SELECT COUNT(id) FROM rutinas WHERE id_fase = fases.id) AS numero_rutinas
@@ -142,13 +141,13 @@ include('includes/navbar.php');
                         echo '<th scope="col">Figura</th>';
                     else{
 //                        echo '<th scope="col">Categoría</th>';
-                        echo '<th scope="col">El_CC</th>';
-						echo '<th scope="col">F_Acro</th>';
-                        echo '<th scope="col">F_Hybrid</th>';
-                        echo '<th scope="col">F_TRE</th>';
-                        echo '<th scope="col">F_Chomu</th>';
-                        echo '<th scope="col">F_Perf</th>';
-                        echo '<th scope="col">F_Trans</th>';
+                        echo '<th scope="col" class="text-center" style="background:#ffc107">Elementos</th>';
+						echo '<th scope="col" class="text-center" style="background:#007bff">Acro</th>';
+                        echo '<th scope="col" class="text-center" style="background:#007bff">Hybrid</th>';
+                        echo '<th scope="col" class="text-center" style="background:#007bff">TRE</th>';
+                        echo '<th scope="col" class="text-center" style="background:#28A745">Chomu</th>';
+                        echo '<th scope="col" class="text-center" style="background:#28A745">Perf</th>';
+                        echo '<th scope="col" class="text-center" style="background:#28A745">Trans</th>';
                     }
                     ?>
 								<th scope="col" colspan="2" class="text-center">Acciones</th>
@@ -163,18 +162,27 @@ include('includes/navbar.php');
 								<th scope="row"> <?php echo $row['id']; ?> </th>
 								<td> <?php echo $row['orden']; ?> </td>
 								<td> <?php echo @$row['nombre'].' '.$row['nombre_categoria'].' ('.$row['numero_rutinas'].')'; ?> </td>
-								<td class="text-center"> <?php echo @$row['elementos_coach_card']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_acro']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_hybrid']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_tre']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_chomu']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_performance']; ?> </td>
-								<td class="text-center"> <?php echo @$row['f_transitions']; ?> </td>
-
 								<?php
+					  				if(@$competicion_figuras != 'si'){
+										?>
+
+								<td class="text-center" style="background:#fff3cd"> <?php echo @$row['elementos_coach_card']; ?> </td>
+								<td class="text-center" style="background:#86cfda"> <?php echo @$row['f_acro']; ?> </td>
+								<td class="text-center" style="background:#86cfda"> <?php echo @$row['f_hybrid']; ?> </td>
+								<td class="text-center" style="background:#86cfda"> <?php echo @$row['f_tre']; ?> </td>
+								<td class="text-center" style="background:#8fd19e"> <?php echo @$row['f_chomu']; ?> </td>
+								<td class="text-center" style="background:#8fd19e"> <?php echo @$row['f_performance']; ?> </td>
+								<td class="text-center" style="background:#8fd19e"> <?php echo @$row['f_transitions']; ?> </td>
+								<?php
+								}
+
 					  			if(@$competicion_figuras == 'si'){
 								?>
-								<td> <?php echo @$row['numero']." - ".@$row['nombre_figura']; ?> </td>
+								<td> 
+								<?php 
+									echo @$row['numero']." - ".@$row['nombre_figura'] ." (GD: ". $row['grado_dificultad']." )";
+								?>
+								</td>
 								<?php
 								}
 								?>

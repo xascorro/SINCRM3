@@ -99,6 +99,7 @@ include('includes/navbar.php');
                     }
 
                     ?>
+                 <th scope="col">S</th>
                  <th scope="col">T</th>
                  <th scope="col">X̅</th>
                   <th scope="col">P</th>
@@ -146,11 +147,13 @@ include('includes/navbar.php');
                       <?php
                       $query_jueces = "SELECT * from panel_jueces WHERE id_fase=$id_fase and id_competicion=".$_SESSION['id_competicion_activa']." order by numero_juez";
                     $query_run_jueces = mysqli_query($connection,$query_jueces);
+					  $sumatorio = 0;
                     while ($row_jueces = mysqli_fetch_assoc($query_run_jueces)) {
 
                         $query = "SELECT nota, id, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_inscripcion_figuras='$id_inscripcion_figuras' and id_panel_juez=".$row_jueces['id']." and id_elemento=".$row['elemento'];
                         $nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota'];
-                        $id = mysqli_fetch_assoc(mysqli_query($connection,$query))['id'];
+                        $sumatorio += $nota;
+						$id = mysqli_fetch_assoc(mysqli_query($connection,$query))['id'];
                         $nota_menor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_menor'];
                         $nota_mayor = mysqli_fetch_assoc(mysqli_query($connection,$query))['nota_mayor'];
                         $style='';
@@ -174,6 +177,7 @@ include('includes/navbar.php');
                     $nota = mysqli_fetch_assoc(mysqli_query($connection,$query));
 
                       ?>
+                        <td><?php echo $sumatorio;?></td>
                         <td><?php echo $nota['nota_total'];?></td>
                         <td><?php echo $nota['nota_media'];?></td>
                         <td><?php echo $nota['nota'];?></td>

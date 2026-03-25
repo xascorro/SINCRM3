@@ -48,11 +48,62 @@ include('includes/navbar.php');
             echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
             unset($_SESSION['estado']);
           }
+          if (!function_exists('puntuaciones_fmt_hasta4')) {
+            function puntuaciones_fmt_hasta4($v) {
+              if ($v === null || $v === '') {
+                return '';
+              }
+              $n = round((float) $v, 4);
+              $s = sprintf('%.4f', $n);
+              return rtrim(rtrim($s, '0'), '.');
+            }
+          }
           ?>
+
+          <style>
+            @keyframes puntuacionMediaNotaFlash {
+              0% { background-color: rgba(255, 193, 7, 0.42); }
+              45% { background-color: rgba(25, 135, 84, 0.32); }
+              100% { background-color: rgba(25, 135, 84, 0.07); }
+            }
+            td.puntuacion-celda-flash {
+              animation: puntuacionMediaNotaFlash 1s ease-out forwards;
+            }
+          </style>
 
           <div class="table-responsive">
             <?php
-                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.baja, inscripciones_figuras.orden as orden, inscripciones_figuras.id_nadadora, nota_total, nota_media, nota_final, nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora, categorias.nombre as nombre_categoria, inscripciones_figuras.id_fase, fases.elementos_coach_card FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras WHERE fases.id = ".$_POST['id_fase'] ." and inscripciones_figuras.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and inscripciones_figuras.id_nadadora = nadadoras.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." ORDER BY inscripciones_figuras.orden, inscripciones_figuras.id, fases.orden, fases.id";
+                $id_fase = (int) $_POST['id_fase'];
+                // Columna Orden: siempre el numero de la primera fase del bloque (misma competicion/categoria/modalidad).
+                // Listado: ordenado por el orden de ESTA fase (orden de salida en la fase que se puntua).
+                $query = "SELECT inscripciones_figuras.id, inscripciones_figuras.baja,
+                    inscripciones_figuras.orden AS orden_fase_actual,
+                    COALESCE(
+                        (SELECT if2.orden FROM inscripciones_figuras if2
+                         WHERE if2.id_nadadora = inscripciones_figuras.id_nadadora
+                           AND if2.id_fase = (
+                               SELECT f0.id FROM fases f0
+                               WHERE f0.id_competicion = fases.id_competicion
+                                 AND f0.id_categoria = fases.id_categoria
+                                 AND IFNULL(f0.id_modalidad,'') = IFNULL(fases.id_modalidad,'')
+                               ORDER BY f0.orden ASC, f0.id ASC
+                               LIMIT 1
+                           )
+                         LIMIT 1),
+                        inscripciones_figuras.orden
+                    ) AS orden_primera_fase,
+                    inscripciones_figuras.id_nadadora, nota_total, nota_media, nota_final,
+                    nadadoras.nombre as nombre_nadadora, nadadoras.apellidos as apellidos_nadadora,
+                    categorias.nombre as nombre_categoria, inscripciones_figuras.id_fase, fases.elementos_coach_card
+                    FROM inscripciones_figuras, fases, modalidades, categorias, nadadoras
+                    WHERE fases.id = ".$id_fase."
+                    AND inscripciones_figuras.id_fase = fases.id
+                    AND fases.id_modalidad = modalidades.id
+                    AND fases.id_categoria = categorias.id
+                    AND inscripciones_figuras.id_nadadora = nadadoras.id
+                    AND fases.id_competicion = ".$_SESSION['id_competicion_activa']."
+                    ORDER BY inscripciones_figuras.orden, inscripciones_figuras.id, fases.orden, fases.id";
+//			  echo $query;
 
             $query_run = mysqli_query($connection,$query);
             ?>
@@ -71,6 +122,7 @@ include('includes/navbar.php');
                             echo '<th scope="col" style="text-align:center">J'.$i.'</th>';
                         }
                         ?>
+                        <th scope="col">S</th>
                         <th scope="col">Total</th>
                         <th scope="col">Media</th>
                         <th scope="col">Nota</th>
@@ -86,40 +138,48 @@ include('includes/navbar.php');
                             $class='';
                       }
                     ?>
+                    <?php
+                      $form_id = 'notas-row-' . (int) $row['id'];
+                    ?>
                     <tr id="<?php echo $row['id'];?>" <?php echo $class;?>>
-                      <th scope="row" > <?php echo $row['orden']; ?> </th>
+                      <th scope="row" > <?php echo $row['orden_primera_fase']; ?> </th>
                       <th scope="row" > <?php echo $row['id']; ?> </th>
                       <td > <?php echo $row['apellidos_nadadora'].', '.$row['nombre_nadadora']; ?> </td>
-                        <form  class="notas" target="_blank" action="puntuaciones_lista_figuras_code.php" method="post">
-                          <input type="hidden" name="id_inscripcion_figuras" value="<?php echo $row['id']; ?>">
-                          <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
-                          <input type="hidden" name="grado_dificultad" value="<?php echo $grado_dificultad; ?>">
                           <?php
                         $query = "SELECT id, id_panel, numero_juez, id_juez FROM panel_jueces WHERE id_fase=".$_POST['id_fase'];
                         $jueces = mysqli_query($connection,$query);
                         $i = 0;
+                        $sumatorio = 0;
+                        $judge_hiddens = '';
                         while($juez = mysqli_fetch_assoc($jueces)){
                             $nota = 0;
 							if($juez['id_juez'] == '108'){
-								$class = ' table-warning';
+								$class_j = ' table-warning';
 							}else
-								$class = '';
+								$class_j = '';
                             $query = "SELECT nota FROM puntuaciones_jueces WHERE id_panel_juez= ".$juez['id']." and id_inscripcion_figuras = ".$row['id'];
                             $nota = mysqli_result(mysqli_query($connection,$query),0);
                             $i++;
-                            echo '<td class='.$class.'><input class="form-control form-control-sm'.$class.'" size="2" name="nota['.$juez['numero_juez'].'][nota]"  step="0.1" type="number" value="'.$nota.'"></td>';
-                            echo '<input type="hidden" name="nota['.$juez['numero_juez'].'][id_juez]" value="'.$juez['id_juez'].'">';
-                            echo '<input type="hidden" name="nota['.$juez['numero_juez'].'][id_panel_jueces]" value="'.$juez['id'].'">';
-
-
+							$sumatorio += $nota;
+                            $nj = (int) $juez['numero_juez'];
+                            echo '<td class='.$class_j.'><input form="'.htmlspecialchars($form_id, ENT_QUOTES, 'UTF-8').'" class="form-control form-control-sm'.$class_j.'" size="2" name="nota['.$nj.'][nota]" step="0.1" type="number" value="'.$nota.'"></td>';
+                            $judge_hiddens .= '<input type="hidden" name="nota['.$nj.'][id_juez]" value="'.htmlspecialchars($juez['id_juez'], ENT_QUOTES, 'UTF-8').'">';
+                            $judge_hiddens .= '<input type="hidden" name="nota['.$nj.'][id_panel_jueces]" value="'.(int) $juez['id'].'">';
                         }
-                        echo "<td>".$row['nota_total']."</td>";
-                        echo "<td>".$row['nota_media']."</td>";
-                        echo "<td>".$row['nota_final']."</td>";
+                        echo '<td class="js-sum-s">' . $sumatorio . '</td>';
+                        echo '<td class="js-nota-total">' . $row['nota_total'] . '</td>';
+                        echo '<td class="js-nota-media">' . htmlspecialchars(puntuaciones_fmt_hasta4($row['nota_media']), ENT_QUOTES, 'UTF-8') . '</td>';
+                        echo '<td class="js-nota-final">' . htmlspecialchars(puntuaciones_fmt_hasta4($row['nota_final']), ENT_QUOTES, 'UTF-8') . '</td>';
                         ?>
-                         <td>
-                          <button class="form-control form-control-sm btn btn-success notas" type="submit" name="puntuar_btn" id="puntuar_btn<?php echo $row['id']; ?>"><i class="fa-solid fa-calculator"></i></btn>
+                         <td class="text-nowrap">
+                          <form id="<?php echo htmlspecialchars($form_id, ENT_QUOTES, 'UTF-8'); ?>" class="notas" action="puntuaciones_lista_figuras_code.php" method="post" onsubmit="return false;">
+                          <input type="hidden" name="ajax" value="1">
+                          <input type="hidden" name="id_inscripcion_figuras" value="<?php echo $row['id']; ?>">
+                          <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
+                          <input type="hidden" name="grado_dificultad" value="<?php echo htmlspecialchars($grado_dificultad, ENT_QUOTES, 'UTF-8'); ?>">
+                          <?php echo $judge_hiddens; ?>
                           </form>
+                          <button class="form-control form-control-sm btn btn-success btn-puntuar-fila" type="button" data-form-id="<?php echo htmlspecialchars($form_id, ENT_QUOTES, 'UTF-8'); ?>" id="puntuar_btn<?php echo $row['id']; ?>"><i class="fa-solid fa-calculator"></i></button>
                         </td>
                         </tr>
                         <?php
@@ -140,7 +200,8 @@ include('includes/navbar.php');
             <!-- template -->
             <?php
             include('includes/scripts.php');
+            ?>
+			<script src="puntuaciones_lista_figuras.js?v=5"></script>
+            <?php
             include('includes/footer.php');
             ?>
-
-			<script type="text/javascript" src="./puntuaciones_lista_figuras.js"></script>

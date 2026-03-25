@@ -81,6 +81,11 @@ if($_SESSION['id_rol'] == '1'){
     					<i class="fab fa-xing"></i>
     					<span>Figuras</span>
     				</a>
+    				<a class="collapse-item" href="coach_card_auditor_config.php">
+    					<i class="fas fa-robot"></i>
+    					
+    					<span>Coach Card Auditor</span>
+    				</a>
     				<a class="collapse-item" href="modalidades.php">
     					TO-DO<i class="fab fa-modx"></i>
     					<span>Modalidades</span>
