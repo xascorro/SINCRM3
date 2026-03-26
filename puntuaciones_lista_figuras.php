@@ -196,12 +196,273 @@ include('includes/navbar.php');
           <a class="btn btn-primary" target="_blank"href="./informes/informe_puntuaciones.php?titulo=Clasificaci%C3%B3n%20detallada&id_fase=<?php echo $_POST['id_fase'];?>"><i class="fa fa-file-pdf"></i> Descargar</a>
             </div>
 
+            <!-- FORMULARIO DE PENALIZACIONES -->
+            <div class="card mt-4">
+              <div class="card-header">
+                <h5 class="mb-0">Penalizaciones</h5>
+              </div>
+              <div class="card-body">
+                <!-- Formulario para agregar penalizaciones -->
+                <div class="card card-light mb-3">
+                  <div class="card-header">
+                    <h6 class="mb-0">Agregar penalización</h6>
+                  </div>
+                  <div class="card-body">
+                    <form id="form-agregar-penalizacion" action="puntuaciones_lista_figuras_code.php" method="POST">
+                      <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <label for="select-nadadora">Nadadora</label>
+                          <select id="select-nadadora" name="id_inscripcion_figuras" class="form-control form-control-sm" required>
+                            <option value="">-- Seleccionar nadadora --</option>
+                            <?php
+                              $query_nadadoras = "SELECT inscripciones_figuras.id, 
+                                  COALESCE(
+                                      (SELECT if2.orden FROM inscripciones_figuras if2
+                                       WHERE if2.id_nadadora = inscripciones_figuras.id_nadadora
+                                         AND if2.id_fase = (
+                                             SELECT f0.id FROM fases f0
+                                             WHERE f0.id_competicion = fases.id_competicion
+                                               AND f0.id_categoria = fases.id_categoria
+                                               AND IFNULL(f0.id_modalidad,'') = IFNULL(fases.id_modalidad,'')
+                                             ORDER BY f0.orden ASC, f0.id ASC
+                                             LIMIT 1
+                                         )
+                                       LIMIT 1),
+                                      inscripciones_figuras.orden
+                                  ) AS orden_display,
+                                  nadadoras.nombre, nadadoras.apellidos
+                                  FROM inscripciones_figuras, fases, nadadoras
+                                  WHERE inscripciones_figuras.id_fase = ".$id_fase."
+                                  AND inscripciones_figuras.id_fase = fases.id
+                                  AND inscripciones_figuras.id_nadadora = nadadoras.id
+                                  AND fases.id_competicion = ".$_SESSION['id_competicion_activa']."
+                                  ORDER BY orden_display, nadadoras.apellidos, nadadoras.nombre";
+                              $result_nadadoras = mysqli_query($connection, $query_nadadoras);
+                              while($nadadora = mysqli_fetch_assoc($result_nadadoras)) {
+                                echo '<option value="'.$nadadora['id'].'">'.$nadadora['orden_display'].' - '.$nadadora['apellidos'].', '.$nadadora['nombre'].'</option>';
+                              }
+                            ?>
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <label for="select-penalizacion">Penalización</label>
+                          <select id="select-penalizacion" name="id_penalizacion" class="form-control form-control-sm" required>
+                            <option value="">-- Seleccionar penalización --</option>
+                            <?php
+                              $query_pen_tipos = "SELECT id, codigo, resumen, puntos FROM penalizaciones WHERE id_paneles_tipo=6 ORDER BY codigo";
+                              $result_pen_tipos = mysqli_query($connection, $query_pen_tipos);
+                              while($pen_tipo = mysqli_fetch_assoc($result_pen_tipos)) {
+                                echo '<option value="'.$pen_tipo['id'].'" data-puntos="'.$pen_tipo['puntos'].'">'.$pen_tipo['codigo'].' - '.$pen_tipo['resumen'].' ('.$pen_tipo['puntos'].' pts)</option>';
+                              }
+                            ?>
+                          </select>
+                        </div>
+                        <div class="col-md-4">
+                          <label>&nbsp;</label>
+                          <button type="submit" class="btn btn-warning btn-sm btn-block" name="penalizacion_aplicar" value="1">
+                            <i class="fas fa-exclamation-triangle"></i> Aplicar penalización
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <!-- Listado de penalizaciones aplicadas -->
+                <div class="table-responsive">
+                  <table class="table table-sm" id="penalizacionesAplicadasTable">
+                    <thead>
+                      <tr>
+                        <th scope="col">Orden</th>
+                        <th scope="col">#</th>
+                        <th scope="col">Nadadora</th>
+                        <th scope="col">Penalización</th>
+                        <th scope="col">Puntos</th>
+                        <th scope="col" class="text-center">Acción</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                        $query_penalizadas = "SELECT pn.id as id_penalizacion_registro,
+                            inscripciones_figuras.id as id_inscripcion,
+                            COALESCE(
+                                (SELECT if2.orden FROM inscripciones_figuras if2
+                                 WHERE if2.id_nadadora = inscripciones_figuras.id_nadadora
+                                   AND if2.id_fase = (
+                                       SELECT f0.id FROM fases f0
+                                       WHERE f0.id_competicion = fases.id_competicion
+                                         AND f0.id_categoria = fases.id_categoria
+                                         AND IFNULL(f0.id_modalidad,'') = IFNULL(fases.id_modalidad,'')
+                                       ORDER BY f0.orden ASC, f0.id ASC
+                                       LIMIT 1
+                                   )
+                                 LIMIT 1),
+                                inscripciones_figuras.orden
+                            ) AS orden,
+                            nadadoras.nombre, nadadoras.apellidos,
+                            penalizaciones.codigo, penalizaciones.resumen, penalizaciones.puntos
+                            FROM penalizaciones_rutinas pn
+                            INNER JOIN inscripciones_figuras ON pn.id_inscripcion_figuras = inscripciones_figuras.id
+                            INNER JOIN fases ON inscripciones_figuras.id_fase = fases.id
+                            INNER JOIN nadadoras ON inscripciones_figuras.id_nadadora = nadadoras.id
+                            INNER JOIN penalizaciones ON pn.id_penalizacion = penalizaciones.id
+                            WHERE inscripciones_figuras.id_fase = ".$id_fase."
+                            AND fases.id_competicion = ".$_SESSION['id_competicion_activa']."
+                            ORDER BY orden, nadadoras.apellidos, nadadoras.nombre";
+                        $result_penalizadas = mysqli_query($connection, $query_penalizadas);
+                        
+                        if(mysqli_num_rows($result_penalizadas) > 0) {
+                          while($penalizada = mysqli_fetch_assoc($result_penalizadas)) {
+                      ?>
+                      <tr>
+                        <td><?php echo $penalizada['orden']; ?></td>
+                        <td><?php echo $penalizada['id_inscripcion']; ?></td>
+                        <td><?php echo $penalizada['apellidos'].', '.$penalizada['nombre']; ?></td>
+                        <td><?php echo $penalizada['codigo'].' - '.$penalizada['resumen']; ?></td>
+                        <td><?php echo $penalizada['puntos']; ?> pts</td>
+                        <td class="text-center">
+                          <form class="form-borrar-penalizacion" action="puntuaciones_lista_figuras_code.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="id_penalizacion_registro" value="<?php echo $penalizada['id_penalizacion_registro']; ?>">
+                            <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
+                            <button type="submit" class="btn btn-danger btn-sm btn-borrar-penalizacion" name="penalizacion_borrar" onclick="return confirm('¿Borrar esta penalización?');">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <?php
+                          }
+                        } else {
+                          echo '<tr><td colspan="6" class="text-center">No hay penalizaciones aplicadas en esta fase</td></tr>';
+                        }
+                      ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
 
             <!-- template -->
             <?php
             include('includes/scripts.php');
             ?>
 			<script src="puntuaciones_lista_figuras.js?v=5"></script>
+            <script>
+              // Lógica AJAX para agregar penalizaciones
+              document.getElementById('form-agregar-penalizacion').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nadadora = document.getElementById('select-nadadora').value;
+                const penalizacion = document.getElementById('select-penalizacion').value;
+                const idFase = document.querySelector('input[name="id_fase"]').value;
+                
+                if(!nadadora || !penalizacion) {
+                  alert('Por favor selecciona nadadora y penalización');
+                  return false;
+                }
+                
+                const formData = new FormData(this);
+                formData.append('penalizacion_aplicar', '1');
+                
+                fetch('puntuaciones_lista_figuras_code.php', {
+                  method: 'POST',
+                  body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if(data.success) {
+                    // Limpiar los selects
+                    document.getElementById('select-nadadora').value = '';
+                    document.getElementById('select-penalizacion').value = '';
+                    
+                    // Actualizar la tabla de penalizaciones
+                    const formDataTabla = new FormData();
+                    formDataTabla.append('get_penalizaciones_tabla', '1');
+                    formDataTabla.append('id_fase', idFase);
+                    
+                    fetch('puntuaciones_lista_figuras_code.php', {
+                      method: 'POST',
+                      body: formDataTabla
+                    })
+                    .then(response => response.json())
+                    .then(dataTabla => {
+                      if(dataTabla.success) {
+                        document.querySelector('#penalizacionesAplicadasTable').innerHTML = dataTabla.html;
+                        // Re-inicializar listeners en los botones de borrar
+                        initDeletePenalizacionesListeners(idFase);
+                      }
+                    });
+                  } else {
+                    alert('Error: ' + (data.message || 'No se pudo aplicar la penalización'));
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('Error al aplicar la penalización: ' + error.message);
+                });
+              });
+
+              // Función para inicializar listeners de borrado
+              function initDeletePenalizacionesListeners(idFase) {
+                document.querySelectorAll('.form-borrar-penalizacion').forEach(function(form) {
+                  form.removeEventListener('submit', handleDeletePenalizacion);
+                  form.addEventListener('submit', handleDeletePenalizacion);
+                });
+              }
+              
+              // Handler para borrar penalizaciones
+              function handleDeletePenalizacion(e) {
+                e.preventDefault();
+                
+                if(!confirm('¿Está seguro de que desea borrar esta penalización?')) {
+                  return false;
+                }
+                
+                const idFase = document.querySelector('input[name="id_fase"]').value;
+                const formData = new FormData(this);
+                formData.append('penalizacion_borrar', '1');
+                
+                fetch('puntuaciones_lista_figuras_code.php', {
+                  method: 'POST',
+                  body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if(data.success) {
+                    // Actualizar la tabla de penalizaciones
+                    const formDataTabla = new FormData();
+                    formDataTabla.append('get_penalizaciones_tabla', '1');
+                    formDataTabla.append('id_fase', idFase);
+                    
+                    fetch('puntuaciones_lista_figuras_code.php', {
+                      method: 'POST',
+                      body: formDataTabla
+                    })
+                    .then(response => response.json())
+                    .then(dataTabla => {
+                      if(dataTabla.success) {
+                        document.querySelector('#penalizacionesAplicadasTable').innerHTML = dataTabla.html;
+                        // Re-inicializar listeners
+                        initDeletePenalizacionesListeners(idFase);
+                      }
+                    });
+                  } else {
+                    alert('Error: ' + (data.message || 'No se pudo borrar la penalización'));
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  alert('Error al borrar la penalización: ' + error.message);
+                });
+              }
+              
+              // Inicializar listeners al cargar
+              document.addEventListener('DOMContentLoaded', function() {
+                const idFase = document.querySelector('input[name="id_fase"]').value;
+                initDeletePenalizacionesListeners(idFase);
+              });
+            </script>
             <?php
             include('includes/footer.php');
             ?>

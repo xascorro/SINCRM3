@@ -9,7 +9,7 @@ if($_SESSION['id_rol'] == '1'){
     	<hr class="sidebar-divider my-0">
     	<!-- Nav Item - Dashboard -->
     	<li class="nav-item active">
-    		<a class="nav-link" href="index.php">
+    		<a class="nav-link" href="index2.php">
     			<i class="fas fa-fw fa-tachometer-alt"></i>
     			<span>Dashboard</span></a>
     	</li>
@@ -32,7 +32,7 @@ if($_SESSION['id_rol'] == '1'){
     			<span>Configuración DB</span></a>
     	</li>
     	<li class="nav-item">
-    		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDB" aria-expanded="true" aria-controls="collapseDB"><i class="fas fa-fw fa-user-cog"></i><span>Gestión de usuarios</span></a>
+    		<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDB" aria-expanded="true" aria-controls="collapseDB"><i class="fas fa-fw fa-user-cog"></i><span>Gestión de usuarios</span></a>
     		<div id="collapseDB" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
     			<div class="bg-white py-2 collapse-inner rounded">
     				<a class="collapse-item" href="usuarios.php"><i class="fas fa-fw fa-user-edit"></i> Usuarios</a>
@@ -46,7 +46,7 @@ if($_SESSION['id_rol'] == '1'){
     		Datos
     	</div>
     	<li class="nav-item">
-    		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseDatos" aria-expanded="true" aria-controls="collapseDatos">
+    		<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDatos" aria-expanded="true" aria-controls="collapseDatos">
     			<i class="fas fa-fw fa-cog"></i>
     			<span>Datos</span>
     		</a>
@@ -83,7 +83,7 @@ if($_SESSION['id_rol'] == '1'){
     				</a>
     				<a class="collapse-item" href="coach_card_auditor_config.php">
     					<i class="fas fa-robot"></i>
-    					
+
     					<span>Coach Card Auditor</span>
     				</a>
     				<a class="collapse-item" href="modalidades.php">
@@ -104,7 +104,7 @@ if($_SESSION['id_rol'] == '1'){
 
 
     	<li class="nav-item">
-    		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCompeticion" aria-expanded="true" aria-controls="collapseCompeticion">
+    		<a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseCompeticion" aria-expanded="true" aria-controls="collapseCompeticion">
     			<i class="fas fa-fw fa-flag-checkered"></i>
     			<span>Competición</span>
     		</a>
@@ -131,7 +131,7 @@ if($_SESSION['id_rol'] == '1'){
     				<?php
               }else if (@$_SESSION['figuras'] == 'si'){
             ?>
-    				<a class="collapse-item" href="inscripciones_figuras.php">
+    				<a class="collapse-item" href="inscripciones_figuras.php?id_competicion=49">
     					<i class="fa-regular fa-flag"></i><span> Inscripciones Figuras</span>
     				</a>
     				<a class="collapse-item" href="sorteo_figuras.php">

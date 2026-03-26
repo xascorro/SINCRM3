@@ -1,0 +1,26 @@
+models:
+  - title: "ZimaOS - Qwen 7B"
+    provider: ollama
+    model: qwen2.5-coder:7b
+    apiBase: http://192.168.1.20:11434
+
+  - title: "ZimaOS - Llama 3.2"
+    provider: ollama
+    model: llama3.2:latest
+    apiBase: http://192.168.1.20:11434
+
+defaultModel:
+  title: "ZimaOS - Qwen 7B"
+  provider: ollama
+  model: qwen2.5-coder:7b
+  apiBase: http://192.168.1.20:11434
+
+tabAutocompleteModel:
+  title: "ZimaOS - Autocomplete"
+  provider: ollama
+  model: qwen2.5-coder:1.5b
+  apiBase: http://192.168.1.20:11434
+
+contextProviders:
+  - name: code
+  - name: docs

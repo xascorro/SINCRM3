@@ -37,7 +37,7 @@ $fecha_fin_inscripcion_obj = new DateTime($fecha_fin_inscripcion);
 //} else {
 //    $enable_inscripcion = '';
 //}
-		if(date('Y-m-d') >= $fecha_fin_inscripcion & $_SESSION['id_rol'] != 1 )
+		if(date('Y-m-d') >= $fecha_fin_inscripcion && $_SESSION['id_rol'] != 1 )
 			$enable_inscripcion = 'disabled';
 		else
 			$enable_inscripcion = '';
@@ -222,11 +222,27 @@ $fecha_fin_inscripcion_obj = new DateTime($fecha_fin_inscripcion);
 									<input type="hidden" name="id_nadadora" value="<?php echo $row['id_nadadora'];?>">
 									<input type="hidden" name="delete_id_categoria" value="<?php echo $row_categorias['id_categoria'];?>">
 									<?php
-										if($enable_inscripcion == ''){
-										?>
-									<button class="btn btn-danger" type="submit" name="delete_btn" <?= $enable_inscripcion ?>><i class="fas fa-trash"></i></button>
-									<?php
-										}else if($row['baja'] == 'si'){
+										$es_admin = ($_SESSION['id_rol'] == 1);
+                                        if($es_admin){
+                                        ?>
+                                    <button class="btn btn-danger" type="submit" name="delete_btn" <?= $enable_inscripcion ?>><i class="fas fa-trash"></i></button>
+                                    <?php
+                                        if($row['baja'] == 'si'){
+                                        ?>
+                                    <button class="btn btn-success" type="submit" name="alta_btn"><i class="fas fa-circle-up"></i></button>
+                                    <input type="hidden" name="alta_id" value="<?php echo $row['id'];?>">
+
+                                    <?php
+                                        } else {
+                                        ?>
+                                    <button class="btn btn-warning" type="submit" name="baja_btn"><i class="fas fa-circle-down"></i></button>
+                                    <input type="hidden" name="baja_id" value="<?php echo $row['id'];?>">
+
+                                    <?php
+                                        }
+                                        } else if($enable_inscripcion == '') {
+                                            if($row['baja'] == 'si'){
+
 
 										?>
 									<button class="btn btn-success" type="submit" name="alta_btn"><i class="fas fa-circle-up"></i></button>
@@ -239,7 +255,8 @@ $fecha_fin_inscripcion_obj = new DateTime($fecha_fin_inscripcion);
 									<input type="hidden" name="baja_id" value="<?php echo $row['id'];?>">
 									<?php
 										}
-										?>
+									}
+									?>
 								</form>
 							</td>
 							</tr>

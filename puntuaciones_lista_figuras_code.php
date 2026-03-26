@@ -161,3 +161,152 @@ if (isset($_POST['puntuar_btn'])) {
 
     echo '<script>window.close();</script>';
 }
+
+// MANEJO DE PENALIZACIONES
+if (isset($_POST['penalizacion_aplicar'])) {
+    // Detener cualquier buffering y establecer header JSON
+    while (ob_get_level() > 0) ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
+    
+    $id_inscripcion_figuras = isset($_POST['id_inscripcion_figuras']) ? (int) $_POST['id_inscripcion_figuras'] : 0;
+    $id_penalizacion = isset($_POST['id_penalizacion']) ? (int) $_POST['id_penalizacion'] : 0;
+    $id_fase = isset($_POST['id_fase']) ? (int) $_POST['id_fase'] : 0;
+    
+    if ($id_inscripcion_figuras > 0 && $id_penalizacion > 0 && $id_fase > 0) {
+        try {
+            // Verificar que no esté duplicada
+            $query_check = "SELECT id FROM penalizaciones_rutinas 
+                            WHERE id_inscripcion_figuras = $id_inscripcion_figuras 
+                            AND id_penalizacion = $id_penalizacion";
+            $result_check = mysqli_query($connection, $query_check);
+            
+            if (!$result_check) {
+                throw new Exception("Error al verificar penalización: " . mysqli_error($connection));
+            }
+            
+            if (mysqli_num_rows($result_check) == 0) {
+                // No está duplicada, agregar
+                $query_insert = "INSERT INTO penalizaciones_rutinas 
+                                (id_inscripcion_figuras, id_penalizacion) 
+                                VALUES ($id_inscripcion_figuras, $id_penalizacion)";
+                
+                if (!mysqli_query($connection, $query_insert)) {
+                    throw new Exception("Error al agregar penalización: " . mysqli_error($connection));
+                }
+                
+                echo json_encode(['success' => true, 'message' => 'Penalización aplicada correctamente']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Esta penalización ya está aplicada a esta nadadora']);
+            }
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Faltan datos requeridos']);
+    }
+    die;
+}
+
+// MANEJO DE BORRAR PENALIZACIONES
+if (isset($_POST['penalizacion_borrar'])) {
+    // Detener cualquier buffering y establecer header JSON
+    while (ob_get_level() > 0) ob_end_clean();
+    header('Content-Type: application/json; charset=utf-8');
+    
+    $id_penalizacion_registro = isset($_POST['id_penalizacion_registro']) ? (int) $_POST['id_penalizacion_registro'] : 0;
+    $id_fase = isset($_POST['id_fase']) ? (int) $_POST['id_fase'] : 0;
+    
+    if ($id_penalizacion_registro > 0 && $id_fase > 0) {
+        try {
+            $query_delete = "DELETE FROM penalizaciones_rutinas WHERE id = $id_penalizacion_registro";
+            
+            if (!mysqli_query($connection, $query_delete)) {
+                throw new Exception("Error al borrar penalización: " . mysqli_error($connection));
+            }
+            
+            echo json_encode(['success' => true, 'message' => 'Penalización eliminada correctamente']);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Faltan datos requeridos']);
+    }
+    die;
+}
+
+// OBTENER TABLA ACTUALIZADA DE PENALIZACIONES
+if (isset($_POST['get_penalizaciones_tabla'])) {
+    header('Content-Type: application/json; charset=utf-8');
+    
+    $id_fase = isset($_POST['id_fase']) ? (int) $_POST['id_fase'] : 0;
+    
+    if ($id_fase > 0) {
+        try {
+            $query_penalizadas = "SELECT 
+                pn.id as id_penalizacion_registro,
+                COALESCE(
+                    (SELECT if2.orden FROM inscripciones_figuras if2
+                     WHERE if2.id_nadadora = inscripciones_figuras.id_nadadora
+                       AND if2.id_fase = (
+                           SELECT f0.id FROM fases f0
+                           WHERE f0.id_competicion = fases.id_competicion
+                             AND f0.id_categoria = fases.id_categoria
+                             AND IFNULL(f0.id_modalidad,'') = IFNULL(fases.id_modalidad,'')
+                           ORDER BY f0.orden ASC, f0.id ASC
+                           LIMIT 1
+                       )
+                     LIMIT 1),
+                    inscripciones_figuras.orden
+                ) AS orden,
+                nadadoras.nombre, nadadoras.apellidos,
+                penalizaciones.codigo, penalizaciones.resumen, penalizaciones.puntos
+                FROM penalizaciones_rutinas pn
+                INNER JOIN inscripciones_figuras ON inscripciones_figuras.id = pn.id_inscripcion_figuras
+                INNER JOIN fases ON inscripciones_figuras.id_fase = fases.id
+                INNER JOIN nadadoras ON nadadoras.id = inscripciones_figuras.id_nadadora
+                INNER JOIN penalizaciones ON penalizaciones.id = pn.id_penalizacion
+                WHERE inscripciones_figuras.id_fase = $id_fase
+                ORDER BY orden, nadadoras.apellidos";
+            
+            $result_penalizadas = mysqli_query($connection, $query_penalizadas);
+            
+            if (!$result_penalizadas) {
+                throw new Exception("Error en query: " . mysqli_error($connection));
+            }
+            
+            $html = '<thead><tr><th scope="col">Orden</th><th scope="col">#</th><th scope="col">Nadadora</th><th scope="col">Penalización</th><th scope="col">Puntos</th><th scope="col" class="text-center">Acción</th></tr></thead><tbody>';
+            
+            if (mysqli_num_rows($result_penalizadas) > 0) {
+                while($penalizada = mysqli_fetch_assoc($result_penalizadas)) {
+                    $html .= '<tr>
+                        <td>'.$penalizada['orden'].'</td>
+                        <td>#'.$penalizada['id_penalizacion_registro'].'</td>
+                        <td>'.$penalizada['apellidos'].', '.$penalizada['nombre'].'</td>
+                        <td>'.$penalizada['codigo'].' - '.$penalizada['resumen'].'</td>
+                        <td>'.$penalizada['puntos'].' pts</td>
+                        <td class="text-center">
+                          <form class="form-borrar-penalizacion" action="puntuaciones_lista_figuras_code.php" method="POST" style="display:inline;">
+                            <input type="hidden" name="id_penalizacion_registro" value="'.$penalizada['id_penalizacion_registro'].'">
+                            <input type="hidden" name="id_fase" value="'.$id_fase.'">
+                            <button type="submit" class="btn btn-danger btn-sm btn-borrar-penalizacion" name="penalizacion_borrar" value="1">
+                              <i class="fas fa-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>';
+                }
+            } else {
+                $html .= '<tr><td colspan="6" class="text-center">No hay penalizaciones aplicadas en esta fase</td></tr>';
+            }
+            
+            $html .= '</tbody>';
+            
+            echo json_encode(['success' => true, 'html' => $html]);
+        } catch (Exception $e) {
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Faltan datos requeridos']);
+    }
+    die;
+}
