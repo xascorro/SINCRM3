@@ -385,60 +385,152 @@ $pdf->AddPage();
 	$pdf->SetFont('helvetica', '', 8);
 
 
-	//composición juez arbitro / secretario / ayudantes
-	$html = '<table border="1" cellpadding="1" align="center"><tr>';
-	$query = "select UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
- UPPER(puestos_juez.nombre) as puesto from puesto_juez, jueces j, puestos_juez where puesto_juez.id_competicion=".$GLOBALS['id_competicion_activa']." and id_puestos_juez=puestos_juez.id and id_juez=j.id and puestos_juez.id<=4";
-	$puestos = mysqli_query($connection,$query);
-	while($puesto = mysqli_fetch_array($puestos)){
-		$html .= '<td  style="background-color:#FCE4EC; text-align:center;  font-size:6px">'.$puesto['puesto'].'</td><td  style="font-size:6px">'.$puesto['nombre_completo'].'</td>';
-	}
-	$html .= '</tr></table>';
-//	composición DTCs
-	$html .= '<table border="1" cellpadding="1" align="center"><tr>';
-	$query = "select UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
- UPPER(puestos_juez.nombre) as puesto from puesto_juez, jueces j, puestos_juez where puesto_juez.id_competicion=".$GLOBALS['id_competicion_activa']." and id_puestos_juez=puestos_juez.id and id_juez=j.id and (puestos_juez.id=10 or puestos_juez.id=11) ";
-	$puestos = mysqli_query($connection,$query);
-	while($puesto = mysqli_fetch_array($puestos)){
-		$html .= '<td style="width:5%; background-color:#FCE4EC; text-align:center; font-size:6px">'.$puesto['puesto'].'</td><td style="width:20%; font-size:6px" >'.$puesto['nombre_completo'].'</td>';
-	}
-	$html .= '</tr></table>';
-//	composicion STC
-		$html .= '<table border="1" cellpadding="1" align="center">';
+// 	//composición juez arbitro / secretario / ayudantes
+// 	$html = '<table border="1" cellpadding="1" align="center"><tr>';
+// 	$query = "select UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
+//  UPPER(puestos_juez.nombre) as puesto from puesto_juez, jueces j, puestos_juez where puesto_juez.id_competicion=".$GLOBALS['id_competicion_activa']." and id_puestos_juez=puestos_juez.id and id_juez=j.id and puestos_juez.id<=4";
+// 	$puestos = mysqli_query($connection,$query);
+// 	while($puesto = mysqli_fetch_array($puestos)){
+// 		$html .= '<td  style="background-color:#FCE4EC; text-align:center;  font-size:6px">'.$puesto['puesto'].'</td><td  style="font-size:6px">'.$puesto['nombre_completo'].'</td>';
+// 	}
+// 	$html .= '</tr></table>';
+// //	composición DTCs
+// 	$html .= '<table border="1" cellpadding="1" align="center"><tr>';
+// 	$query = "select UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
+//  UPPER(puestos_juez.nombre) as puesto from puesto_juez, jueces j, puestos_juez where puesto_juez.id_competicion=".$GLOBALS['id_competicion_activa']." and id_puestos_juez=puestos_juez.id and id_juez=j.id and (puestos_juez.id=10 or puestos_juez.id=11) ";
+// 	$puestos = mysqli_query($connection,$query);
+// 	while($puesto = mysqli_fetch_array($puestos)){
+// 		$html .= '<td style="width:5%; background-color:#FCE4EC; text-align:center; font-size:6px">'.$puesto['puesto'].'</td><td style="width:20%; font-size:6px" >'.$puesto['nombre_completo'].'</td>';
+// 	}
+// 	$html .= '</tr></table>';
+// //	composicion STC
+// 		$html .= '<table border="1" cellpadding="1" align="center">';
 
-$query = "SELECT UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
-    UPPER(paneles.nombre) AS panel
-FROM paneles
-JOIN panel_jueces ON paneles.id = panel_jueces.id_panel
-JOIN jueces j ON j.id = panel_jueces.id_juez
-WHERE panel_jueces.id_fase = ".$fase['id']."
-ORDER BY paneles.id, panel_jueces.numero_juez";
+// $query = "SELECT UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo,
+//     UPPER(paneles.nombre) AS panel
+// FROM paneles
+// JOIN panel_jueces ON paneles.id = panel_jueces.id_panel
+// JOIN jueces j ON j.id = panel_jueces.id_juez
+// WHERE panel_jueces.id_fase = ".$fase['id']."
+// ORDER BY paneles.id, panel_jueces.numero_juez";
 
-$puestos = mysqli_query($connection, $query);
+// $puestos = mysqli_query($connection, $query);
 
-$panel_anterior = null; // Inicializamos la variable para comparar el panel
+// $panel_anterior = null; // Inicializamos la variable para comparar el panel
 
-while ($puesto = mysqli_fetch_array($puestos)) {
-    if ($puesto['panel'] != $panel_anterior) {
-        // Cerramos la fila anterior si no es la primera
+// while ($puesto = mysqli_fetch_array($puestos)) {
+//     if ($puesto['panel'] != $panel_anterior) {
+//         // Cerramos la fila anterior si no es la primera
+//         if ($panel_anterior !== null) {
+//             $html .= '</tr>';
+//         }
+//         // Creamos la fila para el nombre del panel
+//         $html .= '<tr><td style="width:100%; background-color:#FCE4EC; text-align:center; font-size:6px">' .$id_modalidad. $puesto['panel'] . '</td></tr><tr>';
+//         $panel_anterior = $puesto['panel']; // Actualizamos el panel anterior
+//     }
+//     // Añadimos la celda con el nombre del juez
+//     $html .= '<td style="width:20%; font-size:6px;">' . $puesto['nombre_completo'] . '</td>';
+// }
+
+// // Cerramos la última fila de datos si hubo jueces
+// if ($panel_anterior !== null) {
+//     $html .= '</tr>';
+// }
+
+// $html .= '</table>';
+
+// Estilo CSS común para ahorrar espacio y dar uniformidad
+// 1. SECCIÓN: JUEZ ÁRBITRO / SECRETARIO / AYUDANTES (Versión Minimalista)
+$html = $style;
+// Forzamos border="0" y eliminamos clases de fondo
+$html .= '<table border="0" cellpadding="1"><tr>';
+
+$query1 = "SELECT UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo, UPPER(p.nombre) as puesto 
+           FROM puesto_juez pj
+           JOIN jueces j ON pj.id_juez = j.id
+           JOIN puestos_juez p ON pj.id_puestos_juez = p.id
+           WHERE pj.id_competicion = ".intval($GLOBALS['id_competicion_activa'])." AND p.id <= 4";
+
+$res1 = mysqli_query($connection, $query1);
+
+while($row = mysqli_fetch_array($res1)){
+    // Usamos estilos inline para asegurar que no herede bordes
+    $html .= '<td style="font-size:6px; font-weight:bold; width:12%; border:none;">'.$row['puesto'].':</td>';
+    $html .= '<td style="font-size:6px; width:13%; border:none;">'.$row['nombre_completo'].'</td>';
+}
+
+// Rellenar celdas vacías si hay menos de 4 jueces para mantener la estructura (opcional)
+$html .= '</tr></table>';
+
+// Separador muy pequeño
+$html .= '<div style="line-height:1px;">&nbsp;</div>'; 
+
+// A partir de aquí vendrían los DTCs y Paneles con sus bordes normales...
+
+// 2. SECCIÓN: DTCs
+$html .= '<table><tr>';
+$query2 = "SELECT UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo, UPPER(p.nombre) as puesto 
+           FROM puesto_juez pj
+           JOIN jueces j ON pj.id_juez = j.id
+           JOIN puestos_juez p ON pj.id_puestos_juez = p.id
+           WHERE pj.id_competicion = ".$GLOBALS['id_competicion_activa']." AND (p.id = 10 OR p.id = 11)";
+
+$res2 = mysqli_query($connection, $query2);
+while($row = mysqli_fetch_array($res2)){
+    $html .= '<td class="header-puesto" width="10%" style="font-size:6px; font-weight:bold;">'.$row['puesto'].'</td>';
+    $html .= '<td class="cell-data" width="40%" style="font-size:6px;"> '.$row['nombre_completo'].'</td>';
+}
+$html .= '</tr></table><div style="line-height:2px;">&nbsp;</div>';
+
+// 3. SECCIÓN: PANELES STC (Máximo 5 jueces por fila)
+$query3 = "SELECT UPPER(CONCAT(j.nombre, ' ', j.apellidos)) AS nombre_completo, UPPER(paneles.nombre) AS panel
+           FROM paneles
+           JOIN panel_jueces ON paneles.id = panel_jueces.id_panel
+           JOIN jueces j ON j.id = panel_jueces.id_juez
+           WHERE panel_jueces.id_fase = ".$fase['id']."
+           ORDER BY paneles.id, panel_jueces.numero_juez";
+
+$res3 = mysqli_query($connection, $query3);
+$panel_anterior = null;
+$jueces_en_fila = 0;
+
+$html .= '<table cellpadding="2">';
+
+while ($row = mysqli_fetch_array($res3)) {
+    if ($row['panel'] != $panel_anterior) {
+        // Si no es el primer panel, cerramos la fila de jueces anterior
         if ($panel_anterior !== null) {
+            // Rellenamos huecos vacíos si hubo menos de 5 jueces para mantener el borde
+            while($jueces_en_fila < 5) {
+                $html .= '<td class="cell-data" width="20%">&nbsp;</td>';
+                $jueces_en_fila++;
+            }
             $html .= '</tr>';
         }
-        // Creamos la fila para el nombre del panel
-        $html .= '<tr><td style="width:100%; background-color:#FCE4EC; text-align:center; font-size:6px">' .$id_modalidad. $puesto['panel'] . '</td></tr><tr>';
-        $panel_anterior = $puesto['panel']; // Actualizamos el panel anterior
+        
+        // Título del Panel
+        $html .= '<tr><td colspan="5" class="panel-title">'.$row['panel'].'</td></tr>';
+        $html .= '<tr>';
+        $panel_anterior = $row['panel'];
+        $jueces_en_fila = 0;
     }
-    // Añadimos la celda con el nombre del juez
-    $html .= '<td style="width:20%; font-size:6px;">' . $puesto['nombre_completo'] . '</td>';
+
+    $html .= '<td class="cell-data" width="20%" style="font-size:6px;">'.$row['nombre_completo'].'</td>';
+    $jueces_en_fila++;
 }
 
-// Cerramos la última fila de datos si hubo jueces
+// Cerramos la última fila del último panel
 if ($panel_anterior !== null) {
+    while($jueces_en_fila < 5) {
+        $html .= '<td class="cell-data" width="20%">&nbsp;</td>';
+        $jueces_en_fila++;
+    }
     $html .= '</tr>';
 }
-
 $html .= '</table>';
 
+// Escribir al PDF
+// $pdf->writeHTML($html, true, false, true, false, '');
 
 	$html .= '<table style="margin-top=10px">';
 	//segun titulo de documento
@@ -533,7 +625,7 @@ $html .= '</table>';
                         $nombre = $tipo_elemento.$dd.' F:'.$fm;
 
 
-                    $html .= "$nombre<br>";
+                    $html .= $nombre."<br>";
                 }
 				if($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5){
 					$html .= "<b>Sincronización</b><br>";
@@ -543,7 +635,9 @@ $html .= '</table>';
             }elseif($panel['nombre']=='Artístico' and $panel['obsoleto'] == 'no' ){
                 $html .= "ChoMu F:$f_chomu<br>Performance F:$f_performance<br>Transitions F:$f_transitions<br><b>Pen. Artístico</b>";
             }
+			
 		}
+
 					$html.= "<br><br><b>Penalización Rutina</b>";
 
 		$html.='</td>';
@@ -674,7 +768,8 @@ $html .= '</table>';
             //SISTEMA DE PUNTUACIÓN 2017-2021
             elseif($fase['obsoleto']=='si'){
 			$html.='<td nobr=true style="width:20%">';
-			$query = "select * from paneles where id_competicion='".$GLOBALS["id_competicion_activa"]."' and puntua='si' and tecnico = '".$fase['tecnico']."' and obsoleto='si'";
+			// $query = "select * from paneles where id_competicion='".$GLOBALS["id_competicion_activa"]."' and puntua='si' and tecnico = '".$fase['tecnico']."' and obsoleto='si'";
+			$query = "select * from paneles where id_competicion='".$GLOBALS["id_competicion_activa"]."' and puntua='si' and obsoleto='si'";
 			$paneles = mysqli_query($connection,$query);
 			while($panel = mysqli_fetch_array($paneles)){
 				$query = "select puntuaciones_jueces.id, id_panel_juez, id_rutina, nota, nota_menor, nota_mayor, numero_juez from puntuaciones_jueces, panel_jueces where id_panel_juez in (select id from panel_jueces where id_fase='$id_fase' and id_panel='".$panel['id']."') and id_rutina = '".$rutina['id']."' and panel_jueces.id = id_panel_juez order by id_panel_juez";

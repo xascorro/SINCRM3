@@ -232,61 +232,69 @@ include('includes/navbar.php');
 
 							<!--		fin modal eliminar rutina			  -->
 							<!--			Inicio modal musica -->
-							<?php
-					  $path = './public/music/'.$id_competicion.'/';
-					  $music_name = $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club'].' - '.$nombres.'.mp3';
-					  		if(@$figuras == 'no'){
-?>
-							<div class="modal fade" id="player<?php echo $row['id']?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								<div class="modal-dialog" role="document">
-									<div class="modal-content">
-										<div class="modal-body align-center">
-											<?php
-if(file_exists($path.$row['id'].'.mp3')){
-?>
-											<div class="card" style="">
-												<img class="card-img-center" src="<?php echo $row['logo']?>" alt="Logo club">
-												<div class="card-body text-center">
-													<h5 class="card-title"><?php echo $row['nombre_categoria'].' - '.$row['nombre_modalidad'].' - '.$row['nombre_club']?></h5>
-													<p class="card-text"><?php echo $nombres?></p>
-													<div><audio src="<?php echo $path.$row['id'].'.mp3';
-?>" controls preload="none"></audio></div>
-													<h7 class="card-title"><?php echo $row['music_original_name']?></h7>
-												</div>
-											</div>
-											<?php
-	$anadir_actualizar ='Actualizar';
-}else{
-	$anadir_actualizar ='Añadir';
-}
-if( $enable_musica == ''){
+						<?php
+$path = './public/music/' . $id_competicion . '/';
+$archivo_mp3 = $path . $row['id'] . '.mp3';
+$music_name = $row['nombre_categoria'] . ' - ' . $row['nombre_modalidad'] . ' - ' . $row['nombre_club'] . ' - ' . $nombres . '.mp3';
 
+// Eliminamos o revisamos la condición de $figuras
+if ($figuras == 'no' || !isset($figuras)) { 
 ?>
-											<form action="rutinas_code.php" method="POST" enctype="multipart/form-data">
+<div class="modal fade" id="player<?php echo $row['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="label<?php echo $row['id'] ?>" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Reproductor de Música</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <?php if (file_exists($archivo_mp3)): ?>
+                    <div class="card mb-3">
+                        <img class="card-img-top mx-auto d-block" src="<?php echo $row['logo'] ?>" alt="Logo club" style="width: 100px; margin-top: 10px;">
+                        <div class="card-body">
+                            <h5 class="card-title"><?php echo $row['nombre_categoria'] . ' - ' . $row['nombre_modalidad'] ?></h5>
+                            <p class="card-text"><?php echo $row['nombre_club'] ?><br><small><?php echo $nombres ?></small></p>
+                            <audio controls style="width: 100%;">
+                                <source src="<?php echo $archivo_mp3; ?>?v=<?php echo time(); ?>" type="audio/mpeg">
+                                Tu navegador no soporta el elemento de audio.
+                            </audio>
+                            <p class="mt-2"><small>Archivo: <?php echo $row['music_original_name'] ?></small></p>
+                        </div>
+                    </div>
+                    <?php $anadir_actualizar = 'Actualizar'; ?>
+                <?php else: ?>
+                    <div class="alert alert-warning">No hay música cargada para esta rutina.</div>
+                    <?php $anadir_actualizar = 'Añadir'; ?>
+                <?php endif; ?>
 
-												<div class="modal-footer">
-													<input type="hidden" name="music_name" value="<?php echo $music_name?>">
-													<input type="hidden" name="club" value="<?php echo $row['id_club']?>">
-													<div class="col-12 ">
-														<label for="musica"><?php echo $anadir_actualizar; ?> acompañamiento musical</label>
-														<input type="file" class="" id="customFile" name="musica" accept=".mp3" required />
-													</div>
-													<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-													<input type="hidden" name="edit_id" value="<?php echo $row['id'];?>">
-													<input type="hidden" name="id_competicion" value="<?php echo $id_competicion;?>">
-													<button class="btn btn-primary" type="submit" name="upload_music" <?php echo $enable_musica ?>>Guardar</button>
-												</div>
-										</div>
-										</form>
-										<?php
-						}
-																				 ?>
-									</div>
-								</div>
-							</div>
-							<?php
-									}
-					  ?>
+                <?php if ($enable_musica == ''): ?>
+                    <hr>
+                    <form action="rutinas_code.php" method="POST" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label><?php echo $anadir_actualizar; ?> acompañamiento musical (.mp3)</label>
+                            <input type="file" name="musica" class="form-control-file" accept=".mp3" required>
+                        </div>
+                        <input type="hidden" name="music_name" value="<?php echo $music_name ?>">
+                        <input type="hidden" name="club" value="<?php echo $row['id_club'] ?>">
+                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="submit" name="upload_music" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                <?php else: ?>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
 
 							<!--		fin modal musica			  -->
 
@@ -343,33 +351,8 @@ if( $enable_musica == ''){
 										<input type="hidden" name="id_rutina" value="<?php echo $row['id']?>">
 										<input type="hidden" name="id_fase" value="<?php echo $row['id_fase']?>">
 										<input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
-
-
 									</form>
-									<?php
-							  		if(!isset($_SESSION['club'])){
-										?>
-									<form action="..php" method="post" style="display:inline-block; margin: 0 2px;">
-										<button class="btn btn-warning" type="submit" name="audit_btn" title="Auditar Normativa">
-											<span style="position: relative; display: inline-block; width: 1.2em; text-align: center;">
-												<i class="fa fa-solid fa-puzzle-piece text-dark" aria-hidden="true"></i>
-												<i class="fa fa-solid fa-magnifying-glass text-white" style="position: absolute; bottom: -4px; right: -6px; font-size: 0.65em; -webkit-text-stroke: 2px;" aria-hidden="true"></i>
-											</span>
-										</button>
-
-										<input type="hidden" name="id_rutina" value="647">
-										<input type="hidden" name="id_fase" value="354">
-										<input type="hidden" name="id_competicion" value="78">
-									</form>
-									<?php
-							  			
-							  		}
-									?>
-
-
 								</td>
-
-
 								<?php
                       } else
                           echo "<td></td>";
@@ -418,3 +401,17 @@ if( $enable_musica == ''){
             include('includes/scripts.php');
             include('includes/footer.php');
             ?>
+
+			<script>
+$(document).ready(function() {
+    // Escuchamos el evento cuando cualquier modal de reproductor se oculta
+    $('div[id^="player"]').on('hidden.bs.modal', function () {
+        // Buscamos la etiqueta audio dentro de este modal específico
+        var audio = $(this).find('audio')[0];
+        if (audio) {
+            audio.pause(); // Pausa la música
+            audio.currentTime = 0; // Opcional: Reinicia la canción al principio
+        }
+    });
+});
+</script>

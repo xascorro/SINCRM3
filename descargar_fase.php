@@ -5,73 +5,88 @@ ini_set('memory_limit', '512M');
 
 include('security.php');
 
-$id_competicion = $_GET['id_competicion'] ?? null;
-$id_fase = $_GET['id_fase'] ?? null;
-$id_club = $_GET['id_club'] ?? null;
+// 1. Seguridad: Forzar tipos enteros
+$id_competicion = isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null;
+$id_fase        = isset($_GET['id_fase']) ? (int)$_GET['id_fase'] : null;
+$id_club        = isset($_GET['id_club']) ? (int)$_GET['id_club'] : null;
+
 $condicion_club = '';
 if ($id_club !== null) {
     $condicion_club = ' AND rutinas.id_club = ' . mysqli_real_escape_string($connection, $id_club);
 }
 
 if ($id_competicion && $id_fase) {
-    $path_competicion_original = './public/music/' . $id_competicion . '/';
-    $path_competicion_ordenado = './public/music/' . $id_competicion . ' ordenado/';
+    $path_base = './public/music/' . $id_competicion . '/';
 
-    $archivos_a_zip = [];
+    // 2. Una sola consulta para obtener todas las rutinas de la fase
+    $query = "SELECT 
+                rutinas.id, 
+                rutinas.orden, 
+                rutinas.music_name, 
+                fases.orden as orden_fase,
+                modalidades.nombre as nombre_modalidad,
+                categorias.nombre as nombre_categoria
+              FROM rutinas
+              INNER JOIN fases ON rutinas.id_fase = fases.id
+              INNER JOIN modalidades ON fases.id_modalidad = modalidades.id
+              INNER JOIN categorias ON fases.id_categoria = categorias.id
+              WHERE rutinas.id_fase = $id_fase 
+                AND fases.id_competicion = $id_competicion 
+                $condicion_club";
 
-    $it = new RecursiveDirectoryIterator($path_competicion_original);
-    foreach (new RecursiveIteratorIterator($it) as $file) {
-        if ($file->getExtension() === 'mp3') {
-            $filename = str_replace($path_competicion_original, '', $file);
-            $id_archivo = str_replace('.mp3', '', $filename);
+    $result = mysqli_query($connection, $query);
 
-            $query = "SELECT rutinas.orden, rutinas.music_name, fases.orden as orden_fase
-                      FROM rutinas, fases
-                      WHERE rutinas.id = '$id_archivo'
-                        AND rutinas.id_fase = '$id_fase'
-                        AND rutinas.id_fase = fases.id " . $condicion_club;
-            $result = mysqli_query($connection, $query);
+    $archivos_encontrados = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $ruta_fisica = $path_base . $row['id'] . '.mp3';
 
-            if ($row = mysqli_fetch_assoc($result)) {
-                $orden = $row['orden'];
-                $music_name = $row['music_name'];
-                $orden_fase = $row['orden_fase'];
+        // 3. Verificamos si el archivo existe físicamente
+        if (file_exists($ruta_fisica)) {
+            // Estructura de carpetas: "OrdenFase - Modalidad - Categoria / Orden - NombreMusica"
+            $nombre_carpeta = $row['orden_fase'] . ' - ' . $row['nombre_modalidad'] . ' - ' . $row['nombre_categoria'];
+            $nombre_archivo = $row['orden'] . ' - ' . $row['music_name'];
+            
+            // Limpiar caracteres no permitidos en nombres de carpetas/archivos
+            $nombre_carpeta = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $nombre_carpeta);
 
-                $folder = explode(" - ", $music_name);
-                $modalidad_categoria = trim($folder[1] ?? '');
-                $club_nombre = trim($folder[0] ?? '');
-
-                $nombre_relativo_zip = $orden_fase . ' - ' . $modalidad_categoria . ' - ' . $club_nombre . '/' . $orden . ' - ' . $music_name;
-                $archivos_a_zip[] = ['ruta_fisica' => $file, 'ruta_zip' => $nombre_relativo_zip];
-            }
-            mysqli_free_result($result);
+            $archivos_encontrados[] = [
+                'ruta_origen' => $ruta_fisica,
+                'ruta_zip'    => $nombre_carpeta . '/' . $nombre_archivo
+            ];
         }
     }
 
-    if (!empty($archivos_a_zip)) {
+    if (!empty($archivos_encontrados)) {
         $zip = new ZipArchive();
-        $nombre_zip = 'competicion_' . $id_competicion . '_fase_' . $id_fase . '.zip';
+        // Creamos un nombre temporal único para el ZIP
+        $nombre_zip = 'temp_fase_' . $id_fase . '_' . time() . '.zip';
 
-        if ($zip->open($nombre_zip, ZipArchive::CREATE) === TRUE) {
-            foreach ($archivos_a_zip as $archivo) {
-                $zip->addFile($archivo['ruta_fisica'], $archivo['ruta_zip']);
+        if ($zip->open($nombre_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($archivos_encontrados as $arc) {
+                $zip->addFile($arc['ruta_origen'], $arc['ruta_zip']);
             }
             $zip->close();
 
-            header('Content-Type: application/zip');
-            header('Content-Disposition: attachment; filename="' . $nombre_zip . '"');
-            header('Content-Length: ' . filesize($nombre_zip));
-            flush();
-            readfile($nombre_zip);
-            unlink($nombre_zip); // Eliminar el archivo zip temporal
-            exit();
+            // 4. Envío del archivo al navegador
+            if (file_exists($nombre_zip)) {
+                header('Content-Type: application/zip');
+                header('Content-Disposition: attachment; filename="Musica_Competicion_'.$id_competicion.'_Fase_'.$id_fase.'.zip"');
+                header('Content-Length: ' . filesize($nombre_zip));
+                header('Pragma: no-cache');
+                header('Expires: 0');
+                
+                readfile($nombre_zip);
+                
+                // Borramos el temporal
+                unlink($nombre_zip);
+                exit();
+            }
         } else {
-            exit('No se pudo crear el archivo ZIP');
+            exit('Error: No se pudo crear el archivo comprimido.');
         }
     } else {
-        exit('No se encontraron archivos para la fase ' . htmlspecialchars($id_fase) . '.');
+        exit('No se encontraron archivos físicos para la fase seleccionada.');
     }
 } else {
-    exit('ID de competición o ID de fase no proporcionados.');
+    exit('Faltan parámetros obligatorios (Competición o Fase).');
 }
-?>

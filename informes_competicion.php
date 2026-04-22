@@ -113,6 +113,7 @@ include('includes/navbar.php');
 						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Hojas puntuación Rutina Técnica</h4>
 					</a>
 				</div>
+<!-- 
 				<hr class="sidebar-divider">
 				<div class="d-sm align-items-center mb-12 ">
 					<h4 class="font-weight-bold text-primary text-center"><i class="fas fa-fw fa-file-pdf"></i> Informes Figuras por año</h4>
@@ -132,6 +133,7 @@ include('includes/navbar.php');
 						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Resultados Liga de Figuras</h4>
 					</a>
 				</div>
+				 -->
 				<hr class="sidebar-divider">
 				<div class="d-sm align-items-center mb-12 ">
 					<h4 class="font-weight-bold text-primary text-center"><i class="fas fa-fw fa-file-pdf"></i> Informes Figuras por categoría</h4>
@@ -152,10 +154,15 @@ include('includes/navbar.php');
 					</a>
 				</div>
 				<div class="d-sm-flex align-items-center justify-content-between mb-12">
+					<a target="_blank" href="./informes/informe_figuras_liga_categorias.php?resta_peor_puntuacion=si">
+						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Resultados Liga de Figuras (resta peor puntuación)</h4>
+					</a>
+				</div>
+				<!-- <div class="d-sm-flex align-items-center justify-content-between mb-12">
 					<a target="_blank" href="./informes/informe_figuras_liga_categorias_puntuaciones.php">
 						<h4 class="font-weight-bold text-gray-900"><i class="fas fa-fw fa-file-pdf"></i> Resultados Liga de Figuras Puntuaciones</h4>
 					</a>
-				</div>
+				</div> -->
 			</div>
 			<hr class="sidebar-divider">
 

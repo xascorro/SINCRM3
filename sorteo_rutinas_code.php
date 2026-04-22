@@ -52,18 +52,18 @@ if(isset($_POST['desbloquear'])){
 			}
 			$change='no';
 			//echo $change.' '.$orden_rand.' '.$fase['id'];
-			if($change=='si' & $fase['id'] == 253){
+			if($change=='si' & $fase['id'] == 375){
 				//echo 'ent<br><br>entro<br><br>';
-					$query = "select id from rutinas where orden=5 and id_fase=".$fase['id'];
+					$query = "select id from rutinas where orden=3 and id_fase=".$fase['id'];
 				//echo $query;
 					$rutina_change = mysqli_result(mysqli_query($connection,$query));
-					$query = "select orden from rutinas where id=429";
+					$query = "select orden from rutinas where id=651";
 				//echo $query;
 					$orden_mx = mysqli_result(mysqli_query($connection,$query));
 				$query = "UPDATE rutinas set orden = $orden_mx WHERE id = $rutina_change";
 				//echo $query;
 					mysqli_query($connection,$query);
-				$query="UPDATE rutinas set orden = 5 WHERE id = 429";
+				$query="UPDATE rutinas set orden = 3 WHERE id = 651";
 				//echo $query;
 					mysqli_query($connection,$query);
 

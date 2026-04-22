@@ -122,20 +122,17 @@ function backup_database( $directory, $outname, $descripcion, $dbhost, $dbuser, 
   $n = 1;
   if( $res ) {
 
-    $name     = $outname;
+    $name = $outname;
     # counts
-    if( file_exists($dir.'/'.$name.'.sql.gz' ) ) {
-
-      for($i=1;@count( file($dir.'/'.$name.'_'.$i.'.sql.gz') );$i++){
-        $name = $name;
-        if( ! file_exists( $dir.'/'.$name.'_'.$i.'.sql.gz') ) {
-          $name = $name.'_'.$i;
-          break;
+    if (file_exists($dir . '/' . $name . '.sql.gz')) {
+        $i = 1;
+        while (file_exists($dir . '/' . $name . '_' . $i . '.sql.gz')) {
+            $i++;
         }
-      }
+        $name = $name . '_' . $i;
     }
 
-    $fullname = $dir.'/'.$name.'.sql.gz'; # full structures
+    $fullname = $dir . '/' . $name . '.sql.gz'; # full structures
 
     if( ! $mysqli->error ) {
       $sql = "SHOW TABLES";
@@ -202,9 +199,9 @@ function backup_database( $directory, $outname, $descripcion, $dbhost, $dbuser, 
         }
         for($j=0; $j<$num_fields; $j++) 
         {
-          
-          $row[$j] = str_replace('\'','\'\'', preg_replace("/\n/","\\n", $row[$j] ) );
-          if ( isset( $row[$j] ) ) { $return .= is_numeric( $row[$j] ) ? $row[$j] : '\''.$row[$j].'\'' ; } else { $return.= '\'\''; }
+          $value = $row[$j] ?? '';
+          $value = str_replace('\'','\'\'', preg_replace("/\n/","\\n", $value ) );
+          if ( isset( $row[$j] ) ) { $return .= is_numeric( $row[$j] ) ? $row[$j] : '\''.$value.'\'' ; } else { $return.= '\'\''; }
           if ($j<($num_fields-1)) { $return.= ', '; }
         }
           $return.= "),\n";
@@ -222,32 +219,31 @@ function backup_database( $directory, $outname, $descripcion, $dbhost, $dbuser, 
 
   }
 
-$return = "/*$descripcion*/\n\n"
-"-- ---------------------------------------------------------
---
--- SIMPLE SQL Dump
--- 
--- nawa (at) yahoo (dot) com
---
--- Host Connection Info: ".$mysqli->host_info."
--- Generation Time: ".date('F d, Y \a\t H:i A ( e )')."
--- Server version: ".mysql_get_server_info()."
--- PHP Version: ".PHP_VERSION."
---
--- ---------------------------------------------------------\n\n
+$header = "/*$descripcion*/\n\n" .
+"-- ---------------------------------------------------------\n" .
+"--\n" .
+"-- SIMPLE SQL Dump\n" .
+"-- \n" .
+"-- nawa (at) yahoo (dot) com\n" .
+"--\n" .
+"-- Host Connection Info: " . $mysqli->host_info . "\n" .
+"-- Generation Time: " . date('F d, Y \a\t H:i A ( e )') . "\n" .
+"-- Server version: " . $mysqli->server_info . "\n" .
+"-- PHP Version: " . PHP_VERSION . "\n" .
+"--\n" .
+"-- ---------------------------------------------------------\n\n" .
+"SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";\n" .
+"SET time_zone = \"+00:00\";\n\n" .
+"/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;\n" .
+"/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;\n" .
+"/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;\n" .
+"/*!40101 SET NAMES utf8 */;\n" .
+$return . "\n" .
+"/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;\n" .
+"/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;\n" .
+"/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;";
 
-SET SQL_MODE = \"NO_AUTO_VALUE_ON_ZERO\";
-SET time_zone = \"+00:00\";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-".$return."
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;";
+$return = $header;
 
 # end values result
 

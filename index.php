@@ -367,6 +367,10 @@ include('includes/navbar.php');
                                 echo '</div>';
 
                                 echo '<div class="row">';
+                                $filename = './docs/'.$row['id'].'-normativa.pdf';
+								if (file_exists($filename)) {
+                                    echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Normativa</a></div>';
+                                }
                                 $filename = './docs/'.$row['id'].'-inscripciones.pdf';
                                 if (file_exists($filename)) {
                                     echo '<div class="col col-12 col-md-3"><a href="'.$filename.'" target="_blank"><i class="fa fa-2x fa-file-arrow-down"></i> Inscripciones</a></div>';
