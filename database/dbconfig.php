@@ -1,39 +1,48 @@
 <?php
-//Datos de conexión
-//Actualizado el 03032021 a las 00:27:24 por el usuario 
-if($_SERVER['SERVER_NAME'] == 'sincrm.pedrodiaz.eu'){
-    $servername = 'localhost';
-    $db_name ='sincrm3';
-    $db_username ='xas';
+/**
+ * Configuración de la Base de Datos
+ * Gestiona la conexión para entornos de producción, beta y local.
+ */
+
+// Dominios de producción/beta
+$prod_domains = ['sincrm.pedrodiaz.eu', 'beta.pedrodiaz.eu'];
+
+if (in_array($_SERVER['SERVER_NAME'], $prod_domains)) {
+    // Entorno Producción / Beta
+    $servername  = 'localhost';
+    $db_name     = 'sincrm3';
+    $db_username = 'xas';
     $db_password = '79eagle';
-}else{
-    $servername = 'localhost';
-    $db_name ='sincrm3';
-    $db_username ='root';
+} else {
+    // Entorno Local / Desarrollo
+    $servername  = 'localhost';
+    $db_name     = 'sincrm3';
+    $db_username = 'root';
     $db_password = 'xas';
 }
-$connection = mysqli_connect($servername,$db_username,$db_password, $db_name);
-mysqli_set_charset($connection, "utf8mb4");
-$dbconfig = mysqli_select_db($connection,$db_name);
-$mysqli = new mysqli($servername,$db_username,$db_password, $db_name);
 
-if($dbconfig){
-	// echo 'Conectado a base de datos';
-}else{
-	echo '
-	<div class="container">
-		<div class="row">
-			<div class="col-md-8 mr-auto ml-auto text-center py-5 mt-5">
-				<div class="card">
-				<div class="card-body">
-						<h1 class="card-title bg-danger text-white">Error de conexión a la base de datos</h1>
-						<h2 class="card-title">Fallo</h2>
-						<div class="card-text">Por favor comprueba la configuración de tu base de datos</div>
-						<a href="./db_setup.php" class="btn btn-primary">:(</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	';
+// Establecer conexión (Procedural y POO para compatibilidad)
+$connection = mysqli_connect($servername, $db_username, $db_password, $db_name);
+
+if ($connection) {
+    mysqli_set_charset($connection, "utf8mb4");
+    $dbconfig = true;
+    
+    // Objeto MySQLi para código moderno
+    $mysqli = new mysqli($servername, $db_username, $db_password, $db_name);
+    $mysqli->set_charset("utf8mb4");
+} else {
+    $dbconfig = false;
+    // Mostrar error amigable si falla la conexión
+    if (php_sapi_name() !== 'cli') { // Evitar salida HTML en scripts de consola
+        echo '
+        <div class="container" style="margin-top: 50px; font-family: sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #dc3545; border-radius: 5px; text-align: center; background-color: #f8d7da;">
+                <h1 style="color: #721c24;">Error de conexión</h1>
+                <p style="color: #721c24;">No se ha podido establecer conexión con la base de datos.</p>
+                <p>Por favor, comprueba la configuración o contacta con el administrador.</p>
+                <a href="./db_setup.php" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Revisar Configuración</a>
+            </div>
+        </div>';
+    }
 }

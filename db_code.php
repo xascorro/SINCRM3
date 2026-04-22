@@ -13,35 +13,51 @@ if (isset($_POST['update_btn']) && isset($_POST['accept']) && $_POST['accept'] =
 	$archivo = './database/dbconfig.php';
 	
 	$nuevo_contenido = "<?php
-//Datos de conexión
-//Actualizado el " . date('d/m/Y') . " a las " . date('H:i:s') . "
-\$servername = '$servername';
-\$db_name = '$db_name';
-\$db_username = '$db_username';
-\$db_password = '$db_password';
+/**
+ * Configuración de la Base de Datos
+ * Actualizado desde el panel de control el " . date('d/m/Y') . " a las " . date('H:i:s') . "
+ */
 
+// Dominios de producción/beta
+\$prod_domains = ['sincrm.pedrodiaz.eu', 'beta.pedrodiaz.eu'];
+
+if (in_array(\$_SERVER['SERVER_NAME'], \$prod_domains)) {
+    // Entorno Producción / Beta
+    \$servername  = '$servername';
+    \$db_name     = '$db_name';
+    \$db_username = '$db_username';
+    \$db_password = '$db_password';
+} else {
+    // Entorno Local / Desarrollo (Valores por defecto)
+    \$servername  = 'localhost';
+    \$db_name     = '$db_name';
+    \$db_username = 'root';
+    \$db_password = 'xas';
+}
+
+// Establecer conexión
 \$connection = mysqli_connect(\$servername, \$db_username, \$db_password, \$db_name);
-mysqli_set_charset(\$connection, \"utf8mb4\");
-\$dbconfig = mysqli_select_db(\$connection, \$db_name);
-\$mysqli = new mysqli(\$servername, \$db_username, \$db_password, \$db_name);
 
-if(!\$dbconfig){
-	echo '
-	<div class=\"container\">
-		<div class=\"row\">
-			<div class=\"col-md-8 mr-auto ml-auto text-center py-5 mt-5\">
-				<div class=\"card\">
-				<div class=\"card-body\">
-						<h1 class=\"card-title bg-danger text-white\">Error de conexión a la base de datos</h1>
-						<h2 class=\"card-title\">Fallo</h2>
-						<div class=\"card-text\">Por favor comprueba la configuración de tu base de datos</div>
-						<a href=\"./db_setup.php\" class=\"btn btn-primary\">:(</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	';
+if (\$connection) {
+    mysqli_set_charset(\$connection, \"utf8mb4\");
+    \$dbconfig = true;
+    
+    // Objeto MySQLi para código moderno
+    \$mysqli = new mysqli(\$servername, \$db_username, \$db_password, \$db_name);
+    \$mysqli->set_charset(\"utf8mb4\");
+} else {
+    \$dbconfig = false;
+    if (php_sapi_name() !== 'cli') {
+        echo '
+        <div class=\"container\" style=\"margin-top: 50px; font-family: sans-serif;\">
+            <div style=\"max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #dc3545; border-radius: 5px; text-align: center; background-color: #f8d7da;\">
+                <h1 style=\"color: #721c24;\">Error de conexión</h1>
+                <p style=\"color: #721c24;\">No se ha podido establecer conexión con la base de datos.</p>
+                <p>Por favor, comprueba la configuración o contacta con el administrador.</p>
+                <a href=\"./db_setup.php\" style=\"display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;\">Revisar Configuración</a>
+            </div>
+        </div>';
+    }
 }
 ?>";
 
