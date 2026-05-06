@@ -1,3 +1,284 @@
+[2026-04-23 23:05:52] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-23 23:05:55] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-23 23:15:05] [INFO] [xascorro@gmail.com] [79.116.0.99] Rol actualizado (ID: 1): Administrado
+[2026-04-23 23:15:16] [INFO] [xascorro@gmail.com] [79.116.0.99] Rol actualizado (ID: 1): Administrador
+[2026-04-23 23:17:51] [INFO] [xascorro@gmail.com] [79.116.0.99] Usuario actualizado (ID: 29): mariajosediazegea@gmail.com
+[2026-04-23 23:35:21] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #69 actualizada con éxito: XIII Liga de Figuras (1ª Jornada)	
+[2026-04-23 23:35:48] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #69 actualizada con éxito: XIII Liga de Figuras (1ª Jornada)	
+[2026-04-23 23:48:44] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #77 activada como principal
+[2026-04-23 23:53:09] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #76 establecida como activa y actualizada en sesión
+[2026-04-23 23:53:13] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #77 establecida como activa y actualizada en sesión
+[2026-04-23 23:59:12] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #76 establecida como activa y actualizada en sesión
+[2026-04-23 23:59:16] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #77 establecida como activa y actualizada en sesión
+[2026-04-24 00:01:12] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 00:01:15] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
 
-24/09/2024 12:23:29 El usuario  se ha desconectado
-24/09/2024 12:29:36 El usuario  se ha desconectado
+24/04/2026 00:25:47 El usuario xascorro@gmail.com a eliminado la inscripción de figuras con id: 12654
+24/04/2026 00:32:01 El usuario xascorro@gmail.com a eliminado la inscripción de figuras con id: 12654
+24/04/2026 00:34:37 El usuario xascorro@gmail.com a eliminado la inscripción de figuras con id: 12498[2026-04-24 00:35:33] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Nuevo backup creado: pruebas de borrado
+[2026-04-24 00:39:38] [WARNING] [xascorro@gmail.com] [79.116.0.99] Inscripción completa eliminada para nadadora #484 en competición #77
+[2026-04-24 00:39:47] [WARNING] [xascorro@gmail.com] [79.116.0.99] Inscripción completa eliminada para nadadora #400 en competición #77
+[2026-04-24 00:46:06] [WARNING] [xascorro@gmail.com] [79.116.0.99] Juez eliminado: MEDIA  (ID: 108)
+[2026-04-24 00:47:22] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Juez #106 actualizado: MARIANA MARTINEZ SICILIA
+[2026-04-24 00:49:40] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Nuevo backup creado: 
+[2026-04-24 00:51:52] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Nuevo backup creado: sincrm3_20260424_0051.sql.gz (test mysql dump)
+[2026-04-24 00:53:12] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Nuevo backup creado: sincrm3_20260424_0053.sql.gz (otro test mysql dump)
+[2026-04-24 00:53:21] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Restauración de base de datos exitosa: sincrm3_20260424_0053.sql.gz
+[2026-04-24 00:53:34] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Restauración de base de datos exitosa: sincrm3_20260424_0053.sql.gz
+[2026-04-24 00:53:48] [ERROR] [xascorro@gmail.com] [79.116.0.99] Error al restaurar base de datos (sincrm3_20260424_0035.sql.gz): Error en la restauración: --------------
+CREATE TABLE `calculos_clasificacion` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id_fase` int(11) DEFAULT NULL,
+  `id_rutina` int(11) DEFAULT NULL,
+  `orden` int(11) DEFAULT NULL,
+  `nota_final` float(10,4) DEFAULT NULL,
+  `nota_calculada_ejecucion` float(10,4) DEFAULT NULL,
+  `nota_calculada_impresion` float(10,4) DEFAULT NULL,
+  `nota_calculada_dificultad` float(10,4) DEFAULT NULL,
+  `baja` varchar(2) DEFAULT NULL,
+  `preswimmer` varchar(2) DEFAULT NULL,
+  `id_competicion` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci
+--------------
+
+ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
+[2026-04-24 04:31:26] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:31:30] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 04:58:00] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:03] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:03] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:04] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:04] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:05] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:05] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:06] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:07] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:08] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:08] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:09] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:12] [SECURITY] [SISTEMA] [79.116.0.99] La sesión del usuario ha expirado por inactividad
+[2026-04-24 04:58:13] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 05:10:16] [WARNING] [xascorro@gmail.com] [79.116.0.99] Figura ID#6 desactivada (Borrado lógico)
+[2026-04-24 05:10:37] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Figura ID#6 actualizada: 101 (1)
+[2026-04-24 05:22:15] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Optimización y reparación de base de datos completada
+[2026-04-24 05:30:32] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Runtime PHP actualizado: Upload=12M, Mem=512M, Exec=300
+[2026-04-24 05:40:22] [INFO] [xascorro@gmail.com] [79.116.111.162] Perfil actualizado por el usuario
+[2026-04-24 05:40:44] [INFO] [xascorro@gmail.com] [79.116.111.162] Perfil actualizado por el usuario
+[2026-04-24 06:04:34] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 06:04:44] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 06:39:47] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 06:39:49] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 06:40:55] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 06:40:57] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 06:44:47] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 06:44:50] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:14:55] [INFO] [club@club.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:14:57] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:24:43] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:24:46] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:25:10] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:25:12] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:29:33] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:29:35] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:30:46] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:30:48] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:30:55] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:30:57] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:31:34] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:31:39] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:32:12] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #71 establecida como activa y actualizada en sesión
+[2026-04-24 07:32:24] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:32:27] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:32:53] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:32:56] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:33:08] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:33:11] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:33:33] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Competición #78 establecida como activa y actualizada en sesión
+[2026-04-24 07:33:37] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:33:39] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:34:38] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:34:40] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:34:45] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:35:05] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:35:42] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:35:44] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:36:43] [INFO] [club@club.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:36:50] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:37:52] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:38:14] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:38:38] [INFO] [club@club.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:38:46] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:38:52] [INFO] [club@club.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 07:38:54] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 07:39:08] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Competición #77 establecida como activa y actualizada en sesión
+[2026-04-24 07:39:30] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:39:37] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:39:44] [INFO] [club@club.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:41:02] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:41:35] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 07:41:38] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 07:45:42] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 10:41:51] [SECURITY] [SISTEMA] [79.116.111.162] La sesión del usuario ha expirado por inactividad
+[2026-04-24 10:41:58] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 10:42:18] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 10:47:44] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:12:30] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:13:24] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:13:27] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:13:53] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:13:57] [SECURITY] [SISTEMA] [79.116.0.99] Intento de sesión fallido: Contraseña incorrecta para xascorro@gmail.com
+[2026-04-24 11:14:05] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:14:13] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:14:23] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:14:33] [SUCCESS] [club@club.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:18:09] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:20:00] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:21:52] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:21:54] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:23:48] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:23:52] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:25:00] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:25:03] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:26:27] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:28:45] [INFO] [xascorro@gmail.com] [79.116.0.99] Cierre de sesión voluntario
+[2026-04-24 11:28:50] [SUCCESS] [xascorro@gmail.com] [79.116.0.99] Inicio de sesión exitoso
+[2026-04-24 11:34:51] [INFO] [xascorro@gmail.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 11:35:12] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 12:26:14] [SUCCESS] [xascorro@gmail.com] [195.57.134.45] Inicio de sesión exitoso
+[2026-04-24 12:27:57] [SUCCESS] [xascorro@gmail.com] [195.57.134.45] Inicio de sesión exitoso
+[2026-04-24 13:43:25] [SECURITY] [SISTEMA] [79.116.111.162] La sesión del usuario ha expirado por inactividad
+[2026-04-24 13:43:29] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 13:44:04] [SUCCESS] [club@club.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 13:48:42] [INFO] [club@club.com] [79.116.111.162] Cierre de sesión voluntario
+[2026-04-24 13:48:46] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 19:11:46] [SECURITY] [SISTEMA] [79.116.111.162] La sesión del usuario ha expirado por inactividad
+[2026-04-24 19:11:52] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Inicio de sesión exitoso
+[2026-04-24 19:13:24] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Runtime PHP actualizado: Upload=1M, Mem=512M, Exec=300
+[2026-04-24 19:15:09] [SUCCESS] [xascorro@gmail.com] [79.116.111.162] Nuevo club registrado: Prb (Prueba)
+[2026-04-24 19:16:01] [INFO] [xascorro@gmail.com] [79.116.111.162] Club actualizado (ID: 44): Prb
+[2026-04-24 19:17:02] [INFO] [xascorro@gmail.com] [79.116.111.162] Club actualizado (ID: 44): Prb
+[2026-04-25 20:08:55] [SECURITY] [SISTEMA] [54.116.50.173] La sesión del usuario ha expirado por inactividad
+[2026-04-26 15:45:33] [SUCCESS] [xascorro@gmail.com] [79.116.59.128] Inicio de sesión exitoso
+[2026-04-27 02:40:18] [SECURITY] [SISTEMA] [54.195.179.56] La sesión del usuario ha expirado por inactividad
+[2026-04-27 05:10:24] [SECURITY] [SISTEMA] [13.233.82.206] La sesión del usuario ha expirado por inactividad
+[2026-04-29 16:41:29] [SECURITY] [SISTEMA] [79.116.59.128] La sesión del usuario ha expirado por inactividad
+[2026-04-29 16:42:49] [SECURITY] [SISTEMA] [79.116.59.128] La sesión del usuario ha expirado por inactividad
+[2026-05-04 04:30:12] [SECURITY] [SISTEMA] [162.158.122.186] Intento de sesión fallido: Contraseña incorrecta para xascorro@gmail.com
+[2026-05-04 04:33:34] [SECURITY] [SISTEMA] [162.158.123.223] La sesión del usuario ha expirado por inactividad
+[2026-05-04 04:46:19] [INFO] [SISTEMA] [172.68.134.211] OTP generado y enviado para xascorro@gmail.com
+[2026-05-04 04:47:00] [INFO] [SISTEMA] [162.158.123.222] OTP verificado correctamente para xascorro@gmail.com
+[2026-05-04 04:48:05] [SUCCESS] [SISTEMA] [172.68.134.210] Contraseña restablecida con éxito para xascorro@gmail.com
+[2026-05-04 04:48:19] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] Inicio de sesión exitoso
+[2026-05-04 08:02:09] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] Inicio de sesión exitoso
+[2026-05-04 08:18:37] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-04 08:18:43] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-04 08:18:51] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] Competición #81 establecida como activa y actualizada en sesión
+[2026-05-04 08:19:49] [INFO] [xascorro@gmail.com] [172.68.134.211] Cierre de sesión voluntario
+[2026-05-04 08:19:53] [SUCCESS] [club@club.com] [172.68.134.211] Inicio de sesión exitoso
+[2026-05-04 08:27:24] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] Inicio de sesión exitoso
+[2026-05-04 09:12:52] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] Competición #80 establecida como activa y actualizada en sesión
+[2026-05-04 09:17:58] [INFO] [xascorro@gmail.com] [162.158.122.186] Cierre de sesión voluntario
+[2026-05-04 09:18:05] [SUCCESS] [club@club.com] [162.158.122.185] Inicio de sesión exitoso
+[2026-05-04 09:19:06] [INFO] [club@club.com] [162.158.122.186] Cierre de sesión voluntario
+[2026-05-04 09:19:14] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] Inicio de sesión exitoso
+[2026-05-04 10:51:53] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] Inscripción de figuras realizada para nadadora #250 en competición #80
+[2026-05-04 10:52:01] [WARNING] [xascorro@gmail.com] [162.158.123.223] Sorteo de figuras ANULADO para la competición #80
+[2026-05-04 10:52:12] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] Sorteo de figuras realizado para 4 figuras en la competición #80
+[2026-05-04 10:52:40] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] Sorteo de figuras realizado para 2 figuras en la competición #80
+[2026-05-04 12:05:33] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-04 18:39:04] [SECURITY] [SISTEMA] [172.68.134.211] La sesión del usuario ha expirado por inactividad
+[2026-05-04 18:39:19] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] Inicio de sesión exitoso
+[2026-05-05 01:01:24] [SECURITY] [SISTEMA] [162.158.123.222] La sesión del usuario ha expirado por inactividad
+[2026-05-05 01:06:36] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] Inicio de sesión exitoso
+[2026-05-05 05:52:44] [SECURITY] [SISTEMA] [172.68.134.211] La sesión del usuario ha expirado por inactividad
+[2026-05-05 05:52:48] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] Inicio de sesión exitoso
+[2026-05-05 06:00:38] [INFO] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Cierre de sesión voluntario
+[2026-05-05 06:00:43] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 06:08:01] [INFO] [xascorro@gmail.com] [172.68.134.211] [7240i0krs04b9fspntaap77p44] Club actualizado (ID: 2): CNLORCA
+[2026-05-05 06:08:21] [INFO] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Club actualizado (ID: 12): CMOVE
+[2026-05-05 06:08:37] [INFO] [xascorro@gmail.com] [172.68.134.211] [7240i0krs04b9fspntaap77p44] Club actualizado (ID: 7): CDCEOLIVOS
+[2026-05-05 06:09:00] [WARNING] [xascorro@gmail.com] [172.68.134.211] [7240i0krs04b9fspntaap77p44] Club eliminado: Prb (ID: 44)
+[2026-05-05 06:11:07] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Juez #106 actualizado: MARIANA MARTINEZ SICILIA
+[2026-05-05 06:11:19] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Juez #132 actualizado: NURIA ALCÓN PONSODA
+[2026-05-05 06:11:29] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Juez #103 actualizado: ELENA ARAQUE CABALLERO
+[2026-05-05 06:11:48] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Juez #89 actualizado: MARIA JOSE DIAZ EGEA
+[2026-05-05 06:20:42] [INFO] [xascorro@gmail.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Cierre de sesión voluntario
+[2026-05-05 06:20:49] [SUCCESS] [club@club.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 06:33:22] [INFO] [club@club.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Cierre de sesión voluntario
+[2026-05-05 06:33:25] [SUCCESS] [club@club.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 06:34:28] [INFO] [club@club.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Cierre de sesión voluntario
+[2026-05-05 06:34:35] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 06:35:13] [INFO] [xascorro@gmail.com] [162.158.122.185] [7240i0krs04b9fspntaap77p44] Usuario actualizado (ID: 42): laura.manzanerasanchez@clubsincroalhama
+[2026-05-05 07:00:53] [SECURITY] [SISTEMA] [172.68.134.211] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-05-05 07:00:57] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 07:29:29] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Competición #74 establecida como activa y actualizada en sesión
+[2026-05-05 07:39:59] [SECURITY] [SISTEMA] [162.158.123.222] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 07:40:03] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 09:43:32] [SECURITY] [SISTEMA] [162.158.123.223] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 09:43:36] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 10:09:54] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Competición #69 establecida como activa y actualizada en sesión
+[2026-05-05 10:11:16] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Competición #72 establecida como activa y actualizada en sesión
+[2026-05-05 10:22:25] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Competición #78 establecida como activa y actualizada en sesión
+[2026-05-05 11:12:03] [SECURITY] [SISTEMA] [172.68.134.210] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 11:12:07] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 11:16:54] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-05 11:17:12] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Competición #78 establecida como activa y actualizada en sesión
+[2026-05-05 11:17:24] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Competición #75 establecida como activa y actualizada en sesión
+[2026-05-05 11:36:03] [INFO] [xascorro@gmail.com] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 12:21:04] [SECURITY] [SISTEMA] [172.68.134.210] [7240i0krs04b9fspntaap77p44] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 12:21:07] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 12:25:23] [INFO] [xascorro@gmail.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: Campeonato Regional Escolar de Figuras 
+[2026-05-05 12:25:35] [INFO] [xascorro@gmail.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: ALMA ROMERO RUÍZ
+[2026-05-05 12:33:22] [INFO] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (3ª Jornada)	
+[2026-05-05 12:48:07] [INFO] [xascorro@gmail.com] [162.158.122.185] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: ROCIO MORALES SANCHEZ
+[2026-05-05 12:48:27] [INFO] [xascorro@gmail.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: Campeonato Regional Escolar de Figuras 
+[2026-05-05 12:52:24] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Competición #78 establecida como activa y actualizada en sesión
+[2026-05-05 12:52:31] [INFO] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 12:53:44] [INFO] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: CARMEN BEATO MARTÍNEZ
+[2026-05-05 12:54:04] [INFO] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 12:55:26] [INFO] [xascorro@gmail.com] [162.158.122.186] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: ANA GONZALEZ MARTINEZ
+[2026-05-05 13:13:32] [INFO] [xascorro@gmail.com] [162.158.122.185] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: ANA GONZALEZ MARTINEZ
+[2026-05-05 13:26:57] [INFO] [xascorro@gmail.com] [172.68.134.210] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Detalle Juez) para: ANA GONZALEZ MARTINEZ
+[2026-05-05 13:28:14] [INFO] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Cierre de sesión voluntario
+[2026-05-05 13:32:33] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Inicio de sesión exitoso
+[2026-05-05 13:32:46] [INFO] [xascorro@gmail.com] [162.158.123.222] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 13:35:04] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Auditoría BIAS cerrada/recalculada para: XIX Campeonato FNRM Open
+[2026-05-05 13:35:07] [INFO] [xascorro@gmail.com] [162.158.123.223] [7240i0krs04b9fspntaap77p44] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 17:25:14] [SECURITY] [SISTEMA] [162.158.123.222] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 17:25:17] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 20:55:23] [SECURITY] [SISTEMA] [172.68.134.211] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 20:56:33] [INFO] [registrando] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Nueva solicitud de registro: juez@pedrodiaz.eu
+[2026-05-05 20:57:37] [SECURITY] [SISTEMA] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 20:57:40] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 20:58:18] [INFO] [xascorro@gmail.com] [162.158.122.186] [tcbb7uhmuuc3f3da07qcbs0116] Usuario actualizado (ID: 51): juez@pedrodiaz.eu
+[2026-05-05 20:58:57] [INFO] [xascorro@gmail.com] [162.158.123.222] [tcbb7uhmuuc3f3da07qcbs0116] Cierre de sesión voluntario
+[2026-05-05 20:59:11] [SUCCESS] [juez@pedrodiaz.eu] [162.158.123.222] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 21:02:24] [INFO] [juez@pedrodiaz.eu] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Cierre de sesión voluntario
+[2026-05-05 21:02:28] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 21:02:50] [INFO] [xascorro@gmail.com] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Consulta de Auditoría BIAS (Global) para: XIX Campeonato FNRM Open
+[2026-05-05 21:02:57] [INFO] [xascorro@gmail.com] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Cierre de sesión voluntario
+[2026-05-05 21:03:00] [SUCCESS] [juez@pedrodiaz.eu] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Inicio de sesión exitoso
+[2026-05-05 21:03:27] [INFO] [juez@pedrodiaz.eu] [162.158.122.185] [tcbb7uhmuuc3f3da07qcbs0116] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (1ª Jornada)	
+[2026-05-05 21:08:23] [INFO] [juez@pedrodiaz.eu] [172.68.134.211] [tcbb7uhmuuc3f3da07qcbs0116] Consulta de Auditoría BIAS (Detalle Juez) para: FRANCISCA ASUNCIÓN PÉREZ VICENTE
+[2026-05-05 23:29:48] [SUCCESS] [xascorro@gmail.com] [172.71.134.36] [uit8fq4mf2hfqclpcd2buufn5c] Inicio de sesión exitoso
+[2026-05-05 23:30:13] [INFO] [xascorro@gmail.com] [172.71.134.36] [uit8fq4mf2hfqclpcd2buufn5c] Consulta de Auditoría BIAS (Global) para: Pase de Nivel 4
+[2026-05-05 23:31:34] [INFO] [xascorro@gmail.com] [172.71.134.37] [uit8fq4mf2hfqclpcd2buufn5c] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-05 23:36:24] [INFO] [xascorro@gmail.com] [172.69.222.134] [uit8fq4mf2hfqclpcd2buufn5c] Cierre de sesión voluntario
+[2026-05-05 23:39:14] [INFO] [SISTEMA] [104.23.170.57] [uit8fq4mf2hfqclpcd2buufn5c] Consulta de soporte enviada por pepe@pepe.no
+[2026-05-05 23:40:34] [SECURITY] [SISTEMA] [104.23.166.69] [uit8fq4mf2hfqclpcd2buufn5c] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-05 23:40:38] [SUCCESS] [xascorro@gmail.com] [104.23.166.69] [uit8fq4mf2hfqclpcd2buufn5c] Inicio de sesión exitoso
+[2026-05-05 23:44:27] [SUCCESS] [xascorro@gmail.com] [172.68.151.121] [uit8fq4mf2hfqclpcd2buufn5c] Competición #76 establecida como activa y actualizada en sesión
+[2026-05-05 23:44:54] [SUCCESS] [xascorro@gmail.com] [172.68.151.121] [uit8fq4mf2hfqclpcd2buufn5c] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-06 00:11:02] [SUCCESS] [xascorro@gmail.com] [172.71.130.249] [uit8fq4mf2hfqclpcd2buufn5c] Clonación de panel 119 desde fase 376 completada para 1 fases
+[2026-05-06 00:25:19] [INFO] [xascorro@gmail.com] [172.71.122.232] [uit8fq4mf2hfqclpcd2buufn5c] Cierre de sesión voluntario
+[2026-05-06 00:25:26] [SUCCESS] [juez@pedrodiaz.eu] [172.71.122.233] [uit8fq4mf2hfqclpcd2buufn5c] Inicio de sesión exitoso
+[2026-05-06 07:55:09] [SUCCESS] [juez@pedrodiaz.eu] [162.158.122.186] [4093503n7cpahoo4ut1t5pejrp] Inicio de sesión exitoso
+[2026-05-06 07:56:39] [INFO] [juez@pedrodiaz.eu] [162.158.123.223] [4093503n7cpahoo4ut1t5pejrp] Cierre de sesión voluntario
+[2026-05-06 07:56:43] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [4093503n7cpahoo4ut1t5pejrp] Inicio de sesión exitoso
+[2026-05-06 08:04:37] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-06 08:22:41] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-06 08:24:36] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Usuario actualizado (ID: 51): juez@pedrodiaz.eu
+[2026-05-06 08:41:34] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Global) para: Pase de Nivel 3
+[2026-05-06 09:17:02] [SECURITY] [SISTEMA] [162.158.122.185] [4093503n7cpahoo4ut1t5pejrp] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-06 09:17:05] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [4093503n7cpahoo4ut1t5pejrp] Inicio de sesión exitoso

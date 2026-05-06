@@ -10,7 +10,7 @@ if (isset($_POST['update_btn']) && isset($_POST['accept']) && $_POST['accept'] =
 	$db_password = $_POST['db_password'];
 	$db_name = $_POST['db_name'];
 
-	$archivo = './database/dbconfig.php';
+	$archivo = 'database/dbconfig.php';
 	
 	$nuevo_contenido = "<?php
 /**
@@ -54,7 +54,7 @@ if (\$connection) {
                 <h1 style=\"color: #721c24;\">Error de conexión</h1>
                 <p style=\"color: #721c24;\">No se ha podido establecer conexión con la base de datos.</p>
                 <p>Por favor, comprueba la configuración o contacta con el administrador.</p>
-                <a href=\"./db_setup.php\" style=\"display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;\">Revisar Configuración</a>
+                <a href=\"./mantenimiento.php\" style=\"display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;\">Revisar Configuración</a>
             </div>
         </div>';
     }
@@ -66,45 +66,104 @@ if (\$connection) {
 	} else {
 		$_SESSION['error'] = 'Error al escribir el archivo de configuración';
 	}
-	header('Location: db_setup.php');
+	header('Location: configuracion_sistema.php');
 	exit();
 }
 
 // Guardar Ajustes de Depuración
 if (isset($_POST['save_debug_settings'])) {
     $debug_val = isset($_POST['show_errors']) ? 'true' : 'false';
-    $archivo = './includes/config.php';
+    $archivo = 'includes/config.php';
     
     if (file_exists($archivo)) {
-        $contenido = file_get_contents($archivo);
-        $nuevo_contenido = preg_replace(
-            "/define\('DEBUG_MODE', (true|false)\);/",
-            "define('DEBUG_MODE', $debug_val);",
-            $contenido
-        );
-        
-        if (file_put_contents($archivo, $nuevo_contenido)) {
-            $_SESSION['correcto'] = 'Ajustes de depuración actualizados';
+        if (is_writable($archivo)) {
+            $contenido = file_get_contents($archivo);
+            $nuevo_contenido = preg_replace(
+                "/define\s*\(\s*['\"]DEBUG_MODE['\"]\s*,\s*(true|false)\s*\)\s*;/",
+                "define('DEBUG_MODE', $debug_val);",
+                $contenido
+            );
+            
+            if (file_put_contents($archivo, $nuevo_contenido) !== false) {
+                $_SESSION['correcto'] = 'Ajustes de depuración actualizados';
+            } else {
+                $_SESSION['error'] = 'Error al escribir en el archivo de configuración';
+            }
         } else {
-            $_SESSION['error'] = 'Error al actualizar el archivo de configuración';
+            $_SESSION['error'] = 'El archivo de configuración no tiene permisos de escritura (chmod 666)';
         }
     } else {
-        $_SESSION['error'] = 'El archivo de configuración no existe';
+        $_SESSION['error'] = 'El archivo de configuración no existe en ' . $archivo;
     }
-    header('Location: db_setup.php');
+    header('Location: configuracion_sistema.php');
     exit();
 }
 
-// Borrar backup
-if (isset($_POST['delete_backup'])) {
-    $file = $_POST['backup_file'];
-    $path = './database/backup/' . basename($file);
-    if (file_exists($path) && unlink($path)) {
-        $_SESSION['correcto'] = 'Backup eliminado correctamente';
-    } else {
-        $_SESSION['error'] = 'No se pudo eliminar el archivo';
+// Guardar Límites PHP (.user.ini y .htaccess)
+if (isset($_POST['save_php_settings'])) {
+    $upload = $_POST['upload_max_filesize'];
+    $post   = $_POST['post_max_size'];
+    $memory = $_POST['memory_limit'];
+    $exec   = $_POST['max_execution_time'];
+    $vars   = $_POST['max_input_vars'];
+    
+    // 1. .user.ini (Para PHP-FPM/FastCGI)
+    $archivo_ini = '.user.ini';
+    $contenido_ini = "upload_max_filesize = $upload\npost_max_size = $post\nmemory_limit = $memory\nmax_execution_time = $exec\nmax_input_vars = $vars";
+    file_put_contents($archivo_ini, $contenido_ini);
+
+    // 2. .htaccess (Para Apache mod_php)
+    $archivo_htaccess = '.htaccess';
+    $bloque_php = "\n# --- BEGIN SINCRM PHP LIMITS ---\n";
+    $bloque_php .= "<IfModule mod_php.c>\n";
+    $bloque_php .= "   php_value upload_max_filesize $upload\n";
+    $bloque_php .= "   php_value post_max_size $post\n";
+    $bloque_php .= "   php_value memory_limit $memory\n";
+    $bloque_php .= "   php_value max_execution_time $exec\n";
+    $bloque_php .= "   php_value max_input_vars $vars\n";
+    $bloque_php .= "</IfModule>\n";
+    $bloque_php .= "<IfModule mod_php7.c>\n";
+    $bloque_php .= "   php_value upload_max_filesize $upload\n";
+    $bloque_php .= "   php_value post_max_size $post\n";
+    $bloque_php .= "   php_value memory_limit $memory\n";
+    $bloque_php .= "   php_value max_execution_time $exec\n";
+    $bloque_php .= "   php_value max_input_vars $vars\n";
+    $bloque_php .= "</IfModule>\n";
+    $bloque_php .= "# --- END SINCRM PHP LIMITS ---\n";
+
+    // Leer .htaccess actual si existe, para no borrar otras cosas
+    $contenido_actual = "";
+    if (file_exists($archivo_htaccess)) {
+        $contenido_actual = file_get_contents($archivo_htaccess);
+        // Limpiar bloque anterior si existe
+        $contenido_actual = preg_replace("/# --- BEGIN SINCRM PHP LIMITS ---.*# --- END SINCRM PHP LIMITS ---/s", "", $contenido_actual);
     }
-    header('Location: db_setup.php');
+    
+    if (file_put_contents($archivo_htaccess, trim($contenido_actual) . "\n" . $bloque_php)) {
+        write_log("Runtime PHP actualizado: Upload=$upload, Mem=$memory, Exec=$exec", 'SUCCESS');
+        $_SESSION['correcto'] = 'Límites PHP actualizados en .user.ini y .htaccess';
+    } else {
+        write_log("Error al escribir configuración de límites PHP", 'ERROR');
+        $_SESSION['error'] = 'Error al escribir el archivo .htaccess';
+    }
+    
+    header('Location: configuracion_sistema.php');
+    exit();
+}
+
+// Crear Backup
+if (isset($_POST['backup_btn'])) {
+    $descripcion = $_POST['descripcion'] ?: 'Backup manual';
+    $res = backup_database('./database/backup', 'sincrm3', $descripcion, $servername, $db_username, $db_password, $db_name);
+    
+    if ($res) {
+        write_log("Nuevo backup creado: $res ($descripcion)", "SUCCESS");
+        $_SESSION['correcto'] = "Copia de seguridad creada: $res";
+    } else {
+        write_log("Error al crear backup", "ERROR");
+        $_SESSION['error'] = 'Error al generar la copia de seguridad';
+    }
+    header('Location: configuracion_sistema.php');
     exit();
 }
 
@@ -114,103 +173,80 @@ if (isset($_POST['restore_backup'])) {
     $path = './database/backup/' . basename($file);
     
     if (file_exists($path)) {
-        $content = '';
-        if (str_ends_with($file, '.gz')) {
-            $content = gzdecode(file_get_contents($path));
+        $res = mysqli_import_sql($path, $servername, $db_username, $db_password, $db_name);
+        if ($res === 'complete dumping database !') {
+            write_log("Restauración de base de datos exitosa: $file", "SUCCESS");
+            $_SESSION['correcto'] = 'Base de datos restaurada con éxito';
         } else {
-            $content = file_get_contents($path);
-        }
-
-        if ($content) {
-            $res = mysqli_import_sql($content, $servername, $db_username, $db_password, $db_name);
-            if ($res === 'complete dumping database !') {
-                $_SESSION['correcto'] = 'Base de datos restaurada con éxito';
-            } else {
-                $_SESSION['error'] = 'Error en la restauración: ' . $res;
-            }
-        } else {
-            $_SESSION['error'] = 'No se pudo leer el contenido del archivo';
-        }
-    } else {
-        $_SESSION['error'] = 'El archivo no existe';
-    }
-    header('Location: db_setup.php');
-    exit();
-}
-
-include('./includes/email_functions.php');
-
-// Enviar email de prueba
-if (isset($_POST['test_email'])) {
-    $asunto = "Prueba de Conectividad SMTP - " . date('d/m/Y H:i:s');
-    $cuerpo = "<h1>¡Conexión Exitosa!</h1><p>Si estás leyendo esto, el sistema de correo de GoDaddy está funcionando correctamente para mensajes de texto.</p>";
-    
-    $res = enviar_email(EMAIL_DESTINO, $asunto, $cuerpo);
-    
-    if ($res === true) {
-        $_SESSION['correcto'] = 'Email de prueba enviado a ' . EMAIL_DESTINO;
-    } else {
-        $_SESSION['error'] = 'Fallo en la prueba: ' . $res;
-    }
-    header('Location: db_setup.php');
-    exit();
-}
-
-// Enviar backup por email
-if (isset($_POST['email_backup'])) {
-    $file = $_POST['backup_file'];
-    $path = './database/backup/' . basename($file);
-    
-    if (file_exists($path)) {
-        $asunto = "Backup Base de Datos - " . $file;
-        $cuerpo = "Se adjunta la copia de seguridad de la base de datos realizada el " . date('d/m/Y H:i:s') . ".<br><br>Archivo: <b>$file</b>";
-        
-        $res = enviar_email(EMAIL_DESTINO, $asunto, $cuerpo, $path);
-        
-        if ($res === true) {
-            $_SESSION['correcto'] = 'Backup enviado correctamente a ' . EMAIL_DESTINO;
-        } else {
-            $_SESSION['error'] = 'Error al enviar el email: ' . $res;
+            write_log("Error al restaurar base de datos ($file): $res", "ERROR");
+            $_SESSION['error'] = 'Error en la restauración: ' . $res;
         }
     } else {
         $_SESSION['error'] = 'El archivo de backup no existe';
     }
-    header('Location: db_setup.php');
+    header('Location: configuracion_sistema.php');
+    exit();
+}
+
+// Borrar backup
+if (isset($_POST['delete_backup'])) {
+    $file = $_POST['backup_file'];
+    $path = './database/backup/' . basename($file);
+    
+    if (file_exists($path)) {
+        if (unlink($path)) {
+            $_SESSION['correcto'] = 'Copia de seguridad eliminada';
+        } else {
+            $_SESSION['error'] = 'Error al borrar el archivo físico';
+        }
+    } else {
+        $_SESSION['error'] = 'El archivo ya no existe';
+    }
+    header('Location: configuracion_sistema.php');
+    exit();
+}
+
+// Optimizar DB
+if (isset($_POST['optimize_db'])) {
+    $tables_res = mysqli_query($connection, "SHOW TABLES");
+    $all_ok = true;
+    while ($t = mysqli_fetch_array($tables_res)) {
+        $table = $t[0];
+        if (!mysqli_query($connection, "OPTIMIZE TABLE `$table`")) $all_ok = false;
+        if (!mysqli_query($connection, "REPAIR TABLE `$table`")) $all_ok = false;
+    }
+    
+    if ($all_ok) {
+        write_log("Optimización y reparación de base de datos completada", "SUCCESS");
+        $_SESSION['correcto'] = 'Base de datos optimizada y reparada';
+    } else {
+        $_SESSION['error'] = 'Algunas tablas no pudieron optimizarse';
+    }
+    header('Location: configuracion_sistema.php');
     exit();
 }
 
 // Vaciar Log
 if (isset($_POST['clear_log'])) {
-    $archivo = './log/log.txt';
-    if (file_exists($archivo)) {
-        file_put_contents($archivo, "");
-        $_SESSION['correcto'] = 'Historial de log vaciado';
+    $log_file = './log/log.txt';
+    if (file_put_contents($log_file, "")) {
+        $_SESSION['correcto'] = 'Archivo de log vaciado correctamente';
+    } else {
+        $_SESSION['error'] = 'Error al vaciar el archivo de log';
     }
-    header('Location: db_setup.php');
+    header('Location: mantenimiento.php');
     exit();
 }
 
-// Optimizar Base de Datos
-if (isset($_POST['optimize_db'])) {
-    $result = mysqli_query($connection, "SHOW TABLES");
-    while ($row = mysqli_fetch_row($result)) {
-        mysqli_query($connection, "OPTIMIZE TABLE " . $row[0]);
+// Borrar archivo residual
+if (isset($_POST['delete_residual_file'])) {
+    $file = $_POST['file_path'];
+    if (unlink($file)) {
+        $_SESSION['correcto'] = "Archivo residual eliminado: $file";
+    } else {
+        $_SESSION['error'] = "No se pudo eliminar el archivo";
     }
-    $_SESSION['correcto'] = 'Tablas optimizadas y desfragmentadas con éxito';
-    header('Location: db_setup.php');
+    header('Location: mantenimiento.php');
     exit();
 }
-
-// Realizar backup
-if (isset($_POST['backup_btn'])) {
-	$directory = './database/backup/';
-	$outname = $db_name;
-	$descripcion = $_POST['descripcion'];
-	if (backup_database($directory, $outname, $descripcion, $servername, $db_username, $db_password, $db_name)) {
-		$_SESSION['correcto'] = 'Se ha realizado el backup de la base de datos';
-	} else {
-		$_SESSION['correcto'] = 'Error al realizar el backup de la base de datos';
-	}
-	header('Location: db_setup.php');
-	exit();
-}
+?>

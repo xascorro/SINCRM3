@@ -20,25 +20,30 @@ include('includes/navbar.php');
 		//habilito o deshabilito subir musica
 		$fechas = mysqli_fetch_assoc(mysqli_query($connection, $query));
 		$fecha_musica = $fechas['fecha_musica'];
-		if(date('Y-m-d') > $fecha_musica & $_SESSION['id_rol'] != 1 )
+		if(date('Y-m-d') >= $fecha_musica && $_SESSION['id_rol'] != 1 )
 			$enable_musica = 'disabled';
 		else
 			$enable_musica = '';
 		//habilito o deshabilito coach_card
-		$fecha_coach_card = $fechas['fecha_coach_card'];
-		if(date('Y-m-d') > $fecha_coach_card & $_SESSION['id_rol'] != 1 )
+        // Si es figuras, el plazo de coach card es igual al de inscripción
+        if($figuras == 'si') {
+            $fecha_coach_card = $fechas['fecha_fin_inscripcion'];
+        } else {
+		    $fecha_coach_card = $fechas['fecha_coach_card'];
+        }
+		if(date('Y-m-d') >= $fecha_coach_card && $_SESSION['id_rol'] != 1 )
 			$enable_coach_card = 'disabled';
 		else
 			$enable_coach_card = '';
 		$fecha_sorteo = $fechas['fecha_sorteo'];
-		if(date('Y-m-d') > $fecha_sorteo)
+		if(date('Y-m-d') >= $fecha_sorteo)
 			$enable_sorteo = 'disabled';
 		else
 			$enable_sorteo = '';
 		//habilito o deshabilito inscripciones (añadir rutinas y añadir participantes)
 		$fecha_inicio_inscripcion = $fechas['fecha_inicio_inscripcion'];
 		$fecha_fin_inscripcion = $fechas['fecha_fin_inscripcion'];
-		if(date('Y-m-d') >= $fecha_fin_inscripcion & $_SESSION['id_rol'] != 1 )
+		if(date('Y-m-d') >= $fecha_fin_inscripcion && $_SESSION['id_rol'] != 1 )
 			$enable_inscripcion = 'disabled';
 		else
 			$enable_inscripcion = '';
@@ -100,7 +105,7 @@ include('includes/navbar.php');
 		<!-- multi Modal borrar rutina-->
 		<?php
 		$condicion = '';
-		if(isset($_SESSION['club']))
+		if(isset($_SESSION['club']) && $_SESSION['club'] > 0)
 			$condicion = ' and rutinas.id_club ='.$_SESSION['club'];
 		$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 
@@ -121,7 +126,26 @@ include('includes/navbar.php');
 
 			<!-- Titulo página y pdf -->
 			<div class="d-sm-flex align-items-center justify-content-between mb-4">
-				<h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag-checkered"></i>Registro de rutinas
+				<h4 class="mb-0 font-weight-bold text-primary"><i class="fas fa-fw fa-flag-checkered"></i> Registro de rutinas</h4>
+				
+				<!-- Plazos en Rutinas -->
+				<div class="flex gap-4 items-center mb-2 mb-sm-0">
+					<div class="d-flex flex-column align-items-center px-3 py-1 bg-white rounded border shadow-sm">
+					        <span style="font-size: 9px; font-weight: 900; text-transform: uppercase; color: #94a3b8;">Inscripción</span>
+					        <span style="font-size: 11px; font-weight: 900; color: <?php echo ($enable_inscripcion == 'disabled') ? '#ef4444' : '#334155'; ?>;"><?php echo dateAFecha($fecha_fin_inscripcion); ?></span>
+					</div>
+					<?php if($figuras != 'si'): ?>
+					<div class="d-flex flex-column align-items-center px-3 py-1 bg-white rounded border shadow-sm">
+					        <span style="font-size: 9px; font-weight: 900; text-transform: uppercase; color: #94a3b8;">Música</span>
+					        <span style="font-size: 11px; font-weight: 900; color: <?php echo ($enable_musica == 'disabled') ? '#ef4444' : '#334155'; ?>;"><?php echo dateAFecha($fecha_musica); ?></span>
+					</div>
+					<?php endif; ?>
+					<div class="d-flex flex-column align-items-center px-3 py-1 bg-white rounded border shadow-sm">						<span style="font-size: 9px; font-weight: 900; text-transform: uppercase; color: #94a3b8;">Coach Card</span>
+						<span style="font-size: 11px; font-weight: 900; color: <?php echo ($enable_coach_card == 'disabled') ? '#ef4444' : '#334155'; ?>;"><?php echo dateAFecha($fecha_coach_card); ?></span>
+					</div>
+				</div>
+
+				<div class="btn-group">
 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addUserProfile" <?php echo $enable_inscripcion?>>Añadir rutina</button>
 					<?php if($_SESSION['id_rol'] != 5){
 	?>
@@ -159,7 +183,7 @@ include('includes/navbar.php');
 				<div class="table-responsive">
 					<?php
 					$condicion = '';
-					if(isset($_SESSION['club']))
+					if(isset($_SESSION['club']) && $_SESSION['club'] > 0)
 						$condicion = ' and rutinas.id_club ='.$_SESSION['club'];
                 	$query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, logo, clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, rutinas.id_fase, fases.elementos_coach_card, music_original_name FROM rutinas, fases, modalidades, categorias, clubes WHERE rutinas.id_fase = fases.id and fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and rutinas.id_club = clubes.id and fases.id_competicion = ".$id_competicion.$condicion." ORDER BY rutinas.id_club, fases.orden, fases.orden, fases.id";
 

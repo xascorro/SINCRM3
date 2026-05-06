@@ -109,71 +109,127 @@ if(isset($_POST['delete_btn_panel'])){
 	}
 }
 
-//Añadir panel_jueces
-if(isset($_POST['panel_jueces_save_btn'])){
-	$id = $_POST['id'];
-	$id_fase = $_POST['id_fase'];
-	$id_juez = $_POST['id_juez'];
-    $numero_juez = $_POST['numero_juez'];
-    $id_panel = $_POST['id_panel'];
-    if($id == '  ' and $id_juez <> ''){
-           $query="INSERT INTO panel_jueces (id_fase, id_juez, numero_juez, id_panel, id_competicion) VALUES ('".$id_fase."','".$id_juez."', '".$numero_juez."','".$id_panel."','".$id_competicion."')";
-        $query_run = mysqli_query($connection,$query);
-        if(mysqli_error($connection) == ''){
-            $_SESSION['correcto'] = 'Panel añadido con éxito';
-            header('Location: paneles_jueces.php');
-        }else{
-            $_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection).'<br>'.$query;
-            header('Location: paneles_jueces.php');
+//Añadir/Actualizar panel_jueces (INDIVIDUAL O BULK)
+if(isset($_POST['panel_jueces_save_btn']) || isset($_POST['panel_jueces_bulk_save_btn'])){
+    $id_competicion = $_SESSION['id_competicion_activa'];
+    $id_panel = mysqli_real_escape_string($connection, $_POST['id_panel']);
+    $id_fase = mysqli_real_escape_string($connection, $_POST['id_fase']);
+    
+    $errors = 0;
+    $procesados = 0;
+
+    // Determinar si es bulk o individual
+    if(isset($_POST['panel_jueces_bulk_save_btn'])){
+        $ids = $_POST['bulk_id'];
+        $num_jueces = $_POST['bulk_num'];
+        $id_jueces = $_POST['bulk_id_juez'];
+        
+        foreach($num_jueces as $index => $num){
+            $id_reg = trim($ids[$index]);
+            $id_juez = trim($id_jueces[$index]);
+            
+            if($id_juez != '' && $id_juez != ' '){
+                if($id_reg != ''){
+                    $query = "UPDATE panel_jueces SET id_juez = '$id_juez' WHERE id = '$id_reg'";
+                } else {
+                    $query = "INSERT INTO panel_jueces (id_fase, id_juez, numero_juez, id_panel, id_competicion) 
+                              VALUES ('$id_fase', '$id_juez', '$num', '$id_panel', '$id_competicion')";
+                }
+                if(!mysqli_query($connection, $query)) $errors++;
+                $procesados++;
+            }
         }
-    }else if($id_juez <> ''){
-        $query="UPDATE panel_jueces set id_juez=$id_juez where id=$id";
-        $query_run = mysqli_query($connection,$query);
-        if(mysqli_error($connection) == ''){
-            $_SESSION['correcto'] = 'Panel añadido con éxito';
-            header('Location: paneles_jueces.php');
-        }else{
-            $_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection).'<br>'.$query;
-            header('Location: paneles_jueces.php');
+    } else {
+        // Individual (mantener compatibilidad si hiciera falta, aunque el front ahora usa bulk)
+        $id = trim($_POST['id']);
+        $id_juez = trim($_POST['id_juez']);
+        $num = $_POST['numero_juez'];
+
+        if($id_juez != ''){
+            if($id != ''){
+                $query = "UPDATE panel_jueces SET id_juez = '$id_juez' WHERE id = '$id'";
+            } else {
+                $query = "INSERT INTO panel_jueces (id_fase, id_juez, numero_juez, id_panel, id_competicion) 
+                          VALUES ('$id_fase', '$id_juez', '$num', '$id_panel', '$id_competicion')";
+            }
+            if(!mysqli_query($connection, $query)) $errors++;
+            $procesados++;
         }
-    }else
-        $_SESSION['correcto'] = 'No se ha seleccionado ningún juez';
-        header('Location: paneles_jueces.php');
+    }
+
+    if($errors == 0){
+        $_SESSION['correcto'] = "Configuración del panel guardada ($procesados jueces).";
+    } else {
+        $_SESSION['estado'] = "Error al guardar: $errors fallos técnicos.";
+    }
+    
+    header('Location: paneles_jueces.php');
+    exit();
 }
 //clonar panel de jueces
-if(isset($_GET['panel_jueces_clonar_btn'])){
-    $id_competicion =  $GLOBALS["id_competicion_activa"];
-	echo '<h1>Cierra esta página y actualiza la página de los paneles de jueces</h1>';
-//include('lib/conexion_abre.php');
-	$query = "select * from panel_jueces where id_panel='".$_GET['id_panel']."' order by numero_juez";
-    $panel_jueces = mysqli_query($connection,$query);
-    while ($componentes = mysqli_fetch_array($panel_jueces)){
-		$valores = "";
+if(isset($_POST['clone_panel_btn'])){
+    $id_panel = mysqli_real_escape_string($connection, $_POST['id_panel']);
+    $source_fase = mysqli_real_escape_string($connection, $_POST['source_fase']);
+    $target_fases = $_POST['target_fases'] ?? [];
+    $id_competicion = $_SESSION['id_competicion_activa'];
 
-		$sql = "SELECT id from fases where id_competicion = ".$componentes['id_competicion'].' LIMIT 1,1000';
-		$fases_figuras = mysqli_query($connection,$sql);
-		while($fase = mysqli_fetch_array($fases_figuras)){
-			$valor = '('.$componentes['id_juez'].',';
-			$valor .= $componentes['numero_juez'].',';
-			$valor .= $componentes['id_panel'].',';
-			$valor .= $fase['id'].',';
-			$valor .= 'NULL,';
-			$valor .= $componentes['id_competicion'].'), ';
-			$valores .= $valor;
-		}
-		$valores = substr($valores, 0, -2);
+    if(empty($target_fases)){
+        $_SESSION['estado'] = 'No se han seleccionado fases de destino.';
+        header('Location: paneles_jueces.php');
+        exit();
+    }
 
-		$sql_final = "INSERT INTO panel_jueces ( id_juez, numero_juez, id_panel, id_fase, id_fase_figuras, id_competicion ) VALUES $valores";
-		$query_existe = 'select id_juez from panel_jueces where id_juez='.$componentes['id_juez'].' and id_competicion = '.$componentes['id_competicion'];
-		echo $query_existe;
-		if(mysqli_num_rows(mysqli_query($connection,$query_existe)) > 1 ) {
-			echo '<br>No se clona, borra el contenido del resto de paneles para utilizar está función.<br>'.$sql_final.'<br>';
-		}else{
-			echo '<br>Ejecuto: '.$sql_final.'<br>';
-			mysqli_query($connection,$sql_final);
-		}
-  	   }
-//include('lib/conexion_cierra.php');
+    // 1. Obtener la composición actual del panel en la fase origen
+    $query_source = "SELECT numero_juez, id_juez FROM panel_jueces WHERE id_panel = '$id_panel' AND id_fase = '$source_fase'";
+    $res_source = mysqli_query($connection, $query_source);
+    
+    $composicion = [];
+    while($row = mysqli_fetch_assoc($res_source)){
+        $composicion[$row['numero_juez']] = $row['id_juez'];
+    }
+
+    if(empty($composicion)){
+        $_SESSION['estado'] = 'El panel de origen no tiene jueces asignados.';
+        header('Location: paneles_jueces.php');
+        exit();
+    }
+
+    $errors = 0;
+    $clonados = 0;
+
+    // 2. Para cada fase de destino
+    foreach($target_fases as $target_id_fase){
+        $target_id_fase = mysqli_real_escape_string($connection, $target_id_fase);
+        
+        // Para cada juez en la composición
+        foreach($composicion as $num_juez => $id_juez){
+            // Verificar si ya existe el registro para actualizar o insertar
+            $q_check = "SELECT id FROM panel_jueces WHERE id_panel = '$id_panel' AND id_fase = '$target_id_fase' AND numero_juez = '$num_juez'";
+            $res_check = mysqli_query($connection, $q_check);
+            
+            if(mysqli_num_rows($res_check) > 0){
+                $id_reg = mysqli_fetch_assoc($res_check)['id'];
+                $q_upd = "UPDATE panel_jueces SET id_juez = '$id_juez' WHERE id = '$id_reg'";
+                if(!mysqli_query($connection, $q_upd)) $errors++;
+            } else {
+                $q_ins = "INSERT INTO panel_jueces (id_fase, id_juez, numero_juez, id_panel, id_competicion) 
+                          VALUES ('$target_id_fase', '$id_juez', '$num_juez', '$id_panel', '$id_competicion')";
+                if(!mysqli_query($connection, $q_ins)) $errors++;
+            }
+        }
+        $clonados++;
+    }
+
+    if($errors == 0){
+        write_log("Clonación de panel $id_panel desde fase $source_fase completada para $clonados fases", "SUCCESS");
+        $_SESSION['correcto'] = "Panel clonado con éxito en $clonados fases.";
+    } else {
+        write_log("Errores durante la clonación de panel: $errors", "ERROR");
+        $_SESSION['estado'] = "Se completó la clonación con $errors errores técnicos.";
+    }
+
+    header('Location: paneles_jueces.php');
+    exit();
 }
 
 ?>

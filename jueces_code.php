@@ -1,54 +1,60 @@
 <?php
 include('security.php');
-//Añadir registro
+
+// Añadir registro
 if(isset($_POST['save_btn'])){
-	$licencia = $_POST['licencia'];
-	$apellidos = mb_strtoupper($_POST['apellidos'], 'UTF-8');
-	$nombre = mb_strtoupper($_POST['nombre'], 'UTF-8');
-	$id_federacion = $_POST['federacion'];
+    $nombre = mysqli_real_escape_string($connection, $_POST['nombre']);
+    $apellidos = mysqli_real_escape_string($connection, $_POST['apellidos']);
+    $licencia = mysqli_real_escape_string($connection, $_POST['licencia'] ?? '');
+    $id_federacion = !empty($_POST['federacion']) ? intval($_POST['federacion']) : 'NULL';
 
-	$query="INSERT INTO jueces (apellidos,nombre,licencia, federacion) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$id_federacion."')";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: jueces.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: jueces.php');	
-	}
+    $query = "INSERT INTO jueces (nombre, apellidos, licencia, federacion, activo) 
+              VALUES ('$nombre', '$apellidos', '$licencia', $id_federacion, 1)";
+    
+    if(mysqli_query($connection, $query)){
+        $_SESSION['correcto'] = 'Juez añadido correctamente al censo.';
+        write_log("Nuevo juez creado: $nombre $apellidos", "SUCCESS");
+    } else {
+        $_SESSION['estado'] = 'Error al añadir juez: ' . mysqli_error($connection);
+    }
+    header('Location: jueces.php');
 }
 
-//Actualizar registro
+// Actualizar registro
 if(isset($_POST['update_btn'])){
-	$id = $_POST['edit_id'];
-	$licencia = $_POST['edit_licencia'];
-	$apellidos = mb_strtoupper($_POST['edit_apellidos'], 'UTF-8');
-	$nombre = mb_strtoupper($_POST['edit_nombre'], 'UTF-8');
-	$id_federacion = $_POST['federacion'];	
+    $id = $_POST['edit_id'];
+    $nombre = mysqli_real_escape_string($connection, $_POST['edit_nombre']);
+    $apellidos = mysqli_real_escape_string($connection, $_POST['edit_apellidos']);
+    $licencia = mysqli_real_escape_string($connection, $_POST['edit_licencia'] ?? '');
+    $id_federacion = !empty($_POST['edit_federacion']) ? intval($_POST['edit_federacion']) : 'NULL';
+    $activo = isset($_POST['activo']) ? 1 : 0;
 
-	$query = "UPDATE jueces SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', federacion='$id_federacion' WHERE id='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: jueces.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: jueces.php');	
-	}
+    $query = "UPDATE jueces SET 
+                nombre = '$nombre', 
+                apellidos = '$apellidos', 
+                licencia = '$licencia', 
+                federacion = $id_federacion, 
+                activo = $activo 
+              WHERE id = '$id'";
+
+    if(mysqli_query($connection, $query)){
+        $_SESSION['correcto'] = 'Ficha de juez actualizada con éxito.';
+        write_log("Juez #$id actualizado: $nombre $apellidos", "SUCCESS");
+    } else {
+        $_SESSION['estado'] = 'Error al actualizar: ' . mysqli_error($connection);
+    }
+    header('Location: jueces.php');
 }
 
-//Borrar registro
+// Borrar registro
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['delete_id'];
-
-	$query = "DELETE FROM jueces WHERE id ='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: jueces.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: jueces.php');	
-	}
+    $id = $_POST['delete_id'];
+    $query = "DELETE FROM jueces WHERE id = '$id'";
+    if(mysqli_query($connection, $query)){
+        $_SESSION['correcto'] = 'Juez eliminado del sistema.';
+    } else {
+        $_SESSION['estado'] = 'Error al eliminar: ' . mysqli_error($connection);
+    }
+    header('Location: jueces.php');
 }
-	?>
+?>

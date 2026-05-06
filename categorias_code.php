@@ -1,54 +1,60 @@
 <?php
-
-
 include('security.php');
-//Añadir registro
+
+// Añadir registro
 if(isset($_POST['save_btn'])){
-	$nombre = $_POST['nombre'];
-	$edad_minima = $_POST['edad_minima'];
-	$edad_maxima = $_POST['edad_maxima'];
+    $nombre = mysqli_real_escape_string($connection, $_POST['nombre']);
+    $edad_minima = mysqli_real_escape_string($connection, $_POST['edad_minima']);
+    $edad_maxima = mysqli_real_escape_string($connection, $_POST['edad_maxima']);
 
-	$query="INSERT INTO categorias (nombre,edad_minima,edad_maxima) VALUES ('".$nombre."','".$edad_minima."','".$edad_maxima."')";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: categorias.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: categorias.php');	
-	}
+    $query = "INSERT INTO categorias (nombre, edad_minima, edad_maxima, activo) VALUES ('$nombre', '$edad_minima', '$edad_maxima', 1)";
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run){
+        write_log("Categoría creada: $nombre ($edad_minima-$edad_maxima años)", 'SUCCESS');
+        $_SESSION['correcto'] = 'Registro añadido con éxito';
+    } else {
+        write_log("Fallo al crear categoría $nombre: " . mysqli_error($connection), 'ERROR');
+        $_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
+    }
+    header('Location: categorias.php');
 }
 
-//Actualizar registro
+// Actualizar registro
 if(isset($_POST['update_btn'])){
-	$id = $_POST['edit_id'];
-	$nombre = $_POST['edit_nombre'];
-	$edad_minima = $_POST['edit_edad_minima'];
-	$edad_maxima = $_POST['edit_edad_maxima'];
+    $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+    $nombre = mysqli_real_escape_string($connection, $_POST['edit_nombre']);
+    $edad_minima = mysqli_real_escape_string($connection, $_POST['edit_edad_minima']);
+    $edad_maxima = mysqli_real_escape_string($connection, $_POST['edit_edad_maxima']);
+    $activo = isset($_POST['edit_activo']) ? 1 : 0;
 
-	$query = "UPDATE categorias SET nombre='$nombre', edad_minima='$edad_minima', edad_maxima='$edad_maxima' WHERE id='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: categorias.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: categorias.php');	
-	}
+    $query = "UPDATE categorias SET nombre='$nombre', edad_minima='$edad_minima', edad_maxima='$edad_maxima', activo='$activo' WHERE id='$id'"; 
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run){
+        write_log("Categoría ID#$id actualizada: $nombre ($activo)", 'SUCCESS');
+        $_SESSION['correcto'] = 'Datos actualizados con éxito';
+    } else {
+        write_log("Fallo al actualizar categoría ID#$id: " . mysqli_error($connection), 'ERROR');
+        $_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
+    }
+    header('Location: categorias.php');
 }
 
-//Borrar registro
+// Borrado lógico (Desactivar)
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['delete_id'];
+    $id = mysqli_real_escape_string($connection, $_POST['delete_id']);
 
-	$query = "DELETE FROM categorias WHERE id ='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: categorias.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: categorias.php');	
-	}
+    $query = "UPDATE categorias SET activo = 0 WHERE id ='$id'"; 
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run){
+        write_log("Categoría ID#$id desactivada (Borrado lógico)", 'WARNING');
+        $_SESSION['correcto'] = 'Registro desactivado con éxito';
+    } else {
+        write_log("Fallo al desactivar categoría ID#$id: " . mysqli_error($connection), 'ERROR');
+        $_SESSION['estado'] = 'Error. El registro no se ha podido desactivar <br>'.mysqli_error($connection);
+    }
+    header('Location: categorias.php');
 }
-	?>
+?>

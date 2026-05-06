@@ -1,8 +1,8 @@
 <?php
-if(isset($_SESSION['club']))
-    $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE baja ='no' and club = ".$_SESSION['club']." ORDER by apellidos, nombre";
+if(isset($_SESSION['club']) && $_SESSION['club'] > 0)
+    $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE activo = 1 AND club = ".$_SESSION['club']." ORDER BY apellidos, nombre";
 else
-    $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE baja = 'no' ORDER BY apellidos, nombre";
+    $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE activo = 1 ORDER BY apellidos, nombre";
 
 $query_run111 = mysqli_query($connection,$query);
 $select = "<select name='id_nadadora' class='form-control'>";

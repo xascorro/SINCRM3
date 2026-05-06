@@ -1,130 +1,117 @@
 <?php
 include('security.php');
 include('./lib/my_functions.php');
-session_start();
-//Sortear todo
 
 if(isset($_POST['save_btn'])){
-    $categoria = $_POST['categoria'];
-	$corte = $_POST['corte'];
-    $redondeo = $_POST['redondeo'];
-if(isset($_POST['desbloquear'])){
-    $query = "UPDATE fases set sorteado='no' WHERE id='$id_fase'";
-    mysqli_query($connection,$query);
-    $order_by = " order by orden";
-}else{
-    $order_by = " order by rand()";
-}
-    if($categoria == '0'){ //sorteo todas las categorias
-//        $query = "UPDATE fases SET sorteado='si' WHERE id_competicion=".$_SESSION['id_competicion_activa'];
-//        mysqli_query($connection,$query);
-        $query = "SELECT id, id_categoria FROM fases WHERE id_competicion=".$_SESSION['id_competicion_activa']." ORDER by orden";;
-    }else{ //sorteo una única categoría
-//        $query = "UPDATE fases SET sorteado='si' WHERE id_categoria='$categoria' and id_competicion=".$_SESSION['id_competicion_activa'];
-//        mysqli_query($connection,$query);
-        $query = "SELECT id, id_categoria FROM fases WHERE id_categoria='$categoria' and id_competicion=".$_SESSION['id_competicion_activa']." ORDER by orden";
+    // Obligatorio usar id_competicion_activa según requerimiento
+    $id_competicion = $_SESSION['id_competicion_activa'];
+    $id_categoria_req = mysqli_real_escape_string($connection, $_POST['id_categoria']);
+    $redondeo = $_POST['redondeo'] ?? 'ceil';
+
+    // 1. Obtener las categorías a procesar
+    if($id_categoria_req == '0'){ 
+        $q_cats = "SELECT DISTINCT id_categoria FROM fases WHERE id_competicion = '$id_competicion'";
+    } else {
+        $q_cats = "SELECT DISTINCT id_categoria FROM fases WHERE id_competicion = '$id_competicion' AND id_categoria = '$id_categoria_req'";
     }
-			echo $query;
+    $res_cats = mysqli_query($connection, $q_cats);
 
-    $result = mysqli_query($connection, $query);
-//    if(count($result)>0){
-        $corte_fase= 1;
-        $id_categoria_anterior = 0;
-        while ($fase = mysqli_fetch_array($result)){
-            if($id_categoria_anterior != $fase['id_categoria']){
-                $id_categoria_anterior = $fase['id_categoria'];
-                $corte_fase = 1;
+    $procesados = 0;
+    while($row_cat = mysqli_fetch_assoc($res_cats)) {
+        $id_cat = $row_cat['id_categoria'];
+
+        // 2. Obtener las fases (figuras) de esta categoría
+        // Eliminamos el filtro 'sorteado=no' porque el usuario ya confirma el re-sorteo en el front-end
+        $q_fases = "SELECT id FROM fases WHERE id_competicion = '$id_competicion' AND id_categoria = '$id_cat' ORDER BY orden ASC";
+        
+        $res_fases = mysqli_query($connection, $q_fases);
+        $fases = [];
+        while($f = mysqli_fetch_assoc($res_fases)) $fases[] = $f['id'];
+        $num_fases = count($fases);
+
+        if($num_fases == 0) continue;
+
+        // 3. Obtener listado de nadadoras a sortear
+        $q_nads = "SELECT DISTINCT id_nadadora FROM inscripciones_figuras 
+                   WHERE id_fase IN (".implode(',', $fases).") 
+                   AND (orden >= 0 OR orden IS NULL)";
+        $res_nads = mysqli_query($connection, $q_nads);
+        $nadadoras_sorteo = [];
+        while($n = mysqli_fetch_assoc($res_nads)) $nadadoras_sorteo[] = $n['id_nadadora'];
+        
+        $num_nads_sorteo = count($nadadoras_sorteo);
+        if($num_nads_sorteo == 0) continue;
+
+        // Marcamos como procesado
+        $procesados += $num_fases;
+
+        // 4. Randomizar nadadoras
+        shuffle($nadadoras_sorteo);
+
+        // 5. Calcular el "salto"
+        if ($redondeo == "floor"){
+            $salto = floor($num_nads_sorteo / $num_fases);
+        } else {
+            $salto = ceil($num_nads_sorteo / $num_fases);
+        }
+        if($salto < 1) $salto = 1;
+
+        // 6. Asignar órdenes desplazados para cada figura
+        foreach($fases as $index_fase => $id_fase) {
+            $desplazamiento = $index_fase * $salto;
+            
+            foreach($nadadoras_sorteo as $index_nadadora => $id_nadadora) {
+                $posicion_relativa = ($index_nadadora - $desplazamiento) % $num_nads_sorteo;
+                if($posicion_relativa < 0) $posicion_relativa += $num_nads_sorteo;
+                
+                $nuevo_orden = $posicion_relativa + 1;
+
+                $q_upd = "UPDATE inscripciones_figuras SET orden = '$nuevo_orden' 
+                          WHERE id_fase = '$id_fase' AND id_nadadora = '$id_nadadora'";
+                mysqli_query($connection, $q_upd);
             }
-            $orden_rand = 0;
-			$query = "SELECT id, id_nadadora FROM inscripciones_figuras WHERE orden >= '0' and id_fase=".$fase['id']." $order_by";
-		    $ordenes = mysqli_query($connection,$query);
-		    $orden_listado = "";
-		    while ($orden = mysqli_fetch_array($ordenes)){
-			    $orden_rand++;
-			    $query = "UPDATE inscripciones_figuras SET orden='$orden_rand' where id='".$orden['id']."'";
-			    mysqli_query($connection,$query);
 
-			    $query = "select * from inscripciones_figuras where id_competicion = '".$_SESSION["id_competicion_activa"]."' and id_nadadora = '".$orden['id_nadadora']."'";
-			    $salidas_nadadora = mysqli_query($connection,$query);
-			    $i = 0;
-			    while ($salida_nadadora = mysqli_fetch_assoc($salidas_nadadora)){
-                    $query ="SELECT count(id) FROM inscripciones_figuras WHERE id_fase=".$fase['id']." and orden >= 0";
-				    $orden_maximo = mysqli_result(mysqli_query($connection,$query),0);
-                    if ($redondeo == "floor"){
-                            $corte = floor($orden_maximo/4);
-                    }else {
-                            $corte = ceil($orden_maximo/4);
-                    }
-				        $orden_corte = $orden_rand-($i*$corte);
-				    if($orden_corte < 0)
-				        $orden_corte += $orden_maximo;
-				    if($orden_corte == 0)
-				        $orden_corte = $orden_maximo;
-				    $query = "UPDATE inscripciones_figuras SET orden='$orden_corte' WHERE id='".$salida_nadadora['id']."'";
-				    mysqli_query($connection,$query);
-				    $i++;
-			    }
-			}
-        //meto cortes a las fases
-        $query = "UPDATE fases SET corte=$corte_fase, sorteado='si' WHERE id=".$fase['id'];
-        mysqli_query($connection,$query);
-        $corte_fase += $corte;
-            if ($corte_fase > $orden_maximo)
-                    $corte_fase = $corte_fase-$orden_maximo;
-		}
-	}
+            // Marcar fase como sorteada
+            $q_fase_upd = "UPDATE fases SET sorteado = 'si', corte = 1 WHERE id = '$id_fase'";
+            mysqli_query($connection, $q_fase_upd);
+        }
+    }
 
-    //+++++++++++++++++++++++++++++++++
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Sorteo realizado';
-		header('Location: sorteo_figuras.php');
-	}else{
-		$_SESSION['estado'] = 'Error, algo ha salido mal durante el sorteo <br>'.mysqli_error($connection);
-		header('Location: sorteo_figuras.php');
-	}
-    echo $_SESSION['correcto'];
-    echo $_SESSION['estado'];
-
-
-
-//}
-//
-////Actualizar registro
-//if(isset($_POST['update_btn'])){
-//	$id = $_POST['edit_id'];
-//	$nombre = $_POST['edit_nombre'];
-//	$nombre_corto = $_POST['edit_nombre_corto'];
-//	$codigo = $_POST['edit_codigo'];
-//	$logo = $_POST['edit_logo'];
-//
-//	if($password != $r_password){
-//		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
-//		header('Location: usuarios.php');
-//	}else{
-//		$query = "UPDATE clubes SET nombre ='$nombre', nombre_corto='$nombre_corto', codigo='$codigo', logo='$logo' WHERE id='$id'";
-//		$query_run = mysqli_query($connection,$query);
-//		if(mysqli_error($connection) == ''){
-//			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-//			header('Location: clubes.php');
-//		}else{
-//			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-//			header('Location: clubes.php');
-//		}
-//	}
-//
-//}
-//
-////Borrar registro
-if(isset($_POST['delete_btn'])){
-	$query = "UPDATE inscripciones_figuras SET orden = '0' WHERE orden > '0' and id_competicion = '".$_SESSION['id_competicion_activa']."';
-    UPDATE fases SET sorteado = 'no', corte='0' WHERE id_competicion = '".$_SESSION['id_competicion_activa']."'";
-	$query_run = mysqli_multi_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: sorteo_figuras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: sorteo_figuras.php');
-	}
+    if($procesados > 0) {
+        if(mysqli_error($connection) == ''){
+            $_SESSION['correcto'] = 'Sorteo realizado con éxito para ' . $procesados . ' figuras.';
+            write_log("Sorteo de figuras realizado para $procesados figuras en la competición #$id_competicion", "SUCCESS");
+        } else {
+            $_SESSION['estado'] = 'Error durante el sorteo: ' . mysqli_error($connection);
+            write_log("Error en sorteo de figuras: " . mysqli_error($connection), "ERROR");
+        }
+    } else {
+        $_SESSION['estado'] = 'No se ha realizado ningún sorteo. Compruebe que existan inscripciones en la Competición Activa.';
+    }
+    header('Location: sorteo_figuras.php');
+    exit();
 }
+
+if(isset($_POST['delete_btn'])){
+    $id_competicion = $_SESSION['id_competicion_activa'];
+    
+    $q1 = "UPDATE inscripciones_figuras SET orden = 0 
+           WHERE id_competicion = '$id_competicion' 
+           AND (orden >= 0 OR orden IS NULL)";
+    
+    $q2 = "UPDATE fases SET sorteado = 'no', corte = 0 WHERE id_competicion = '$id_competicion'";
+    
+    if(mysqli_query($connection, $q1) && mysqli_query($connection, $q2)){
+        $_SESSION['correcto'] = 'Sorteo de figuras anulado con éxito.';
+        write_log("Sorteo de figuras ANULADO para la competición #$id_competicion", "WARNING");
+    } else {
+        $_SESSION['estado'] = 'Error al anular: ' . mysqli_error($connection);
+        write_log("Error al anular sorteo de figuras: " . mysqli_error($connection), "ERROR");
+    }
+    header('Location: sorteo_figuras.php');
+    exit();
+}
+
+header('Location: sorteo_figuras.php');
+exit();
 ?>

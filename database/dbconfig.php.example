@@ -41,7 +41,7 @@ if ($connection) {
                 <h1 style="color: #721c24;">Error de conexión</h1>
                 <p style="color: #721c24;">No se ha podido establecer conexión con la base de datos.</p>
                 <p>Por favor, comprueba la configuración o contacta con el administrador.</p>
-                <a href="./db_setup.php" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Revisar Configuración</a>
+                <a href="./mantenimiento.php" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">Revisar Configuración</a>
             </div>
         </div>';
     }

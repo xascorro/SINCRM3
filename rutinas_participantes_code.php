@@ -30,6 +30,7 @@ if(isset($_POST['save_btn'])){
 		echo $query;
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
+            write_log("Participante #$id_nadadora añadida a rutina #$id_rutina (Competición #$id_competicion)", "SUCCESS");
 			$_SESSION['correcto'] = 'Participante añadida con éxito';
 		}else{
 			$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
@@ -52,6 +53,7 @@ if(isset($_POST['update_btn'])){
 		$query = "UPDATE rutinas_participantes SET id_nadadora ='$id_nadadora' WHERE id='$id'";
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
+            write_log("Participante actualizada en registro #$id (Nueva nadadora: #$id_nadadora)", "INFO");
 			$_SESSION['correcto'] = 'Participante actualizada con éxito';
 		}else{
 			$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
@@ -69,6 +71,7 @@ if(isset($_POST['delete_btn'])){
 	$query = "DELETE FROM rutinas_participantes WHERE id ='$id'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
+        write_log("Participante eliminada del registro #$id", "WARNING");
 		$_SESSION['correcto'] = 'Participante eliminada con éxito';
 	}else{
 		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);

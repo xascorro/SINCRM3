@@ -134,7 +134,7 @@ if(isset($_GET['id_fase'])){
 				<h4 class="mb-0 font-weight-bold text-primary"><i class="fa-solid fa-puzzle-piece"></i> Coach Card Composer
 					<a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card&id_rutina=<?php echo $id_rutina;?>&id_competicion=<?php echo $id_competicion;?>" class="btn btn-warning shadow"><i class="fa fa-solid fa-puzzle-piece"></i> PDF</a>
 					<?php
-							  		if(!isset($_SESSION['club'])){
+							  		if(!isset($_SESSION['club']) || $_SESSION['club'] == 0){
 										?>
 									<form target='_blank' action="../coach_card_auditor.php" method="post" style="display:inline-block; margin: 0 2px;">
 										<button class="btn btn-warning" type="submit" name="audit_btn" title="Auditar Normativa">

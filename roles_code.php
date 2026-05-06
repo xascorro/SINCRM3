@@ -1,65 +1,65 @@
 <?php
 include('security.php');
 
-session_start();
-//Añadir registro
+// AÑADIR ROL
 if(isset($_POST['save_btn'])){
-	$username = $_POST['nombre'];
-	else{
-		$query="INSERT INTO roles (nombre,level) VALUES ('".$nombre."','".$level."')";
-		$query_run = mysqli_query($connection,$query);
-		if(mysqli_error($connection) == ''){
-			$_SESSION['correcto'] = 'Registro añadido con éxito';
-			header('Location: roles.php');
-		}else{
-			$_SESSION['estado '] = 'Error, registro no añadido <br>'.mysqli_error($connection);
-			header('Location: roles.php');
-		}
-	}
+    $nombre = mysqli_real_escape_string($connection, $_POST['roles_nombre']);
+    $level = mysqli_real_escape_string($connection, $_POST['level']);
 
+    $query = "INSERT INTO roles (nombre, level) VALUES ('$nombre', '$level')";
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run){
+        write_log("Nuevo rol creado: $nombre (Nivel $level)", "SUCCESS");
+        $_SESSION['correcto'] = 'Rol añadido correctamente';
+    } else {
+        write_log("Error al crear rol: " . mysqli_error($connection), "ERROR");
+        $_SESSION['estado'] = 'Error al registrar el rol.';
+    }
+    header('Location: roles.php');
+    exit();
 }
 
-//Actualizar registro
+// ACTUALIZAR ROL
 if(isset($_POST['update_btn'])){
-	$id = $_POST['edit_id'];
-	$username = $_POST['edit_username'];
-	$email = $_POST['edit_email'];
-	$password = $_POST['edit_password'];
-	$r_password = $_POST['edit_r_password'];
-	$club = $_POST['club'];
-	$telefono = $_POST['edit_telefono'];
-	$comentario = $_POST['edit_comentario'];
-	$rol = $_POST['edit_rol'];
+    $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+    $nombre = mysqli_real_escape_string($connection, $_POST['edit_nombre']);
+    $level = mysqli_real_escape_string($connection, $_POST['edit_level']);
 
-	if($password != $r_password){
-		$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>La contraseña no coincide';
-		header('Location: usuarios.php');
-	}else{
-		$query = "UPDATE roles SET nombre ='$username', email='$email', telefono='$telefono', password='$password', club='$club', telefono='$telefono', comentario='$comentario', rol='$edit_rol' WHERE id='$id'";
-		$query_run = mysqli_query($connection,$query);
-		if(mysqli_error($connection) == ''){
-			$_SESSION['correcto'] = 'Datos actualizados con éxito';
-			header('Location: usuarios.php');
-		}else{
-			$_SESSION['estado'] = 'Error, los datos no se han actualizado <br>'.mysqli_error($connection);
-			header('Location: roles.php');
-		}
-	}
+    $query = "UPDATE roles SET nombre='$nombre', level='$level' WHERE id='$id'";
+    $query_run = mysqli_query($connection, $query);
 
+    if($query_run){
+        write_log("Rol actualizado (ID: $id): $nombre", "INFO");
+        $_SESSION['correcto'] = 'Rol actualizado correctamente';
+    } else {
+        write_log("Error al actualizar rol (ID: $id): " . mysqli_error($connection), "ERROR");
+        $_SESSION['estado'] = 'Error al actualizar el rol.';
+    }
+    header('Location: roles.php');
+    exit();
 }
 
-//Borrar registro
+// BORRAR ROL
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['delete_id'];
+    $id = mysqli_real_escape_string($connection, $_POST['delete_id']);
 
-	$query = "DELETE FROM roles WHERE id ='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: roles.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: roles.php');
-	}
+    // Info para el log
+    $q_name = mysqli_query($connection, "SELECT nombre FROM roles WHERE id = '$id'");
+    $r_data = mysqli_fetch_assoc($q_name);
+    $nombre_rol = $r_data['nombre'] ?? 'ID '.$id;
+
+    $query = "DELETE FROM roles WHERE id ='$id'";
+    $query_run = mysqli_query($connection, $query);
+
+    if($query_run){
+        write_log("Rol eliminado: $nombre_rol", "WARNING");
+        $_SESSION['correcto'] = 'Rol eliminado correctamente';
+    } else {
+        write_log("Error al eliminar rol ($nombre_rol): " . mysqli_error($connection), "ERROR");
+        $_SESSION['estado'] = 'No se pudo eliminar el rol.';
+    }
+    header('Location: roles.php');
+    exit();
 }
 ?>

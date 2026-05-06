@@ -1,66 +1,211 @@
 <?php
+session_start();
 session_destroy();
 session_start();
-include('includes/header.php');
 ?>
-<div class="container">
-	<!-- Outer Row -->
-	<div class="row justify-content-center">
-		<div class="col-xl-10 col-lg-12 col-md-9">
-			<div class="card o-hidden border-0 shadow-lg my-5">
-				<div class="card-body p-0">
-					<!-- Nested Row within Card Body -->
-					<div class="row">
-						<!--						<div class="col-lg-6 d-none d-lg-block bg-login-image"></div>-->
-						<div class="col-lg-6 bg-login-image"></div>
-						<div class="col-lg-6">
-							<div class="p-5">
-								<div class="text-center">
-									<h1 class="text-gray-900 mb-4">Hola de nuevo!!</h1>
-									<h4 class="text-gray-900 mb-4">Introduce tus credenciales</h3>
-									<?php
-									if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
-										echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
-										unset($_SESSION['estado']);
-									}
-									if (isset($_SESSION['estado_registro']) && $_SESSION['estado_registro'] != '') {
-										echo '<div class="alert alert-info" role="info">'.$_SESSION['estado_registro'].'</div>';
-										unset($_SESSION['estado_registro']);
-									}
-									?>
-								</div>
-								<form class="user" action="login_code.php" method="POST">
-									<div class="form-group">
-									<label for="email">Email</label>
-										<input type="email" name="email" class="form-control form-control-user" placeholder="example@dominio.com" required>
-									</div>
-									<div class="form-group">
-									<label for="password">Contraseña</label>
-										<input type="password" name="password" class="form-control form-control-user" id="exampleInputPassword" autocomplete="current-password" placeholder="Password" required>
-									</div>
-									<button type="submit" name="login_btn" href="index.html" class="btn btn-primary btn-user btn-block">
-										Login
-									</button>
-									<hr>
-								</form>
-								<form class="user" action="register.php" method="POST">
-									<button type="submit" name="login_btn" href="register.php" class="btn btn-info btn-user btn-block">
-										Registrarse
-									</button>
-									<hr>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>SINCRM 3 | Acceso</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0f172a",
+                        "secondary": "#3b82f6",
+                    },
+                    fontFamily: { lexend: ["Lexend", "sans-serif"] }
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Lexend', sans-serif; }
+        .glass-overlay {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out both; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* SweetAlert2 Custom Styling */
+        .swal2-popup-v3 {
+            border-radius: 3.5rem !important;
+            padding: 3rem !important;
+            font-family: 'Lexend', sans-serif !important;
+        }
+        .swal2-title-v3 {
+            font-size: 0.75rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.2em !important;
+            font-weight: 900 !important;
+            color: #94a3b8 !important;
+            margin-bottom: 0.5rem !important;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+<main class="flex min-h-screen">
+    
+    <!-- PANEL IZQUIERDO: VISUAL -->
+    <section class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center bg-slate-900">
+        <img alt="Natación Sincronizada" class="absolute inset-0 w-full h-full object-cover opacity-70" src="img/bg_sincro_login.jpg"/>
+        <div class="relative z-10 glass-overlay p-12 rounded-[2.5rem] max-w-lg mx-8 animate-fade-in">
+            <div class="flex flex-col gap-4">
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
+                    <img src="img/logo_sincrm3.png" class="w-10" alt="Logo">
+                </div>
+                <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">3</span></h1>
+                <p class="text-xl text-blue-50 font-light leading-relaxed">Donde el arte se une a la precisión. La gestión definitiva para natación artística.</p>
+            </div>
+        </div>
+        <div class="absolute bottom-10 left-10 z-10 flex items-center gap-3">
+            <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+            <p class="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Refactorización v3.0 stable</p>
+        </div>
+    </section>
 
+    <!-- PANEL DERECHO: FORMULARIO -->
+    <section class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 bg-white lg:rounded-l-[3rem] shadow-2xl z-20">
+        <div class="w-full max-w-md animate-fade-in">
+            <div class="lg:hidden text-center mb-10">
+                <img src="img/logo_sincrm3.png" class="w-16 mx-auto mb-4" alt="Logo">
+                <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">SINCRM <span class="text-blue-500">3</span></h1>
+            </div>
 
+            <div class="mb-10 text-center lg:text-left">
+                <h2 class="text-3xl font-black text-slate-800 tracking-tight mb-2 uppercase italic tracking-tighter">Bienvenido</h2>
+                <p class="text-slate-400 font-medium italic text-sm">Introduce tus datos para acceder al panel.</p>
+            </div>
 
-<?php
-include('includes/scripts.php');
-include('includes/footer.php');
-?>
+            <div id="alert-container">
+                <?php
+                if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
+                    echo '<div class="mb-8 p-5 rounded-[2.5rem] bg-red-50 text-red-600 text-[11px] font-black uppercase tracking-widest border border-red-100 flex items-center justify-center gap-3 animate-fade-in shadow-sm"><i class="fas fa-circle-exclamation text-base"></i> '.$_SESSION['estado'].'</div>';
+                    unset($_SESSION['estado']);
+                }
+                ?>
+            </div>
+
+            <form id="loginForm" action="login_code.php" method="POST" class="space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Email de Usuario</label>
+                    <div class="relative group">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-envelope text-sm"></i></span>
+                        <input type="email" name="email" required placeholder="ejemplo@sincrm.com" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center px-1">
+                        <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest italic">Contraseña</label>
+                        <a href="forgot_password.php" class="text-[10px] font-black text-blue-500 hover:underline tracking-tighter">¿Olvidaste la clave?</a>
+                    </div>
+                    <div class="relative group">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-lock text-sm"></i></span>
+                        <input type="password" name="password" required placeholder="••••••••" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 px-2">
+                    <input type="checkbox" id="remember" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500/20">
+                    <label for="remember" class="text-xs font-bold text-slate-400 italic">Mantener sesión iniciada</label>
+                </div>
+
+                <button id="submitBtn" name="login_btn" type="submit" class="w-full py-5 px-6 bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] rounded-[1.5rem] shadow-2xl hover:bg-blue-600 active:scale-95 transition-all flex items-center justify-center gap-4 group">
+                    <span id="btnText">Entrar al Sistema</span>
+                    <i id="btnIcon" class="fas fa-arrow-right-long text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                    <div id="loader" class="hidden animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white"></div>
+                </button>
+            </form>
+
+            <div class="mt-12 pt-8 border-t border-slate-100 text-center">
+                <p class="text-sm font-medium text-slate-400 italic">
+                    ¿Aún no tienes acceso? 
+                    <a href="register.php" class="text-slate-800 font-black hover:text-blue-600 transition-colors ml-1 not-italic border-b-2 border-slate-100">Crea una cuenta</a>
+                </p>
+            </div>
+
+            <div class="mt-12 flex flex-col items-center gap-6">
+                <div class="flex items-center justify-center gap-6 opacity-30 hover:opacity-100 transition-all">
+                    <a href="soporte.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Soporte</a>
+                    <a href="privacidad.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Privacidad</a>
+                </div>
+                <p class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter italic">
+                    Made with <i class="fas fa-heart text-red-500/50 mx-1"></i> by Pedro Díaz
+                </p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="vendor/jquery/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('#loginForm').on('submit', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const submitBtn = $('#submitBtn');
+        const btnText = $('#btnText');
+        const btnIcon = $('#btnIcon');
+        const loader = $('#loader');
+
+        submitBtn.prop('disabled', true).addClass('bg-blue-600');
+        btnText.text('Verificando...');
+        btnIcon.addClass('hidden');
+        loader.removeClass('hidden');
+
+        $.ajax({
+            type: 'POST',
+            url: 'login_code.php',
+            data: form.serialize() + '&login_btn=1',
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: '<span class="swal2-title-v3">Acceso Concedido</span>',
+                        html: `<div class="font-lexend"><p class="text-3xl font-black text-slate-800 tracking-tighter italic leading-none mb-2">${response.message}</p><p class="text-sm text-slate-400 font-medium">Sincronizando tus datos...</p></div>`,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#ffffff',
+                        customClass: { popup: 'swal2-popup-v3' }
+                    }).then(() => { window.location.href = response.redirect; });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '<span class="swal2-title-v3 text-red-500">Error de Acceso</span>',
+                        text: response.message,
+                        confirmButtonColor: '#0f172a',
+                        confirmButtonText: 'REINTENTAR',
+                        customClass: { popup: 'swal2-popup-v3' }
+                    });
+                    submitBtn.prop('disabled', false).removeClass('bg-blue-600');
+                    btnText.text('Entrar al Sistema');
+                    btnIcon.removeClass('hidden');
+                    loader.addClass('hidden');
+                }
+            },
+            error: function() {
+                Swal.fire({ icon: 'error', title: 'Error', text: 'Servidor no responde.', customClass: { popup: 'swal2-popup-v3' } });
+                submitBtn.prop('disabled', false).removeClass('bg-blue-600');
+                btnText.text('Entrar al Sistema');
+                btnIcon.removeClass('hidden');
+                loader.addClass('hidden');
+            }
+        });
+    });
+});
+</script>
+</body>
+</html>

@@ -1,90 +1,117 @@
 <?php
 include('security.php');
 include('includes/header.php');
-if(!isset($_SESSION['club'])){
-    include('includes/navbar.php');
-}else{
-    $condicion_club = " and nadadoras.club = ".$_SESSION['club'];
-}?>
-<!-- Content Wrapper -->
-<div id="content-wrapper" class="d-flex flex-column">
+include('includes/navbar.php');
+?>
 
-	<!-- Main Content -->
-	<div id="content">
-		<?php
-		include('includes/topbar.php');
-		?>
+<!-- Contenedor Principal -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+    
+    <?php include('includes/topbar.php'); ?>
 
-		<!-- template -->    
-		<!-- Tu código empieza aquí -->
+    <!-- Contenido de la Página -->
+    <div class="p-6 md:p-10 max-w-5xl mx-auto w-full">
+        
+        <!-- Header de Sección -->
+        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-person-swimming text-lg"></i></span>
+                    Ficha Deportista
+                </h1>
+                <p class="text-slate-500 font-medium">Actualización de expediente y vinculación técnica.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="nadadoras.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i class="fas fa-arrow-left text-xs"></i> Volver
+                </a>
+            </div>
+        </div>
 
-		<!-- Begin Page Content -->
-		<div class="container-fluid">
+        <?php
+        if(isset($_POST['edit_btn'])):
+            $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+            $query = "SELECT * FROM nadadoras WHERE id = '$id'";
+            $query_run = mysqli_query($connection, $query);
+            foreach ($query_run as $row):
+        ?>
+            <form action="nadadoras_code.php" method="POST" class="animate-fade-in space-y-8">
+                <input type="hidden" name="id_nadadora" value="<?php echo $row['id']?>">
 
-			<!-- Titulo página y pdf -->
-			<div class="d-sm-flex align-items-center justify-content-between mb-4">
-				<h4 class="mb-0 font-weight-bold text-primary">Editar nadadora</h4>
-			</div>
+                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[6px] border-t-blue-600 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nombre</label>
+                            <input type="text" name="edit_nombre" value="<?php echo $row['nombre']?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
+                        </div>
+                        <div class="md:col-span-8 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Apellidos</label>
+                            <input type="text" name="edit_apellidos" value="<?php echo $row['apellidos']?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
+                        </div>
+                        
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Licencia / DNI</label>
+                            <input type="text" name="edit_licencia" value="<?php echo $row['licencia']?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700">
+                        </div>
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Año Nacimiento</label>
+                            <div class="relative">
+                                <?php 
+                                $año_nacimiento_actual = $row['año_nacimiento'];
+                                ob_start();
+                                include('./includes/año_select_option.php');
+                                echo str_replace('class="form-control"', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 appearance-none text-sm font-bold text-slate-700"', ob_get_clean());
+                                ?>
+                                <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300"><i class="fas fa-calendar text-xs"></i></div>
+                            </div>
+                        </div>
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Estado</label>
+                            <div class="flex items-center h-full pt-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="activo" value="1" <?php echo ($row['activo'] == 1) ? 'checked' : ''; ?> class="sr-only peer">
+                                    <div class="w-14 h-7 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    <span class="ml-3 text-xs font-black uppercase tracking-widest text-slate-400 peer-checked:text-emerald-600"><?php echo ($row['activo'] == 1) ? 'ACTIVA' : 'BAJA'; ?></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-			<div class="card-body">
-				<?php
-//Editar nadadora
-				if(isset($_POST['edit_btn'])){
-					$id = $_POST['edit_id'];
-					$query = "SELECT * from nadadoras WHERE id = '$id'";
-					$query_run = mysqli_query($connection,$query);
-					foreach ($query_run as $row) {
-						?>
-						<form action="nadadoras_code.php" method="POST">
-							<input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
-							<div class="form-group">
-								<div class="row">
-							<div class="col-12 col-sm-6">
-								<label for="edit_apellidos">Apellidos</label><input type="text" class="form-control" name="edit_apellidos" value="<?php echo $row['apellidos']?>"placeholder="Apellidos">
-							</div>
-							<div class="col-12 col-sm-6">
-								<label for="edit_nombre">Nombre</label><input type="text" class="form-control" name="edit_nombre" value="<?php echo $row['nombre']?>"placeholder="Nombre">
-							</div>
-							</div>
-							</div>
-							<div class="form-group">
-								<div class="row">
-									<div class="col col-12 col-sm-4">
-										<label for="edit_licencia">Licencia</label><input type="text" class="form-control" name="edit_licencia" value="<?php echo $row['licencia']?>" placeholder="Número de licencia, NIF para nadadoras sin licencia federativa">
+                <!-- Club y Notas -->
+                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500">
+                    <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-shield-halved text-purple-600"></i> Vinculación Deportiva</h2>
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Club de Pertenencia</label>
+                            <div class="relative">
+                                <?php 
+                                $id_club_actual = $row['club'];
+                                ob_start();
+                                include('./includes/club_select_option.php');
+                                echo str_replace('class="form-control"', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 appearance-none text-sm font-bold text-slate-700"', ob_get_clean());
+                                ?>
+                                <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300"><i class="fas fa-chevron-down text-xs"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-									</div>
-									<div class="col col-12 col-sm-4">
-<!--										<label for="edit_fecha_nacimiento">Año</label><input type="text" class="form-control" name="edit_fecha_nacimiento" value="<?php //echo $row['año_nacimiento']?>" placeholder="AAAA">-->
-                                <?php
-                            $_SESSION['año_nacimiento'] = $row['año_nacimiento'];
-								include('./includes/año_select_option.php');
-								?>
-									</div>
-									<div class="col col-12 col-sm-4">
-								<?php
-								include('./includes/club_select_option.php');
-								?>
-							</div>
-								</div>
-							</div>
-							
-							<a href="nadadoras.php" class="btn btn-danger"> Cancelar </a>
-							<button type="submit" name="update_btn" class="btn btn-primary">Actualizar</button>
-						</form>
-						<?php
-					}
+                <div class="pt-6 flex justify-end gap-4 border-t border-slate-100">
+                    <a href="nadadoras.php" class="px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Cancelar</a>
+                    <button type="submit" name="update_btn" class="px-12 py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                        <i class="fas fa-save"></i> Guardar Ficha
+                    </button>
+                </div>
+            </form>
+        <?php 
+            endforeach; 
+        endif;
+        ?>
 
-				}
-				?>
-				
+    </div>
+</main>
 
-
-
-			</div>
-
-
-			<!-- template -->
-			<?php
-			include('includes/scripts.php');
-			include('includes/footer.php');
-			?>
+<?php include('includes/scripts.php'); include('includes/footer.php'); ?>

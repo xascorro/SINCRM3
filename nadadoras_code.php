@@ -1,83 +1,72 @@
 <?php
 include('security.php');
-//Añadir registro
+
+// AÑADIR REGISTRO
 if(isset($_POST['save_btn'])){
-	$licencia = $_POST['licencia'];
-	$apellidos = mb_strtoupper($_POST['apellidos'], 'UTF-8');
-	$nombre = mb_strtoupper($_POST['nombre'],  'UTF-8');
-	$fecha_nacimiento = $_POST['fecha_nacimiento'];
-	$club = $_POST['club'];
+	$licencia = mysqli_real_escape_string($connection, $_POST['licencia']);
+	$apellidos = mysqli_real_escape_string($connection, mb_strtoupper($_POST['apellidos'], 'UTF-8'));
+	$nombre = mysqli_real_escape_string($connection, mb_strtoupper($_POST['nombre'],  'UTF-8'));
+	$fecha_nacimiento = mysqli_real_escape_string($connection, $_POST['fecha_nacimiento']);
+	$club = mysqli_real_escape_string($connection, $_POST['club']);
 
-	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,año_nacimiento, club) VALUES ('".$apellidos."','".$nombre."','".$licencia."','".$fecha_nacimiento."','".$club."')";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro añadido con éxito';
-		header('Location: nadadoras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+	$query="INSERT INTO nadadoras (apellidos,nombre,licencia,año_nacimiento, club, activo) VALUES ('$apellidos','$nombre','$licencia','$fecha_nacimiento','$club', 1)";
+	$query_run = mysqli_query($connection, $query);
+
+	if($query_run){
+        write_log("Nueva nadadora añadida: $nombre $apellidos (Club ID: $club)", "SUCCESS");
+		$_SESSION['correcto'] = 'Nadadora añadida con éxito';
+	} else {
+        write_log("Error al añadir nadadora: " . mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'Error técnico al registrar la deportista.';
 	}
+    header('Location: nadadoras.php');
+    exit();
 }
 
-//Actualizar registro
+// ACTUALIZAR REGISTRO
 if(isset($_POST['update_btn'])){
-	$id = $_POST['edit_id'];
-	$licencia = $_POST['edit_licencia'];
-	$apellidos = mb_strtoupper($_POST['edit_apellidos'], 'UTF-8');
-	$nombre = mb_strtoupper($_POST['edit_nombre'],  'UTF-8');
-	$fecha_nacimiento = $_POST['fecha_nacimiento'];
-	$club = $_POST['club'];
+	$id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+	$licencia = mysqli_real_escape_string($connection, $_POST['edit_licencia']);
+	$apellidos = mysqli_real_escape_string($connection, mb_strtoupper($_POST['edit_apellidos'], 'UTF-8'));
+	$nombre = mysqli_real_escape_string($connection, mb_strtoupper($_POST['edit_nombre'],  'UTF-8'));
+	$fecha_nacimiento = mysqli_real_escape_string($connection, $_POST['fecha_nacimiento']);
+	$club = mysqli_real_escape_string($connection, $_POST['club']);
+    $activo = isset($_POST['activo']) ? 1 : 0;
 
-	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', año_nacimiento='$fecha_nacimiento', club='$club' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
+	$query = "UPDATE nadadoras SET licencia ='$licencia', apellidos='$apellidos', nombre='$nombre', año_nacimiento='$fecha_nacimiento', club='$club', activo='$activo' WHERE id='$id'";
+	$query_run = mysqli_query($connection, $query);
+
+	if($query_run){
+        $estado_txt = $activo ? "ACTIVA" : "BAJA";
+        write_log("Nadadora actualizada (ID: $id): $nombre $apellidos | Estado: $estado_txt", "INFO");
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
-		header('Location: nadadoras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+	} else {
+        write_log("Error al actualizar nadadora (ID: $id): " . mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'No se pudieron actualizar los datos.';
 	}
+    header('Location: nadadoras.php');
+    exit();
 }
 
-//dar de baja nadadora
-if(isset($_POST['baja_btn'])){
-	$id = $_POST['id_nadadora'];
-	$query = "UPDATE nadadoras SET baja ='si' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Nadadora dada de baja';
-		header('Location: nadadoras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');
-	}
-}
-//dar de alta nadadora
-if(isset($_POST['alta_btn'])){
-	$id = $_POST['id_nadadora'];
-	$query = "UPDATE nadadoras SET baja ='no' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Nadadora dada de alta';
-		header('Location: nadadoras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');
-	}
-}
-
-//Borrar registro
+// BORRAR REGISTRO
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['id_nadadora'];
+	$id = mysqli_real_escape_string($connection, $_POST['id_nadadora']);
+
+    $q_name = mysqli_query($connection, "SELECT nombre, apellidos FROM nadadoras WHERE id = '$id'");
+    $n_data = mysqli_fetch_assoc($q_name);
+    $nombre_completo = ($n_data) ? $n_data['nombre']." ".$n_data['apellidos'] : "ID ".$id;
 
 	$query = "DELETE FROM nadadoras WHERE id ='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
+	$query_run = mysqli_query($connection, $query);
+
+	if($query_run){
+        write_log("Nadadora eliminada del sistema: $nombre_completo", "WARNING");
 		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: nadadoras.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: nadadoras.php');	
+	} else {
+        write_log("Error al eliminar nadadora ($nombre_completo): " . mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'No se pudo eliminar el registro.';
 	}
+    header('Location: nadadoras.php');
+    exit();
 }
-	?>
+?>

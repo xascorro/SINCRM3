@@ -1,0 +1,47 @@
+<!-- Formulario de Borrado Oculto -->
+<form id="deleteFedForm" action="federaciones_code.php" method="POST">
+    <input type="hidden" name="delete_id" id="deleteFedID">
+    <input type="hidden" name="delete_btn" value="1">
+</form>
+
+<script>
+function toggleAddFedPanel() { 
+    document.getElementById('addFedPanel').classList.toggle('hidden'); 
+}
+
+function filterFedCards() {
+    const input = document.getElementById('fedSearchInput');
+    const filter = input.value.toLowerCase();
+    const grid = document.getElementById('fedGrid');
+    const cards = grid.getElementsByClassName('fed-card');
+
+    for (let i = 0; i < cards.length; i++) {
+        let textContent = cards[i].textContent.toLowerCase();
+        if (textContent.indexOf(filter) > -1) {
+            cards[i].style.display = "";
+        } else {
+            cards[i].style.display = "none";
+        }
+    }
+}
+
+function launchConfirmDeleteFed(id, name) {
+    Swal.fire({
+        title: '¿Eliminar Federación?',
+        html: `Vas a eliminar <b>${name}</b>.<br><small class='text-slate-400'>Asegúrate de que no tenga <b>clubes ni jueces</b> vinculados, de lo contrario podrías causar inconsistencias en los listados.</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('deleteFedID').value = id;
+            document.getElementById('deleteFedForm').submit();
+        }
+    });
+}
+</script>
+
+<?php include('includes/scripts.php'); include('includes/footer.php'); ?>

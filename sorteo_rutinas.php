@@ -1,390 +1,298 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
-//include('./lib/my_functions.php');
 ?>
-<!-- Content Wrapper -->
-<div id="content-wrapper" class="d-flex flex-column">
 
-	<!-- Main Content -->
-	<div id="content">
-		<?php
-    include('includes/topbar.php');
-    ?>
-		<!-- template -->
-		<!-- Tu código empieza aquí -->
+<!-- Contenedor Principal -->
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+    
+    <?php include('includes/topbar.php'); ?>
 
-
-		<!-- Modal -->
-		<div class="modal fade" id="addUserProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-wand-magic-sparkles"></i> Nuevo sorteo</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<form id="sortearForm" action="sorteo_rutinas_code.php" method="POST" enctype="multipart/form-data">
-						<div class="modal-body">
-							<div class="row">
-
-								<div class="form-group col-8">
-									<?php
-                        include('includes/fases_competicion_select_option.php');
-                  ?>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-								<!--                                <button type="submit" class="btn btn-primary" name="save_btn"><i class="fa-solid fa-random"></i> Sortear</button>-->
-<!--								<button id="sortearBtn" type="button" class="btn btn-primary" name="save_btn"><i class="fa-solid fa-random"></i> Sortear modal</button>-->
-					        <input type="hidden" name="save_btn" value="1">
-
-						<button id="sortearBtn" type="submit" class="btn btn-primary" name="save_btn" value="1">
-    <i class="fa-solid fa-random"></i> Sortear
-</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<div class="modal fade" id="animacionModal" tabindex="-1" role="dialog" aria-labelledby="animacionModalLabel" aria-hidden="true" style="background-color: rgba(0,0,0,0.7);">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content bg-transparent border-0">
-            <div class="modal-body text-center" style="position: relative; min-height: 200px;">
-                <i id="iconoAnimacion" class="fa-solid fa-wand-magic-sparkles fa-4x" style="color: white;"></i>
-                <!-- Particles and text will be added here by JavaScript -->
+    <!-- Contenido de la Página -->
+    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+        
+        <!-- Header de Sección -->
+        <div class="page-header-v3">
+            <div>
+                <h1 class="section-title-v3 italic">
+                    <span class="w-12 h-12 rounded-2xl oceanic-gradient flex items-center justify-center text-white shadow-lg"><i class="fa-solid fa-wand-magic-sparkles text-xl"></i></span>
+                    Orden de Salida <span class="text-slate-300 font-light mx-2">/</span> Rutinas
+                </h1>
+                <p class="section-subtitle-v3">Generación aleatoria y gestión de turnos de actuación.</p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+                <button onclick="toggleAddSorteoPanel()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                    <i class="fas fa-random text-xs"></i> Nuevo Sorteo
+                </button>
+                <button onclick="toggleAnularPanel()" class="px-5 py-3 bg-white border border-red-100 text-red-500 font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-trash-can text-xs"></i> Anular Todo
+                </button>
+                <a href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?=$_SESSION['id_competicion_activa']?>&titulo=Orden de salida" target="_blank" class="px-5 py-3 bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+                    <i class="fas fa-download text-xs"></i> Descargar PDF
+                </a>
             </div>
         </div>
+
+        <!-- Panel Nuevo Sorteo (Colapsable) -->
+        <div id="addSorteoPanel" class="hidden mb-10 animate-fade-in-down">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-dice text-blue-600"></i> Configurar Sorteo por Fase</h2>
+                <form id="sortearForm" action="sorteo_rutinas_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="md:col-span-8 space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Seleccionar Fase de Competición</label>
+                        <?php 
+                        ob_start();
+                        include('includes/fases_competicion_select_option.php');
+                        $select_html = ob_get_clean();
+                        $select_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html);
+                        $select_html = str_replace("name='fase'", "name='id_fase'", $select_html);
+                        $select_html = str_replace("class='form-control'", "class='v3-select-fix'", $select_html);
+                        echo $select_html;
+                        ?>
+                    </div>
+                    <div class="md:col-span-4 flex items-end">
+                        <input type="hidden" name="save_btn" value="1">
+                        <button id="sortearBtn" type="submit" class="w-full py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 group">
+                            <i class="fa-solid fa-wand-sparkles group-hover:rotate-12 transition-transform"></i> Ejecutar Sorteo Mágico
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Panel Anular (Colapsable) -->
+        <div id="anularPanel" class="hidden mb-10 animate-fade-in-down">
+            <div class="bg-red-50 rounded-[2.5rem] p-8 border border-red-100 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-sm border border-red-100"><i class="fas fa-triangle-exclamation text-2xl"></i></div>
+                    <div>
+                        <h3 class="text-lg font-black text-red-800 leading-tight">¿Anular todos los sorteos?</h3>
+                        <p class="text-sm text-red-600 font-medium">Esta acción eliminará el orden de salida de TODAS las fases. No se puede deshacer.</p>
+                    </div>
+                </div>
+                <form action="sorteo_rutinas_code.php" method="POST" class="flex gap-4">
+                    <button type="button" onclick="toggleAnularPanel()" class="px-6 py-3 text-xs font-black uppercase text-slate-400 hover:text-slate-600">Cancelar</button>
+                    <button type="submit" name="delete_btn" class="px-8 py-3 bg-red-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-700 transition-all">Sí, Eliminar Sorteos</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Alertas -->
+        <?php if(isset($_SESSION['correcto'])): ?>
+            <div class="mb-8 p-4 bg-white border-l-4 border-green-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4 animate-fade-in">
+                <i class="fas fa-check-circle text-green-500"></i>
+                <span class="text-sm font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
+            </div>
+        <?php endif; ?>
+
+        <?php if(isset($_SESSION['estado'])): ?>
+            <div class="mb-8 p-4 bg-white border-l-4 border-red-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4 animate-fade-in">
+                <i class="fas fa-circle-exclamation text-red-500"></i>
+                <span class="text-sm font-bold"><?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?></span>
+            </div>
+        <?php endif; ?>
+
+        <!-- LISTADO POR CARRILES -->
+        <div class="space-y-16">
+            <?php
+            $query = "SELECT DISTINCT f.id as id_fase, f.id_categoria, c.nombre as categoria, m.nombre as modalidad 
+                      FROM fases f, categorias c, modalidades m 
+                      WHERE f.id_modalidad=m.id AND f.id_categoria = c.id AND f.id_competicion = ".$_SESSION['id_competicion_activa']." 
+                      ORDER BY f.orden";
+            $query_fases = mysqli_query($connection, $query);
+            while ($row_fases = mysqli_fetch_assoc($query_fases)):
+            ?>
+            <div class="relative">
+                <!-- Título de Fase (Sticky Header) -->
+                <div class="sticky top-20 z-30 bg-surface/80 backdrop-blur-md py-4 mb-6 border-b border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-xs shadow-md">
+                            <?php echo strtoupper(substr($row_fases['modalidad'],0,1)); ?>
+                        </div>
+                        <h2 class="text-2xl font-black text-slate-800 tracking-tight">
+                            <?php echo $row_fases['modalidad'];?> <span class="text-blue-600 ml-2 font-medium"><?php echo $row_fases['categoria'];?></span>
+                        </h2>
+                    </div>
+                    <?php
+                    $q_count = "SELECT COUNT(*) as total FROM rutinas WHERE id_fase = ".$row_fases['id_fase'];
+                    $num_r = mysqli_fetch_assoc(mysqli_query($connection, $q_count))['total'];
+                    ?>
+                    <span class="px-4 py-1.5 bg-white text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-slate-200 shadow-sm"><?php echo $num_r; ?> Rutinas</span>
+                </div>
+
+                <!-- Carril de Salida -->
+                <div class="grid grid-cols-1 gap-3 relative">
+                    <!-- Línea de Conexión Visual -->
+                    <div class="absolute left-10 top-0 bottom-0 w-px bg-slate-200 hidden md:block"></div>
+
+                    <?php
+                    $query_r = "SELECT r.id as id_rutina, r.orden, cl.nombre_corto as nombre_club 
+                                FROM rutinas r, clubes cl 
+                                WHERE r.id_fase = ".$row_fases['id_fase']." AND r.id_club = cl.id 
+                                ORDER BY orden";
+                    $res_r = mysqli_query($connection, $query_r);
+                    if(mysqli_num_rows($res_r) > 0):
+                        while ($row = mysqli_fetch_assoc($res_r)):
+                            $nombres_q = "SELECT group_concat(n.nombre, ' ', n.apellidos SEPARATOR ', ') as atletas 
+                                          FROM rutinas_participantes rp 
+                                          JOIN nadadoras n ON rp.id_nadadora = n.id 
+                                          WHERE rp.reserva = 'no' AND rp.id_rutina = ".$row['id_rutina'];
+                            $nombres = mysqli_fetch_assoc(mysqli_query($connection, $nombres_q))['atletas'];
+                            
+                            // Lógica de color de carril (Cortes)
+                            $accent_color = "border-l-slate-200";
+                            $bg_color = "bg-white";
+                            $orden_label = $row['orden'];
+
+                            if($row['orden'] <= -1 && $row['orden'] >= -9) {
+                                $orden_label = "PS";
+                                $accent_color = "border-l-amber-400";
+                                $bg_color = "bg-amber-50/30";
+                            } else if($row['orden'] <= -10) {
+                                $orden_label = "E";
+                                $accent_color = "border-l-purple-400";
+                                $bg_color = "bg-purple-50/30";
+                            } else if($row['orden'] == '1') {
+                                $accent_color = "border-l-emerald-500";
+                                $bg_color = "bg-emerald-50/30";
+                            }
+                    ?>
+                    <div class="<?php echo $bg_color; ?> rounded-2xl p-5 md:p-6 shadow-sm border border-slate-100 border-l-[8px] <?php echo $accent_color; ?> flex flex-col md:flex-row items-center gap-6 group hover:shadow-lg transition-all relative z-10 ml-0 md:ml-4">
+                        <!-- Dorsal / Orden -->
+                        <div class="flex-shrink-0 w-24 text-center">
+                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Orden</p>
+                            <span class="text-xl font-black text-slate-800"><?php echo $orden_label; ?></span>
+                        </div>
+
+                        <!-- Club -->
+                        <div class="flex-shrink-0 w-32 border-x border-slate-100 px-4 text-center">
+                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Entidad</p>
+                            <span class="text-xs font-black text-blue-600 uppercase tracking-widest"><?php echo $row['nombre_club']; ?></span>
+                        </div>
+
+                        <!-- Nadadoras -->
+                        <div class="flex-1 text-center md:text-left">
+                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Participantes</p>
+                            <p class="text-sm font-bold text-slate-600 italic leading-snug"><?php echo $nombres; ?></p>
+                        </div>
+
+                        <!-- ID Interno -->
+                        <div class="flex-shrink-0 text-right opacity-20 group-hover:opacity-100 transition-opacity">
+                            <span class="text-[10px] font-black text-slate-300">ID #<?php echo $row['id_rutina']; ?></span>
+                        </div>
+                    </div>
+                    <?php endwhile; else: ?>
+                        <div class="p-10 bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200 text-center">
+                            <p class="text-slate-400 italic text-sm font-medium">Pendiente de sorteo</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <?php endwhile; ?>
+        </div>
+
+    </div>
+</main>
+
+<!-- Modal de Animación Mágica (v3.0 Refined) -->
+<div id="animacionModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-xl transition-all duration-500 opacity-0">
+    <div class="text-center">
+        <div class="relative inline-block mb-12">
+            <!-- Partículas rotando (CSS puro) -->
+            <div class="absolute inset-0 animate-spin-slow">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-blue-400 rounded-full blur-sm"></div>
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-emerald-400 rounded-full blur-sm"></div>
+            </div>
+            <i id="iconoAnimacion" class="fa-solid fa-wand-magic-sparkles text-7xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.5)]"></i>
+        </div>
+        <h2 id="animationText" class="text-3xl font-black text-white tracking-tighter mb-4">Invocando el azar...</h2>
+        <p class="text-slate-400 font-medium uppercase tracking-[0.3em] text-xs">Sistema de Sorteo SINCRM v3.0</p>
     </div>
 </div>
-		<div class="modal fade" id="anularSorteo" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel"><i class="fa-solid fa-delete-left"></i> Anular sorteo</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<form action="sorteo_rutinas_code.php" method="POST" enctype="multipart/form-data">
-						<div class="modal-body">
-							<div class="row">
-								<div class="form-group col-12">
-									<label for="mensaje">Se va a eliminar el sorteo de la competición completa. <br>Una vez pulsado "Eliminar" no podrá deshacerse.<br>¿Estás seguro? </label>
-								</div>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-								<button type="submit" class="btn btn-danger" name="delete_btn"><i class="fa-solid fa-delete-left"></i> Eliminar</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-		<!-- Final Modal -->
-		<!-- Begin Page Content -->
-		<div class="container-fluid">
-			<!-- Titulo página y pdf -->
-			<div class=" align-items-center justify-content-between">
-				<div class="row">
-					<div class="col col-6">
-						<h4 class=" font-weight-bold text-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Orden de salida para rutinas </h4>
-					</div>
-					<div class="col col-6 ">
-						<div class="row">
-							<button type="button" class="col col-3 btn btn-primary" data-toggle="modal" data-target="#addUserProfile"><i class="fa-solid fa-random"></i> Sortear </button>
-							<div class="col col-1"></div>
-							<button type="button" class="col col-3 btn btn-danger" data-toggle="modal" data-target="#anularSorteo"><i class="fa-solid fa-delete-left"></i> Anular </button>
-							<div class="col col-1"></div>
 
-							<div class="col col-4">
-								<a href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?=$_SESSION['id_competicion_activa']?>&titulo=Orden de salida" class="d-none d-sm-inline-block btn btn-success shadow-sm" target="_blank"><i class="fas fa-download fa-sm"></i> Descargar </a>
-							</div>
-						</div>
-					</div>
-				</div>
+<script>
+function toggleAddSorteoPanel() { document.getElementById('addSorteoPanel').classList.toggle('hidden'); }
+function toggleAnularPanel() { document.getElementById('anularPanel').classList.toggle('hidden'); }
 
-			</div>
-
-			<div class="card-body">
-				<?php
-          if(isset($_SESSION['correcto']) && $_SESSION['correcto'] != ''){
-            echo '<div class="alert alert-primary" role="alert">'.$_SESSION['correcto'].'</div>';
-            unset($_SESSION['correcto']);
-          }
-          if(isset($_SESSION['estado']) && $_SESSION['estado'] != ''){
-            echo '<div class="alert alert-danger" role="alert">'.$_SESSION['estado'].'</div>';
-            unset($_SESSION['estado']);
-          }
-          ?>
-				<div class="table-responsive">
-					<?php
-            $query = "SELECT DISTINCT fases.id as id_fase, fases.id_categoria, categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades WHERE fases.id_modalidad=modalidades.id and fases.id_categoria = categorias.id and fases.id_competicion = ".$_SESSION['id_competicion_activa']." order by fases.orden";
-            $query_categorias = mysqli_query($connection,$query);
-            $numero_categorias = $query_categorias->num_rows;
-            while ($row_fases = mysqli_fetch_assoc($query_categorias)) {
-                $query = "SELECT id FROM fases WHERE id_categoria = ".$row_fases['id_categoria']." and id_competicion = ".$_SESSION['id_competicion_activa']   ;
-                $numero_fases = mysqli_query($connection,$query)->num_rows;
-//                $numero_categorias=1;
-                    ?>
-					<table class="table table-striped table-hover table-sm" id="nodataTable" width="100%" cellspacing="0">
-						<thead class="thead-light">
-							<tr>
-								<th colspan=4>
-									<h2 class="text-center"> <?php echo $row_fases['modalidad'].' '.$row_fases['categoria'];?></h2>
-								</th>
-							</tr>
-							<tr>
-								<th scope="col" class="col col-1  text-center"><i class="fa-solid fa-list-ol"></i></th>
-								<th scope="col" class="col col-1 ">#</th>
-								<th scope="col" class="col col-2 ">Club</th>
-								<th scope="col" class="col col-8 ">Nadadoras</th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php
-                $query = "SELECT rutinas.id as id_rutina, rutinas.orden, clubes.nombre_corto as nombre_club FROM rutinas, clubes WHERE rutinas.id_fase = ".$row_fases['id_fase']." and rutinas.id_club = clubes.id ORDER BY orden";
-                $query_run = mysqli_query($connection,$query);
-                if(mysqli_num_rows($query_run) > 0){
-					while ($row = mysqli_fetch_assoc($query_run)) {
-						$nombres = "SELECT group_concat(nadadoras.nombre SEPARATOR ', ') FROM rutinas, rutinas_participantes, nadadoras WHERE nadadoras.id = rutinas_participantes.id_nadadora and rutinas.id = rutinas_participantes.id_rutina and rutinas_participantes.reserva = 'no' and id_rutina = ".$row['id_rutina'];
-						$nombres = mysqli_result(mysqli_query($connection,$nombres));
-						$class_orden='';
-						if($row['orden'] == '-1'){
-							$row['orden'] = 'PRESWIMMER';
-							$class_orden = 'table-warning';
-						}
-						else if($row['orden'] == '-2'){
-							$row['orden'] = 'EXHIBICIÓN';
-							$class_orden = 'table-warning';
-						}else if($row['orden'] == '1'){
-						  $class_orden = 'table-success';
-					}
-
-                    ?>
-							<tr class="<?php echo $class_orden;?>">
-								<th class="table-success text-center" scope="row"> <?php echo $row['orden']; ?> </th>
-								<td class="" scope="row"> <?php echo $row['id_rutina']; ?> </td>
-								<td class="" scope="row"> <?php echo $row['nombre_club']; ?> </td>
-								<td class=""> <?php echo $nombres;?> </td>
-							</tr>
-							<?php
-                      }
-                    }
-                    else{
-                      echo "<tr><td colspan='4'>No se han encontrado registros en la base de datos</td></tr>";
-                    }
-                    ?>
-						</tbody>
-					</table>
-					<?php
-            }
-            ?>
-				</div>
-			</div>
-			<!-- template -->
-			<?php
-            include('includes/scripts.php');
-            include('includes/footer.php');
-            ?>
-			<script>
 document.addEventListener('DOMContentLoaded', function() {
-    const sortearBtn = document.getElementById('sortearBtn');
-    const animacionModal = new bootstrap.Modal(document.getElementById('animacionModal'));
-    const iconoAnimacion = document.getElementById('iconoAnimacion');
-    const formulario = document.getElementById('sortearForm');
-    const modalBody = document.querySelector('#animacionModal .modal-body');
+    const form = document.getElementById('sortearForm');
+    const modal = document.getElementById('animacionModal');
+    const text = document.getElementById('animationText');
+    const icon = document.getElementById('iconoAnimacion');
 
-    // Add a container for particles
-    const particlesContainer = document.createElement('div');
-    particlesContainer.id = 'particles-container';
-    particlesContainer.style.position = 'absolute';
-    particlesContainer.style.top = '0';
-    particlesContainer.style.left = '0';
-    particlesContainer.style.width = '100%';
-    particlesContainer.style.height = '100%';
-    particlesContainer.style.pointerEvents = 'none';
-    modalBody.appendChild(particlesContainer);
-
-    // Add text element for animation messages
-    const animationText = document.createElement('div');
-    animationText.style.color = 'white';
-    animationText.style.marginTop = '20px';
-    animationText.style.fontSize = '1.5rem';
-    animationText.style.fontWeight = 'bold';
-    animationText.style.textShadow = '0 0 10px rgba(0,0,0,0.5)';
-    modalBody.appendChild(animationText);
-
-    // Function to create magic particles
-    function createParticles() {
-        for (let i = 0; i < 20; i++) {
-            setTimeout(() => {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = '10px';
-                particle.style.height = '10px';
-                particle.style.backgroundColor = getRandomColor();
-                particle.style.borderRadius = '50%';
-                particle.style.filter = 'blur(1px)';
-                particle.style.boxShadow = '0 0 10px ' + getRandomColor();
-
-                // Random starting position near the wand
-                const iconRect = iconoAnimacion.getBoundingClientRect();
-                const modalRect = modalBody.getBoundingClientRect();
-
-                const startX = (iconRect.left + iconRect.width/2) - modalRect.left;
-                const startY = (iconRect.top + iconRect.height/2) - modalRect.top;
-
-                particle.style.left = startX + 'px';
-                particle.style.top = startY + 'px';
-
-                particlesContainer.appendChild(particle);
-
-                // Animate particle
-                const angle = Math.random() * Math.PI * 2;
-                const distance = 100 + Math.random() * 200;
-                const destinationX = startX + Math.cos(angle) * distance;
-                const destinationY = startY + Math.sin(angle) * distance;
-
-                particle.animate([
-                    { left: startX + 'px', top: startY + 'px', opacity: 1, transform: 'scale(0.3)' },
-                    { left: destinationX + 'px', top: destinationY + 'px', opacity: 0, transform: 'scale(1.5)' }
-                ], {
-                    duration: 1000 + Math.random() * 1000,
-                    easing: 'ease-out',
-                    fill: 'forwards'
-                });
-
-                // Remove particle after animation
-                setTimeout(() => {
-                    if (particlesContainer.contains(particle)) {
-                        particlesContainer.removeChild(particle);
+    if(form) {
+        form.addEventListener('submit', function(e) {
+            const faseSelect = document.querySelector('select[name="id_fase"]');
+            const selectedOption = faseSelect.options[faseSelect.selectedIndex];
+            const isAll = faseSelect.value === '0';
+            
+            // Si es una fase concreta, comprobamos si ya está sorteada mediante un atributo de datos
+            // (Necesitamos actualizar el include de fases para que nos dé esta info o hacerlo vía JS)
+            // Por simplicidad y UX, usaremos un enfoque de "confirmación siempre que sea individual"
+            // o mejor aún, si el usuario elige una fase, lanzamos el aviso.
+            
+            if(!isAll) {
+                e.preventDefault();
+                Swal.fire({
+                    title: '¿Confirmar Sorteo?',
+                    text: "Se generará un nuevo orden de salida para esta fase. Si ya existía uno, será sobreescrito.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#94a3b8',
+                    confirmButtonText: 'Sí, Sortear',
+                    cancelButtonText: 'Cancelar',
+                    customClass: {
+                        popup: 'rounded-[2rem]',
+                        confirmButton: 'rounded-xl px-6 py-3 font-black uppercase text-xs tracking-widest',
+                        cancelButton: 'rounded-xl px-6 py-3 font-black uppercase text-xs tracking-widest'
                     }
-                }, 2000);
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        ejecutarAnimacion(form);
+                    }
+                });
+            } else {
+                e.preventDefault();
+                ejecutarAnimacion(form);
+            }
+        });
 
-            }, i * 50);
+        function ejecutarAnimacion(formElement) {
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('opacity-100'), 10);
+            
+            const frases = [
+                { t: "Consultando al oráculo de Delfos...", c: "text-blue-400", i: "fa-spaghetti-monster-flying" },
+                { t: "Mezclando los dorsales con elegancia...", c: "text-purple-400", i: "fa-shuffle" },
+                { t: "Sacudiendo la chistera mágica...", c: "text-amber-400", i: "fa-hat-wizard" },
+                { t: "Invocando el espíritu de la competición...", c: "text-red-400", i: "fa-ghost" },
+                { t: "Alineando los astros de la piscina...", c: "text-indigo-400", i: "fa-star-and-crescent" },
+                { t: "Batiendo récords de aleatoriedad...", c: "text-emerald-400", i: "fa-bolt" },
+                { t: "¡Habemus Sorteo!", c: "text-white", i: "fa-check-double" }
+            ];
+
+            let step = 0;
+            const interval = setInterval(() => {
+                if(step < frases.length) {
+                    text.textContent = frases[step].t;
+                    icon.className = `fa-solid ${frases[step].i} text-7xl ${frases[step].c} transition-all duration-500`;
+                    step++;
+                } else {
+                    clearInterval(interval);
+                    formElement.submit();
+                }
+            }, 800);
         }
     }
-
-    function getRandomColor() {
-        const colors = ['#FFD700', '#FF69B4', '#00BFFF', '#7FFF00', '#FF4500', '#9370DB'];
-        return colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    // Submit event handler with enhanced animations
-    formulario.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        // Clear previous particles
-        particlesContainer.innerHTML = '';
-
-        // First animation - magic wand
-        iconoAnimacion.className = 'fa-solid fa-wand-magic-sparkles fa-4x fa-bounce';
-        iconoAnimacion.style.color = '#FFD700'; // Gold color
-        animationText.textContent = 'Preparando sorteo...';
-        animationText.style.opacity = '0';
-        animacionModal.show();
-        sortearBtn.disabled = true;
-
-        // Fade in text
-        setTimeout(() => {
-            animationText.style.transition = 'opacity 0.5s ease-in';
-            animationText.style.opacity = '1';
-        }, 100);
-
-        // Create magic particles
-        setTimeout(() => {
-            createParticles();
-        }, 500);
-
-        // Second animation - processing
-        setTimeout(function() {
-            iconoAnimacion.className = 'fas fa-spinner fa-spin fa-4x fa-pulse';
-            iconoAnimacion.style.color = '#00BFFF'; // Deep sky blue
-            animationText.style.opacity = '0';
-
-            setTimeout(() => {
-                animationText.textContent = 'Procesando participantes...';
-                animationText.style.opacity = '1';
-            }, 300);
-
-            // Third animation - shuffling
-            setTimeout(function() {
-                iconoAnimacion.className = 'fa-solid fa-shuffle fa-4x fa-beat';
-                iconoAnimacion.style.color = '#7FFF00'; // Chartreuse
-                animationText.style.opacity = '0';
-
-                setTimeout(() => {
-                    animationText.textContent = '¡Mezclando!';
-                    animationText.style.opacity = '1';
-                    createParticles();
-                }, 300);
-
-                // Final animation - success
-                setTimeout(function() {
-                    iconoAnimacion.className = 'fa-solid fa-check-circle fa-4x';
-                    iconoAnimacion.style.color = '#50C878'; // Emerald green
-                    animationText.style.opacity = '0';
-
-                    setTimeout(() => {
-                        animationText.textContent = '¡Sorteo completado!';
-                        animationText.style.opacity = '1';
-
-                        // Add burst effect
-                        const burstParticles = 40;
-                        for (let i = 0; i < burstParticles; i++) {
-                            const particle = document.createElement('div');
-                            particle.style.position = 'absolute';
-                            particle.style.width = '8px';
-                            particle.style.height = '8px';
-                            particle.style.backgroundColor = getRandomColor();
-                            particle.style.borderRadius = '50%';
-                            particle.style.boxShadow = '0 0 5px ' + getRandomColor();
-
-                            const iconRect = iconoAnimacion.getBoundingClientRect();
-                            const modalRect = modalBody.getBoundingClientRect();
-
-                            const startX = (iconRect.left + iconRect.width/2) - modalRect.left;
-                            const startY = (iconRect.top + iconRect.height/2) - modalRect.top;
-
-                            particle.style.left = startX + 'px';
-                            particle.style.top = startY + 'px';
-
-                            particlesContainer.appendChild(particle);
-
-                            const angle = (i / burstParticles) * Math.PI * 2;
-                            const distance = 150 + Math.random() * 100;
-                            const destinationX = startX + Math.cos(angle) * distance;
-                            const destinationY = startY + Math.sin(angle) * distance;
-
-                            particle.animate([
-                                { left: startX + 'px', top: startY + 'px', opacity: 1, transform: 'scale(0.5)' },
-                                { left: destinationX + 'px', top: destinationY + 'px', opacity: 0, transform: 'scale(0)' }
-                            ], {
-                                duration: 1000,
-                                easing: 'ease-out',
-                                fill: 'forwards'
-                            });
-                        }
-                    }, 300);
-
-                    // Submit form and close modal
-                    setTimeout(function() {
-                        animacionModal.hide();
-                        formulario.submit();
-                        sortearBtn.disabled = false;
-                    }, 1200);
-
-                }, 1500);
-            }, 1500);
-        }, 1500);
-    });
 });
-			</script>
+</script>
+
+<style>
+@keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 3s linear infinite; }
+</style>
+
+<?php include('includes/scripts.php'); include('includes/footer.php'); ?>
