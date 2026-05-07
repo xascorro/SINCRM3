@@ -282,3 +282,33 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-05-06 08:41:34] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Global) para: Pase de Nivel 3
 [2026-05-06 09:17:02] [SECURITY] [SISTEMA] [162.158.122.185] [4093503n7cpahoo4ut1t5pejrp] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
 [2026-05-06 09:17:05] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [4093503n7cpahoo4ut1t5pejrp] Inicio de sesión exitoso
+[2026-05-06 11:40:01] [SECURITY] [SISTEMA] [162.158.122.186] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-06 11:40:05] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-06 12:40:31] [SECURITY] [SISTEMA] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-06 12:40:34] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-06 12:41:39] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] [3vb9ko4jtjrrur34qi6rnrb00m] Nuevo backup creado: sincrm3_20260506_1241.sql.gz (antes de recuperar paneles perdidos de competicion 77 4 liga de figuras)
+[2026-05-06 13:05:16] [SECURITY] [SISTEMA] [162.158.123.222] [4093503n7cpahoo4ut1t5pejrp] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-06 13:05:22] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [4093503n7cpahoo4ut1t5pejrp] Inicio de sesión exitoso
+[2026-05-06 13:14:53] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Clonación de panel 119 desde fase 376 completada para 4 fases
+[2026-05-06 13:16:07] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [3vb9ko4jtjrrur34qi6rnrb00m] Clonación de panel 119 desde fase 380 completada para 3 fases
+[2026-05-06 13:19:19] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-06 13:21:36] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] Auditoría BIAS cerrada/recalculada para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-06 13:21:38] [INFO] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-06 13:22:04] [INFO] [xascorro@gmail.com] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] Consulta de Auditoría BIAS (Detalle Juez) para: ALAYNE ISABEL MIJANGOS CHAN
+[2026-05-06 14:55:19] [SECURITY] [SISTEMA] [162.158.123.222] [gaa4evne3vs0um380emgj84v39] Intento de sesión fallido: Contraseña incorrecta para xascorro@gmail.com
+[2026-05-06 23:07:23] [SECURITY] [SISTEMA] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-06 23:07:26] [SUCCESS] [xascorro@gmail.com] [162.158.123.41] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-06 23:14:30] [SECURITY] [xascorro@gmail.com] [172.68.134.210] [3vb9ko4jtjrrur34qi6rnrb00m] BLOQUEADO: Intento de borrar panel 'Panel único' (ID: 119) con 1200 notas vinculadas.
+[2026-05-06 23:18:34] [INFO] [xascorro@gmail.com] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] Cierre de sesión voluntario
+[2026-05-06 23:18:37] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-06 23:19:46] [SECURITY] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Reparación de integridad: Eliminadas 10 notas huérfanas.
+[2026-05-07 05:15:15] [SECURITY] [SISTEMA] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-07 05:15:20] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-07 05:55:21] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [3vb9ko4jtjrrur34qi6rnrb00m] Competición #78 establecida como activa y actualizada en sesión
+[2026-05-07 06:19:26] [INFO] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] Usuario actualizado (ID: 1): xascorro@gmail.com
+[2026-05-07 06:27:36] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-07 06:38:06] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Competición #81 establecida como activa y actualizada en sesión
+[2026-05-07 06:38:27] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Competición #77 establecida como activa y actualizada en sesión
+[2026-05-07 06:39:55] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] ACTUALIZADO: Panel Técnico (ID: 119) - Nuevo Nombre: 'Panel único', Jueces: 5, Peso: 100%, Obsoleto: no, Puntua: si
+[2026-05-07 06:40:39] [INFO] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Cierre de sesión voluntario
+[2026-05-07 06:40:41] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso

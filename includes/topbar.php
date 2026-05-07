@@ -41,9 +41,9 @@ include('security.php');
                 <p class="text-[11px] md:text-sm font-black text-slate-800 truncate mb-0 leading-none">
                     <?php 
                     if(!empty($_SESSION['nombre_competicion_usuario'])) {
-                        echo $_SESSION['nombre_competicion_usuario'];
+                        echo $_SESSION['id_competicion_usuario'] . ' - ' . $_SESSION['nombre_competicion_usuario'];
                     } elseif($_SESSION['id_rol'] == '1' && !empty($_SESSION['nombre_competicion_activa'])) {
-                        echo $_SESSION['nombre_competicion_activa'];
+                        echo $_SESSION['id_competicion_activa'] . ' - ' . $_SESSION['nombre_competicion_activa'];
                     } else {
                         echo '<span class="text-red-400 italic font-black uppercase tracking-tighter">Sin Competición</span>';
                     }

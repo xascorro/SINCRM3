@@ -2,7 +2,7 @@
 
 ## 🔑 Acceso al Servidor Beta
 - **Host:** `beta.pedrodiaz.eu` | **Usuario:** `ubuntu` | **Puerto:** 22
-- **Ruta Web:** `/var/www/html/sincrm`
+- **Ruta Web:** `/var/www/html/beta`
 - **Clave SSH:** `~/.ssh/beta-sincrm.key`
 
 ## 🗄️ Acceso a Base de Datos (MariaDB)

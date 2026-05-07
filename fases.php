@@ -119,9 +119,12 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
             while ($row = mysqli_fetch_assoc($res)):
             ?>
             <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 group hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-8">
-                <div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-slate-50 border border-slate-100 shadow-inner">
-                    <span class="text-xs font-black text-slate-300 italic">#<?php echo $row['orden']; ?></span>
-                    <span class="text-[10px] font-black text-slate-400 uppercase">Fase</span>
+                <!-- ID Más Visible -->
+                <div class="absolute top-4 right-8 text-[10px] font-black text-slate-400 italic tracking-widest uppercase opacity-40">ID: #<?php echo $row['id']; ?></div>
+
+                <div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <span class="text-[9px] font-black text-blue-300 uppercase leading-none mb-1">Orden</span>
+                    <span class="text-xl font-black text-blue-600 leading-none"><?php echo $row['orden']; ?></span>
                 </div>
                 <div class="flex-1">
                     <div class="mb-2">
@@ -133,14 +136,14 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         </h3>
                     </div>
                     <?php if($is_figuras): ?>
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic">G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
                     <?php else: ?>
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><?php echo $row['num_rutinas']; ?> rutinas registradas.</p>
+                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <?php echo $row['num_rutinas']; ?> rutinas registradas.</p>
                     <?php endif; ?>
                 </div>
                 <div class="flex items-center gap-3">
-                    <form action="fases_edit.php" method="POST"><input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>"><button type="submit" name="edit_btn" class="px-5 py-2.5 bg-slate-50 text-slate-400 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-50 hover:text-blue-600 hover:shadow-md transition-all flex items-center gap-2"><i class="fas fa-cog"></i> Configurar</button></form>
-                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');"><input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>"><button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center"><i class="fas fa-trash-alt text-sm"></i></button></form>
+                    <form action="fases_edit.php" method="POST"><input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>"><button type="submit" name="edit_btn" class="px-5 py-2.5 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2"><i class="fas fa-cog"></i> Configurar</button></form>
+                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');"><input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>"><button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center border border-red-100/50 shadow-sm"><i class="fas fa-trash-alt text-sm"></i></button></form>
                 </div>
             </div>
             <?php endwhile; ?>

@@ -22,6 +22,9 @@ include('includes/navbar.php');
                 <p class="text-slate-500 font-medium">Monitorización en tiempo real y diagnóstico de salud del servidor.</p>
             </div>
             <div class="flex gap-3">
+                <a href="diagnostico.php" class="px-6 py-3 bg-slate-800 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-black transition-all flex items-center gap-2">
+                    <i class="fas fa-stethoscope"></i> Diagnóstico
+                </a>
                 <a href="configuracion_sistema.php" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2 shadow-blue-500/20">
                     <i class="fas fa-sliders"></i> Configuración
                 </a>

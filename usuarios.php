@@ -51,7 +51,7 @@ include('includes/navbar.php');
                             ob_start();
                             include("includes/club_select_option.php");
                             $select = ob_get_clean();
-                            echo str_replace('class="form-control"', 'class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold appearance-none"', $select);
+                            echo str_replace(["class='form-control'", 'class="form-control"'], 'class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold appearance-none"', $select);
                             ?>
                         </div>
                     </div>
@@ -64,7 +64,7 @@ include('includes/navbar.php');
                             $select_rol = ob_get_clean();
                             // Limpieza del include antiguo para adaptarlo al diseño v3
                             $select_rol = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_rol);
-                            echo str_replace(['class="form-control"', 'name=\'edit_rol\''], ['class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold appearance-none"', 'name="id_rol"'], $select_rol);
+                            echo str_replace(["class='form-control'", 'class="form-control"', "name='edit_rol'", "name=\"edit_rol\""], ['class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold appearance-none"', 'class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-bold appearance-none"', 'name="id_rol"', 'name="id_rol"'], $select_rol);
                             ?>
                         </div>
                     </div>

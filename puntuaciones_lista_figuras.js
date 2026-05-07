@@ -84,13 +84,13 @@ $('input[type="number"]').blur(function() {
      }
  });
 
-// Hasta 4 decimales, sin ceros sobrantes a la derecha
+// Exactamente 4 decimales (con ceros a la derecha)
 function puntuacionesFmtHasta4(val) {
 	var n = Number(val);
 	if (!isFinite(n)) {
 		return '';
 	}
-	return String(parseFloat(n.toFixed(4)));
+	return n.toFixed(4);
 }
 
 function puntuacionesFlashCelda(td) {

@@ -9,104 +9,149 @@ if(isset($_POST['save_btn'])){
 	$query="INSERT INTO puesto_juez (id_puestos_juez, id_juez, id_competicion) VALUES ('".$id_puestos_juez."','".$id_juez."', '".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
+        write_log("AÑADIDO: Juez a Dirección - Puesto ID: $id_puestos_juez, Juez ID: $id_juez", "SUCCESS");
 		$_SESSION['correcto'] = 'Juez añadido con éxito';
 		header('Location: paneles_jueces.php');
 	}else{
+        write_log("FALLO AÑADIR: Juez a Dirección - Error: ".mysqli_error($connection), "ERROR");
 		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
 		header('Location: paneles_jueces.php');	
 	}
+    exit();
 }
 
 //Actualizar registro
 if(isset($_POST['update_btn'])){
 	$id = $_POST['edit_id'];
-	$nombre = $_POST['edit_nombre'];
 	$id_juez = $_POST['id_juez'];	
     $id_puestos_juez = $_POST['id_puestos_juez'];
-
 
 	$query = "UPDATE puesto_juez SET id_puestos_juez ='$id_puestos_juez', id_juez='$id_juez' WHERE id='$id'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
+        write_log("ACTUALIZADO: Juez de Dirección (ID Vinculo: $id) - Nuevo Puesto: $id_puestos_juez, Nuevo Juez: $id_juez", "SUCCESS");
 		$_SESSION['correcto'] = 'Datos actualizados con éxito';
 		header('Location: paneles_jueces.php');
 	}else{
+        write_log("FALLO ACTUALIZAR: Juez de Dirección (ID Vinculo: $id) - Error: ".mysqli_error($connection), "ERROR");
 		$_SESSION['estado'] = 'Error. Los datos no se han actualizado <br>'.mysqli_error($connection);
 		header('Location: paneles_jueces.php');	
 	}
+    exit();
 }
 
-//Borrar registro
+//Borrar registro (Puesto Juez en Dirección)
 if(isset($_POST['delete_btn'])){
-	$id = $_POST['delete_id'];
+	$id = mysqli_real_escape_string($connection, $_POST['delete_id']);
+    
+    // Obtener info para el log antes de borrar
+    $q_info = "SELECT j.nombre, j.apellidos, p.nombre as puesto FROM puesto_juez pj JOIN jueces j ON pj.id_juez = j.id JOIN puestos_juez p ON pj.id_puestos_juez = p.id WHERE pj.id = '$id'";
+    $info = mysqli_fetch_assoc(mysqli_query($connection, $q_info));
+    $detalles = "{$info['puesto']}: {$info['nombre']} {$info['apellidos']} (ID Vinculo: $id)";
 
 	$query = "DELETE FROM puesto_juez WHERE id ='$id'"; 
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Registro eliminado con éxito';
-		header('Location: paneles_jueces.php');
+	if(mysqli_query($connection, $query)){
+        write_log("ELIMINADO: Juez de Dirección - $detalles", "SECURITY");
+		$_SESSION['correcto'] = 'Juez eliminado de la dirección';
 	}else{
-		$_SESSION['estado'] = 'Error. El Registro no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: paneles_jueces.php');	
+        write_log("FALLO ELIMINAR: Juez de Dirección - $detalles - Error: ".mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'Error técnico al eliminar';
 	}
+    header('Location: paneles_jueces.php');
+    exit();
 }
 
-
-//Añadir panel jueces
+//Añadir panel técnico
 if(isset($_POST['save_btn_panel'])){
-	$nombre = $_POST['nombre'];
-	$id_paneles_tipo = $_POST['id_paneles_tipo'];
-	$numero_jueces = $_POST['numero_jueces'];
-    $peso = $_POST['peso'];
-    $descripcion = $_POST['descripcion'];
-    $puntua = $_POST['puntua'];
-    $color = $_POST['color'];
-	$query="INSERT INTO paneles (nombre, id_paneles_tipo, numero_jueces, peso, descripcion, puntua, color, id_competicion) VALUES ('".$nombre."','".$id_paneles_tipo."','".$numero_jueces."', '".$peso."','".$descripcion."','".$puntua."','".$color."','".$id_competicion."')";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Panel añadido con éxito';
-		header('Location: paneles_jueces.php');
+	$nombre = mysqli_real_escape_string($connection, $_POST['nombre']);
+	$id_paneles_tipo = mysqli_real_escape_string($connection, $_POST['id_paneles_tipo']);
+	$numero_jueces = intval($_POST['numero_jueces']);
+    $peso = intval($_POST['peso']);
+    $descripcion = mysqli_real_escape_string($connection, $_POST['descripcion'] ?? '');
+    $color = mysqli_real_escape_string($connection, $_POST['color'] ?? '#3b82f6');
+
+	$query="INSERT INTO paneles (nombre, id_paneles_tipo, numero_jueces, peso, descripcion, color, id_competicion) 
+            VALUES ('$nombre', '$id_paneles_tipo', '$numero_jueces', '$peso', '$descripcion', '$color', '$id_competicion')";
+	
+    if(mysqli_query($connection, $query)){
+        write_log("CREADO: Panel Técnico '$nombre' - $numero_jueces Jueces, Peso: $peso%", "SUCCESS");
+		$_SESSION['correcto'] = 'Panel técnico añadido con éxito';
 	}else{
-		$_SESSION['estado'] = 'Error. Registro no añadido <br>'.mysqli_error($connection);
-		header('Location: paneles_jueces.php');
+        write_log("FALLO CREAR: Panel Técnico '$nombre' - Error: ".mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'Error técnico al crear el panel';
 	}
+    header('Location: paneles_jueces.php');
+    exit();
 }
 
-//Actualizar panel de jueces
+//Actualizar panel técnico
 if(isset($_POST['update_btn_panel'])){
-	$id = $_POST['edit_id'];
-	$id_paneles_tipo = $_POST['id_paneles_tipo'];
-	$nombre = $_POST['edit_nombre'];
-	$numero_jueces = $_POST['edit_numero_jueces'];
-    $peso = $_POST['edit_peso'];
-	$color = $_POST['edit_color'];
-	$descripcion = $_POST['edit_descripcion'];
+	$id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+	$id_paneles_tipo = mysqli_real_escape_string($connection, $_POST['id_paneles_tipo']);
+	$nombre = mysqli_real_escape_string($connection, $_POST['edit_nombre']);
+	$numero_jueces = intval($_POST['edit_numero_jueces']);
+    $peso = intval($_POST['edit_peso']);
+	$color = mysqli_real_escape_string($connection, $_POST['edit_color']);
+	$descripcion = mysqli_real_escape_string($connection, $_POST['edit_descripcion'] ?? '');
+    
+    // Lógica Excluyente: Tipo de Puntuación (AQUA vs Sincro)
+    $obsoleto = 'no'; // Default AQUA
+    if (isset($_POST['edit_puntuacion_sincro'])) {
+        $obsoleto = 'si';
+    } elseif (isset($_POST['edit_puntuacion_aqua'])) {
+        $obsoleto = 'no';
+    }
 
+    // Lógica Excluyente: Contabilización (Puntúa vs DTC)
+    $puntua = 'si'; // Default Puntúa
+    if (isset($_POST['edit_contabilizacion_dtc'])) {
+        $puntua = 'no';
+    } elseif (isset($_POST['edit_contabilizacion_puntua'])) {
+        $puntua = 'si';
+    }
 
-	$query = "UPDATE paneles SET nombre ='$nombre', numero_jueces='$numero_jueces', peso ='$peso', color ='$color', descripcion ='$descripcion', id_paneles_tipo='$id_paneles_tipo' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
+	$query = "UPDATE paneles SET nombre ='$nombre', numero_jueces='$numero_jueces', peso ='$peso', color ='$color', descripcion ='$descripcion', id_paneles_tipo='$id_paneles_tipo', obsoleto='$obsoleto', puntua='$puntua' WHERE id='$id'";
+	if(mysqli_query($connection, $query)){
+        write_log("ACTUALIZADO: Panel Técnico (ID: $id) - Nuevo Nombre: '$nombre', Jueces: $numero_jueces, Peso: $peso%, Obsoleto: $obsoleto, Puntua: $puntua", "SUCCESS");
 		$_SESSION['correcto'] = 'Panel actualizado con éxito';
-		header('Location: paneles_jueces.php');
 	}else{
-		$_SESSION['estado'] = 'Error. El Panel no se ha actualizado <br>'.mysqli_error($connection);
-		header('Location: paneles_jueces.php');
+        write_log("FALLO ACTUALIZAR: Panel Técnico (ID: $id) - Error: ".mysqli_error($connection), "ERROR");
+		$_SESSION['estado'] = 'Error técnico al actualizar el panel';
 	}
+    header('Location: paneles_jueces.php');
+    exit();
 }
 
-//Borrar panel de jueces
-if(isset($_POST['delete_btn_panel'])){
-	$id = $_POST['delete_id'];
 
-	$query = "DELETE FROM paneles WHERE id ='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Panel eliminado con éxito';
-		header('Location: paneles_jueces.php');
-	}else{
-		$_SESSION['estado'] = 'Error. El Panel no se ha eliminado <br>'.mysqli_error($connection);
-		header('Location: paneles_jueces.php');
-	}
+//Borrar panel técnico de jueces
+if(isset($_POST['delete_btn_panel'])){
+	$id = mysqli_real_escape_string($connection, $_POST['delete_id']);
+    
+    // 1. Obtener info del panel
+    $q_p = "SELECT nombre FROM paneles WHERE id = '$id'";
+    $p_info = mysqli_fetch_assoc(mysqli_query($connection, $q_p));
+    $nombre_panel = $p_info['nombre'] ?? 'Desconocido';
+
+    // 2. PROTECCIÓN CRÍTICA: ¿Tiene este panel puntuaciones ya grabadas en alguna fase?
+    $q_check = "SELECT COUNT(*) as total FROM puntuaciones_jueces WHERE id_panel_juez IN (SELECT id FROM panel_jueces WHERE id_panel = '$id')";
+    $count = mysqli_fetch_assoc(mysqli_query($connection, $q_check))['total'];
+
+    if($count > 0){
+        write_log("BLOQUEADO: Intento de borrar panel '$nombre_panel' (ID: $id) con $count notas vinculadas.", "SECURITY");
+        $_SESSION['estado'] = "⚠️ BLOQUEO DE SEGURIDAD: Este panel tiene $count notas grabadas en la competición. No se puede borrar para evitar la pérdida de datos.";
+    } else {
+        // 3. Si no tiene notas, procedemos pero LOGUEAMOS
+        $query = "DELETE FROM paneles WHERE id ='$id'";
+        if(mysqli_query($connection, $query)){
+            write_log("ELIMINADO: Panel Técnico '$nombre_panel' (ID: $id) - Sin notas vinculadas.", "SECURITY");
+            $_SESSION['correcto'] = 'Panel eliminado con éxito';
+        }else{
+            write_log("FALLO ELIMINAR: Panel '$nombre_panel' (ID: $id) - Error: ".mysqli_error($connection), "ERROR");
+            $_SESSION['estado'] = 'Error al eliminar el registro';
+        }
+    }
+    header('Location: paneles_jueces.php');
+    exit();
 }
 
 //Añadir/Actualizar panel_jueces (INDIVIDUAL O BULK)
@@ -158,8 +203,10 @@ if(isset($_POST['panel_jueces_save_btn']) || isset($_POST['panel_jueces_bulk_sav
     }
 
     if($errors == 0){
+        write_log("CONFIGURADO: Composición de Panel ID $id_panel en Fase #$id_fase ($procesados jueces)", "SUCCESS");
         $_SESSION['correcto'] = "Configuración del panel guardada ($procesados jueces).";
     } else {
+        write_log("FALLO CONFIGURAR: Composición de Panel ID $id_panel en Fase #$id_fase - $errors errores técnicos", "ERROR");
         $_SESSION['estado'] = "Error al guardar: $errors fallos técnicos.";
     }
     
