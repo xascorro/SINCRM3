@@ -2,13 +2,13 @@
 //test
 // devuelve la version de SINCRM desde JSON
 function getVersion(){
-    $versionData = json_decode(file_get_contents('version.json'), true);
+    $versionData = json_decode(file_get_contents(dirname(__DIR__) . '/version.json'), true);
     return $versionData['full_version'] ?? 'v4.0.0-prerelease';
 }
 
 // devuelve los detalles completos de la version
 function getVersionDetails(){
-    return json_decode(file_get_contents('version.json'), true);
+    return json_decode(file_get_contents(dirname(__DIR__) . '/version.json'), true);
 }
 
 // modifica la version de SINCRM (ahora actualiza el JSON)

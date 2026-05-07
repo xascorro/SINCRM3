@@ -312,3 +312,7 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-05-07 06:39:55] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [3vb9ko4jtjrrur34qi6rnrb00m] ACTUALIZADO: Panel Técnico (ID: 119) - Nuevo Nombre: 'Panel único', Jueces: 5, Peso: 100%, Obsoleto: no, Puntua: si
 [2026-05-07 06:40:39] [INFO] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Cierre de sesión voluntario
 [2026-05-07 06:40:41] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-07 07:54:03] [INFO] [xascorro@gmail.com] [162.158.122.185] [3vb9ko4jtjrrur34qi6rnrb00m] Cierre de sesión voluntario
+[2026-05-07 07:55:05] [SECURITY] [SISTEMA] [172.68.134.210] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-07 08:01:36] [SECURITY] [SISTEMA] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-07 08:01:40] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso

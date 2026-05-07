@@ -39,7 +39,7 @@
 
             <!-- Branding sutil -->
             <div class="pt-4 opacity-10 hover:opacity-50 transition-opacity duration-700">
-                <p class="text-[10px] font-black italic tracking-tighter text-slate-400">SINCRM v4 Framework</p>
+                <p class="text-[10px] font-black italic tracking-tighter text-slate-400">SINCRM v<?php echo $vDetails['major'] ?? '4'; ?> Framework</p>
             </div>
 
         </div>
