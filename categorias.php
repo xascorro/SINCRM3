@@ -67,7 +67,7 @@ include('includes/navbar.php');
         <?php endif; ?>
 
         <!-- KPIs de Categorías -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             <?php
             $q_c = "SELECT COUNT(*) as total, MIN(edad_minima) as min_e, MAX(edad_maxima) as max_e FROM categorias WHERE activo = 1";
             $res_c = mysqli_query($connection, $q_c);
@@ -75,15 +75,11 @@ include('includes/navbar.php');
             ?>
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 border-l-[6px] border-l-slate-400">
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Activas</p>
-                <h3 class="text-2xl font-black text-slate-800"><?php echo $stats['total'] ?? 0; ?> <span class="text-xs text-slate-400 font-bold uppercase italic">Niveles</span></h3>
+                <h3 class="text-2xl font-black text-slate-800"><?php echo $stats['total'] ?? 0; ?> <span class="text-xs text-slate-400 font-bold uppercase italic">Categorías</span></h3>
             </div>
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 border-l-[6px] border-l-blue-500">
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Rango Edad</p>
                 <h3 class="text-2xl font-black text-blue-600"><?php echo $stats['min_e'] ?? 0; ?> - <?php echo $stats['max_e'] ?? 0; ?> <span class="text-xs text-slate-400 font-bold uppercase italic">Años</span></h3>
-            </div>
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Estado</p>
-                <h3 class="text-2xl font-black text-emerald-600">Online</h3>
             </div>
         </div>
 
