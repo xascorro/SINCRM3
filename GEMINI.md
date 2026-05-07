@@ -11,7 +11,7 @@ Para conectar desde este entorno vía SSH:
 ssh -i ~/.ssh/beta-sincrm.key ubuntu@beta.pedrodiaz.eu "mysql -u xas -p79eagle sincrm3 -e 'CONSULTA'"
 ```
 
-## 🚀 Estado del Proyecto (Refactorización v3.0)
+## 🚀 Estado del Proyecto (Refactorización v4 (Prerelease))
 Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y profesionalizado la interfaz (SB Admin 2 + DataTables + Logs).
 
 ### ✅ Secciones Completadas:
@@ -22,17 +22,17 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Nadadoras**: Migración técnica a `activo` (tinyint), interfaz de tabla optimizada y switch de estado en edición.
 - **Jueces**: Migración técnica a `activo` (tinyint), limpieza de tabla y auditoría completa.
 - **Clubes y Federaciones**: Sistema de subida de logos/escudos arreglado (con limpieza de archivos), interfaz unificada y logs.
-- **Login y Registro (v3.0)**: Renovación total con diseño moderno (Tailwind), AJAX e integración de SweetAlert2.
-- **Dashboard (v3.0)**: Reestructuración completa de `index.php` con grid moderno, tarjetas de resumen y gestión visual de competiciones (Próximas e Historial).
-- **Sistema de Alertas Inteligente (v3.0)**: Gestión de "Tareas Pendientes" con capacidad de **Snooze** (pausa temporal por horas/días) y **Descarte Permanente**. Los descartes no se recuperan al restablecer el panel, permitiendo una limpieza real del ruido (ej: Pases de Nivel sin BIAS).
-- **Buscador Dinámico Global (v3.0)**: Implementación de filtrado en tiempo real en las tablas y grids de: Usuarios, Nadadoras, Jueces, Clubes, Competiciones, Federaciones y Figuras.
-- **Competiciones (v3.0)**: Rediseño total de `competiciones.php` con estética vibrante ("colorinchi").
+- **Login y Registro (v4 (Prerelease))**: Renovación total con diseño moderno (Tailwind), AJAX e integración de SweetAlert2.
+- **Dashboard (v4 (Prerelease))**: Reestructuración completa de `index.php` con grid moderno, tarjetas de resumen y gestión visual de competiciones (Próximas e Historial).
+- **Sistema de Alertas Inteligente (v4 (Prerelease))**: Gestión de "Tareas Pendientes" con capacidad de **Snooze** (pausa temporal por horas/días) y **Descarte Permanente**. Los descartes no se recuperan al restablecer el panel, permitiendo una limpieza real del ruido (ej: Pases de Nivel sin BIAS).
+- **Buscador Dinámico Global (v4 (Prerelease))**: Implementación de filtrado en tiempo real en las tablas y grids de: Usuarios, Nadadoras, Jueces, Clubes, Competiciones, Federaciones y Figuras.
+- **Competiciones (v4 (Prerelease))**: Rediseño total de `competiciones.php` con estética vibrante ("colorinchi").
     - **KPI Técnico**: Barra tricolor con distribución real de Figuras, Rutinas y Pases de Nivel.
     - **Fichas Premium**: Inclusión de IDs, fechas en español con año y colores corporativos dinámicos.
     - **Edición 360º**: Formulario avanzado con todos los parámetros técnicos (plazos, mapas, enlaces de meet, tipos excluyentes) y galería de informes optimizada.
 - **Galería Inteligente**: Nuevo selector de cabeceras/pies de página con vista `object-contain`, nombres de archivo y motor de subida directa a la carpeta `images/`.
-- **Mi Equipo (v3.0)**: Nueva sección centralizada para clubes. KPIs dinámicos (Staff/Atletas/Edad Media), directorio de usuarios vinculados y censo alfabético de nadadoras activas.
-- **BIAS Analizer (v3.0)**: Módulo de auditoría técnica avanzado bajo normativa **World Aquatics (AQUA)**.
+- **Mi Equipo (v4 (Prerelease))**: Nueva sección centralizada para clubes. KPIs dinámicos (Staff/Atletas/Edad Media), directorio de usuarios vinculados y censo alfabético de nadadoras activas.
+- **BIAS Analizer (v4 (Prerelease))**: Módulo de auditoría técnica avanzado bajo normativa **World Aquatics (AQUA)**.
     - **Ranking Calidad**: Hall of Fame de la temporada con podio visual y comparativa de líderes mediante **Radar Charts** y **Bubble Charts**.
     - **Perfil de Trayectoria**: Seguimiento histórico individual con evolución de posición técnica y acceso directo a auditorías pasadas.
     - **Auditoría de Evento**: Análisis micro con dispersión real de calidad y cronología de desviaciones.
@@ -41,8 +41,8 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Recuperación de Avisos**: Opción dinámica en el menú de usuario del TopBar para restablecer silencios temporales sin afectar a los descartes.
 - **Motor de Persistencia**: Implementación de tablas `auditoria_jueces_stats` y `auditoria_jueces_puntos` que reduce el tiempo de carga de 23s a 0.003s (Optimización x7000).
 - **Portal del Juez**: Acceso directo "Mi Auditoría" para usuarios con rol de Juez, permitiendo el autocontrol técnico.
-- **Informes de Figuras (v3.0)**: Modernización y unificación en `informe_figuras.php`. Ahora un solo archivo inteligente gestiona tanto el listado de **Inscripciones** (alfabético) como el de **Orden de Actuación** (con marcado de cortes técnicos), con una estética profesional rosada, cabeceras compactas y repetición automática de tablas en saltos de página.
-- **Resultados por Categorías (v3.0)**: Rediseño completo de `informe_figuras_resultados_categorias.php`. Se han optimizado los anchos de columna, mejorado el contraste de notas tachadas, implementado `nobr` para evitar cortes de filas y un sistema de consultas seguras (`safe_mysqli_result`) para evitar errores fatales. Pendiente de re-introducir la lógica de elementos técnicos (TRE) para Junior/Senior.
+- **Informes de Figuras (v4 (Prerelease))**: Modernización y unificación en `informe_figuras.php`. Ahora un solo archivo inteligente gestiona tanto el listado de **Inscripciones** (alfabético) como el de **Orden de Actuación** (con marcado de cortes técnicos), con una estética profesional rosada, cabeceras compactas y repetición automática de tablas en saltos de página.
+- **Resultados por Categorías (v4 (Prerelease))**: Rediseño completo de `informe_figuras_resultados_categorias.php`. Se han optimizado los anchos de columna, mejorado el contraste de notas tachadas, implementado `nobr` para evitar cortes de filas y un sistema de consultas seguras (`safe_mysqli_result`) para evitar errores fatales. Pendiente de re-introducir la lógica de elementos técnicos (TRE) para Junior/Senior.
 - **Layout Global**: Modernización de `header.php`, `topbar.php` y `footer.php` (vínculos centrados y firma personalizada).
 - **Navbar**: Modernizado con integración del nuevo módulo **BIAS Analizer** y organización de grupos de acceso.
 

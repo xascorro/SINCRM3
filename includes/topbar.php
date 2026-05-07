@@ -1,7 +1,7 @@
 <?php
 include('security.php');
 ?>
-<!-- Topbar v3.0 (Estética Refinada) -->
+<!-- Topbar v4 (Prerelease) (Estética Refinada) -->
 <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 font-lexend">
     
     <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0">

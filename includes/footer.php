@@ -1,7 +1,7 @@
     </div> <!-- /.container-fluid -->
 </div> <!-- #content -->
 
-<!-- Footer v3.0 Premium -->
+<!-- Footer v4 (Prerelease) Premium -->
 <footer class="bg-white/80 backdrop-blur-md py-12 border-t border-slate-200 mt-auto font-lexend">
     <div class="max-w-7xl mx-auto px-8">
         <div class="flex flex-col items-center gap-6">

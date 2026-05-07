@@ -70,7 +70,7 @@ session_start();
         </div>
         <div class="absolute bottom-10 left-10 z-10 flex items-center gap-3">
             <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            <p class="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Refactorización v3.0 stable</p>
+            <p class="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]">Refactorización v4 (Prerelease) stable</p>
         </div>
     </section>
 
