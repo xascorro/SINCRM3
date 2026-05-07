@@ -18,8 +18,6 @@ function setVersion($aV){
     $data['updated_at'] = date('Y-m-d');
     file_put_contents('version.json', json_encode($data, JSON_PRETTY_PRINT));
 }
-	return true;
-}
 
 //obtiene el tamaño de un archivo remoto
 function remote_filesize($url) {
