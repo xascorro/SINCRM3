@@ -1,0 +1,11 @@
+{
+    "major": 4,
+    "minor": 0,
+    "patch": 0,
+    "status": "prerelease",
+    "build": 20260507,
+    "full_version": "v4.0.0-prerelease",
+    "codename": "Colorinchi",
+    "updated_at": "2026-05-07",
+    "description": "Refactorización integral v4 con Tailwind CSS y arquitectura modular."
+}

@@ -1,14 +1,23 @@
 <?php
 //test
-
-//devuelve la version de SINCRM
+// devuelve la version de SINCRM desde JSON
 function getVersion(){
-	return file_get_contents('about/version.txt');
+    $versionData = json_decode(file_get_contents('version.json'), true);
+    return $versionData['full_version'] ?? 'v4.0.0-prerelease';
 }
 
-//modifica la version de SINCRM
+// devuelve los detalles completos de la version
+function getVersionDetails(){
+    return json_decode(file_get_contents('version.json'), true);
+}
+
+// modifica la version de SINCRM (ahora actualiza el JSON)
 function setVersion($aV){
-	fwrite(fopen('about/version.txt', 'w+'), $aV );
+    $data = getVersionDetails();
+    $data['full_version'] = $aV;
+    $data['updated_at'] = date('Y-m-d');
+    file_put_contents('version.json', json_encode($data, JSON_PRETTY_PRINT));
+}
 	return true;
 }
 
