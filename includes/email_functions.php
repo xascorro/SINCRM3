@@ -5,9 +5,9 @@
 function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug = false) {
     $token = "hub_mail_947d82b3c2e1";
     $url = "https://pulse.pedrodiaz.eu/mail/api.php";
-    $from = "SINCRM3 <sincrm@pedrodiaz.eu>";
+    $from = "SINCRM4 <sincrm@pedrodiaz.eu>";
 
-    // Aplicar el diseño unificado de SINCRM3
+    // Aplicar el diseño unificado de SINCRM4
     $html_final = wrap_email_template($asunto, $cuerpo);
 
     $ch = curl_init();
@@ -39,7 +39,7 @@ function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug =
 }
 
 /**
- * Plantilla de diseño unificada para SINCRM3
+ * Plantilla de diseño unificada para SINCRM4
  */
 function wrap_email_template($title, $content) {
     return "
@@ -75,7 +75,7 @@ function wrap_email_template($title, $content) {
                 $content
             </div>
             <div class='footer'>
-                <p>&copy; " . date('Y') . " SINCRM3 - Natación Artística</p>
+                <p>&copy; " . date('Y') . " SINCRM4 - Natación Artística</p>
                 <div style='margin-top: 10px;'>
                     <a href='mailto:sincrm@pedrodiaz.eu' style='color: #3b82f6; font-size: 11px; text-decoration: none; font-weight: bold;'>sincrm@pedrodiaz.eu</a>
                 </div>

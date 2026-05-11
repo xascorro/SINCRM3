@@ -40,7 +40,7 @@ $meses_es = [
             <a href="index.php" class="no-underline group/dash inline-block">
                 <h1 class="text-5xl font-black text-slate-800 tracking-tighter mb-2 italic text-primary group-hover/dash:text-blue-600 transition-colors">Dashboard</h1>
             </a>
-            <p class="text-lg text-slate-500 font-medium">Panel central de gestión SINCRM3</p>
+            <p class="text-lg text-slate-500 font-medium">Panel central de gestión SINCRM4</p>
         </div>
 
         <!-- FILA 1: Tarjetas Informativas -->

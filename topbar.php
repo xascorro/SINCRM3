@@ -21,7 +21,7 @@ include('security.php');
             <?php endif; ?>
             
             <a href="index.php" class="flex items-center no-underline shrink-0">
-                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM3" class="h-10 md:h-14 transition-transform hover:scale-105 block">
+                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM4" class="h-10 md:h-14 transition-transform hover:scale-105 block">
             </a>
             
             <div class="flex flex-col border-l border-slate-200 pl-3 md:pl-4 h-10 justify-center min-w-0 flex-1">
@@ -43,6 +43,13 @@ include('security.php');
 
     <!-- User Section -->
     <div class="flex items-center gap-3 ml-2">
+        <?php if($_SESSION['id_rol'] == 1): ?>
+        <a href="help_admin/index.php" class="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-xl border border-blue-100 hover:bg-blue-600 hover:text-white transition-all no-underline group" title="Documentación de Administrador">
+            <i class="fas fa-book-open text-xs transition-transform group-hover:scale-110"></i>
+            <span class="text-[10px] font-black uppercase tracking-widest">Ayuda Admin</span>
+        </a>
+        <?php endif; ?>
+
         <div class="relative group" id="userMenuContainer">
             <button onclick="toggleUserMenu()" class="flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
                 <div class="text-right hidden sm:block">
@@ -82,6 +89,13 @@ include('security.php');
                 </a>
                 
                 <?php if($_SESSION['id_rol'] == 1): ?>
+                <a href="help_admin/index.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
+                    <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                        <i class="fas fa-book-open text-lg text-blue-500"></i>
+                    </div>
+                    <span class="text-sm font-black italic tracking-tighter">Ayuda Admin</span>
+                </a>
+                
                 <a href="log.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
                     <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
                         <i class="fas fa-list-ul text-lg"></i>

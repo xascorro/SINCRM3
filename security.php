@@ -11,7 +11,9 @@ include('database/dbconfig.php');
 //si no esta logeado
 if(!isset($_SESSION['email'])){
     if (isset($_COOKIE[session_name()])) {
-        $last_user = $_COOKIE['last_user'] ?? 'Desconocido';
+        $last_user = htmlspecialchars($_COOKIE['last_user'] ?? 'Desconocido', ENT_QUOTES, 'UTF-8');
+        // Limpiar posibles saltos de línea para evitar log injection
+        $last_user = str_replace(["\r", "\n"], '', $last_user);
         write_log("La sesión del usuario ($last_user) ha expirado por inactividad", "SECURITY");
     }
 	header('Location: login.php');

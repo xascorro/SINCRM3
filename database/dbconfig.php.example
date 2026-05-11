@@ -16,7 +16,7 @@ if (in_array($_SERVER['SERVER_NAME'], $prod_domains)) {
 } else {
     // Entorno Local / Desarrollo
     $servername  = 'localhost';
-    $db_name     = 'sincrm3';
+    $db_name     = 'sincrm4';
     $db_username = 'root';
     $db_password = '';
 }

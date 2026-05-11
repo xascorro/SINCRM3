@@ -17,7 +17,7 @@ if(isset($_POST['save_btn'])){
 	} else {
         // SEGURIDAD: Siempre hashear la contraseña
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-		$query = "INSERT INTO usuarios (username, email, hash, club, id_rol) VALUES ('$username', '$email', '$hashed_password', '$club', '$id_rol')";
+		$query = "INSERT INTO usuarios (username, email, hash, club, id_rol, email_confirmado) VALUES ('$username', '$email', '$hashed_password', '$club', '$id_rol', 1)";
 		$query_run = mysqli_query($connection, $query);
         
 		if($query_run){
@@ -32,17 +32,17 @@ if(isset($_POST['save_btn'])){
                 $rol_data = mysqli_fetch_assoc($q_rol);
                 $nombre_rol = $rol_data['nombre'] ?? 'Usuario';
 
-                $subjectUser = 'Bienvenido a SINCRM3 - Acceso Configurado';
+                $subjectUser = 'Bienvenido a SINCRM4 - Acceso Configurado';
                 $bodyUser = "
                 <h2 style='color: #3b82f6;'>¡Bienvenido a la Plataforma!</h2>
                 <p>Hola <strong>".$username."</strong>,</p>
-                <p>Un administrador ha creado tu cuenta en SINCRM3 y ya puedes acceder al sistema.</p>
+                <p>Un administrador ha creado tu cuenta en SINCRM4 y ya puedes acceder al sistema.</p>
                 <div style='background: #f8fafc; padding: 20px; border-radius: 15px; border-left: 5px solid #3b82f6; margin: 20px 0;'>
                     <p style='margin: 0; font-weight: bold; color: #1e293b;'>Estamento asignado: <span style='color: #2563eb;'>".$nombre_rol."</span></p>
                     <p style='margin: 5px 0 0 0; font-size: 13px; color: #64748b;'>Utiliza tu email y la contraseña proporcionada por el administrador.</p>
                 </div>
                 <div style='text-align: center; margin-top: 30px;'>
-                    <a href='https://sincrm.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM3</a>
+                    <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
                 </div>";
                 enviar_email($email, $subjectUser, $bodyUser);
             }
@@ -116,17 +116,17 @@ if(isset($_POST['update_btn'])){
             $rol_data = mysqli_fetch_assoc($q_rol);
             $nombre_rol = $rol_data['nombre'] ?? 'Usuario';
 
-            $subjectUser = '¡Actualización de Acceso! - SINCRM3';
+            $subjectUser = '¡Actualización de Acceso! - SINCRM4';
             $bodyUser = "
             <h2 style='color: #3b82f6;'>Acceso Actualizado</h2>
             <p>Hola <strong>".$username."</strong>,</p>
-            <p>Te informamos que se ha actualizado tu perfil de acceso en la plataforma SINCRM3.</p>
+            <p>Te informamos que se ha actualizado tu perfil de acceso en la plataforma SINCRM4.</p>
             <div style='background: #f8fafc; padding: 20px; border-radius: 15px; border-left: 5px solid #3b82f6; margin: 20px 0;'>
                 <p style='margin: 0; font-weight: bold; color: #1e293b;'>Nuevo Estamento: <span style='color: #2563eb;'>".$nombre_rol."</span></p>
                 <p style='margin: 5px 0 0 0; font-size: 13px; color: #64748b;'>Ya puedes acceder con tus credenciales habituales.</p>
             </div>
             <div style='text-align: center; margin-top: 30px;'>
-                <a href='https://sincrm.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM3</a>
+                <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
             </div>";
             enviar_email($email, $subjectUser, $bodyUser);
             write_log("Email de actualización enviado a $email (Rol: $nombre_rol)", "INFO");
@@ -161,7 +161,7 @@ if(isset($_POST['toggle_status_btn'])){
                 require_once 'includes/email_functions.php';
                 $toUser = $u_row['email'];
                 $nombre_rol = $u_row['rol'] ?? 'Usuario';
-                $subjectUser = '¡Cuenta Activada! - SINCRM3';
+                $subjectUser = '¡Cuenta Activada! - SINCRM4';
                 $bodyUser = "
                 <h2 style='color: #10b981;'>Acceso Concedido</h2>
                 <p>Hola <strong>".$u_row['username']."</strong>,</p>
@@ -171,7 +171,7 @@ if(isset($_POST['toggle_status_btn'])){
                     <p style='margin: 5px 0 0 0; font-size: 13px; color: #065f46;'>Ya puedes empezar a gestionar tus competiciones y nadadoras.</p>
                 </div>
                 <div style='text-align: center; margin-top: 30px;'>
-                    <a href='https://sincrm.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM3</a>
+                    <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
                 </div>";
                 enviar_email($toUser, $subjectUser, $bodyUser);
             }
@@ -207,46 +207,21 @@ if(isset($_POST['delete_btn'])){
     header('Location: usuarios.php');
     exit();
 }
-?>cedido</h2>
-                <p>Hola <strong>".$u_row['username']."</strong>,</p>
-                <p>Te informamos que un administrador ha aprobado tu solicitud y ya puedes acceder a la plataforma.</p>
-                <div class='alert-box alert-info'>
-                    Ya puedes empezar a gestionar tus competiciones y nadadoras.
-                </div>
-                <div style='text-align: center; margin-top: 30px;'>
-                    <a href='https://sincrm.pedrodiaz.eu/login.php' class='btn'>Entrar en SINCRM3</a>
-                </div>";
-                enviar_email($toUser, $subjectUser, $bodyUser);
-            }
-        }
 
-        $_SESSION['correcto'] = $msg . " con éxito.";
-    } else {
-        $_SESSION['estado'] = "Error al cambiar el estado del usuario.";
-    }
-    header('Location: usuarios.php');
-    exit();
-}
-
-// BORRAR REGISTRO
-if(isset($_POST['delete_btn'])){
-	$id = mysqli_real_escape_string($connection, $_POST['delete_id']);
-
-    // Obtener info para el log antes de borrar
-    $q_data = mysqli_query($connection, "SELECT email FROM usuarios WHERE id = '$id'");
-    $u_data = mysqli_fetch_assoc($q_data);
-    $email_borrado = $u_data['email'] ?? 'ID '.$id;
-
-	$query = "DELETE FROM usuarios WHERE id ='$id'";
-	$query_run = mysqli_query($connection, $query);
+// VERIFICAR EMAIL MANUALMENTE
+if(isset($_POST['verify_btn'])){
+    $id = mysqli_real_escape_string($connection, $_POST['verify_id']);
     
-	if($query_run){
-        write_log("Cuenta de usuario eliminada: $email_borrado", "WARNING");
-		$_SESSION['correcto'] = 'Usuario eliminado correctamente';
-	} else {
-        write_log("Error al eliminar usuario ($email_borrado): " . mysqli_error($connection), "ERROR");
-		$_SESSION['estado'] = 'No se pudo eliminar el usuario.';
-	}
+    $query = "UPDATE usuarios SET email_confirmado = 1, token_confirmacion = NULL WHERE id = '$id'";
+    $query_run = mysqli_query($connection, $query);
+    
+    if($query_run){
+        write_log("Email verificado manualmente por admin (ID: $id)", "SUCCESS");
+        $_SESSION['correcto'] = 'Email verificado manualmente.';
+    } else {
+        write_log("Error al verificar email manualmente (ID: $id): " . mysqli_error($connection), "ERROR");
+        $_SESSION['estado'] = 'No se pudo verificar el email.';
+    }
     header('Location: usuarios.php');
     exit();
 }

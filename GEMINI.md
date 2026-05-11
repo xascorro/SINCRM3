@@ -1,4 +1,4 @@
-# Guía de Proyecto: SINCRM3-BETA
+# Guía de Proyecto: SINCRM4-BETA
 
 ## 🔑 Acceso al Servidor Beta
 - **Host:** `beta.pedrodiaz.eu` | **Usuario:** `ubuntu` | **Puerto:** 22
@@ -6,9 +6,24 @@
 - **Clave SSH:** `~/.ssh/beta-sincrm.key`
 
 ## 🗄️ Acceso a Base de Datos (MariaDB)
-Para conectar desde este entorno vía SSH:
+El sistema utiliza `database/dbconfig.php` para gestionar la conexión automáticamente según el entorno:
+
+### 🌐 Entorno Beta / Producción (`beta.pedrodiaz.eu`)
+- **Host:** `localhost`
+- **Base de Datos:** `sincrm4`
+- **Usuario:** `xas`
+- **Contraseña:** `79eagle`
+
+### 💻 Entorno Local / Desarrollo
+- **Host:** `localhost`
+- **Base de Datos:** `sincrm4`
+- **Usuario:** `root`
+- **Contraseña:** `xas`
+
+### 🛠️ Comandos Útiles
+Para conectar desde este entorno vía SSH al servidor Beta:
 ```bash
-ssh -i ~/.ssh/beta-sincrm.key ubuntu@beta.pedrodiaz.eu "mysql -u xas -p79eagle sincrm3 -e 'CONSULTA'"
+ssh -i ~/.ssh/beta-sincrm.key ubuntu@beta.pedrodiaz.eu "mysql -u xas -p79eagle sincrm4 -e 'CONSULTA'"
 ```
 
 ## 🚀 Estado del Proyecto (Refactorización v4 (Prerelease))
@@ -16,7 +31,7 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 
 ### ✅ Secciones Completadas:
 - **Mantenimiento**: Nueva interfaz, gestión de `.user.ini`, diagnóstico de servidor y visor de logs profesional.
-- **Sistema de Logs**: Motor centralizado `write_log()` en `dbconfig.php`. Niveles: `SUCCESS`, `ERROR`, `WARNING`, `INFO`, `SECURITY`.
+- **Sistema de Logs**: Motor centralizado `write_log()` en `database/dbconfig.php`. Niveles: `SUCCESS`, `ERROR`, `WARNING`, `INFO`, `SECURITY`.
 - **Visores de Log**: `log.php` (Sistema) y `log_usuario.php` (Personalizado por email/club).
 - **Usuarios**: Migración a `activo` (tinyint), seguridad con `password_hash`, interfaz renovada y logs de sesión.
 - **Nadadoras**: Migración técnica a `activo` (tinyint), interfaz de tabla optimizada y switch de estado en edición.
@@ -45,6 +60,8 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Resultados por Categorías (v4 (Prerelease))**: Rediseño completo de `informe_figuras_resultados_categorias.php`. Se han optimizado los anchos de columna, mejorado el contraste de notas tachadas, implementado `nobr` para evitar cortes de filas y un sistema de consultas seguras (`safe_mysqli_result`) para evitar errores fatales. Pendiente de re-introducir la lógica de elementos técnicos (TRE) para Junior/Senior.
 - **Layout Global**: Modernización de `header.php`, `topbar.php` y `footer.php` (vínculos centrados y firma personalizada).
 - **Navbar**: Modernizado con integración del nuevo módulo **BIAS Analizer** y organización de grupos de acceso.
+- **Versionado Dinámico Global**: Integración total de `version.json` en Login, Footer y página 404. Eliminación de strings hardcoded.
+- **Limpieza de Código (v4)**: Purga de librerías obsoletas (TCPDF original), carpetas SCSS legacy y archivos de prueba antiguos.
 
 ### ⏳ Pendiente:
 - **Categorías**: Pendiente de aplicar el nuevo estándar visual y de lógica.

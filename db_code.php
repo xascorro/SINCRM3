@@ -154,7 +154,7 @@ if (isset($_POST['save_php_settings'])) {
 // Crear Backup
 if (isset($_POST['backup_btn'])) {
     $descripcion = $_POST['descripcion'] ?: 'Backup manual';
-    $res = backup_database('./database/backup', 'sincrm3', $descripcion, $servername, $db_username, $db_password, $db_name);
+    $res = backup_database('./database/backup', 'sincrm4', $descripcion, $servername, $db_username, $db_password, $db_name);
     
     if ($res) {
         write_log("Nuevo backup creado: $res ($descripcion)", "SUCCESS");

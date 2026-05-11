@@ -22,7 +22,7 @@ include('security.php');
             
             <?php if($_SESSION['id_rol'] != '1'): ?>
             <a href="index.php" class="flex items-center no-underline shrink-0">
-                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM3" class="h-10 md:h-14 transition-transform hover:scale-105 block">
+                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM4" class="h-10 md:h-14 transition-transform hover:scale-105 block">
             </a>
             <?php endif; ?>
             
@@ -94,6 +94,13 @@ include('security.php');
                 </a>
                 
                 <?php if($_SESSION['id_rol'] == 1): ?>
+                <a href="help_admin/index.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
+                    <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                        <i class="fas fa-book-open text-lg text-blue-500"></i>
+                    </div>
+                    <span class="text-sm font-bold">Ayuda Admin</span>
+                </a>
+
                 <a href="log.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
                     <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
                         <i class="fas fa-list-ul text-lg"></i>
@@ -103,7 +110,7 @@ include('security.php');
 
                 <!-- Opción para restablecer avisos silenciados (Solo si hay alguno temporal) -->
                 <?php
-                include_once('dbconfig.php');
+                include_once('database/dbconfig.php');
                 $user_id_check = $_SESSION['id_usario'];
                 $q_has_sil = "SELECT COUNT(*) as total FROM avisos_silenciados WHERE id_usuario = '$user_id_check' AND silencio_hasta > NOW() AND es_descarte = 0";
                 $res_has_sil = mysqli_query($connection, $q_has_sil);

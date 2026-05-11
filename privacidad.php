@@ -6,7 +6,7 @@ session_start();
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM3 - Política de Privacidad</title>
+    <title>SINCRM4 - Política de Privacidad</title>
     
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -97,7 +97,7 @@ session_start();
 <main class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="flex flex-col items-center mb-12 text-center">
-        <span class="font-headline-xl text-primary tracking-tighter">SINCRM3</span>
+        <span class="font-headline-xl text-primary tracking-tighter">SINCRM4</span>
         <h1 class="text-2xl font-bold text-primary-container mt-2">Política de Privacidad</h1>
         <div class="w-24 h-1 oceanic-gradient mt-4 rounded-full"></div>
     </div>
@@ -113,7 +113,7 @@ session_start();
             <p class="text-on-surface-variant leading-relaxed">
                 La <strong>Federación de Natación de la Región de Murcia (FNRM)</strong>, con domicilio en 
                 <span class="bg-red-500 text-white px-1 px-2 rounded">DIRECCIÓN FÍSICA DE LA FEDERACIÓN</span>, 
-                es la responsable del tratamiento de los datos personales recogidos a través de la plataforma SINCRM3.
+                es la responsable del tratamiento de los datos personales recogidos a través de la plataforma SINCRM4.
                 <br><br>
                 <strong>Email de contacto:</strong> info@fnrm.es
             </p>
@@ -153,7 +153,7 @@ session_start();
                 Protección de Menores
             </h2>
             <p class="text-on-surface-variant leading-relaxed">
-                SINCRM3 gestiona datos de menores de edad (nadadoras). La FNRM asume que los clubes que introducen estos datos cuentan con la 
+                SINCRM4 gestiona datos de menores de edad (nadadoras). La FNRM asume que los clubes que introducen estos datos cuentan con la 
                 <strong>autorización expresa</strong> de los padres o tutores legales para el tratamiento de los datos en el ámbito deportivo y para la publicación de sus nombres en los resultados públicos de las competiciones.
             </p>
         </section>

@@ -1,7 +1,11 @@
 <?php
-session_start();
-session_destroy();
-session_start();
+@session_start();
+// Solo destruimos la sesión si venimos de un logout explícito, 
+// de lo contrario perdemos los mensajes de confirmación (Email Verificado, etc.)
+if(isset($_GET['logout_btn'])) {
+    session_destroy();
+    session_start();
+}
 require_once 'lib/my_functions.php';
 $version = getVersion();
 ?>
@@ -10,7 +14,7 @@ $version = getVersion();
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM 3 | Acceso</title>
+    <title>SINCRM 4 | Acceso</title>
     
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
@@ -64,7 +68,7 @@ $version = getVersion();
         <div class="relative z-10 glass-overlay p-12 rounded-[2.5rem] max-w-lg mx-8 animate-fade-in">
             <div class="flex flex-col gap-4">
                 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
-                    <img src="img/logo_sincrm3.png" class="w-10" alt="Logo">
+                    <img src="img/logo_sincrm4.png" class="w-10" alt="Logo">
                 </div>
                 <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">3</span></h1>
                 <p class="text-xl text-blue-50 font-light leading-relaxed">Donde el arte se une a la precisión. La gestión definitiva para natación artística.</p>
@@ -80,8 +84,8 @@ $version = getVersion();
     <section class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 bg-white lg:rounded-l-[3rem] shadow-2xl z-20">
         <div class="w-full max-w-md animate-fade-in">
             <div class="lg:hidden text-center mb-10">
-                <img src="img/logo_sincrm3.png" class="w-16 mx-auto mb-4" alt="Logo">
-                <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">SINCRM <span class="text-blue-500">3</span></h1>
+                <img src="img/logo_sincrm4.png" class="w-16 mx-auto mb-4" alt="Logo">
+                <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">SINCRM <span class="text-blue-500">4</span></h1>
             </div>
 
             <div class="mb-10 text-center lg:text-left">
@@ -94,6 +98,10 @@ $version = getVersion();
                 if (isset($_SESSION['estado']) && $_SESSION['estado'] != '') {
                     echo '<div class="mb-8 p-5 rounded-[2.5rem] bg-red-50 text-red-600 text-[11px] font-black uppercase tracking-widest border border-red-100 flex items-center justify-center gap-3 animate-fade-in shadow-sm"><i class="fas fa-circle-exclamation text-base"></i> '.$_SESSION['estado'].'</div>';
                     unset($_SESSION['estado']);
+                }
+                if (isset($_SESSION['correcto']) && $_SESSION['correcto'] != '') {
+                    echo '<div class="mb-8 p-5 rounded-[2.5rem] bg-emerald-50 text-emerald-600 text-[11px] font-black uppercase tracking-widest border border-emerald-100 flex items-center justify-center gap-3 animate-fade-in shadow-sm"><i class="fas fa-circle-check text-base"></i> '.$_SESSION['correcto'].'</div>';
+                    unset($_SESSION['correcto']);
                 }
                 ?>
             </div>
@@ -119,7 +127,7 @@ $version = getVersion();
                 </div>
 
                 <div class="flex items-center gap-3 px-2">
-                    <input type="checkbox" id="remember" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500/20">
+                    <input type="checkbox" name="remember" id="remember" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500/20">
                     <label for="remember" class="text-xs font-bold text-slate-400 italic">Mantener sesión iniciada</label>
                 </div>
 
@@ -139,6 +147,7 @@ $version = getVersion();
 
             <div class="mt-12 flex flex-col items-center gap-6">
                 <div class="flex items-center justify-center gap-6 opacity-30 hover:opacity-100 transition-all">
+                    <a href="help/index.html" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline"><i class="fas fa-circle-question mr-1"></i>Ayuda</a>
                     <a href="soporte.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Soporte</a>
                     <a href="privacidad.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Privacidad</a>
                 </div>
@@ -154,6 +163,27 @@ $version = getVersion();
 <script src="vendor/jquery/jquery.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Mostrar alertas de sesión mediante SweetAlert2 si existen
+    <?php if(isset($_SESSION['correcto'])): ?>
+        Swal.fire({
+            icon: 'success',
+            title: '<span class="swal2-title-v3">¡Éxito!</span>',
+            html: '<?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?>',
+            confirmButtonColor: '#0f172a',
+            customClass: { popup: 'swal2-popup-v3' }
+        });
+    <?php endif; ?>
+
+    <?php if(isset($_SESSION['estado'])): ?>
+        Swal.fire({
+            icon: 'error',
+            title: '<span class="swal2-title-v3 text-red-500">Aviso</span>',
+            html: '<?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?>',
+            confirmButtonColor: '#0f172a',
+            customClass: { popup: 'swal2-popup-v3' }
+        });
+    <?php endif; ?>
+
     $('#loginForm').on('submit', function(e) {
         e.preventDefault();
         const form = $(this);
@@ -187,7 +217,7 @@ $(document).ready(function() {
                     Swal.fire({
                         icon: 'error',
                         title: '<span class="swal2-title-v3 text-red-500">Error de Acceso</span>',
-                        text: response.message,
+                        html: response.message,
                         confirmButtonColor: '#0f172a',
                         confirmButtonText: 'REINTENTAR',
                         customClass: { popup: 'swal2-popup-v3' }
@@ -208,6 +238,45 @@ $(document).ready(function() {
         });
     });
 });
+
+function reenviarVerificacion(email) {
+    Swal.fire({
+        title: '<span class="swal2-title-v3">Enviando...</span>',
+        text: 'Estamos procesando tu solicitud.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); },
+        customClass: { popup: 'swal2-popup-v3' }
+    });
+
+    $.ajax({
+        type: 'POST',
+        url: 'login_code.php',
+        data: { reenviar_verificacion: 1, email: email },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === 'success') {
+                Swal.fire({
+                    icon: 'success',
+                    title: '<span class="swal2-title-v3">Email Enviado</span>',
+                    html: response.message,
+                    confirmButtonColor: '#0f172a',
+                    customClass: { popup: 'swal2-popup-v3' }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: '<span class="swal2-title-v3 text-red-500">Error</span>',
+                    html: response.message,
+                    confirmButtonColor: '#0f172a',
+                    customClass: { popup: 'swal2-popup-v3' }
+                });
+            }
+        },
+        error: function() {
+            Swal.fire({ icon: 'error', title: 'Error', text: 'Servidor no responde.', customClass: { popup: 'swal2-popup-v3' } });
+        }
+    });
+}
 </script>
 </body>
 </html>

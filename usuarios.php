@@ -183,7 +183,7 @@ include('includes/navbar.php');
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <?php
-                        $query = "SELECT u.id, u.username, u.email, u.telefono, u.activo, u.id_juez_v3, r.nombre AS rol, r.id as id_rol, c.nombre_corto AS club_nombre 
+                        $query = "SELECT u.id, u.username, u.email, u.telefono, u.activo, u.id_juez_v3, u.email_confirmado, r.nombre AS rol, r.id as id_rol, c.nombre_corto AS club_nombre 
                                   FROM usuarios u 
                                   LEFT JOIN roles r ON u.id_rol = r.id 
                                   LEFT JOIN clubes c ON u.club = c.id 
@@ -191,6 +191,7 @@ include('includes/navbar.php');
                         $res = mysqli_query($connection, $query);
                         while ($row = mysqli_fetch_assoc($res)):
                             $is_active = ($row['activo'] == 1);
+                            $is_verified = ($row['email_confirmado'] == 1);
                             $is_judge = ($row['id_rol'] == 4);
                             $is_linked = ($row['id_juez_v3'] > 0);
                             $rol_class = ($row['id_rol'] == 1) ? 'bg-blue-50 text-blue-700' : (($row['id_rol'] == 5) ? 'bg-purple-50 text-purple-700' : (($row['id_rol'] == 4) ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-600'));
@@ -204,7 +205,14 @@ include('includes/navbar.php');
                                     </div>
                                     <div>
                                         <p class="text-sm font-black text-slate-700 leading-tight"><?php echo $row['username']; ?> <?php if(!$is_active) echo '<span class="ml-2 text-[8px] text-red-500 font-black uppercase italic">Baja</span>'; ?></p>
-                                        <p class="text-xs font-medium text-slate-400"><?php echo $row['email']; ?></p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="text-xs font-medium text-slate-400"><?php echo $row['email']; ?></p>
+                                            <?php if($is_verified): ?>
+                                                <i class="fas fa-circle-check text-emerald-500 text-[10px]" title="Email Verificado"></i>
+                                            <?php else: ?>
+                                                <i class="fas fa-circle-xmark text-red-400 text-[10px]" title="Email NO Verificado"></i>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -221,6 +229,12 @@ include('includes/navbar.php');
                             <td class="px-4 py-5 text-center text-xs font-bold text-slate-500 italic"><?php echo $row['club_nombre'] ?: '-'; ?></td>
                             <td class="px-4 py-5">
                                 <div class="flex items-center justify-center gap-2">
+                                    <?php if(!$is_verified): ?>
+                                    <form action="usuarios_code.php" method="POST" title="Verificar Email Manualmente">
+                                        <input type="hidden" name="verify_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" name="verify_btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-blue-500 hover:shadow-md transition-all border border-transparent hover:border-blue-100"><i class="fas fa-envelope-circle-check text-sm"></i></button>
+                                    </form>
+                                    <?php endif; ?>
                                     <form action="usuarios_edit.php" method="POST">
                                         <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                                         <button type="submit" name="edit_btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-emerald-500 hover:shadow-md transition-all border border-transparent hover:border-emerald-100"><i class="fas fa-pen-to-square text-sm"></i></button>

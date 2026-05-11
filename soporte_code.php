@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $body = "
     <h2 style='color: #002b49;'>Nueva Consulta de Soporte</h2>
-    <p>Has recibido un mensaje desde el formulario de contacto de SINCRM3.</p>
+    <p>Has recibido un mensaje desde el formulario de contacto de SINCRM4.</p>
     <div style='background: #f6f9ff; padding: 20px; border-radius: 12px; border: 1px solid #e0f0ff;'>
         <p><strong>Nombre:</strong> $name</p>
         <p><strong>Email:</strong> $email</p>

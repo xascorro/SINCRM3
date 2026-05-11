@@ -163,7 +163,7 @@ include('includes/navbar.php');
 										<div class="input-group-prepend">
 											<span class="input-group-text"><i class="fas fa-hdd"></i></span>
 										</div>
-										<input type="text" class="form-control" name="db_name" value="<?php echo $db_name ?>" placeholder="Ej: sincrm3">
+										<input type="text" class="form-control" name="db_name" value="<?php echo $db_name ?>" placeholder="Ej: sincrm4">
 									</div>
 								</div>
 								<div class="row">

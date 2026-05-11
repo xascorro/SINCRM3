@@ -103,6 +103,10 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '1'){
                 <i class="fas fa-file-pdf w-8 text-center text-lg group-hover:text-white transition-colors"></i>
                 <span class="sidebar-text hidden font-bold text-sm">Informes</span>
             </a>
+            <a href="help_admin/index.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo strpos($_SERVER['REQUEST_URI'], 'help_admin') !== false ? 'nav-item-active' : 'text-blue-50'; ?>" title="Ayuda Admin">
+                <i class="fas fa-book-open w-8 text-center text-lg text-blue-400 group-hover:text-white transition-colors"></i>
+                <span class="sidebar-text hidden font-bold text-sm">Ayuda Admin</span>
+            </a>
         </div>
 
         <!-- 4. Usuarios -->
