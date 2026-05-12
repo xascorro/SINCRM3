@@ -1,5 +1,10 @@
 <?php
 @session_start();
+// Si el usuario ya está logueado, redirigir al dashboard
+if(isset($_SESSION['id_usario'])) {
+    header("Location: index.php");
+    exit();
+}
 // Solo destruimos la sesión si venimos de un logout explícito, 
 // de lo contrario perdemos los mensajes de confirmación (Email Verificado, etc.)
 if(isset($_GET['logout_btn'])) {
@@ -17,6 +22,26 @@ $version = getVersion();
     <title>SINCRM 4 | Acceso</title>
     
     <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Icons suite -->
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png">
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registrado', reg.scope))
+                    .catch(err => console.error('Error al registrar Service Worker', err));
+            });
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
     <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -111,7 +136,7 @@ $version = getVersion();
                     <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Email de Usuario</label>
                     <div class="relative group">
                         <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-envelope text-sm"></i></span>
-                        <input type="email" name="email" required placeholder="ejemplo@sincrm.com" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                        <input type="email" name="email" required autocomplete="username" placeholder="ejemplo@sincrm.com" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
                     </div>
                 </div>
 
@@ -122,7 +147,7 @@ $version = getVersion();
                     </div>
                     <div class="relative group">
                         <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-lock text-sm"></i></span>
-                        <input type="password" name="password" required placeholder="••••••••" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
                     </div>
                 </div>
 

@@ -248,10 +248,8 @@ if($res_cats) {
         $id_categoria = $cat['id_categoria'];
         $nombre_categoria = $cat['cat_nombre'];
         $is_tre = ($cat['elementos_coach_card'] > 0);
+        $id_fase_tre = $cat['id_fase'];
 
-        // --- DESACTIVAR JUNIOR/TRE PARA DEBUG ---
-        if($is_tre) continue; 
-        
         $pdf->AddPage();
         
         // Cabecera de Categoría v3
@@ -261,20 +259,34 @@ if($res_cats) {
         $pdf->Cell(0, 12, "  " . mb_strtoupper($nombre_categoria), 0, 1, 'L', true);
         $pdf->SetTextColor(30, 41, 59);
 
-        // Obtener información de Figuras
+        // Obtener información de Figuras / TRE
         $figuras_info = [];
         $figuras_html_header = "";
         
-        // Para Figuras tradicionales
-        $query_figs = "select id_figura from fases where id_categoria='".$id_categoria."' and id_competicion='".$comp['id']."' order by orden asc";
-        $res_figs = mysqli_query($connection, $query_figs);
-        if($res_figs) {
-            while($f = mysqli_fetch_assoc($res_figs)){
-                $q_f = "select numero, grado_dificultad from figuras where id ='".$f['id_figura']."'";
-                $f_data_res = mysqli_query($connection, $q_f);
-                if($f_data_res && $f_data = mysqli_fetch_assoc($f_data_res)){
-                    $figuras_info[] = $f_data;
-                    $figuras_html_header .= '<b>' . $f_data['numero'] . '</b> (GD: ' . $f_data['grado_dificultad'] . ') | ';
+        if($is_tre) {
+            // Para TRE (Technical Required Elements) - Tomamos una muestra del primer nadador
+            $q_sample = "SELECT id FROM inscripciones_figuras WHERE id_fase = '$id_fase_tre' LIMIT 1";
+            $id_insc_sample = safe_mysqli_result($connection, $q_sample);
+            if($id_insc_sample) {
+                $q_tre = "SELECT elemento, texto, valor FROM hibridos_rutina WHERE id_rutina = '$id_insc_sample' AND tipo = 'dd' AND valor > 0 ORDER BY elemento ASC";
+                $res_tre = mysqli_query($connection, $q_tre);
+                while($t = mysqli_fetch_assoc($res_tre)){
+                    $figuras_info[] = ["numero" => $t['texto'], "grado_dificultad" => $t['valor']];
+                    $figuras_html_header .= '<b>' . $t['texto'] . '</b> (GD: ' . number_format($t['valor'], 2) . ') | ';
+                }
+            }
+        } else {
+            // Para Figuras tradicionales
+            $query_figs = "select id_figura from fases where id_categoria='".$id_categoria."' and id_competicion='".$comp['id']."' order by orden asc";
+            $res_figs = mysqli_query($connection, $query_figs);
+            if($res_figs) {
+                while($f = mysqli_fetch_assoc($res_figs)){
+                    $q_f = "select numero, grado_dificultad from figuras where id ='".$f['id_figura']."'";
+                    $f_data_res = mysqli_query($connection, $q_f);
+                    if($f_data_res && $f_data = mysqli_fetch_assoc($f_data_res)){
+                        $figuras_info[] = $f_data;
+                        $figuras_html_header .= '<b>' . $f_data['numero'] . '</b> (GD: ' . $f_data['grado_dificultad'] . ') | ';
+                    }
                 }
             }
         }
@@ -283,7 +295,7 @@ if($res_cats) {
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(71, 85, 105);
         $html_fig_header = '<div style="background-color:#f8fafc; padding:5px; border-left:3px solid #e92662; margin-bottom:10px;">';
-        $html_fig_header .= '&nbsp; <b style="color:#e92662;">FIGURAS:</b> ' . $figuras_html_header;
+        $html_fig_header .= '&nbsp; <b style="color:#e92662;">' . ($is_tre ? 'ELEMENTOS TÉCNICOS (TRE):' : 'FIGURAS:') . '</b> ' . $figuras_html_header;
         $html_fig_header .= '</div>';
         $pdf->writeHTML($html_fig_header, true, false, true, false, '');
 
@@ -294,7 +306,7 @@ if($res_cats) {
                 <tr style="background-color:rgb(233, 38, 98); color:white; font-weight:bold;">
                     <th width="4%" align="center">Pos.</th>
                     <th width="26%">Nadadora / Club</th>
-                    <th width="7%" align="center">Fig.</th>
+                    <th width="7%" align="center">' . ($is_tre ? 'Elem' : 'Fig.') . '</th>
                     <th width="23%">Puntuaciones Jueces</th>
                     <th width="8%" align="center">Nota</th>
                     <th width="6%" align="center">Pen.</th>
@@ -323,7 +335,7 @@ if($res_cats) {
                 $html .= '<td width="4%" align="center" style="font-weight:bold; font-size:10pt;">' . ($resultado['posicion'] ?? '-') . '</td>';
                 $html .= '<td width="26%"><b style="color:#1e293b; font-size:9pt;">' . mb_strtoupper(($nad['apellidos'] ?? '')) . ', ' . ($nad['nombre'] ?? '') . '</b><br><small style="color:#64748b; font-size:7pt;">' . $club . '</small></td>';
                 
-                // Columna de figuras
+                // Columna de figuras / elementos
                 $html .= '<td width="7%" align="center" style="font-size:8pt; color:#64748b;">';
                 foreach($figuras_info as $fi) { 
                     $html .= ($fi['numero'] ?? '') . '<br>'; 
@@ -335,32 +347,30 @@ if($res_cats) {
                 $notas_finales_fase = "";
                 $penalizaciones_fase = "";
                 
-                // Lógica para Figuras tradicionales
-                $res_fases_cat = mysqli_query($connection,"select id from fases where id_categoria='".$id_categoria."' and id_competicion='".$comp['id']."' order by orden asc");
-                if($res_fases_cat) {
-                    while($fase_cat = mysqli_fetch_assoc($res_fases_cat)){
-                        $q_p = "select * from puntuaciones_jueces where id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."') order by id_elemento, id_panel_juez";
-                        $res_p = mysqli_query($connection, $q_p);
-                        if($res_p) {
-                            while($pj = mysqli_fetch_assoc($res_p)){
-                                if($pj['nota_menor'] == 'si' || $pj['nota_mayor'] == 'si')
-                                    $html .= '<span style="text-decoration:line-through; color:#64748b;">' . number_format($pj['nota'] ?? 0, 1) . "</span> ";
-                                else
-                                    $html .= '<b style="color:#1e293b;">' . number_format($pj['nota'] ?? 0, 1) . '</b> ';
+                if($is_tre) {
+                    // Lógica para TRE
+                    $q_insc_id = safe_mysqli_result($connection, "SELECT id FROM inscripciones_figuras WHERE id_nadadora='".$resultado['id_nadadora']."' AND id_fase='$id_fase_tre'");
+                    if($q_insc_id) {
+                        for($e=1; $e<=count($figuras_info); $e++) {
+                            $q_p = "SELECT * FROM puntuaciones_jueces WHERE id_inscripcion_figuras = '$q_insc_id' AND id_elemento = '$e' ORDER BY id_panel_juez";
+                            $res_p = mysqli_query($connection, $q_p);
+                            if($res_p) {
+                                while($pj = mysqli_fetch_assoc($res_p)){
+                                    if($pj['nota_menor'] == 'si' || $pj['nota_mayor'] == 'si')
+                                        $html .= '<span style="text-decoration:line-through; color:#64748b;">' . number_format($pj['nota'] ?? 0, 1) . "</span> ";
+                                    else
+                                        $html .= '<b style="color:#1e293b;">' . number_format($pj['nota'] ?? 0, 1) . '</b> ';
+                                }
                             }
-                        }
-                        $html .= "<br>";
+                            $html .= "<br>";
 
-                        $q_i = "select nota_final from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."'";
-                        $res_i = mysqli_query($connection, $q_i);
-                        $nota_final_fase = 0;
-                        if($res_i && mysqli_num_rows($res_i) > 0) {
-                            $insc_data = mysqli_fetch_assoc($res_i);
-                            $nota_final_fase = $insc_data['nota_final'] ?? 0;
+                            $q_pe = "SELECT nota FROM puntuaciones_elementos WHERE id_rutina = '$q_insc_id' AND elemento = '$e'";
+                            $res_pe = mysqli_query($connection, $q_pe);
+                            $nota_elem = ($res_pe && $row_pe = mysqli_fetch_assoc($res_pe)) ? $row_pe['nota'] : 0;
+                            $notas_finales_fase .= number_format($nota_elem, 4) . "<br>";
                         }
-                        $notas_finales_fase .= number_format($nota_final_fase, 4) . "<br>";
-
-                        $q_pen = "select p.codigo from penalizaciones_rutinas pr JOIN penalizaciones p ON pr.id_penalizacion = p.id where pr.id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."')";
+                        
+                        $q_pen = "select p.codigo from penalizaciones_rutinas pr JOIN penalizaciones p ON pr.id_penalizacion = p.id where pr.id_inscripcion_figuras = '$q_insc_id'";
                         $res_pen = mysqli_query($connection, $q_pen);
                         $pens_this_fase = "";
                         if($res_pen) {
@@ -369,6 +379,43 @@ if($res_cats) {
                             }
                         }
                         $penalizaciones_fase .= ($pens_this_fase ?: "-") . "<br>";
+                    }
+                } else {
+                    // Lógica para Figuras tradicionales
+                    $res_fases_cat = mysqli_query($connection,"select id from fases where id_categoria='".$id_categoria."' and id_competicion='".$comp['id']."' order by orden asc");
+                    if($res_fases_cat) {
+                        while($fase_cat = mysqli_fetch_assoc($res_fases_cat)){
+                            $q_p = "select * from puntuaciones_jueces where id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."') order by id_elemento, id_panel_juez";
+                            $res_p = mysqli_query($connection, $q_p);
+                            if($res_p) {
+                                while($pj = mysqli_fetch_assoc($res_p)){
+                                    if($pj['nota_menor'] == 'si' || $pj['nota_mayor'] == 'si')
+                                        $html .= '<span style="text-decoration:line-through; color:#64748b;">' . number_format($pj['nota'] ?? 0, 1) . "</span> ";
+                                    else
+                                        $html .= '<b style="color:#1e293b;">' . number_format($pj['nota'] ?? 0, 1) . '</b> ';
+                                }
+                            }
+                            $html .= "<br>";
+
+                            $q_i = "select nota_final from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."'";
+                            $res_i = mysqli_query($connection, $q_i);
+                            $nota_final_fase = 0;
+                            if($res_i && mysqli_num_rows($res_i) > 0) {
+                                $insc_data = mysqli_fetch_assoc($res_i);
+                                $nota_final_fase = $insc_data['nota_final'] ?? 0;
+                            }
+                            $notas_finales_fase .= number_format($nota_final_fase, 4) . "<br>";
+
+                            $q_pen = "select p.codigo from penalizaciones_rutinas pr JOIN penalizaciones p ON pr.id_penalizacion = p.id where pr.id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado['id_nadadora']."' and id_fase='".$fase_cat['id']."')";
+                            $res_pen = mysqli_query($connection, $q_pen);
+                            $pens_this_fase = "";
+                            if($res_pen) {
+                                while($pen = mysqli_fetch_assoc($res_pen)){
+                                    $pens_this_fase .= $pen['codigo'] . " ";
+                                }
+                            }
+                            $penalizaciones_fase .= ($pens_this_fase ?: "-") . "<br>";
+                        }
                     }
                 }
                 

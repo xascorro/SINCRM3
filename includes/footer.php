@@ -47,6 +47,7 @@
 </footer>
 
 </div> <!-- #content-wrapper -->
+
 </div> <!-- #wrapper (Abierto en header.php) -->
 
 </body>

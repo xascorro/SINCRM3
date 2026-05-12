@@ -62,10 +62,15 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Navbar**: Modernizado con integración del nuevo módulo **BIAS Analizer** y organización de grupos de acceso.
 - **Versionado Dinámico Global**: Integración total de `version.json` en Login, Footer y página 404. Eliminación de strings hardcoded.
 - **Limpieza de Código (v4)**: Purga de librerías obsoletas (TCPDF original), carpetas SCSS legacy y archivos de prueba antiguos.
+- **Categorías (v4 (Prerelease))**: Rediseño visual total. Implementación de campos `nombre_corto` y `orden`. Buscador dinámico integrado y KPIs técnicos.
+- **Modo PWA (v4 (Prerelease))**: Aplicación 100% instalable en móvil.
+    - **Service Worker**: Gestión de caché inteligente para carga ultra-rápida.
+    - **Manifiesto**: Configuración de colores corporativos y Splash Screen.
+    - **UI Mobile**: Nueva barra de navegación inferior (Bottom Nav) con botones dinámicos por rol.
+    - **Resolución de Conflictos**: Solucionado el solapamiento con el alias `/icons/` de Apache mediante la nueva ruta `pwa-icons/`.
 
 ### ⏳ Pendiente:
-- **Categorías**: Pendiente de aplicar el nuevo estándar visual y de lógica.
-- **Limpieza Final**: Borrar la columna `baja` de la tabla `nadadoras` una vez confirmada la estabilidad de `activo`.
+- **Limpieza Final**: Completada la eliminación de la columna `baja` en `nadadoras`. Sistema unificado bajo `activo`.
 - **TRE (Técnico)**: Re-introducir la lógica de elementos técnicos en los informes de resultados.
 
 ## 📌 Nota de Sesión

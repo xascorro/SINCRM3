@@ -5,7 +5,7 @@
  */
 
 // Dominios de producción/beta
-$prod_domains = ['sincrm.pedrodiaz.eu', 'beta.pedrodiaz.eu'];
+$prod_domains = ['sincrm.pedrodiaz.eu', 'beta.pedrodiaz.eu', '79.72.31.184'];
 
 // Configuración de Zona Horaria Global
 date_default_timezone_set('Europe/Madrid');
@@ -14,13 +14,13 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'Spanish_Spain');
 if (in_array($_SERVER['SERVER_NAME'] ?? '', $prod_domains)) {
     // Entorno Producción / Beta
     $servername  = 'localhost';
-    $db_name     = 'sincrm3';
+    $db_name     = 'sincrm4';
     $db_username = 'xas';
     $db_password = '79eagle';
 } else {
     // Entorno Local / Desarrollo
     $servername  = 'localhost';
-    $db_name     = 'sincrm3';
+    $db_name     = 'sincrm4';
     $db_username = 'root';
     $db_password = 'xas';
 }

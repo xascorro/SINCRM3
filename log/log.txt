@@ -316,3 +316,117 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-05-07 07:55:05] [SECURITY] [SISTEMA] [172.68.134.210] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
 [2026-05-07 08:01:36] [SECURITY] [SISTEMA] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
 [2026-05-07 08:01:40] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [3vb9ko4jtjrrur34qi6rnrb00m] Inicio de sesión exitoso
+[2026-05-07 08:34:47] [SECURITY] [SISTEMA] [162.158.122.186] [ef4e7veig92v05oi9cfn165p1f] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-07 08:34:57] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-07 19:41:09] [SECURITY] [SISTEMA] [162.158.123.223] [ef4e7veig92v05oi9cfn165p1f] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-07 19:41:18] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-07 19:42:12] [INFO] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Cierre de sesión voluntario
+[2026-05-07 19:42:15] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-07 19:42:20] [INFO] [xascorro@gmail.com] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Cierre de sesión voluntario
+[2026-05-07 19:42:31] [SUCCESS] [juez@pedrodiaz.eu] [162.158.123.222] [ef4e7veig92v05oi9cfn165p1f] Inicio de sesión exitoso
+[2026-05-09 08:35:33] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [21l3r2fpfpjm1sa4np2djkm1pg] Inicio de sesión exitoso
+[2026-05-11 17:30:01] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 17:45:28] [INFO] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 17:45:32] [WARNING] [SISTEMA] [172.68.135.11] [2d4oid5pl9er9vk9je0qau542m] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:47:48] [WARNING] [SISTEMA] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:47:59] [WARNING] [SISTEMA] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:48:14] [WARNING] [SISTEMA] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:49:11] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 17:50:08] [INFO] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Cierre de sesión voluntario
+[2026-05-11 17:50:27] [WARNING] [SISTEMA] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:50:53] [WARNING] [SISTEMA] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:51:07] [WARNING] [SISTEMA] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:51:22] [WARNING] [SISTEMA] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:51:24] [INFO] [SISTEMA] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Reenvío de verificación solicitado para xascorro@gmail.com
+[2026-05-11 17:51:41] [SUCCESS] [SISTEMA] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Email verificado con éxito: xascorro@gmail.com
+[2026-05-11 17:51:46] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 17:53:16] [WARNING] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:53:18] [INFO] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Reenvío de verificación solicitado para xascorro@gmail.com
+[2026-05-11 17:53:29] [WARNING] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 17:53:37] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Email verificado con éxito: xascorro@gmail.com
+[2026-05-11 17:53:43] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:00:30] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:02:24] [WARNING] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 18:02:27] [INFO] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Reenvío de verificación solicitado para xascorro@gmail.com
+[2026-05-11 18:02:29] [WARNING] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Intento de acceso sin verificar email: xascorro@gmail.com
+[2026-05-11 18:03:09] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ovk02q1qpe8mhc3uqc0jgau5pr] Email verificado con éxito: xascorro@gmail.com
+[2026-05-11 18:03:22] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:03:54] [INFO] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Cierre de sesión voluntario
+[2026-05-11 18:04:00] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:10:04] [INFO] [xascorro@gmail.com] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:12:40] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:12:44] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:12:53] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:13:00] [INFO] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Cierre de sesión voluntario
+[2026-05-11 18:13:03] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:13:28] [INFO] [xascorro@gmail.com] [162.158.122.185] [ovk02q1qpe8mhc3uqc0jgau5pr] Cierre de sesión voluntario
+[2026-05-11 18:13:42] [INFO] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:13:46] [SECURITY] [SISTEMA] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 18:13:49] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:18:35] [INFO] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:19:11] [SECURITY] [SISTEMA] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Intento de sesión fallido: Contraseña incorrecta para xascorro@gmail.com
+[2026-05-11 18:19:19] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:19:36] [WARNING] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Intento de acceso sin verificar email: juez@pedrodiaz.eu
+[2026-05-11 18:19:47] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:21:40] [INFO] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] OTP generado y enviado para xascorro@gmail.com
+[2026-05-11 18:21:58] [INFO] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] OTP verificado correctamente para xascorro@gmail.com
+[2026-05-11 18:22:15] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:22:38] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:23:53] [INFO] [SISTEMA] [162.158.122.186] [no-session] Cierre de sesión voluntario
+[2026-05-11 18:23:56] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:30:39] [INFO] [xascorro@gmail.com] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:30:47] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:33:19] [INFO] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:34:04] [INFO] [SISTEMA] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Nueva solicitud de registro: no@pedrodiaz.eu
+[2026-05-11 18:34:16] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:34:57] [SUCCESS] [SISTEMA] [172.68.134.210] [ovk02q1qpe8mhc3uqc0jgau5pr] Email verificado con éxito: no@pedrodiaz.eu
+[2026-05-11 18:35:09] [INFO] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:35:18] [SUCCESS] [no@pedrodiaz.eu] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:35:18] [SECURITY] [no@pedrodiaz.eu] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Intento de acceso: Usuario invitado no aprobado (no@pedrodiaz.eu)
+[2026-05-11 18:35:32] [SECURITY] [SISTEMA] [172.68.134.211] [ovk02q1qpe8mhc3uqc0jgau5pr] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 18:35:35] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:35:58] [INFO] [xascorro@gmail.com] [172.68.134.211] [ovk02q1qpe8mhc3uqc0jgau5pr] Usuario actualizado (ID: 52): no@pedrodiaz.eu
+[2026-05-11 18:35:58] [INFO] [xascorro@gmail.com] [172.68.134.211] [ovk02q1qpe8mhc3uqc0jgau5pr] Email de actualización enviado a no@pedrodiaz.eu (Rol: Juez)
+[2026-05-11 18:36:00] [SUCCESS] [no@pedrodiaz.eu] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:36:23] [INFO] [no@pedrodiaz.eu] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:36:31] [INFO] [SISTEMA] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] OTP generado y enviado para no@pedrodiaz.eu
+[2026-05-11 18:36:57] [INFO] [SISTEMA] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] OTP verificado correctamente para no@pedrodiaz.eu
+[2026-05-11 18:37:11] [SUCCESS] [no@pedrodiaz.eu] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:40:38] [INFO] [no@pedrodiaz.eu] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:41:25] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:42:59] [INFO] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:43:01] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:44:05] [INFO] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:44:07] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:45:33] [INFO] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:45:38] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:46:01] [INFO] [xascorro@gmail.com] [162.158.123.222] [ovk02q1qpe8mhc3uqc0jgau5pr] Cierre de sesión voluntario
+[2026-05-11 18:46:07] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [ovk02q1qpe8mhc3uqc0jgau5pr] Inicio de sesión exitoso
+[2026-05-11 18:47:08] [INFO] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:47:11] [SUCCESS] [xascorro@gmail.com] [172.68.134.211] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 18:49:39] [INFO] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 18:49:42] [SUCCESS] [xascorro@gmail.com] [162.158.122.185] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 19:33:30] [SECURITY] [SISTEMA] [162.158.123.223] [gpj6tdl6g0b4n1735mm2jrehfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 19:33:34] [SECURITY] [SISTEMA] [162.158.123.223] [gpj6tdl6g0b4n1735mm2jrehfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 19:33:39] [SECURITY] [SISTEMA] [162.158.123.223] [gpj6tdl6g0b4n1735mm2jrehfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 19:33:47] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [gpj6tdl6g0b4n1735mm2jrehfk] Inicio de sesión exitoso
+[2026-05-11 19:35:46] [SUCCESS] [xascorro@gmail.com] [172.68.134.210] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 19:39:38] [INFO] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 19:39:41] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 19:40:28] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Nuevo backup creado: sincrm4_20260511_1940.sql.gz (cambio a sincrm4)
+[2026-05-11 19:44:11] [INFO] [xascorro@gmail.com] [162.158.122.186] [2d4oid5pl9er9vk9je0qau542m] Cierre de sesión voluntario
+[2026-05-11 19:44:13] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 20:16:24] [SUCCESS] [SISTEMA] [172.68.134.210] [lvnaah9mg9ha10pis3ptmq0qfk] Email verificado con éxito: juez@pedrodiaz.eu
+[2026-05-11 20:49:34] [SECURITY] [SISTEMA] [162.158.123.223] [2d4oid5pl9er9vk9je0qau542m] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 20:53:59] [SUCCESS] [xascorro@gmail.com] [162.158.123.222] [2d4oid5pl9er9vk9je0qau542m] Inicio de sesión exitoso
+[2026-05-11 21:00:34] [SECURITY] [SISTEMA] [172.68.134.210] [lvnaah9mg9ha10pis3ptmq0qfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-11 21:01:10] [SUCCESS] [xascorro@gmail.com] [162.158.122.186] [lvnaah9mg9ha10pis3ptmq0qfk] Inicio de sesión exitoso
+[2026-05-12 03:10:49] [SECURITY] [SISTEMA] [162.158.123.223] [lvnaah9mg9ha10pis3ptmq0qfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-12 03:11:05] [SECURITY] [SISTEMA] [162.158.123.223] [lvnaah9mg9ha10pis3ptmq0qfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-12 03:11:14] [SUCCESS] [xascorro@gmail.com] [162.158.123.223] [lvnaah9mg9ha10pis3ptmq0qfk] Inicio de sesión exitoso
+[2026-05-12 03:13:23] [INFO] [xascorro@gmail.com] [172.68.135.103] [lvnaah9mg9ha10pis3ptmq0qfk] Consulta de Auditoría BIAS (Global) para: XIII Liga de Figuras (4ª Jornada)	
+[2026-05-12 03:15:26] [INFO] [xascorro@gmail.com] [172.68.135.104] [lvnaah9mg9ha10pis3ptmq0qfk] Cierre de sesión voluntario
+[2026-05-12 03:15:29] [SUCCESS] [xascorro@gmail.com] [172.68.135.104] [lvnaah9mg9ha10pis3ptmq0qfk] Inicio de sesión exitoso
+[2026-05-12 03:17:28] [WARNING] [xascorro@gmail.com] [162.158.122.145] [lvnaah9mg9ha10pis3ptmq0qfk] Cuenta de usuario eliminada: no@pedrodiaz.eu
+[2026-05-12 05:31:13] [SECURITY] [SISTEMA] [172.68.135.33] [lvnaah9mg9ha10pis3ptmq0qfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-05-12 05:31:17] [SUCCESS] [xascorro@gmail.com] [188.114.111.48] [lvnaah9mg9ha10pis3ptmq0qfk] Inicio de sesión exitoso

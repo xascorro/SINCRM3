@@ -19,10 +19,10 @@ include('includes/navbar.php');
                     <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-layer-group text-lg"></i></span>
                     Editar Categoría
                 </h1>
-                <p class="text-slate-500 font-medium">Ajuste de rangos y denominación técnica.</p>
+                <p class="text-slate-500 font-medium italic">Ajuste de rangos y denominación técnica.</p>
             </div>
             <div class="flex gap-3">
-                <a href="categorias.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm italic">
+                <a href="categorias.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm italic no-underline">
                     <i class="fas fa-arrow-left text-xs"></i> Volver
                 </a>
             </div>
@@ -43,21 +43,31 @@ include('includes/navbar.php');
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                        <div class="md:col-span-12 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nombre de la Categoría</label>
-                            <input type="text" name="edit_nombre" value="<?php echo $row['nombre']?>" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-lg font-black text-slate-700 shadow-inner">
+                        <div class="md:col-span-8 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Nombre Completo</label>
+                            <input type="text" name="edit_nombre" value="<?php echo $row['nombre']?>" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all text-lg font-black text-slate-700 shadow-inner uppercase italic">
+                        </div>
+
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Cód. Corto</label>
+                            <input type="text" name="edit_nombre_corto" value="<?php echo $row['nombre_corto']?>" required maxlength="8" class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 uppercase italic">
                         </div>
                         
-                        <div class="md:col-span-6 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Edad Mínima permitida</label>
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Orden Visual</label>
+                            <input type="number" name="edit_orden" value="<?php echo $row['orden']?>" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700">
+                        </div>
+
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Edad Mínima</label>
                             <div class="relative">
                                 <input type="number" name="edit_edad_minima" value="<?php echo $row['edad_minima']?>" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700">
                                 <span class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">Años</span>
                             </div>
                         </div>
 
-                        <div class="md:col-span-6 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Edad Máxima permitida</label>
+                        <div class="md:col-span-4 space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Edad Máxima</label>
                             <div class="relative">
                                 <input type="number" name="edit_edad_maxima" value="<?php echo $row['edad_maxima']?>" required class="w-full px-6 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700">
                                 <span class="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase">Años</span>

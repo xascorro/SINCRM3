@@ -92,11 +92,18 @@ include('security.php');
                     </div>
                     <span class="text-sm font-bold">Mi Actividad</span>
                 </a>
+
+                <a href="help/index.html" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
+                    <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
+                        <i class="fas fa-question-circle text-lg"></i>
+                    </div>
+                    <span class="text-sm font-bold">Ayuda</span>
+                </a>
                 
                 <?php if($_SESSION['id_rol'] == 1): ?>
                 <a href="help_admin/index.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
                     <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
-                        <i class="fas fa-book-open text-lg text-blue-500"></i>
+                        <i class="fas fa-book-open text-lg"></i>
                     </div>
                     <span class="text-sm font-bold">Ayuda Admin</span>
                 </a>
