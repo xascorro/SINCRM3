@@ -7,34 +7,31 @@ include('./lib/my_functions.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SINCRM4</title>
-
+    <title>SINCRM4 | Gestión de Natación Artística</title>
+    <meta name="description" content="Sistema integral para la gestión de competiciones, clubes y auditoría de jueces de Natación Artística. Optimizado para normativa World Aquatics (AQUA).">
+    
     <!-- PWA & Mobile Meta -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#334155">
+    <meta name="theme-color" content="#0f172a">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="application-name" content="SINCRM4">
+    <meta name="apple-mobile-web-app-title" content="SINCRM4">
     
     <!-- Icons suite -->
-    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png">
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(reg => console.log('Service Worker registrado', reg.scope))
-                    .catch(err => console.error('Error al registrar Service Worker', err));
-            });
-        }
-    </script>
-
+    <!-- Performance: Preconnect & Font Loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
         tailwind.config = {
+            corePlugins: { preflight: false },
             theme: {
                 extend: {
                     colors: {
@@ -51,6 +48,8 @@ include('./lib/my_functions.php');
                 },
             },
         }
+        // Silenciar aviso de producción
+        window.tailwind.config.production = true;
     </script>
 
     <style>
@@ -106,8 +105,11 @@ include('./lib/my_functions.php');
         }
     </style>
 
-    <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous" defer></script>
+</head>
+<body class="antialiased bg-[#f1f5f9]">
+<div id="wrapper" class="flex min-h-screen">
+://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet"/>
 </head>
 <body class="antialiased bg-[#f1f5f9]">
 <div id="wrapper" class="flex min-h-screen">

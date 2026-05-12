@@ -128,15 +128,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     exit;
 }
 
-// Acción: Reparar Notas Huérfanas
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'reparar_notas') {
-    $q_del = "DELETE FROM puntuaciones_jueces WHERE id_panel_juez NOT IN (SELECT id FROM panel_jueces)";
-    if (mysqli_query($connection, $q_del)) {
-        $affected = mysqli_affected_rows($connection);
-        write_log("Reparación de integridad: Eliminadas $affected notas huérfanas.", "SECURITY");
-        echo json_encode(['status' => 'success', 'affected' => $affected]);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => mysqli_error($connection)]);
+// Acción: Obtener lista de competiciones
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'get_competiciones_list') {
+    $q = "SELECT id, nombre, fecha FROM competiciones ORDER BY fecha DESC";
+    $res = mysqli_query($connection, $q);
+    $comps = [];
+    while($r = mysqli_fetch_assoc($res)) { $comps[] = $r; }
+    echo json_encode(['status' => 'success', 'competiciones' => $comps]);
+    exit;
+}
+
+// Acción: Simular borrado en cascada
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'simular_cascada') {
+    $ids = json_decode($_POST['ids'], true);
+    if (!$ids) exit;
+    $id_list = implode(',', array_map('intval', $ids));
+    
+    $conteo = [];
+    $total_global = 0;
+
+    $tablas = [
+        ['entidad' => 'Competiciones', 'sql' => "SELECT COUNT(*) FROM competiciones WHERE id IN ($id_list)"],
+        ['entidad' => 'Fases Técnicas', 'sql' => "SELECT COUNT(*) FROM fases WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Inscripciones (Figuras)', 'sql' => "SELECT COUNT(*) FROM inscripciones_figuras WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Rutinas / Equipos', 'sql' => "SELECT COUNT(*) FROM rutinas WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Paneles de Jueces', 'sql' => "SELECT COUNT(*) FROM paneles WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Vínculos de Jueces', 'sql' => "SELECT COUNT(*) FROM panel_jueces WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Participantes Rutinas', 'sql' => "SELECT COUNT(*) FROM rutinas_participantes WHERE id_competicion IN ($id_list)"],
+        ['entidad' => 'Notas de Jueces', 'sql' => "SELECT COUNT(*) FROM puntuaciones_jueces WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))"],
+        ['entidad' => 'Notas Elementos/TRE', 'sql' => "SELECT COUNT(*) FROM puntuaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"],
+        ['entidad' => 'Notas Paneles', 'sql' => "SELECT COUNT(*) FROM puntuaciones_paneles WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))"],
+        ['entidad' => 'Híbridos / Coach Cards', 'sql' => "SELECT COUNT(*) FROM hibridos_rutina WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"],
+        ['entidad' => 'Resultados & Stats', 'sql' => "SELECT (SELECT COUNT(*) FROM resultados_figuras WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM resultados_figuras_categorias WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM resultados_rutinas_categorias WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM auditoria_jueces_stats WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM auditoria_jueces_puntos WHERE id_competicion IN ($id_list))"]
+    ];
+
+    foreach ($tablas as $t) {
+        $res = mysqli_query($connection, $t['sql']);
+        $count = mysqli_fetch_array($res)[0];
+        $conteo[] = ['entidad' => $t['entidad'], 'total' => (int)$count];
+        $total_global += $count;
+    }
+
+    echo json_encode(['status' => 'success', 'conteo' => $conteo, 'total_global' => $total_global]);
+    exit;
+}
+
+// Acción: Ejecutar borrado en cascada
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'ejecutar_cascada') {
+    $ids = json_decode($_POST['ids'], true);
+    if (!$ids) exit;
+    $id_list = implode(',', array_map('intval', $ids));
+
+    mysqli_begin_transaction($connection);
+    try {
+        $total_borrado = 0;
+
+        // 1. Borrar Notas y dependencias profundas (usando subqueries)
+        $queries_dep = [
+            "DELETE FROM puntuaciones_jueces WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+            "DELETE FROM puntuaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+            "DELETE FROM puntuaciones_paneles WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+            "DELETE FROM penalizaciones_rutinas WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+            "DELETE FROM penalizaciones_artistico WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+            "DELETE FROM penalizaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+            "DELETE FROM hibridos_rutina WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"
+        ];
+
+        // 2. Borrar entidades vinculadas directamente a id_competicion
+        $queries_direct = [
+            "DELETE FROM panel_jueces WHERE id_competicion IN ($id_list)",
+            "DELETE FROM paneles WHERE id_competicion IN ($id_list)",
+            "DELETE FROM rutinas_participantes WHERE id_competicion IN ($id_list)",
+            "DELETE FROM rutinas WHERE id_competicion IN ($id_list)",
+            "DELETE FROM inscripciones_figuras WHERE id_competicion IN ($id_list)",
+            "DELETE FROM fases WHERE id_competicion IN ($id_list)",
+            "DELETE FROM resultados_figuras WHERE id_competicion IN ($id_list)",
+            "DELETE FROM resultados_figuras_categorias WHERE id_competicion IN ($id_list)",
+            "DELETE FROM resultados_rutinas_categorias WHERE id_competicion IN ($id_list)",
+            "DELETE FROM auditoria_jueces_stats WHERE id_competicion IN ($id_list)",
+            "DELETE FROM auditoria_jueces_puntos WHERE id_competicion IN ($id_list)",
+            "DELETE FROM calculos_clasificacion WHERE id_competicion IN ($id_list)",
+            "DELETE FROM competiciones WHERE id IN ($id_list)"
+        ];
+
+        foreach (array_merge($queries_dep, $queries_direct) as $q) {
+            if (mysqli_query($connection, $q)) {
+                $total_borrado += mysqli_affected_rows($connection);
+            } else {
+                throw new Exception(mysqli_error($connection));
+            }
+        }
+
+        mysqli_commit($connection);
+        write_log("LIMPIEZA EN CASCADA: Eliminadas competiciones [$id_list]. Total registros borrados: $total_borrado", "SECURITY");
+        echo json_encode(['status' => 'success', 'total_borrado' => $total_borrado]);
+
+    } catch (Exception $e) {
+        mysqli_rollback($connection);
+        echo json_encode(['status' => 'error', 'message' => "Fallo en cascada: ".$e->getMessage()]);
     }
     exit;
 }

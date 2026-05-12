@@ -14,9 +14,15 @@ setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'Spanish_Spain');
 if (in_array($_SERVER['SERVER_NAME'] ?? '', $prod_domains)) {
     // Entorno Producción / Beta
     $servername  = 'localhost';
-    $db_name     = 'sincrm4';
     $db_username = 'xas';
     $db_password = '79eagle';
+    
+    // Separación de bases de datos por subdominio
+    if (($_SERVER['SERVER_NAME'] ?? '') == 'beta.pedrodiaz.eu') {
+        $db_name = 'sincrm4beta';
+    } else {
+        $db_name = 'sincrm4';
+    }
 } else {
     // Entorno Local / Desarrollo
     $servername  = 'localhost';

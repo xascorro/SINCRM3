@@ -168,6 +168,19 @@ include('includes/navbar.php');
                             <button onclick="analizar('notas_huerfanas')" class="px-6 py-2.5 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 hover:scale-105 transition-all">Reparar</button>
                         </div>
                     </div>
+
+                    <!-- Limpieza en Cascada de Competiciones -->
+                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-slate-800 flex flex-col justify-between group hover:shadow-xl transition-all">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fas fa-broom text-lg"></i></div>
+                            <h3 class="text-xl font-black text-slate-800 mb-2">Limpieza en Cascada</h3>
+                            <p class="text-xs font-medium text-slate-400 italic mb-8">Eliminación completa de eventos (Figuras/Rutinas) y todas sus dependencias técnicas.</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase text-slate-400">Acción Destructiva</span>
+                            <button onclick="abrirSelectorCascada()" class="px-6 py-2.5 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">Iniciar Limpieza</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -177,6 +190,136 @@ include('includes/navbar.php');
 </main>
 
 <script>
+    function abrirSelectorCascada() {
+        const formData = new FormData();
+        formData.append('action', 'get_competiciones_list');
+
+        fetch('mantenimiento_code.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                let html = '<div class="text-left font-lexend"><p class="text-xs font-bold text-slate-500 mb-4 italic">Selecciona las competiciones que deseas borrar POR COMPLETO (fases, inscripciones, notas, etc.):</p>';
+                html += '<div class="max-h-64 overflow-y-auto custom-scrollbar space-y-2 pr-2">';
+                data.competiciones.forEach(c => {
+                    html += `<label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100 transition-all cursor-pointer">
+                                <input type="checkbox" name="comp_ids[]" value="${c.id}" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[11px] font-black text-slate-700 truncate">${c.nombre}</p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase italic">ID: #${c.id} | Fecha: ${c.fecha}</p>
+                                </div>
+                             </label>`;
+                });
+                html += '</div></div>';
+
+                Swal.fire({
+                    title: 'Seleccionar Competiciones',
+                    html: html,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Simular Borrado',
+                    cancelButtonText: 'Cancelar',
+                    confirmButtonColor: '#1e293b',
+                    preConfirm: () => {
+                        const selected = Array.from(document.querySelectorAll('input[name="comp_ids[]"]:checked')).map(cb => cb.value);
+                        if (selected.length === 0) {
+                            Swal.showValidationMessage('Debes seleccionar al menos una competición');
+                            return false;
+                        }
+                        return selected;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        simularBorrado(result.value);
+                    }
+                });
+            }
+        });
+    }
+
+    function simularBorrado(ids) {
+        const formData = new FormData();
+        formData.append('action', 'simular_cascada');
+        formData.append('ids', JSON.stringify(ids));
+
+        Swal.fire({
+            title: 'Calculando impacto...',
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch('mantenimiento_code.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                let html = '<div class="text-left font-lexend space-y-6">';
+                html += '<p class="text-xs font-bold text-red-500 uppercase tracking-widest bg-red-50 p-3 rounded-xl border border-red-100">Atención: Esta acción eliminará permanentemente todos estos datos:</p>';
+                
+                html += '<div class="grid grid-cols-2 gap-4">';
+                data.conteo.forEach(item => {
+                    html += `<div class="p-4 bg-slate-50 rounded-[1.5rem] border border-slate-100">
+                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">${item.entidad}</p>
+                                <p class="text-xl font-black text-slate-800">${item.total}</p>
+                             </div>`;
+                });
+                html += '</div>';
+
+                html += '<div class="p-4 bg-amber-50 rounded-2xl border border-amber-100"><p class="text-[10px] font-bold text-amber-700 italic">Total de registros afectados: <span class="font-black">' + data.total_global + '</span></p></div>';
+                html += '</div>';
+
+                Swal.fire({
+                    title: 'Confirmar Eliminación',
+                    html: html,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: '¡SÍ, BORRAR TODO!',
+                    cancelButtonText: 'Abortar',
+                    confirmButtonColor: '#ef4444',
+                    width: '650px'
+                }).then((resConfirm) => {
+                    if (resConfirm.isConfirmed) {
+                        ejecutarBorrado(ids);
+                    }
+                });
+            }
+        });
+    }
+
+    function ejecutarBorrado(ids) {
+        const formData = new FormData();
+        formData.append('action', 'ejecutar_cascada');
+        formData.append('ids', JSON.stringify(ids));
+
+        Swal.fire({
+            title: 'Ejecutando limpieza...',
+            html: 'Por favor, no cierres la ventana.',
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        fetch('mantenimiento_code.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                Swal.fire({
+                    title: '¡Limpieza Completada!',
+                    text: `Se han eliminado ${data.total_borrado} registros con éxito.`,
+                    icon: 'success'
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
+        });
+    }
+
     function analizar(tipo) {
         const formData = new FormData();
         formData.append('action', 'analisis_especifico');
