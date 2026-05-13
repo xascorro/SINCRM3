@@ -2,7 +2,7 @@
 //funciona bien x 4
 //if($_SESSION['competicion_figuras'] == 'si'){
 if($figuras == 'si'){
-	$query = "SELECT fs.id, fs.id_categoria, m.nombre as nombre_modalidad, c.nombre as nombre_categoria 
+	$query_fase = "SELECT fs.id, fs.id_categoria, m.nombre as nombre_modalidad, c.nombre as nombre_categoria 
               FROM fases fs 
               JOIN modalidades m ON fs.id_modalidad = m.id 
               JOIN categorias c ON fs.id_categoria = c.id 
@@ -10,22 +10,22 @@ if($figuras == 'si'){
               GROUP BY fs.id_categoria 
               ORDER BY c.orden ASC";
 }else{
-	$query = "SELECT fs.id, fs.id_categoria, m.nombre as nombre_modalidad, c.nombre as nombre_categoria 
+	$query_fase = "SELECT fs.id, fs.id_categoria, m.nombre as nombre_modalidad, c.nombre as nombre_categoria 
               FROM fases fs 
               JOIN modalidades m ON fs.id_modalidad = m.id 
               JOIN categorias c ON fs.id_categoria = c.id 
               WHERE fs.id_competicion = $id_competicion";
 }
-$query_run = mysqli_query($connection,$query);
+$query_run_fase = mysqli_query($connection, $query_fase);
 $select = "<label for='id_fase'>Fase</label>";
 $select .= "<select name='id_fase' id='id_fase' class='form-control'>";
-if(mysqli_num_rows($query_run) > 0){
-	while ($row = mysqli_fetch_assoc($query_run)) {
-		if(intval(@$id_fase) == $row['id']){
-			$select .= "<option selected value=".$row['id']." data-categoria='".$row['id_categoria']."'>".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
+if(mysqli_num_rows($query_run_fase) > 0){
+	while ($row_fase = mysqli_fetch_assoc($query_run_fase)) {
+		if(intval(@$id_fase) == $row_fase['id']){
+			$select .= "<option selected value=".$row_fase['id']." data-categoria='".$row_fase['id_categoria']."'>".$row_fase['nombre_modalidad']." ".$row_fase['nombre_categoria']."</option>";
 		}
 		else{
-			$select .= "<option value=".$row['id']." data-categoria='".$row['id_categoria']."'>".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
+			$select .= "<option value=".$row_fase['id']." data-categoria='".$row_fase['id_categoria']."'>".$row_fase['nombre_modalidad']." ".$row_fase['nombre_categoria']."</option>";
 		}
 
 	}

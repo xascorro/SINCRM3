@@ -46,6 +46,8 @@ $stats = mysqli_fetch_assoc($res_stats);
             </div>
         </div>
 
+        <?php include('includes/alertas_v4.php'); ?>
+
         <!-- DASHBOARD: KPIs -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-blue-600 group hover:shadow-xl transition-all">
@@ -95,12 +97,7 @@ $stats = mysqli_fetch_assoc($res_stats);
         </div>
 
         <!-- Alertas -->
-        <?php if(isset($_SESSION['correcto'])): ?>
-            <div class="mb-8 p-4 bg-white border-l-4 border-green-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4">
-                <i class="fas fa-check-circle text-green-500"></i>
-                <span class="text-sm font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
-            </div>
-        <?php endif; ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Rejilla de Federaciones -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="fedGrid">

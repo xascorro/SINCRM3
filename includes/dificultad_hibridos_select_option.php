@@ -77,25 +77,25 @@ if(mysqli_num_rows($query_run2) > 0){
 	$agrupar = '';
 	if(mysqli_num_rows($query_run2) > 1)
     	$select .= "<option value=''> Selecciona valor </option>";
-	while ($row = mysqli_fetch_assoc($query_run2)) {
-		$row2['codigo'] = str_replace("'", "XX", $row['codigo']);
-		$codigoValor = $row['codigo'] . "(". $row['valor'] .")";
+	while ($row_dif = mysqli_fetch_assoc($query_run2)) {
+		$codigo_safe = str_replace("'", "XX", $row_dif['codigo']);
+		$codigoValor = $row_dif['codigo'] . "(". $row_dif['valor'] .")";
         $longitudCodigoValor = strlen($codigoValor);
         $espaciosNecesarios = max(0, 25 - $longitudCodigoValor);
         $espacios = str_repeat("&nbsp;", $espaciosNecesarios);
 		$tabulacionesNecesarias = max(0, ceil((20 - $longitudCodigoValor) / 4)); // Asumiendo 8 caracteres por tabulación
         $tabulaciones = str_repeat("\t", $tabulacionesNecesarias);
 
-		if($agrupar != @$row['agrupar'].@$row['subagrupar']){
-				$select .= '</optgroup><optgroup label="'.$row['agrupar'].' '.@$row['subagrupar'].'">';
+		if($agrupar != @$row_dif['agrupar'].@$row_dif['subagrupar']){
+				$select .= '</optgroup><optgroup label="'.$row_dif['agrupar'].' '.@$row_dif['subagrupar'].'">';
 			}
-		if($id_dificultad == $row['id'] or $texto == $row['codigo']){
-			$select .= "<option selected value=".$row['id'].">".$row['codigo']." +".$row['valor']."</option>";
+		if($id_dificultad == $row_dif['id'] or $texto == $row_dif['codigo']){
+			$select .= "<option selected value=".$row_dif['id'].">".$row_dif['codigo']." +".$row_dif['valor']."</option>";
 		}
 		else{
-			$select .= "<option value='".$row['id']."'>".$row['codigo'].$tabulaciones."(".$row['valor'].")</option>";
+			$select .= "<option value='".$row_dif['id']."'>".$row_dif['codigo'].$tabulaciones."(".$row_dif['valor'].")</option>";
 		}
-		$agrupar = @$row['agrupar'].@$row['subagrupar'];
+		$agrupar = @$row_dif['agrupar'].@$row_dif['subagrupar'];
 
 
 	}

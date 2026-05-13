@@ -50,6 +50,8 @@ $pct_activos = ($total_c > 0) ? round(($activos_c / $total_c) * 100) : 0;
             </div>
         </div>
 
+        <?php include('includes/alertas_v4.php'); ?>
+
         <!-- DASHBOARD -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             <div class="md:col-span-2 bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500 group hover:shadow-xl transition-all">

@@ -105,6 +105,9 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
     <?php include('includes/topbar.php'); ?>
 
     <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+
+        <!-- ALERTAS DE SESIÓN (ESTILO PROYECTO) -->
+        <?php include('includes/alertas_v4.php'); ?>
         
         <!-- Header Unificado -->
         <div class="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
@@ -202,17 +205,41 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
                 $color_cat = $cat_color_map[$id_cat] ?? 'slate';
                 $q_has_cc = "SELECT SUM(elementos_coach_card) as total_cc FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp'";
                 $has_cc = (mysqli_fetch_assoc(mysqli_query($connection, $q_has_cc))['total_cc'] > 0);
+
+                // Calculamos la fase de referencia y el listado de figuras
+                $q_fases_cat = "SELECT fs.id, fs.id_figura, fig.nombre as fig_nom, fig.numero as fig_num
+                                FROM fases fs 
+                                LEFT JOIN figuras fig ON fs.id_figura = fig.id
+                                WHERE fs.id_competicion = '$id_comp' AND fs.id_categoria = '$id_cat' 
+                                ORDER BY fs.orden ASC";
+                $res_fases_cat = mysqli_query($connection, $q_fases_cat);
+                $nombres_figuras = [];
+                $id_fase_ref = 0;
+                $num_figuras_cat = 0;
+                while($f_row = mysqli_fetch_assoc($res_fases_cat)) {
+                    if($id_fase_ref == 0) $id_fase_ref = $f_row['id'];
+                    if(!empty($f_row['fig_nom'])) {
+                        $nombres_figuras[] = "<span class='text-slate-600 font-bold'>".$f_row['fig_num']."</span> <span class='text-slate-400'>".$f_row['fig_nom']."</span>";
+                        $num_figuras_cat++;
+                    }
+                }
+                $str_figuras = implode("<span class='mx-2 text-slate-200'>|</span>", $nombres_figuras);
             ?>
             <div id="cat-<?php echo $id_cat; ?>" class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden border-t-[8px] border-t-<?php echo $color_cat; ?>-500 scroll-mt-24">
                 
                 <div class="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <h2 class="text-xl font-black text-slate-800 tracking-tight italic"><?php echo $row_cat['nombre']; ?> <span class="ml-2 text-xs font-bold text-slate-400 not-italic">(<?php echo $row_cat['edad_minima']; ?>-<?php echo $row_cat['edad_maxima']; ?> años)</span></h2>
-                        <?php if($inscripcion_abierta): ?>
-                        <button onclick="toggleQuickInscribe(<?php echo $id_cat; ?>)" class="px-4 py-1.5 bg-blue-600 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all flex items-center gap-2">
-                            <i class="fas fa-plus text-[8px]"></i> Inscribir aquí
-                        </button>
-                        <?php endif; ?>
+                    <div>
+                        <div class="flex items-center gap-4 mb-1">
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight italic"><?php echo $row_cat['nombre']; ?> <span class="ml-2 text-xs font-bold text-slate-400 not-italic">(<?php echo $row_cat['edad_minima']; ?>-<?php echo $row_cat['edad_maxima']; ?> años)</span></h2>
+                            <?php if($inscripcion_abierta): ?>
+                            <button onclick="toggleQuickInscribe(<?php echo $id_cat; ?>)" class="px-4 py-1.5 bg-blue-600 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-blue-500/20 hover:scale-105 transition-all flex items-center gap-2">
+                                <i class="fas fa-plus text-[8px]"></i> Inscribir aquí
+                            </button>
+                            <?php endif; ?>
+                        </div>
+                        <div class="text-[10px] uppercase tracking-wide flex items-center">
+                            <?php echo $str_figuras; ?>
+                        </div>
                     </div>
                     <?php
                     // Corregimos la cuenta para que siempre sea relativa al club si existe el filtro
@@ -230,30 +257,11 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
                 <!-- FORMULARIO RÁPIDO (INLINE POR CATEGORÍA) -->
                 <?php if($inscripcion_abierta): ?>
                 <div id="quick-inscribe-<?php echo $id_cat; ?>" class="hidden px-8 py-6 bg-blue-50/30 border-b border-blue-100 animate-fade-in">
-                    <form action="inscripciones_figuras_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                    <form action="inscripciones_figuras_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end" onsubmit="return validateInscribe(this);">
                         <input type="hidden" name="id_competicion" value="<?php echo $id_comp; ?>">
+                        <input type="hidden" name="id_fase" value="<?php echo $id_fase_ref; ?>">
                         
-                        <div class="md:col-span-4">
-                            <label class="text-[9px] font-black uppercase text-slate-400 px-1 mb-1 block">Fase / Figura</label>
-                            <select name="id_fase" class="v3-select-fix w-full text-xs font-bold px-4 py-2.5 rounded-xl border border-blue-100 shadow-sm bg-white">
-                                <?php
-                                // Mejoramos la query para capturar el nombre de la figura si existe
-                                $q_fases_cat = "SELECT fs.id, fs.id_figura, m.nombre as m_nom, fig.nombre as fig_nom, fig.numero as fig_num
-                                                FROM fases fs 
-                                                LEFT JOIN modalidades m ON fs.id_modalidad = m.id 
-                                                LEFT JOIN figuras fig ON fs.id_figura = fig.id
-                                                WHERE fs.id_competicion = '$id_comp' AND fs.id_categoria = '$id_cat' 
-                                                ORDER BY fs.orden ASC";
-                                $res_fases_cat = mysqli_query($connection, $q_fases_cat);
-                                while($f_row = mysqli_fetch_assoc($res_fases_cat)) {
-                                    $display_name = !empty($f_row['fig_nom']) ? $f_row['fig_num'] . " - " . $f_row['fig_nom'] : $f_row['m_nom'];
-                                    echo "<option value='".$f_row['id']."'>".$display_name."</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-
-                        <div class="md:col-span-6">
+                        <div class="md:col-span-10">
                             <label class="text-[9px] font-black uppercase text-slate-400 px-1 mb-1 block">Nadadora apta para <?php echo $row_cat['nombre']; ?></label>
                             <?php 
                             // Contexto de edad para el include
@@ -285,10 +293,6 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             <?php
-                            $q_fase_ref = "SELECT id FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp' LIMIT 1";
-                            $id_fase_res = mysqli_query($connection, $q_fase_ref);
-                            $id_fase_ref = ($id_fase_res && mysqli_num_rows($id_fase_res) > 0) ? mysqli_fetch_row($id_fase_res)[0] : 0;
-                            
                             $q_ins = "SELECT i.*, n.nombre as n_nom, n.apellidos as n_ape, n.año_nacimiento as n_año, cl.nombre_corto as c_nom, f.elementos_coach_card 
                                       FROM inscripciones_figuras i 
                                       JOIN nadadoras n ON i.id_nadadora = n.id 
@@ -337,7 +341,7 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
                                 <td class="px-4 py-4 text-center">
                                     <div class="flex items-center justify-center">
                                         <?php if($inscripcion_abierta): ?>
-                                            <button type="button" onclick="launchConfirmDelete(<?php echo $row['id'];?>, '<?php echo addslashes($row['n_nom'].' '.$row['n_ape']);?>')" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center border border-transparent hover:border-red-100 shadow-sm"><i class="fas fa-trash-can text-xs"></i></button>
+                                            <button type="button" onclick="launchConfirmDelete(<?php echo $row['id'];?>, '<?php echo addslashes($row['n_nom'].' '.$row['n_ape']);?>', <?php echo $num_figuras_cat; ?>)" class="w-9 h-9 rounded-xl bg-slate-50 text-slate-300 hover:bg-red-50 hover:text-red-500 transition-all flex items-center justify-center border border-transparent hover:border-red-100 shadow-sm"><i class="fas fa-trash-can text-xs"></i></button>
                                         <?php endif; ?>
                                     </div>
                                 </td>
@@ -357,28 +361,11 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
     <input type="hidden" name="delete_btn" value="1">
 </form>
 
+<?php include('includes/scripts.php'); ?>
+
 <script>
 $(document).ready(function() {
-    // Alertas de sesión mediante SweetAlert2
-    <?php if(isset($_SESSION['correcto'])): ?>
-        Swal.fire({
-            icon: 'success',
-            title: '<span class="swal2-title-v3">¡Éxito!</span>',
-            html: '<?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?>',
-            confirmButtonColor: '#0f172a',
-            customClass: { popup: 'swal2-popup-v3' }
-        });
-    <?php endif; ?>
-
-    <?php if(isset($_SESSION['estado'])): ?>
-        Swal.fire({
-            icon: 'error',
-            title: '<span class="swal2-title-v3 text-red-500">Aviso</span>',
-            html: '<?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?>',
-            confirmButtonColor: '#0f172a',
-            customClass: { popup: 'swal2-popup-v3' }
-        });
-    <?php endif; ?>
+    // Alertas de sesión mediante SweetAlert2 eliminadas por consistencia visual
 });
 
 function toggleQuickInscribe(idCat) {
@@ -386,10 +373,25 @@ function toggleQuickInscribe(idCat) {
     el.classList.toggle('hidden');
 }
 
-function launchConfirmDelete(id, name) {
+function validateInscribe(form) {
+    const nadadora = form.querySelector('[name="id_nadadora"]').value;
+    if (!nadadora || nadadora <= 0) {
+        Swal.fire({
+            icon: 'error',
+            title: '<span class="swal2-title-v3 text-red-500">Aviso</span>',
+            text: 'Debes seleccionar una nadadora antes de registrar.',
+            confirmButtonColor: '#0f172a',
+            customClass: { popup: 'swal2-popup-v3' }
+        });
+        return false;
+    }
+    return true;
+}
+
+function launchConfirmDelete(id, name, numFig) {
     Swal.fire({
         title: '¿Confirmar eliminación?',
-        html: `Estás a punto de borrar la inscripción de <b>${name}</b>.<br><small class='text-slate-400'>Se eliminarán sus 4 figuras de esta competición.</small>`,
+        html: `Estás a punto de borrar la inscripción de <b>${name}</b>.<br><small class='text-slate-400'>Se eliminarán sus ${numFig} figuras de esta competición.</small>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
@@ -402,4 +404,4 @@ function launchConfirmDelete(id, name) {
 document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' }); }); });
 </script>
 
-<?php include('includes/scripts.php'); include('includes/footer.php'); ?>
+<?php include('includes/footer.php'); ?>

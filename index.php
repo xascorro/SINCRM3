@@ -19,15 +19,7 @@ $meses_es = [
     <!-- Contenido del Dashboard -->
     <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
-        <?php
-        if(isset($_SESSION['no_acceso']) && $_SESSION['no_acceso'] != ''){
-            echo '<div class="mb-8 p-6 bg-white border-l-[6px] border-l-red-500 text-slate-700 rounded-r-3xl shadow-sm flex items-center gap-4 animate-fade-in">
-                    <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 shadow-sm"><i class="fas fa-exclamation-triangle text-xl"></i></div>
-                    <span class="text-base font-bold">'.$_SESSION['no_acceso'].'</span>
-                  </div>';
-            unset($_SESSION['no_acceso']);
-        }
-        ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
         <?php
         $query_usr = "SELECT * FROM usuarios where id=".$_SESSION['id_usario']."";

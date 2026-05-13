@@ -43,6 +43,8 @@ $stats = mysqli_fetch_assoc($res_stats);
             </div>
         </div>
 
+        <?php include('includes/alertas_v4.php'); ?>
+
         <!-- PANEL DASHBOARD: KPIs -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 border-l-[6px] border-l-slate-400 group hover:shadow-md transition-all">

@@ -80,19 +80,8 @@ include('includes/navbar.php');
         </div>
 
         <!-- Alertas -->
-        <?php if(isset($_SESSION['correcto'])): ?>
-            <div class="mb-8 p-4 bg-white border-l-4 border-green-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4 animate-fade-in">
-                <i class="fas fa-check-circle text-green-500"></i>
-                <span class="text-sm font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
-            </div>
-        <?php endif; ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
-        <?php if(isset($_SESSION['estado'])): ?>
-            <div class="mb-8 p-4 bg-white border-l-4 border-red-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4 animate-fade-in">
-                <i class="fas fa-circle-exclamation text-red-500"></i>
-                <span class="text-sm font-bold"><?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?></span>
-            </div>
-        <?php endif; ?>
 
         <!-- LISTADO POR CARRILES -->
         <div class="space-y-16">

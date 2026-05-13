@@ -27,19 +27,15 @@ if(isset($_POST['update_btn'])){
     $query_update_run = mysqli_query($connection, $query_update);
 
     if($query_update_run){
-        echo '<div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-                <strong>¡Actualizado!</strong> Los límites del Apéndice III se han modificado correctamente.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>';
-        // Opcional: Redirigir de vuelta a la tabla principal
-        // header('Location: admin_reglas.php');
+        $_SESSION['correcto'] = 'Los límites del Apéndice III se han modificado correctamente.';
     } else {
-        echo '<div class="alert alert-danger m-3">Error al actualizar: ' . mysqli_error($connection) . '</div>';
+        $_SESSION['estado'] = 'Error al actualizar: ' . mysqli_error($connection);
     }
 }
 ?>
 
 <div class="container-fluid mt-4">
+    <?php include('includes/alertas_v4.php'); ?>
     <div class="card shadow-sm mb-4">
         <div class="card-header py-3 bg-primary text-white">
             <h6 class="m-0 font-weight-bold"><i class="fas fa-edit"></i> Editar Reglas de Competición (Apéndice III)</h6>

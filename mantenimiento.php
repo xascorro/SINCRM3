@@ -32,12 +32,7 @@ include('includes/navbar.php');
         </div>
 
         <!-- Alertas -->
-        <?php if (isset($_SESSION['correcto'])): ?>
-            <div class="mb-8 p-4 bg-white border-l-4 border-green-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4 animate-fade-in">
-                <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-500"><i class="fas fa-check"></i></div>
-                <span class="text-sm font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
-            </div>
-        <?php endif; ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
         <!-- FILA 1: KPIs TÉCNICOS -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">

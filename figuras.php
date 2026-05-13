@@ -56,6 +56,8 @@ $stats = mysqli_fetch_assoc($res_stats);
             </div>
         </div>
 
+        <?php include('includes/alertas_v4.php'); ?>
+
         <!-- Panel Añadir Figura (Colapsable) -->
         <div id="addFiguraPanel" class="hidden mb-10 animate-fade-in-down">
             <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">

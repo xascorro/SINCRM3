@@ -99,6 +99,8 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
             </div>
         </div>
 
+        <?php include('includes/alertas_v4.php'); ?>
+
         <!-- LISTADO DE FASES (EL GUION) -->
         <?php
         if($is_figuras) {

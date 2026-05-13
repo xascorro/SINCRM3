@@ -52,18 +52,7 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
         </div>
 
         <!-- Alertas de Sesión -->
-        <?php if(isset($_SESSION['correcto'])): ?>
-            <div class="mb-10 p-6 bg-white border-l-[6px] border-l-emerald-500 text-slate-700 rounded-r-3xl shadow-sm flex items-center gap-4 animate-fade-in">
-                <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500 shadow-sm"><i class="fas fa-check-circle text-xl"></i></div>
-                <span class="text-base font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
-            </div>
-        <?php endif; ?>
-        <?php if(isset($_SESSION['estado'])): ?>
-            <div class="mb-10 p-6 bg-white border-l-[6px] border-l-red-500 text-slate-700 rounded-r-3xl shadow-sm flex items-center gap-4 animate-fade-in">
-                <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center text-red-500 shadow-sm"><i class="fas fa-exclamation-triangle text-xl"></i></div>
-                <span class="text-base font-bold"><?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?></span>
-            </div>
-        <?php endif; ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Formulario Añadir Juez (Estilo competiciones_edit) -->
         <div id="addJuezPanel" class="hidden mb-12 animate-fade-in-down">

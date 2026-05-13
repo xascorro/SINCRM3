@@ -55,12 +55,7 @@ include('includes/navbar.php');
         </div>
 
         <!-- Alertas -->
-        <?php if(isset($_SESSION['correcto'])): ?>
-            <div class="mb-8 p-4 bg-white border-l-4 border-green-500 text-slate-700 rounded-r-2xl shadow-sm flex items-center gap-4">
-                <i class="fas fa-check-circle text-green-500"></i>
-                <span class="text-sm font-bold"><?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?></span>
-            </div>
-        <?php endif; ?>
+        <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Tabla de Roles -->
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
