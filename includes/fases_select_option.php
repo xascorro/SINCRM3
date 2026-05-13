@@ -22,10 +22,10 @@ $select .= "<select name='id_fase' id='id_fase' class='form-control'>";
 if(mysqli_num_rows($query_run) > 0){
 	while ($row = mysqli_fetch_assoc($query_run)) {
 		if(intval(@$id_fase) == $row['id']){
-			$select .= "<option selected value=".$row['id'].">".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
+			$select .= "<option selected value=".$row['id']." data-categoria='".$row['id_categoria']."'>".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
 		}
 		else{
-			$select .= "<option value=".$row['id'].">".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
+			$select .= "<option value=".$row['id']." data-categoria='".$row['id_categoria']."'>".$row['nombre_modalidad']." ".$row['nombre_categoria']."</option>";
 		}
 
 	}

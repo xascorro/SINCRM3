@@ -229,11 +229,21 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.status === 'success') {
+                    let customIcon = '';
+                    if(response.icon) {
+                        customIcon = `<div class="flex justify-center mb-6"><div class="w-24 h-24 rounded-3xl bg-slate-50 p-4 shadow-inner flex items-center justify-center border border-slate-100"><img src="${response.icon}" class="max-w-full max-h-full object-contain" alt="Logo Club"></div></div>`;
+                    }
+
                     Swal.fire({
-                        icon: 'success',
+                        icon: response.icon ? undefined : 'success',
                         title: '<span class="swal2-title-v3">Acceso Concedido</span>',
-                        html: `<div class="font-lexend"><p class="text-3xl font-black text-slate-800 tracking-tighter italic leading-none mb-2">${response.message}</p><p class="text-sm text-slate-400 font-medium">Sincronizando tus datos...</p></div>`,
-                        timer: 2000,
+                        html: `
+                            <div class="font-lexend text-center">
+                                ${customIcon}
+                                <p class="text-3xl font-black text-slate-800 tracking-tighter italic leading-none mb-2">${response.message}</p>
+                                <p class="text-sm text-slate-400 font-medium italic">Sincronizando con tu club...</p>
+                            </div>`,
+                        timer: 2500,
                         showConfirmButton: false,
                         background: '#ffffff',
                         customClass: { popup: 'swal2-popup-v3' }

@@ -273,9 +273,9 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 <i class="fas fa-users-gear w-8 text-center text-lg group-hover:text-white transition-colors"></i>
                 <span class="sidebar-text hidden font-bold text-sm">Mi Equipo</span>
             </a>
-            <a href="nadadoras.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'nadadoras.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Atletas">
+            <a href="nadadoras.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'nadadoras.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Nadadoras">
                 <i class="fas fa-person-swimming w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Atletas</span>
+                <span class="sidebar-text hidden font-bold text-sm">Nadadoras</span>
             </a>
         </div>
 
@@ -298,20 +298,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                         <i class="fas fa-users-line w-4 text-center"></i> Rutinas
                     </a>
                 <?php endif; ?>
-
-                <a href="puntuaciones_lista_fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'puntuaciones_lista_fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap font-bold border-t border-white/5 mt-2 pt-2">
-                    <i class="fas fa-calculator w-4 text-center"></i> Puntuaciones
-                </a>
             </div>
-        </div>
-
-        <!-- 3. Informes -->
-        <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Documentación</div>
-            <a href="informes_competicion.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'informes_competicion.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Informes">
-                <i class="fas fa-file-pdf w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Informes</span>
-            </a>
         </div>
 
     </nav>

@@ -71,6 +71,35 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
             </div>
         <?php endif; ?>
 
+        <!-- Panel Añadir -->
+        <div id="addCompPanel" class="hidden mb-10 animate-fade-in-down">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-calendar-plus text-blue-600"></i> Nueva Competición</h2>
+                <form action="competiciones_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    <div class="md:col-span-12 space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Nombre del Evento</label>
+                        <input type="text" name="nombre" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
+                    </div>
+                    <div class="md:col-span-8 space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Sede / Municipio</label>
+                        <input type="text" name="lugar" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
+                    </div>
+                    <div class="md:col-span-4 space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Fecha</label>
+                        <input type="date" name="fecha" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold">
+                    </div>
+                    <div class="md:col-span-12 space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Enlace Google Maps</label>
+                        <input type="url" name="maps" placeholder="https://goo.gl/maps/..." class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
+                    </div>
+                    <div class="md:col-span-12 pt-6 flex justify-end gap-4">
+                        <button type="button" onclick="toggleAddCompPanel()" class="text-xs font-black uppercase text-slate-400">Cancelar</button>
+                        <button type="submit" name="save_btn" class="px-10 py-3.5 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all">Crear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- DASHBOARD: KPIs ESTILO "TANTAS/CUANTAS" -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
             <!-- Tipología de Eventos -->
@@ -108,32 +137,6 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Cobertura</p>
                 <h3 class="text-2xl font-black text-amber-600"><?php echo $stats['sedes']; ?></h3>
                 <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase italic">Municipios sede</p>
-            </div>
-        </div>
-
-        <!-- Panel Añadir y Rejilla de tarjetas se mantienen igual que la versión v3.0 anterior -->
-        <!-- ... (código previo) ... -->
-        <div id="addCompPanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-calendar-plus text-blue-600"></i> Nueva Competición</h2>
-                <form action="competiciones_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
-                    <div class="md:col-span-12 space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Nombre del Evento</label>
-                        <input type="text" name="nombre" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
-                    </div>
-                    <div class="md:col-span-8 space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Sede / Municipio</label>
-                        <input type="text" name="lugar" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
-                    </div>
-                    <div class="md:col-span-4 space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Fecha</label>
-                        <input type="date" name="fecha" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold">
-                    </div>
-                    <div class="md:col-span-12 pt-6 flex justify-end gap-4">
-                        <button type="button" onclick="toggleAddCompPanel()" class="text-xs font-black uppercase text-slate-400">Cancelar</button>
-                        <button type="submit" name="save_btn" class="px-10 py-3.5 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all">Crear</button>
-                    </div>
-                </form>
             </div>
         </div>
 

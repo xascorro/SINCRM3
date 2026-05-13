@@ -5,7 +5,8 @@ $select = "<label for='categorias'>Categoría</label>";
 $select .= "<select name='categoria' id='categoria' class='form-control'>";
 if(mysqli_num_rows($query_run) > 0){
 	while ($row = mysqli_fetch_assoc($query_run)) {	    
-		if(intval(@$_POST['id_categoria']) == $row['id']){
+        $current_val = $id_categoria_actual ?? @$_POST['id_categoria'] ?? 0;
+		if(intval($current_val) == $row['id']){
 			$select .= "<option selected value=".$row['id'].">".$row['nombre']." (".$row['edad_minima']."-".$row['edad_maxima'].")</option>";
 		}
 		else{

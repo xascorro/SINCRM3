@@ -6,8 +6,9 @@ if(isset($_POST['save_btn'])){
 	$nombre = mysqli_real_escape_string($connection, $_POST['nombre']);
 	$lugar = mysqli_real_escape_string($connection, $_POST['lugar']);
 	$fecha = mysqli_real_escape_string($connection, $_POST['fecha']);
+	$maps = mysqli_real_escape_string($connection, $_POST['maps'] ?? '');
 
-	$query="INSERT INTO competiciones (nombre,lugar,fecha) VALUES ('$nombre','$lugar','$fecha')";
+	$query="INSERT INTO competiciones (nombre,lugar,fecha,maps) VALUES ('$nombre','$lugar','$fecha','$maps')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Registro añadido con éxito';

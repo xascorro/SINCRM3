@@ -87,14 +87,19 @@ if (isset($_POST['reenviar_verificacion'])) {
 
 /**
  * Helper to send response (AJAX or Redirect)
+ * @param string $status 'success' or 'error'
+ * @param string $message Text to show
+ * @param string $redirect Redirect URL
+ * @param string|null $icon Optional club logo path
  */
-function sendResponse($status, $message, $redirect = 'login.php') {
+function sendResponse($status, $message, $redirect = 'login.php', $icon = null) {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         header('Content-Type: application/json');
         echo json_encode([
             'status' => $status,
             'message' => $message,
-            'redirect' => $redirect
+            'redirect' => $redirect,
+            'icon' => $icon
         ]);
         exit();
     } else {
@@ -145,16 +150,21 @@ if(isset($_POST['login_btn'])){
             $_SESSION['club'] = $usuario['club'];
             $_SESSION['icono'] = $usuario['icono'];
             
+            $club_logo = null;
             if($_SESSION['id_rol'] == 5){
-                $query = "SELECT nombre FROM clubes WHERE id = ".$_SESSION['club'];
+                $query = "SELECT nombre, logo FROM clubes WHERE id = ".$_SESSION['club'];
                 $res_club = mysqli_query($connection, $query);
                 if($res_club && mysqli_num_rows($res_club) > 0) {
-                    $_SESSION['nombre_club'] = mysqli_result($res_club, 0);
+                    $c_data = mysqli_fetch_assoc($res_club);
+                    $_SESSION['nombre_club'] = $c_data['nombre'];
+                    if(!empty($c_data['logo'])) $club_logo = $c_data['logo'];
                 }
             }
 
-            // Nuevo sistema de log
-            write_log("Inicio de sesión exitoso", "SUCCESS");
+            // Nuevo sistema de log mejorado
+            $log_msg = "Inicio de sesión exitoso: " . $usuario['username'] . " (" . $usuario['nombre_rol'] . ")";
+            if($_SESSION['id_rol'] == 5) $log_msg .= " - Club: " . ($_SESSION['nombre_club'] ?? 'N/A');
+            write_log($log_msg, "SUCCESS");
 
 			//admin
 			if($_SESSION['id_rol'] == '1'){
@@ -208,27 +218,28 @@ if(isset($_POST['login_btn'])){
 					'mi_equipo.php',
 					'log_usuario.php'
 				);
-				//redirecciono a su pagina inicial
-                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage']);
+				//redirecciono a su pagina inicial pasándole el logo
+                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $club_logo);
 
 			}else if($_SESSION['id_rol'] == '6'){
                 write_log("Intento de acceso: Usuario invitado no aprobado ($login_email)", "SECURITY");
                 sendResponse('error', "Estas registrado como Invitado, debes de esperar a que el administrador aprueba tu registro.");
 			}
 		}else {
-            write_log("Intento de sesión fallido: Contraseña incorrecta para $login_email", "SECURITY");
+            write_log("Fallo de autenticación: Contraseña incorrecta para el email $login_email", "SECURITY");
             sendResponse('error', "La contraseña no coincide");
 		}
 	}else{
         if (session_status() === PHP_SESSION_NONE) @session_start();
 		unset($_SESSION['email']);
-        write_log("Intento de sesión fallido: Usuario no encontrado ($login_email)", "SECURITY");
+        write_log("Fallo de autenticación: El email $login_email no existe en el sistema", "SECURITY");
         sendResponse('error', "Este usuario no está registrado");
 	}
 
 }elseif (isset($_POST['logout_btn']) or isset($_GET['logout_btn'])) {
     @session_start();
-    write_log("Cierre de sesión voluntario", "INFO");
+    $user_log = $_SESSION['username'] ?? 'Usuario desconocido';
+    write_log("Cierre de sesión: $user_log", "INFO");
 	unset($_SESSION);
 	session_destroy();
     @session_start();
