@@ -34,7 +34,7 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Sistema de Logs**: Motor centralizado `write_log()` en `database/dbconfig.php`. Niveles: `SUCCESS`, `ERROR`, `WARNING`, `INFO`, `SECURITY`.
 - **Visores de Log**: `log.php` (Sistema) y `log_usuario.php` (Personalizado por email/club).
 - **Usuarios**: Migración a `activo` (tinyint), seguridad con `password_hash`, interfaz renovada y logs de sesión.
-- **Nadadoras**: Migración técnica a `activo` (tinyint), interfaz de tabla optimizada y switch de estado en edición.
+- **Nadadoras**: Migración técnica a `activo` (tinyint), interfaz de tabla optimizada y switch de estado en edición. Se ha aclarado que la columna `baja` en tablas operativas (`inscripciones`, `resultados`) es independiente y representa retiradas puntuales de eventos.
 - **Jueces**: Migración técnica a `activo` (tinyint), limpieza de tabla y auditoría completa.
 - **Clubes y Federaciones**: Sistema de subida de logos/escudos arreglado (con limpieza de archivos), interfaz unificada y logs.
 - **Login y Registro (v4 (Prerelease))**: Renovación total con diseño moderno (Tailwind), AJAX e integración de SweetAlert2.
@@ -57,7 +57,7 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **Motor de Persistencia**: Implementación de tablas `auditoria_jueces_stats` y `auditoria_jueces_puntos` que reduce el tiempo de carga de 23s a 0.003s (Optimización x7000).
 - **Portal del Juez**: Acceso directo "Mi Auditoría" para usuarios con rol de Juez, permitiendo el autocontrol técnico.
 - **Informes de Figuras (v4 (Prerelease))**: Modernización y unificación en `informe_figuras.php`. Ahora un solo archivo inteligente gestiona tanto el listado de **Inscripciones** (alfabético) como el de **Orden de Actuación** (con marcado de cortes técnicos), con una estética profesional rosada, cabeceras compactas y repetición automática de tablas en saltos de página.
-- **Resultados por Categorías (v4 (Prerelease))**: Rediseño completo de `informe_figuras_resultados_categorias.php`. Se han optimizado los anchos de columna, mejorado el contraste de notas tachadas, implementado `nobr` para evitar cortes de filas y un sistema de consultas seguras (`safe_mysqli_result`) para evitar errores fatales. Pendiente de re-introducir la lógica de elementos técnicos (TRE) para Junior/Senior.
+- **Resultados por Categorías (v4 (Prerelease))**: Rediseño completo de `informe_figuras_resultados_categorias.php`. Se han optimizado los anchos de columna, mejorado el contraste de notas tachadas, implementado `nobr` para evitar cortes de filas y un sistema de consultas seguras (`safe_mysqli_result`) para evitar errores fatales.
 - **Layout Global**: Modernización de `header.php`, `topbar.php` y `footer.php` (vínculos centrados y firma personalizada).
 - **Navbar**: Modernizado con integración del nuevo módulo **BIAS Analizer** y organización de grupos de acceso.
 - **Versionado Dinámico Global**: Integración total de `version.json` en Login, Footer y página 404. Eliminación de strings hardcoded.
@@ -70,8 +70,8 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
     - **Resolución de Conflictos**: Solucionado el solapamiento con el alias `/icons/` de Apache mediante la nueva ruta `pwa-icons/`.
 
 ### ⏳ Pendiente:
-- **Limpieza Final**: Completada la eliminación de la columna `baja` en `nadadoras`. Sistema unificado bajo `activo`.
-- **TRE (Técnico)**: Re-introducir la lógica de elementos técnicos en los informes de resultados.
+- **TRE (Técnico)**: Ajuste del sistema de cálculo de puntuación implementado. **PENDIENTE DE REVISIÓN MANUAL POR EL USUARIO** para validar la normalización de notas basada en el sumatorio de DDs en Junior/Senior.
+
 
 ## 📌 Nota de Sesión
 Esta sesión concluye tras la modernización total del flujo de acceso y el Dashboard principal. Se ha garantizado la compatibilidad de Tailwind con el motor de Bootstrap original desactivando el Preflight.

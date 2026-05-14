@@ -234,11 +234,11 @@ if(isset($_GET['hoja_tecnica'])){
 }
 
 // PROCESAMIENTO DE CATEGORÍAS (Unificado)
-$query_cats = "SELECT rfc.id_categoria, c.nombre as cat_nombre, f.elementos_coach_card, f.id as id_fase 
+$query_cats = "SELECT rfc.id_categoria, c.nombre as cat_nombre, MAX(f.elementos_coach_card) as max_ecc
                FROM resultados_figuras_categorias rfc 
                JOIN categorias c ON rfc.id_categoria = c.id 
-               JOIN fases f ON f.id_categoria = c.id
-               WHERE f.id_competicion = '".$comp["id"]."' 
+               JOIN fases f ON f.id_categoria = c.id AND f.id_competicion = rfc.id_competicion
+               WHERE rfc.id_competicion = '".$comp["id"]."' 
                GROUP BY rfc.id_categoria 
                ORDER BY c.orden ASC";
 $res_cats = mysqli_query($connection, $query_cats);
@@ -247,8 +247,15 @@ if($res_cats) {
     while($cat = mysqli_fetch_assoc($res_cats)){
         $id_categoria = $cat['id_categoria'];
         $nombre_categoria = $cat['cat_nombre'];
-        $is_tre = ($cat['elementos_coach_card'] > 0);
-        $id_fase_tre = $cat['id_fase'];
+        $is_tre = ($cat['max_ecc'] > 0);
+        
+        // Buscamos la fase principal (si es TRE, la que tiene elementos; si es Figuras, cualquiera de la categoría)
+        if($is_tre) {
+            $q_fase = "SELECT id FROM fases WHERE id_categoria = '$id_categoria' AND id_competicion = '".$comp["id"]."' AND elementos_coach_card > 0 LIMIT 1";
+        } else {
+            $q_fase = "SELECT id FROM fases WHERE id_categoria = '$id_categoria' AND id_competicion = '".$comp["id"]."' LIMIT 1";
+        }
+        $id_fase_ref = safe_mysqli_result($connection, $q_fase);
 
         $pdf->AddPage();
         
@@ -265,7 +272,7 @@ if($res_cats) {
         
         if($is_tre) {
             // Para TRE (Technical Required Elements) - Tomamos una muestra del primer nadador
-            $q_sample = "SELECT id FROM inscripciones_figuras WHERE id_fase = '$id_fase_tre' LIMIT 1";
+            $q_sample = "SELECT id FROM inscripciones_figuras WHERE id_fase = '$id_fase_ref' LIMIT 1";
             $id_insc_sample = safe_mysqli_result($connection, $q_sample);
             if($id_insc_sample) {
                 $q_tre = "SELECT elemento, texto, valor FROM hibridos_rutina WHERE id_rutina = '$id_insc_sample' AND tipo = 'dd' AND valor > 0 ORDER BY elemento ASC";
@@ -349,7 +356,7 @@ if($res_cats) {
                 
                 if($is_tre) {
                     // Lógica para TRE
-                    $q_insc_id = safe_mysqli_result($connection, "SELECT id FROM inscripciones_figuras WHERE id_nadadora='".$resultado['id_nadadora']."' AND id_fase='$id_fase_tre'");
+                    $q_insc_id = safe_mysqli_result($connection, "SELECT id FROM inscripciones_figuras WHERE id_nadadora='".$resultado['id_nadadora']."' AND id_fase='$id_fase_ref'");
                     if($q_insc_id) {
                         for($e=1; $e<=count($figuras_info); $e++) {
                             $q_p = "SELECT * FROM puntuaciones_jueces WHERE id_inscripcion_figuras = '$q_insc_id' AND id_elemento = '$e' ORDER BY id_panel_juez";

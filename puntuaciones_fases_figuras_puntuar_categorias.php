@@ -17,50 +17,36 @@ $query = "select * from fases where id_competicion='$id_competicion' group by id
 echo $query;
 $fases = mysqli_query($connection,$query);
 while($fase_figuras = mysqli_fetch_array($fases)){
-	$gd_acumulado = mysqli_result(mysqli_query($connection,"select sum(grado_dificultad) from figuras where id in (select id_figura from fases where id_categoria='".$fase_figuras['id_categoria']."')"),0);
+    // Cálculo de GD Acumulado (Soporte para Figuras y TRE)
+    if($fase_figuras['elementos_coach_card'] > 0) {
+        // Para TRE, obtenemos el sumatorio de DDs de una inscripción de muestra de esta fase
+        $q_sample = "SELECT id FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_categoria='".$fase_figuras['id_categoria']."' AND id_competicion='$id_competicion') LIMIT 1";
+        $id_sample = mysqli_result(mysqli_query($connection, $q_sample), 0);
+        $gd_acumulado = mysqli_result(mysqli_query($connection, "SELECT sum(valor) FROM hibridos_rutina WHERE id_rutina = '$id_sample' AND tipo = 'dd'"), 0);
+    } else {
+	    $gd_acumulado = mysqli_result(mysqli_query($connection,"select sum(grado_dificultad) from figuras where id in (select id_figura from fases where id_categoria='".$fase_figuras['id_categoria']."')"),0);
+    }
 
-	$query = "select id_nadadora, sum(nota_final) as sum_nota_final, baja, preswimmer, id from inscripciones_figuras where id_fase in (select id from fases where id_categoria='".$fase_figuras['id_categoria'].@$condicion."' and id_competicion='$id_competicion') group by id_nadadora";
-    echo '<br>'.$gd_acumulado.'<br>'.$query.'<br><br>';
+	$query = "select id_nadadora, sum(nota_final) as sum_nota_final, baja, preswimmer, id from inscripciones_figuras where id_fase in (select id from fases where id_categoria='".$fase_figuras['id_categoria']."' and id_competicion='$id_competicion') group by id_nadadora";
+    echo '<br>GD Acumulado Categoría: '.$gd_acumulado.'<br>'.$query.'<br><br>';
 	$resultados_nadadoras = mysqli_query($connection,$query);
 	while($resultado_nadadora = mysqli_fetch_array($resultados_nadadoras)){
 		$anio_nadadora = mysqli_result(mysqli_query($connection,"select año_nacimiento from nadadoras where id='".$resultado_nadadora['id_nadadora']."'"),0);
 		$query = "select sum(puntos) from penalizaciones where id in (select id_penalizacion from penalizaciones_rutinas where id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado_nadadora['id_nadadora']."' and id_competicion='".$id_competicion."'))";
 		$puntos_penalizacion = mysqli_result(mysqli_query($connection,$query),0);
 
-        $gd_acumulado = mysqli_result(mysqli_query($connection,"select sum(grado_dificultad) from figuras where id in (select id_figura from fases where id_categoria='".$fase_figuras['id_categoria']."'  and id_competicion = '".$id_competicion."' )"),0);
-		echo '<br>1 select sum(grado_dificultad) from figuras where id in (select id_figura from fases where id_categoria='.$fase_figuras['id_categoria'].' and id_competicion = '.$id_competicion.' )';
-		echo '<br>2 GD acumulado:'.$gd_acumulado;
-		$nota_final_calculada = (($resultado_nadadora['sum_nota_final']/$gd_acumulado)*10) - $puntos_penalizacion;
-		echo '<br>3 Nota final calculada: (('.$resultado_nadadora['sum_nota_final'].'/'.$gd_acumulado.')*10) - '.$puntos_penalizacion .' = '.$nota_final_calculada;
-        if($fase_figuras['elementos_coach_card']>1){
-			echo '<br>4 Cálculo como TRE<br>';
-            $query = "select nota_final from inscripciones_figuras where id in (select id from inscripciones_figuras where id_nadadora='".$resultado_nadadora['id_nadadora']."' and id_competicion='".$id_competicion."')";
-            $nota_final = mysqli_result(mysqli_query($connection,$query),0);
-            $nota_final_calculada = $nota_final*$gd_acumulado/10;
-            $nota_final_calculada = $nota_final;
-
-			if(!$nota_final > 0)
-				$nota_final=0;
-			if(!$nota_final_calculada > 0)
-				$nota_final_calculada=0;
-            $query = "insert into resultados_figuras_categorias (id_nadadora, id_categoria, año, gd_acumulado, puntos_penalizacion, nota_final, nota_final_calculada, baja, preswimmer, id_competicion) values ('".$resultado_nadadora['id_nadadora']."', '".$fase_figuras['id_categoria']."', '$anio_nadadora', '$gd_acumulado"."', '$puntos_penalizacion', '$nota_final', '$nota_final_calculada', '".$resultado_nadadora['baja']."','".$resultado_nadadora['preswimmer']."','$id_competicion' )";
-            echo "<br>".$query;
-            mysqli_query($connection,$query);
-        }else{
-
-			if(!isset($resultado_nadadora['sum_nota_final']))
-				$resultado_nadadora['sum_nota_final']=0;
-
-//			if($fase_figuras['id_categoria'] == '234' or $fase_figuras['id_categoria'] == '235')
-//				$fase = '241';
-//			else
-				$fase = $fase_figuras['id_categoria'];
-
-            $query = "insert into resultados_figuras_categorias (id_nadadora, id_categoria, año, gd_acumulado, puntos_penalizacion, nota_final, nota_final_calculada, baja, preswimmer, id_competicion) values ('".$resultado_nadadora['id_nadadora']."', '".$fase."', '$anio_nadadora', '$gd_acumulado"."', '$puntos_penalizacion', '".$resultado_nadadora['sum_nota_final']."', '$nota_final_calculada', '".$resultado_nadadora['baja']."','".$resultado_nadadora['preswimmer']."','$id_competicion' )";
-		echo "<br>4 ".$query;
-		mysqli_query($connection,$query);
+        if($gd_acumulado > 0){
+		    $nota_final_calculada = (($resultado_nadadora['sum_nota_final']/$gd_acumulado)*10) - $puntos_penalizacion;
+        } else {
+            $nota_final_calculada = 0;
         }
 
+		echo '<br>Nadadora ID: '.$resultado_nadadora['id_nadadora'].' | Nota Final: '.$resultado_nadadora['sum_nota_final'].' | GD: '.$gd_acumulado.' | Calc: '.$nota_final_calculada;
+        
+        $fase = $fase_figuras['id_categoria'];
+        $query = "insert into resultados_figuras_categorias (id_nadadora, id_categoria, año, gd_acumulado, puntos_penalizacion, nota_final, nota_final_calculada, baja, preswimmer, id_competicion) values ('".$resultado_nadadora['id_nadadora']."', '".$fase."', '$anio_nadadora', '$gd_acumulado"."', '$puntos_penalizacion', '".$resultado_nadadora['sum_nota_final']."', '$nota_final_calculada', '".$resultado_nadadora['baja']."','".$resultado_nadadora['preswimmer']."','$id_competicion' )";
+		echo "<br>SQL: ".$query;
+		mysqli_query($connection,$query);
 	}
 }
 
