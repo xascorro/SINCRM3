@@ -35,7 +35,7 @@ services:
 
 networks:
   sincrm-network:
-    name: sincrm-network
+    # Quitamos el name fijo para evitar conflictos de proyectos
   coolify:
     external: true
 
