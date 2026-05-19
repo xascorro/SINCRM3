@@ -70,7 +70,7 @@ if ($action == 'save') {
                     (pj.id_inscripcion_figuras > 0 AND pj3.id_inscripcion_figuras = pj.id_inscripcion_figuras AND pj3.id_elemento = pj.id_elemento)
                     OR 
                     (pj.id_rutina > 0 AND pj3.id_rutina = pj.id_rutina AND pj3.id_elemento = pj.id_elemento AND pj3.tipo_ia = pj.tipo_ia)
-                ) AND COALESCE(pj3.nota_menor, '') != 'si' AND COALESCE(pj3.nota_mayor, '') != 'si') as media_consenso
+                ) AND pj3.nota_menor = 0 AND pj3.nota_mayor = 0) as media_consenso
             FROM puntuaciones_jueces pj
             LEFT JOIN inscripciones_figuras i ON pj.id_inscripcion_figuras = i.id
             LEFT JOIN nadadoras n_fig ON i.id_nadadora = n_fig.id

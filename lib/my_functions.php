@@ -107,3 +107,9 @@ function mysqli_result($res,$row=0,$col=0){
     }
     return false;
 }
+
+//formatea las puntuaciones a 4 decimales
+function puntuaciones_fmt_hasta4($val) {
+	if (!is_numeric($val)) return '0.0000';
+	return number_format((float)$val, 4, '.', '');
+}

@@ -42,10 +42,10 @@ if(isset($_POST['save_btn'])){
 	echo $query.'<br>';
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
 	echo '<br>'.$query.'<br>';
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=1 limit 1";
 	echo $query.'<br>';
     mysqli_query($connection,$query);
 
@@ -57,9 +57,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=2";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=2 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=2 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=2 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=2 limit 1";
     mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_rutina, id_elemento, nota) VALUES
@@ -70,9 +70,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=3";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=3 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=3 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=3 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=3 limit 1";
     mysqli_query($connection,$query);
     $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
    // mysqli_query($connection,$query);
@@ -85,9 +85,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=4";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=4 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=4 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=4 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=4 limit 1";
     mysqli_query($connection,$query);
     $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
     //mysqli_query($connection,$query);
@@ -101,9 +101,9 @@ if(isset($_POST['save_btn'])){
 		$query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=5";
 		$min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
 		$max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-		$query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=5 limit 1";
+		$query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=5 limit 1";
 		mysqli_query($connection,$query);
-		$query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=5 limit 1";
+		$query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=5 limit 1";
 		mysqli_query($connection,$query);
 		$query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
 		//mysqli_query($connection,$query);
@@ -118,9 +118,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=6";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=6 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=6 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=6 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=6 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
     }
@@ -133,9 +133,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=7";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=7 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=7 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=7 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=7 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
         //mysqli_query($connection,$query);
@@ -149,9 +149,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=8";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=8 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=8 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=8 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=8 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
         //mysqli_query($connection,$query);
@@ -165,9 +165,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=9";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=9 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=9 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=9 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=9 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
         //mysqli_query($connection,$query);
@@ -181,9 +181,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=10";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=10 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
         //mysqli_query($connection,$query);
@@ -197,9 +197,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and id_elemento=11";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and id_elemento=11 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_rutina=$id_rutina";
         //mysqli_query($connection,$query);
@@ -349,9 +349,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia like 'ChoMu'";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Chomu' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Chomu' limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'ChoMu' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'ChoMu' limit 1";
     mysqli_query($connection,$query);
     $query="INSERT puntuaciones_elementos SET nota=(SELECT (sum(nota)-$min_nota-$max_nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia='ChoMu')*$f_chomu, id_rutina=$id_rutina, tipo_ia='ChoMu'";
     mysqli_query($connection,$query);
@@ -364,9 +364,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia like 'Performance'";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Performance' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Performance' limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'Performance' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'Performance' limit 1";
     mysqli_query($connection,$query);
     $query="INSERT puntuaciones_elementos SET nota=(SELECT (sum(nota)-$min_nota-$max_nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia='Performance')*$factor_Performance, id_rutina=$id_rutina, tipo_ia='Performance'";
     mysqli_query($connection,$query);
@@ -378,9 +378,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia like 'Transitions'";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Transitions' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_rutina=$id_rutina and tipo_ia like 'Transitions' limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'Transitions' limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_rutina=$id_rutina and tipo_ia like 'Transitions' limit 1";
     mysqli_query($connection,$query);
     $query="INSERT puntuaciones_elementos SET nota=(SELECT (sum(nota)-$min_nota-$max_nota) FROM puntuaciones_jueces WHERE id_rutina=$id_rutina and tipo_ia='Transitions')*$factor_Transitions, id_rutina=$id_rutina, tipo_ia='Transitions'";
     mysqli_query($connection,$query);

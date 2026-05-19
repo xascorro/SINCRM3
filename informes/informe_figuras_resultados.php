@@ -262,7 +262,7 @@ $html .= '<table style="margin-top=10px">';
 		    $query = "select * from puntuaciones_jueces where id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado_figuras['id_nadadora']."' and id_fase='".$fase['id']."') order by id_inscripcion_figuras, id_elemento, id_panel_juez";
 		    $puntuaciones_jueces = mysqli_query($connection,$query);
 		    while($puntuacion_juez = mysqli_fetch_array($puntuaciones_jueces)){
-                if($puntuacion_juez['nota_menor'] == 'si' or $puntuacion_juez['nota_mayor'] == 'si')
+                if($puntuacion_juez['nota_menor'] == 1 or $puntuacion_juez['nota_mayor'] == 1)
                     $celda_puntuaciones_jueces .= '<span style="text-decoration:line-through">'.substr($puntuacion_juez['nota'],0,3)."</span> ";
                 else
                     $celda_puntuaciones_jueces .= substr($puntuacion_juez['nota'],0,3).' ';
@@ -401,7 +401,7 @@ $html .= '<table style="margin-top=10px">';
             $i=0;
 		    while($puntuacion_juez = mysqli_fetch_array($puntuaciones_jueces)){
                 $i++;
-                if($puntuacion_juez['nota_menor'] == 'si' or $puntuacion_juez['nota_mayor'] == 'si')
+                if($puntuacion_juez['nota_menor'] == 1 or $puntuacion_juez['nota_mayor'] == 1)
                     $celda_puntuaciones_jueces .= '<span style="text-decoration:line-through">'.substr($puntuacion_juez['nota'],0,4)." </span>";
                 else
                     $celda_puntuaciones_jueces .= substr($puntuacion_juez['nota'],0,4).' ';

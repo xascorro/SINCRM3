@@ -58,9 +58,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=1";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=1 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=1 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=1 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=1 limit 1";
     mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_inscripcion_figuras, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_inscripcion_figuras."','2','".$notaE2J1."'),('".$id_panel_juez2."','".$id_inscripcion_figuras."','2','".$notaE2J2."'),('".$id_panel_juez3."','".$id_inscripcion_figuras."','2','".$notaE2J3."'),
@@ -71,9 +71,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=2";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=2 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=2 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=2 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=2 limit 1";
     mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_inscripcion_figuras, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_inscripcion_figuras."','3','".$notaE3J1."'),('".$id_panel_juez2."','".$id_inscripcion_figuras."','3','".$notaE3J2."'),('".$id_panel_juez3."','".$id_inscripcion_figuras."','3','".$notaE3J3."'),
@@ -84,9 +84,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=3";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=3 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=3 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=3 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=3 limit 1";
     mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_inscripcion_figuras, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_inscripcion_figuras."','4','".$notaE4J1."'),('".$id_panel_juez2."','".$id_inscripcion_figuras."','4','".$notaE4J2."'),('".$id_panel_juez3."','".$id_inscripcion_figuras."','4','".$notaE4J3."'),
@@ -98,9 +98,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=4";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=4 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=4 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=4 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=4 limit 1";
     mysqli_query($connection,$query);
 
     $query="INSERT INTO puntuaciones_jueces (id_panel_juez, id_inscripcion_figuras, id_elemento, nota) VALUES ('".$id_panel_juez1."','".$id_inscripcion_figuras."','5','".$notaE5J1."'),('".$id_panel_juez2."','".$id_inscripcion_figuras."','5','".$notaE5J2."'),('".$id_panel_juez3."','".$id_inscripcion_figuras."','5','".$notaE5J3."'),
@@ -111,9 +111,9 @@ if(isset($_POST['save_btn'])){
     $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5";
     $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
     $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-    $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5 limit 1";
     mysqli_query($connection,$query);
-    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5 limit 1";
+    $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=5 limit 1";
     mysqli_query($connection,$query);
     /////////////////////arreglar lo de arriba con un bucle
     if($notaE6J1 != ''){
@@ -124,9 +124,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=6 limit 1";
         mysqli_query($connection,$query);
     }
     if($notaE7J1 != ''){
@@ -137,9 +137,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=7 limit 1";
         //mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_inscripcion_figuras=$id_inscripcion_figuras";
         //mysqli_query($connection,$query);
@@ -152,9 +152,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8 limit 1";
         mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=8 limit 1";
         mysqli_query($connection,$query);
         $query = "DELETE FROM puntuaciones_jueces WHERE tipo_ia is Null and nota=0.00 and id_elemento>0 and id_inscripcion_figuras=$id_inscripcion_figuras";
     }
@@ -167,9 +167,9 @@ if(isset($_POST['save_btn'])){
         $query = "SELECT min(nota), max(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9";
         $min_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['min(nota)'];
         $max_nota = mysqli_fetch_assoc(mysqli_query($connection,$query))['max(nota)'];
-        $query = "UPDATE puntuaciones_jueces SET nota_menor = 'si' WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_menor = 1 WHERE nota=$min_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9 limit 1";
         //mysqli_query($connection,$query);
-        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 'si' WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9 limit 1";
+        $query = "UPDATE puntuaciones_jueces SET nota_mayor = 1 WHERE nota=$max_nota and id_inscripcion_figuras=$id_inscripcion_figuras and id_elemento=9 limit 1";
         //mysqli_query($connection,$query);
     }
 

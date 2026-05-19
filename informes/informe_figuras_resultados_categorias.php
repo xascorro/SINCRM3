@@ -363,7 +363,7 @@ if($res_cats) {
                             $res_p = mysqli_query($connection, $q_p);
                             if($res_p) {
                                 while($pj = mysqli_fetch_assoc($res_p)){
-                                    if($pj['nota_menor'] == 'si' || $pj['nota_mayor'] == 'si')
+                                    if($pj['nota_menor'] == 1 || $pj['nota_mayor'] == 1)
                                         $html .= '<span style="text-decoration:line-through; color:#64748b;">' . number_format($pj['nota'] ?? 0, 1) . "</span> ";
                                     else
                                         $html .= '<b style="color:#1e293b;">' . number_format($pj['nota'] ?? 0, 1) . '</b> ';
@@ -396,7 +396,7 @@ if($res_cats) {
                             $res_p = mysqli_query($connection, $q_p);
                             if($res_p) {
                                 while($pj = mysqli_fetch_assoc($res_p)){
-                                    if($pj['nota_menor'] == 'si' || $pj['nota_mayor'] == 'si')
+                                    if($pj['nota_menor'] == 1 || $pj['nota_mayor'] == 1)
                                         $html .= '<span style="text-decoration:line-through; color:#64748b;">' . number_format($pj['nota'] ?? 0, 1) . "</span> ";
                                     else
                                         $html .= '<b style="color:#1e293b;">' . number_format($pj['nota'] ?? 0, 1) . '</b> ';

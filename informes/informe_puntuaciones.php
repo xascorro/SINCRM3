@@ -775,7 +775,7 @@ $html .= '</table>';
 				$query = "select puntuaciones_jueces.id, id_panel_juez, id_rutina, nota, nota_menor, nota_mayor, numero_juez from puntuaciones_jueces, panel_jueces where id_panel_juez in (select id from panel_jueces where id_fase='$id_fase' and id_panel='".$panel['id']."') and id_rutina = '".$rutina['id']."' and panel_jueces.id = id_panel_juez order by id_panel_juez";
 				$puntuaciones_jueces = mysqli_query($connection,$query);
 				while($puntuacion_juez = mysqli_fetch_array($puntuaciones_jueces)){
-					if($puntuacion_juez['nota_menor']=='si' || $puntuacion_juez['nota_mayor']=='si')
+					if($puntuacion_juez['nota_menor']==1 || $puntuacion_juez['nota_mayor']==1)
 						$html .= '<span style="text-decoration: line-through;">'.$puntuacion_juez['nota'].'</span>'.' ';
 					else
 						$html .= '<span>'.$puntuacion_juez['nota'].'</span>'.' ';

@@ -133,7 +133,7 @@ if ($res_fases) {
                         
                         $res_j = mysqli_query($connection, "SELECT pj.nota, pj.nota_menor, pj.nota_mayor FROM puntuaciones_jueces pj JOIN panel_jueces p on pj.id_panel_juez = p.id WHERE pj.id_rutina='".$rutina['id']."' AND pj.id_elemento='$e_idx' AND p.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo=1 AND id_competicion='".$GLOBALS['id_competicion_activa']."') ORDER BY p.numero_juez");
                         while ($res_j && $nj = mysqli_fetch_array($res_j)) {
-                            $n_txt = ($nj['nota_menor'] == 'si' || $nj['nota_mayor'] == 'si') ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
+                            $n_txt = ($nj['nota_menor'] == 1 || $nj['nota_mayor'] == 1) ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
                             $col_notas_j .= '<span class="nota-jueces">'.$n_txt.' </span>';
                         }
                         $col_notas_j .= '<br>';
@@ -157,7 +157,7 @@ if ($res_fases) {
                         $col_paneles .= '<span class="item-label">'.$label.'</span><br>';
                         $res_j_ia = mysqli_query($connection, "SELECT pj.nota, pj.nota_menor, pj.nota_mayor FROM puntuaciones_jueces pj JOIN panel_jueces p on pj.id_panel_juez = p.id WHERE pj.id_rutina='".$rutina['id']."' AND pj.tipo_ia='$db_type' AND p.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo=2 AND id_competicion='".$GLOBALS['id_competicion_activa']."') ORDER BY p.numero_juez");
                         while ($res_j_ia && $nj = mysqli_fetch_array($res_j_ia)) {
-                            $n_txt = ($nj['nota_menor'] == 'si' || $nj['nota_mayor'] == 'si') ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
+                            $n_txt = ($nj['nota_menor'] == 1 || $nj['nota_mayor'] == 1) ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
                             $col_notas_j .= '<span class="nota-jueces">'.$n_txt.' </span>';
                         }
                         $col_notas_j .= '<br>';
@@ -176,7 +176,7 @@ if ($res_fases) {
                         $col_paneles .= '<span class="item-label">'.$p['nombre'].'</span><br>';
                         $res_j = mysqli_query($connection, "SELECT pj.nota, pj.nota_menor, pj.nota_mayor FROM puntuaciones_jueces pj JOIN panel_jueces pj_p on pj.id_panel_juez = pj_p.id WHERE pj_p.id_panel='".$p['id']."' AND pj.id_rutina='".$rutina['id']."' ORDER BY pj_p.numero_juez");
                         while ($res_j && $nj = mysqli_fetch_array($res_j)) {
-                            $n_txt = ($nj['nota_menor'] == 'si' || $nj['nota_mayor'] == 'si') ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
+                            $n_txt = ($nj['nota_menor'] == 1 || $nj['nota_mayor'] == 1) ? '<del>'.$nj['nota'].'</del>' : $nj['nota'];
                             $col_notas_j .= '<span class="nota-jueces">'.$n_txt.' </span>';
                         }
                         $col_notas_j .= '<br>';

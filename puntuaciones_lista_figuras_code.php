@@ -48,9 +48,9 @@ if (isset($_POST['puntuar_btn'])) {
                 throw new Exception(mysqli_error($connection));
             }
             if (mysqli_num_rows($resultado) > 0) {
-                $query = "UPDATE puntuaciones_jueces SET nota='$nota', nota_menor = NULL, nota_mayor = NULL WHERE id_inscripcion_figuras= '$id_inscripcion_figuras' and id_panel_juez='$id_panel_jueces'";
+                $query = "UPDATE puntuaciones_jueces SET nota='$nota', nota_menor = 0, nota_mayor = 0 WHERE id_inscripcion_figuras= '$id_inscripcion_figuras' and id_panel_juez='$id_panel_jueces'";
             } else {
-                $query = "INSERT INTO puntuaciones_jueces (id_inscripcion_figuras, id_panel_juez, nota) values ('$id_inscripcion_figuras', '$id_panel_jueces', '$nota')";
+                $query = "INSERT INTO puntuaciones_jueces (id_inscripcion_figuras, id_panel_juez, nota, nota_menor, nota_mayor) values ('$id_inscripcion_figuras', '$id_panel_jueces', '$nota', 0, 0)";
             }
             if (!mysqli_query($connection, $query)) {
                 throw new Exception(mysqli_error($connection));
@@ -64,7 +64,7 @@ if (isset($_POST['puntuar_btn'])) {
                 echo '<br>' . $query;
             }
             $nota_menor = mysqli_result(mysqli_query($connection, $query), 0);
-            $query = "UPDATE puntuaciones_jueces set nota_menor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_menor limit 1";
+            $query = "UPDATE puntuaciones_jueces set nota_menor = 1 WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_menor limit 1";
             if (!$is_ajax) {
                 echo '<br>' . $query;
             }
@@ -75,7 +75,7 @@ if (isset($_POST['puntuar_btn'])) {
                 echo '<br>' . $query;
             }
             $nota_mayor = mysqli_result(mysqli_query($connection, $query), 0);
-            $query = "UPDATE puntuaciones_jueces set nota_mayor = 'si' WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_mayor and nota_menor IS NULL limit 1";
+            $query = "UPDATE puntuaciones_jueces set nota_mayor = 1 WHERE id_inscripcion_figuras = $id_inscripcion_figuras and nota = $nota_mayor and nota_menor = 0 limit 1";
             if (!$is_ajax) {
                 echo '<br>' . $query;
             }
@@ -98,12 +98,12 @@ if (isset($_POST['puntuar_btn'])) {
             }
         }
 
-        $query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL) limit 1";
+        $query = "SELECT sum(nota) FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor = 0 and nota_menor = 0) limit 1";
         if (!$is_ajax) {
             echo '<br>' . $query;
         }
         $nota_total = mysqli_result(mysqli_query($connection, $query), 0);
-        $query = "SELECT sum(nota)/3 FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor IS NULL and nota_menor IS NULL)";
+        $query = "SELECT sum(nota)/3 FROM puntuaciones_jueces WHERE id_inscripcion_figuras = $id_inscripcion_figuras and (nota_mayor = 0 and nota_menor = 0)";
         if (!$is_ajax) {
             echo '<br>' . $query;
         }
