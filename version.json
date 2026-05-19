@@ -1,11 +1,11 @@
 {
     "major": 4,
     "minor": 1,
-    "patch": 0,
-    "status": "dockerized",
+    "patch": 1,
+    "status": "dockerized beta",
     "build": 20260519,
-    "full_version": "v4.1.0-dockerized",
-    "codename": "SINCRM4 dockerized",
+    "full_version": "v4.1.1-dockerized-beta",
+    "codename": "SINCRM4 dockerized beta",
     "updated_at": "2026-05-19",
-    "description": "Migración completa a arquitectura de contenedores con Docker y despliegue automático vía Coolify."
+    "description": "Test de auto-despliegue tras corrección de volúmenes en docker-compose."
 }
