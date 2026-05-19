@@ -1,7 +1,6 @@
 services:
   database:
     image: mariadb:11
-    container_name: sincrm-beta-db
     restart: always
     environment:
       - MARIADB_DATABASE=sincrm4beta
@@ -10,13 +9,12 @@ services:
       - MARIADB_ROOT_PASSWORD=root_pass_placeholder
     volumes:
       - sincrm-db-data:/var/lib/mysql
-      - ./database/backup/latest_migration_backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz:ro
+      - ./database/backup:/docker-entrypoint-initdb.d:ro
     networks:
       - sincrm-network
 
   app:
     build: .
-    container_name: sincrm-beta-app
     restart: always
     depends_on:
       - database
@@ -35,7 +33,6 @@ services:
 
 networks:
   sincrm-network:
-    # Quitamos el name fijo para evitar conflictos de proyectos
   coolify:
     external: true
 
