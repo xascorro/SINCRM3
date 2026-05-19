@@ -24,3 +24,4 @@ Thumbs.db
 docs/*.pdf
 informes/*.pdf
 !informes/*.php
+docker-compose.yaml

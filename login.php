@@ -95,7 +95,7 @@ $version = getVersion();
                 <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
                     <img src="img/logo_sincrm4.png" class="w-10" alt="Logo">
                 </div>
-                <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">3</span></h1>
+                <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">4</span></h1>
                 <p class="text-xl text-blue-50 font-light leading-relaxed">Donde el arte se une a la precisión. La gestión definitiva para natación artística.</p>
             </div>
         </div>

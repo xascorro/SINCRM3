@@ -17,7 +17,10 @@ services:
     restart: always
     depends_on:
       - database
+    ports:
+      - "8081:80"
     volumes:
+      - .:/var/www/html
       - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
       - DB_HOST=database
