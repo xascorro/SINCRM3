@@ -31,10 +31,13 @@ services:
       - 80
     networks:
       - sincrm-network
+      - coolify
 
 networks:
   sincrm-network:
     name: sincrm-network
+  coolify:
+    external: true
 
 volumes:
   sincrm-db-data:
