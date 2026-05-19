@@ -92,9 +92,9 @@ $version = getVersion();
         <img alt="Natación Sincronizada" class="absolute inset-0 w-full h-full object-cover opacity-70" src="img/bg_sincro_login.jpg"/>
         <div class="relative z-10 glass-overlay p-12 rounded-[2.5rem] max-w-lg mx-8 animate-fade-in">
             <div class="flex flex-col gap-4">
-                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
+                <!-- <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
                     <img src="img/logo_sincrm4.png" class="w-10" alt="Logo">
-                </div>
+                </div> -->
                 <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">4</span></h1>
                 <p class="text-xl text-blue-50 font-light leading-relaxed">Donde el arte se une a la precisión. La gestión definitiva para natación artística.</p>
             </div>
