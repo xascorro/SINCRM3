@@ -30,6 +30,12 @@ services:
     networks:
       - sincrm-network
       - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sincrm-beta.rule=Host(`beta.pedrodiaz.eu`)"
+      - "traefik.http.routers.sincrm-beta.entrypoints=web"
+      - "traefik.http.services.sincrm-beta.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
 
 networks:
   sincrm-network:
