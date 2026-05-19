@@ -1,22 +1,41 @@
 services:
-  beta-app:
-    build: .
-    container_name: sincrm-beta
+  database:
+    image: mariadb:11
+    container_name: sincrm-beta-db
     restart: always
+    environment:
+      - MARIADB_DATABASE=sincrm4beta
+      - MARIADB_USER=xas
+      - MARIADB_PASSWORD=79eagle
+      - MARIADB_ROOT_PASSWORD=root_pass_placeholder
     volumes:
-      - /var/www/html/beta:/var/www/html
+      - sincrm-db-data:/var/lib/mysql
+      - ./database/backup/latest_migration_backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz:ro
+    networks:
+      - sincrm-network
+
+  app:
+    build: .
+    container_name: sincrm-beta-app
+    restart: always
+    depends_on:
+      - database
+    volumes:
+      - .:/var/www/html
       - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
     environment:
-      - DB_HOST=${DB_HOST:-host.docker.internal}
-      - DB_USER=${DB_USER:-xas}
-      - DB_PASS=${DB_PASS:-79eagle}
-      - DB_NAME=${DB_NAME:-sincrm4beta}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    # El puerto se puede mapear a uno libre, ej: 8081
-    ports:
-      - "8081:80"
+      - DB_HOST=database
+      - DB_USER=xas
+      - DB_PASS=79eagle
+      - DB_NAME=sincrm4beta
+    expose:
+      - 80
+    networks:
+      - sincrm-network
 
 networks:
-  default:
+  sincrm-network:
     name: sincrm-network
+
+volumes:
+  sincrm-db-data:
