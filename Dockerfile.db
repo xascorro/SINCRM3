@@ -1,0 +1,2 @@
+FROM mariadb:11
+COPY ./database/backup/latest_migration_backup.sql.gz /docker-entrypoint-initdb.d/

@@ -1,6 +1,8 @@
 services:
   database:
-    image: mariadb:11
+    build:
+      context: .
+      dockerfile: Dockerfile.db
     restart: always
     environment:
       - MARIADB_DATABASE=sincrm4beta
@@ -9,7 +11,6 @@ services:
       - MARIADB_ROOT_PASSWORD=root_pass_placeholder
     volumes:
       - sincrm-db-data:/var/lib/mysql
-      - ./database/backup:/docker-entrypoint-initdb.d:ro
     networks:
       - sincrm-network
 
