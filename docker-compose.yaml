@@ -11,8 +11,6 @@ services:
       - MARIADB_ROOT_PASSWORD=root_pass_placeholder
     volumes:
       - sincrm-db-data:/var/lib/mysql
-    networks:
-      - sincrm-network
 
   app:
     build: .
@@ -28,23 +26,6 @@ services:
       - DB_NAME=sincrm4beta
     expose:
       - 80
-    networks:
-      - sincrm-network
-      - coolify
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.sincrm-beta-http.rule=Host(`beta.pedrodiaz.eu`)"
-      - "traefik.http.routers.sincrm-beta-http.entrypoints=http"
-      - "traefik.http.routers.sincrm-beta-https.rule=Host(`beta.pedrodiaz.eu`)"
-      - "traefik.http.routers.sincrm-beta-https.entrypoints=https"
-      - "traefik.http.routers.sincrm-beta-https.tls=true"
-      - "traefik.http.services.sincrm-beta-svc.loadbalancer.server.port=80"
-      - "traefik.docker.network=coolify"
-
-networks:
-  sincrm-network:
-  coolify:
-    external: true
 
 volumes:
   sincrm-db-data:
