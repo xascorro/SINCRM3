@@ -6,7 +6,7 @@ includes/config.php
 
 # Almacenamiento y Logs
 log/*.txt
-database/backup/*
+# database/backup/*
 !database/backup/.gitkeep
 
 # Dependencias (si se usaran en el futuro)
