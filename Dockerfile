@@ -17,6 +17,9 @@ RUN a2enmod rewrite headers
 # Configurar el directorio de trabajo
 WORKDIR /var/www/html
 
+# Copiar el código de la aplicación al contenedor
+COPY . /var/www/html
+
 # Ajustar permisos para www-data
 RUN chown -R www-data:www-data /var/www/html
 
