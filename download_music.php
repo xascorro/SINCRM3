@@ -106,6 +106,8 @@ if ($id_competicion !== null && is_dir($path_base)) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .border-left-info { border-left: .25rem solid #36b9cc!important; }
+        .border-left-danger { border-left: .25rem solid #e74a3b!important; }
+        .border-left-success { border-left: .25rem solid #1cc88a!important; }
         .progress-sm { height: .5rem; }
     </style>
 </head>
@@ -128,14 +130,20 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 <?php foreach ($stats_fases as $id_f => $info): 
                     $porcentaje = ($info['total'] > 0) ? round(($info['subidas'] / $info['total']) * 100) : 0;
                     
-                    // Colores de barra según progreso
+                    // Colores de barra y borde según progreso
                     $color_bar = "bg-danger";
+                    $border_class = "border-left-danger";
+
                     if ($porcentaje > 40) $color_bar = "bg-warning";
                     if ($porcentaje > 89) $color_bar = "bg-info";
-                    if ($porcentaje == 100) $color_bar = "bg-success";
+                    
+                    if ($porcentaje == 100) {
+                        $color_bar = "bg-success";
+                        $border_class = "border-left-success";
+                    }
                 ?>
                 <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card shadow-sm border-left-info h-100">
+                    <div class="card shadow-sm <?php echo $border_class; ?> h-100">
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <div class="text-xs font-weight-bold text-info text-uppercase" style="font-size: 0.75rem;">
