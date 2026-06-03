@@ -148,13 +148,17 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 group hover:shadow-lg transition-all">
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1"><?php echo $has_coach_cards ? 'Música / CC' : 'Música'; ?></p>
                 <div class="flex items-center gap-2">
-                    <h3 class="text-xl font-black text-emerald-600"><?php echo $stats['con_musica'] ?? 0; ?></h3>
+                    <h3 class="text-xl font-black text-emerald-600" title="Música subida / Total rutinas">
+                        <?php echo ($stats['con_musica'] ?? 0); ?><span class="text-slate-300 text-sm font-medium">/<?php echo ($stats['total'] ?? 0); ?></span>
+                    </h3>
                     <?php if($has_coach_cards): ?>
-                        <span class="text-slate-300">/</span>
-                        <h3 class="text-xl font-black text-emerald-600"><?php echo $stats['con_coach_card'] ?? 0; ?></h3>
+                        <span class="text-slate-200">|</span>
+                        <h3 class="text-xl font-black text-emerald-600" title="Coach Cards definidas / Total necesarias">
+                            <?php echo ($stats['con_coach_card'] ?? 0); ?><span class="text-slate-300 text-sm font-medium">/<?php echo ($stats['requieren_coach_card'] ?? 0); ?></span>
+                        </h3>
                     <?php endif; ?>
                 </div>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo $has_coach_cards ? 'Subido / Definido' : 'Subida'; ?></p>
+                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo $has_coach_cards ? 'Subidas / Definidas' : 'Subidas'; ?></p>
             </div>
         </div>
 
