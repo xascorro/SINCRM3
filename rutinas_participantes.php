@@ -1,5 +1,14 @@
 <?php
 include('security.php');
+
+$id_rutina = $_SESSION['id_rutina_usuario'] ?? 0;
+$id_competicion = $_SESSION['id_competicion_usuario'] ?? 0;
+
+if ($id_rutina == 0) {
+    header('Location: rutinas.php');
+    exit();
+}
+
 include('includes/header.php');
 include('includes/navbar.php');
 
