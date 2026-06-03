@@ -291,7 +291,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                                             <?php endif; ?>
 
                                             <!-- Borrar -->
-                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>')" 
+                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($nombres); ?>')" 
                                                     <?php echo $enable_inscripcion ?> class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm group/btn disabled:opacity-30" title="Eliminar Rutina">
                                                 <i class="fas fa-trash-alt text-xs group-hover/btn:scale-110"></i>
                                             </button>
@@ -378,7 +378,9 @@ $stats = mysqli_fetch_assoc($res_stats);
             </div>
             <h3 class="text-2xl font-black text-slate-800 mb-2 tracking-tighter">¿Estás seguro?</h3>
             <p class="text-slate-500 font-medium mb-8 leading-relaxed">
-                Vas a eliminar la rutina de <span id="delRoutineName" class="font-black text-slate-700"></span>. Esta acción borrará también sus participantes y Coach Card.
+                Vas a eliminar la rutina de <span id="delRoutineName" class="font-black text-slate-700"></span>.
+                <br><span id="delParticipants" class="text-[10px] italic text-slate-400"></span>
+                <br><br>Esta acción borrará también sus participantes y Coach Card.
             </p>
             
             <form action="rutinas_code.php" method="POST">
@@ -434,9 +436,10 @@ $stats = mysqli_fetch_assoc($res_stats);
         document.getElementById('musicModal').classList.add('hidden');
     }
 
-    function confirmDelete(id, routine, club) {
+    function confirmDelete(id, routine, club, participants) {
         document.getElementById('delete_id_val').value = id;
         document.getElementById('delRoutineName').textContent = routine + ' (' + club + ')';
+        document.getElementById('delParticipants').textContent = participants ? 'Participantes: ' + participants : 'Sin participantes asignados';
         document.getElementById('deleteModal').classList.remove('hidden');
     }
 
