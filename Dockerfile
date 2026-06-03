@@ -6,10 +6,11 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
     libfreetype6-dev \
+    libzip-dev \
     zip \
     unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd mysqli pdo pdo_mysql
+    && docker-php-ext-install gd mysqli pdo pdo_mysql zip
 
 # Habilitar mod_rewrite de Apache para soportar .htaccess
 RUN a2enmod rewrite headers
