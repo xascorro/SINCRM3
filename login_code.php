@@ -216,8 +216,10 @@ if(isset($_POST['login_btn'])){
 					'perfil.php',
 					'perfil_code.php',
 					'mi_equipo.php',
+					'download_music.php',
+					'descargar_fase.php',
 					'log_usuario.php'
-				);
+					);
 				//redirecciono a su pagina inicial pasándole el logo
                 sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $club_logo);
 
