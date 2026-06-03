@@ -49,9 +49,9 @@ $fecha_fin_inscripcion = $fechas['fecha_fin_inscripcion'] ?? '';
 $enable_inscripcion = (date('Y-m-d') >= $fecha_fin_inscripcion && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
 
 // Condición por club
-$condicion = '';
+$condicion_club = '';
 if(isset($_SESSION['club']) && $_SESSION['club'] > 0 && $_SESSION['id_rol'] == 5)
-    $condicion = ' AND rutinas.id_club ='.$_SESSION['club'];
+    $condicion_club = ' AND rutinas.id_club ='.$_SESSION['club'];
 
 // Stats para KPIs
 $q_stats = "SELECT 
@@ -59,7 +59,7 @@ $q_stats = "SELECT
             SUM(CASE WHEN music_name IS NOT NULL AND music_name != '' THEN 1 ELSE 0 END) as con_musica,
             SUM(CASE WHEN dd_total > 0 THEN 1 ELSE 0 END) as con_coach_card
             FROM rutinas, fases 
-            WHERE rutinas.id_fase = fases.id AND fases.id_competicion = $id_competicion $condicion";
+            WHERE rutinas.id_fase = fases.id AND fases.id_competicion = $id_competicion $condicion_club";
 $res_stats = mysqli_query($connection, $q_stats);
 $stats = mysqli_fetch_assoc($res_stats);
 ?>
@@ -215,7 +215,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                                   AND fases.id_modalidad = modalidades.id 
                                   AND fases.id_categoria = categorias.id 
                                   AND rutinas.id_club = clubes.id 
-                                  AND fases.id_competicion = $id_competicion $condicion 
+                                  AND fases.id_competicion = $id_competicion $condicion_club 
                                   ORDER BY fases.orden ASC, fases.id ASC, clubes.nombre_corto ASC, rutinas.id ASC";
                         $res = mysqli_query($connection, $query);
 
