@@ -62,7 +62,7 @@ if (isset($_POST['reenviar_verificacion'])) {
         if (mysqli_query($connection, $update)) {
             require_once 'includes/email_functions.php';
             $subject = 'Confirma tu email - SINCRM4 (Reenvío)';
-            $link = "https://beta.pedrodiaz.eu/login_code.php?confirmar_email=" . $token;
+            $link = "https://" . $_SERVER['HTTP_HOST'] . "/login_code.php?confirmar_email=" . $token;
             $body = "
             <h2>Hola $username,</h2>
             <p>Has solicitado el reenvío del enlace de confirmación para tu cuenta en SINCRM4.</p>
@@ -287,7 +287,7 @@ if(isset($_POST['login_btn'])){
 		</div>
 		<p>Termina de configurar el usuario desde el panel administrativo.</p>
 		<div style='text-align: center; margin-top: 30px;'>
-			<a href='https://beta.pedrodiaz.eu/usuarios.php' class='btn'>Ir al Panel de Usuarios</a>
+			<a href='https://" . $_SERVER['HTTP_HOST'] . "/usuarios.php' class='btn'>Ir al Panel de Usuarios</a>
 		</div>";
 		require_once 'includes/email_functions.php';
 		enviar_email($toAddress, $subject, $body);
@@ -295,7 +295,7 @@ if(isset($_POST['login_btn'])){
 		// 2. ENVIO EMAIL AL USUARIO (Confirmación de registro + Verificación)
 		$toUser = $register_email;
 		$subjectUser = 'Confirma tu email - SINCRM4';
-        $link_confirmacion = "https://beta.pedrodiaz.eu/login_code.php?confirmar_email=" . $token_verificacion;
+        $link_confirmacion = "https://" . $_SERVER['HTTP_HOST'] . "/login_code.php?confirmar_email=" . $token_verificacion;
 		$bodyUser = "
 		<h2>¡Bienvenido a SINCRM4!</h2>
 		<p>Hola <strong>$register_username</strong>,</p>

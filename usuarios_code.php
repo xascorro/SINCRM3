@@ -42,7 +42,7 @@ if(isset($_POST['save_btn'])){
                     <p style='margin: 5px 0 0 0; font-size: 13px; color: #64748b;'>Utiliza tu email y la contraseña proporcionada por el administrador.</p>
                 </div>
                 <div style='text-align: center; margin-top: 30px;'>
-                    <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
+                    <a href='https://" . $_SERVER['HTTP_HOST'] . "/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
                 </div>";
                 enviar_email($email, $subjectUser, $bodyUser);
             }
@@ -126,7 +126,7 @@ if(isset($_POST['update_btn'])){
                 <p style='margin: 5px 0 0 0; font-size: 13px; color: #64748b;'>Ya puedes acceder con tus credenciales habituales.</p>
             </div>
             <div style='text-align: center; margin-top: 30px;'>
-                <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
+                <a href='https://" . $_SERVER['HTTP_HOST'] . "/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
             </div>";
             enviar_email($email, $subjectUser, $bodyUser);
             write_log("Email de actualización enviado a $email (Rol: $nombre_rol)", "INFO");
@@ -171,7 +171,7 @@ if(isset($_POST['toggle_status_btn'])){
                     <p style='margin: 5px 0 0 0; font-size: 13px; color: #065f46;'>Ya puedes empezar a gestionar tus competiciones y nadadoras.</p>
                 </div>
                 <div style='text-align: center; margin-top: 30px;'>
-                    <a href='https://beta.pedrodiaz.eu/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
+                    <a href='https://" . $_SERVER['HTTP_HOST'] . "/login.php' style='display: inline-block; padding: 12px 30px; background-color: #1e293b; color: white; text-decoration: none; border-radius: 12px; font-weight: bold;'>Entrar en SINCRM4</a>
                 </div>";
                 enviar_email($toUser, $subjectUser, $bodyUser);
             }

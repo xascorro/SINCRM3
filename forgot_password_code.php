@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 Si no has realizado este cambio, por favor ponte en contacto con nosotros inmediatamente.
             </div>
             <div style='text-align: center; margin-top: 30px;'>
-                <a href='https://beta.pedrodiaz.eu/login.php' class='btn'>Acceder a mi Cuenta</a>
+                <a href='https://" . $_SERVER['HTTP_HOST'] . "/login.php' class='btn'>Acceder a mi Cuenta</a>
             </div>";
             
             send_pulse_email($email, $subject_confirm, $html_confirm);
