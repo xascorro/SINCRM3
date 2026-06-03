@@ -90,7 +90,10 @@ if ($id_competicion && $id_fase) {
                 if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
                     // Nombre para Club: Musica_NombreClub_Modalidad_Categoria.zip
                     $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
-                    $club_nom = mysqli_result(mysqli_query($connection, $q_club_nom), 0);
+                    $res_club_nom = mysqli_query($connection, $q_club_nom);
+                    $row_club_nom = mysqli_fetch_assoc($res_club_nom);
+                    $club_nom = $row_club_nom['nombre_corto'] ?? 'Club';
+                    
                     $club_nom_clean = str_replace(' ', '_', $club_nom);
                     $filename_final = "Musica_" . $club_nom_clean . "_" . $nom_mod . "_" . $nom_cat . ".zip";
                 } else {
