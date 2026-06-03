@@ -58,7 +58,11 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 modalidades.nombre AS mod_nom, 
                 categorias.nombre AS cat_nom, 
                 clubes.nombre_corto AS nombre_club,
-                fases.orden 
+                fases.orden,
+                (SELECT GROUP_CONCAT(CONCAT(n.nombre, ' ', n.apellidos) SEPARATOR ', ') 
+                 FROM rutinas_participantes rp 
+                 JOIN nadadoras n ON rp.id_nadadora = n.id 
+                 WHERE rp.id_rutina = rutinas.id AND rp.reserva = 'no') as nadadoras
               FROM rutinas 
               INNER JOIN fases ON rutinas.id_fase = fases.id 
               INNER JOIN modalidades ON fases.id_modalidad = modalidades.id 
@@ -92,7 +96,11 @@ if ($id_competicion !== null && is_dir($path_base)) {
             if (in_array($id_rutina, $ids_en_disco)) {
                 $stats_fases[$f_id]['subidas']++;
             } else {
-                $rutinas_sin_musica[] = $row['nombre_club'] . " (" . $row['mod_nom'] . " " . $row['cat_nom'] . ")";
+                $info_rutina = "<strong>#" . $id_rutina . "</strong> " . $row['nombre_club'] . " (" . $row['mod_nom'] . " " . $row['cat_nom'] . ")";
+                if (!empty($row['nadadoras'])) {
+                    $info_rutina .= " - <span class='opacity-70'>" . $row['nadadoras'] . "</span>";
+                }
+                $rutinas_sin_musica[] = $info_rutina;
             }
         }
     }
