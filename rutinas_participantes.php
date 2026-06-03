@@ -191,14 +191,24 @@ function saveAllParticipants() {
         const idRegistro = form.querySelector('input[name="id"]').value;
         const reserva = form.querySelector('input[name="reserva"]').value;
 
+        // Reset visual state
+        select.classList.remove('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
+
         if (val !== '' && val !== ' ') {
             // Validar Duplicados
             if (swimmerIds.includes(val)) {
                 duplicateFound = true;
-                select.classList.add('border-red-500', 'bg-red-50');
+                // Aplicar estilos de error (Usando !important vía Tailwind si es necesario o asegurando clases)
+                select.classList.add('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
+                
+                // Buscar el primer elemento que tiene este valor para marcarlo también
+                selects.forEach((s) => {
+                    if (s.value.trim() === val) {
+                        s.classList.add('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
+                    }
+                });
             } else {
                 swimmerIds.push(val);
-                select.classList.remove('border-red-500', 'bg-red-50');
                 
                 // Crear inputs para el form bulk
                 bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][id_nadadora]" value="${val}">`;
