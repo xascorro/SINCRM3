@@ -3,9 +3,8 @@ session_start();
 set_time_limit(1000);
 ini_set('memory_limit', '512M');
 include('security.php'); 
-
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+include('includes/header.php');
+include('includes/navbar.php');
 
 // Prioridad a POST, fallback a GET (pero validado por sesión)
 $id_competicion = isset($_POST['id_competicion']) ? (int)$_POST['id_competicion'] : (isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null);
@@ -33,8 +32,8 @@ function agregarMensajeDescarga($mensaje, $tipo = 'info') {
     global $id_competicion;
     if (!$id_competicion) return;
     $hora = date('[H:i:s] ');
-    $color = ($tipo == 'error') ? 'text-danger' : (($tipo == 'warning') ? 'text-warning' : 'text-success');
-    $_SESSION['mensajes_descarga_' . $id_competicion][] = "<span class='$color'>$hora $mensaje</span>";
+    $color = ($tipo == 'error') ? 'text-red-500' : (($tipo == 'warning') ? 'text-amber-500' : 'text-emerald-500');
+    $_SESSION['mensajes_descarga_' . $id_competicion][] = "<span class='$color font-mono'>$hora $mensaje</span>";
 }
 
 // --- LÓGICA DE ESCANEO E INTEGRIDAD ---
@@ -111,128 +110,124 @@ if ($id_competicion !== null && is_dir($path_base)) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Gestor de Música - SINCRM</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .border-left-info { border-left: .25rem solid #36b9cc!important; }
-        .border-left-danger { border-left: .25rem solid #e74a3b!important; }
-        .border-left-success { border-left: .25rem solid #1cc88a!important; }
-        .progress-sm { height: .5rem; }
-    </style>
-</head>
-<body class="bg-light">
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
+    <?php include('includes/topbar.php'); ?>
 
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h4 text-gray-800">Gestor de Música <?php echo ($id_club > 0) ? "- Mi Club" : "por Fase"; ?></h1>
-            <img src="https://sincrm.pedrodiaz.eu/images/logo_sincrm_removebg.png" alt="Logo" height="50">
-        </div>
-
-        <div class="row mb-2">
-            <div class="col-12">
-                <h5 class="font-weight-bold text-dark"><i class="fas fa-tasks me-2"></i>Progreso y Descarga</h5>
+    <div class="p-6 md:p-10 max-w-6xl mx-auto w-full font-lexend text-primary">
+        
+        <!-- Header -->
+        <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
+                    <span class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-sm border border-indigo-100"><i class="fas fa-music text-lg"></i></span>
+                    Gestor de Música
+                </h1>
+                <p class="text-slate-500 font-medium">
+                    <?php echo ($id_club > 0) ? "Descarga del acompañamiento musical de su club." : "Exploración y descarga de archivos por fase de competición."; ?>
+                </p>
             </div>
+            <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
+                <i class="fas fa-chevron-left text-xs"></i> Volver
+            </a>
         </div>
 
-        <div class="row mb-4">
-            <?php if (!empty($stats_fases)): ?>
+        <?php if (empty($stats_fases)): ?>
+            <div class="bg-white rounded-[2.5rem] p-12 shadow-sm border border-slate-200 text-center">
+                <div class="w-20 h-20 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-folder-open text-3xl"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-800 mb-2">No se han encontrado registros</h2>
+                <p class="text-slate-500 max-w-sm mx-auto">No hay rutinas registradas para los criterios seleccionados en esta competición.</p>
+            </div>
+        <?php else: ?>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                 <?php foreach ($stats_fases as $id_f => $info): 
                     $porcentaje = ($info['total'] > 0) ? round(($info['subidas'] / $info['total']) * 100) : 0;
                     
-                    // Colores de barra y borde según progreso
-                    $color_bar = "bg-danger";
-                    $border_class = "border-left-danger";
-
-                    if ($porcentaje > 40) $color_bar = "bg-warning";
-                    if ($porcentaje > 89) $color_bar = "bg-info";
+                    $is_complete = ($porcentaje == 100);
+                    $accent_color = $is_complete ? 'emerald' : 'red';
                     
-                    if ($porcentaje == 100) {
-                        $color_bar = "bg-success";
-                        $border_class = "border-left-success";
-                    }
-                ?>
-                <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card shadow-sm <?php echo $border_class; ?> h-100">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <div class="text-xs font-weight-bold text-info text-uppercase" style="font-size: 0.75rem;">
-                                    <?php echo htmlspecialchars($info['nombre']); ?>
-                                </div>
-                                <span class="badge <?php echo ($porcentaje == 100) ? 'text-bg-success' : 'text-bg-dark'; ?> border">
-                                    <?php echo $info['subidas']; ?> / <?php echo $info['total']; ?>
-                                </span>
-                            </div>
-                            
-                            <div class="row no-gutters align-items-center mb-3">
-                                <div class="col-auto me-2">
-                                    <div class="h6 mb-0 font-weight-bold text-gray-800"><?php echo $porcentaje; ?>%</div>
-                                </div>
-                                <div class="col">
-                                    <div class="progress progress-sm">
-                                        <div class="progress-bar <?php echo $color_bar; ?>" role="progressbar" 
-                                             style="width: <?php echo $porcentaje; ?>%" 
-                                             aria-valuenow="<?php echo $porcentaje; ?>" aria-valuemin="0" aria-valuemax="100">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    if (!$is_complete && $porcentaje > 40) $accent_color = 'amber';
+                    if (!$is_complete && $porcentaje > 89) $accent_color = 'blue';
 
-                            <div class="mt-auto pt-2">
-                                <?php if ($info['subidas'] > 0): ?>
-                                    <form action="descargar_fase.php" method="POST">
-                                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
-                                        <input type="hidden" name="id_fase" value="<?php echo $id_f; ?>">
-                                        <input type="hidden" name="id_club" value="<?php echo $id_club; ?>">
-                                        <button type="submit" class="btn btn-primary btn-sm w-100 shadow-sm">
-                                            <i class="fas fa-download me-1"></i> Descargar ZIP
-                                        </button>
-                                    </form>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary btn-sm w-100 disabled" disabled>
-                                        <i class="fas fa-exclamation-circle me-1"></i> Sin archivos
-                                    </button>
-                                <?php endif; ?>
-                            </div>
+                    $border_class = "border-l-".$accent_color."-500";
+                    $bg_badge = "bg-".$accent_color."-50";
+                    $text_badge = "text-".$accent_color."-600";
+                    $bg_bar = "bg-".$accent_color."-500";
+                ?>
+                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 border-l-[6px] <?php echo $border_class; ?> hover:shadow-lg transition-all group flex flex-col h-full">
+                    <div class="flex justify-between items-start mb-6">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1 truncate">Fase Competición</p>
+                            <h3 class="text-base font-black text-slate-800 leading-tight"><?php echo htmlspecialchars($info['nombre']); ?></h3>
                         </div>
+                        <div class="px-3 py-1 rounded-lg <?php echo $bg_badge.' '.$text_badge; ?> text-[10px] font-black border border-current/10">
+                            <?php echo $info['subidas']; ?> / <?php echo $info['total']; ?>
+                        </div>
+                    </div>
+
+                    <div class="mb-8">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase italic">Integridad</span>
+                            <span class="text-sm font-black text-slate-700"><?php echo $porcentaje; ?>%</span>
+                        </div>
+                        <div class="h-2 w-full bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                            <div class="h-full <?php echo $bg_bar; ?> transition-all duration-1000 ease-out shadow-sm" style="width: <?php echo $porcentaje; ?>%"></div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto">
+                        <?php if ($info['subidas'] > 0): ?>
+                            <form action="descargar_fase.php" method="POST">
+                                <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                                <input type="hidden" name="id_fase" value="<?php echo $id_f; ?>">
+                                <input type="hidden" name="id_club" value="<?php echo $id_club; ?>">
+                                <button type="submit" class="w-full py-3 bg-slate-800 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-md hover:bg-black hover:scale-[1.02] transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-cloud-download-alt"></i> Descargar ZIP
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <div class="w-full py-3 bg-slate-50 text-slate-400 font-black uppercase text-[10px] tracking-widest rounded-xl border border-slate-100 flex items-center justify-center gap-2 italic">
+                                <i class="fas fa-exclamation-circle opacity-50"></i> Sin archivos
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endforeach; ?>
-            <?php else: ?>
-                <div class="col-12">
-                    <div class="alert <?php echo ($id_competicion) ? 'alert-info' : 'alert-warning'; ?>">
-                        <?php echo ($id_competicion) ? 'No se encontraron rutinas o archivos para los criterios seleccionados.' : 'Falta información de la competición.'; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-        </div>
+            </div>
+        <?php endif; ?>
 
         <?php if (!empty($_SESSION['mensajes_descarga_' . $id_competicion])): ?>
-            <div class="card shadow-sm bg-dark text-light mb-5">
-                <div class="card-header bg-dark border-secondary py-2">
-                    <h6 class="m-0 font-weight-bold text-secondary small text-uppercase">Alertas e Integridad del Sistema</h6>
+            <div class="bg-slate-900 rounded-[2rem] shadow-2xl overflow-hidden mb-10 border border-white/5">
+                <div class="px-8 py-4 bg-slate-800/50 border-b border-white/5 flex items-center justify-between">
+                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        Consola de Integridad Técnica
+                    </h3>
                 </div>
-                <div class="card-body py-2 small" style="font-family: 'Courier New', Courier, monospace; max-height: 250px; overflow-y: auto;">
-                    <?php 
-                    foreach ($_SESSION['mensajes_descarga_' . $id_competicion] as $m) echo $m . "<br>";
-                    unset($_SESSION['mensajes_descarga_' . $id_competicion]);
-                    ?>
+                <div class="p-8 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 custom-scrollbar">
+                    <div class="space-y-2">
+                        <?php 
+                        foreach ($_SESSION['mensajes_descarga_' . $id_competicion] as $m) {
+                            echo "<div class='flex gap-3 text-xs leading-relaxed'>$m</div>";
+                        }
+                        unset($_SESSION['mensajes_descarga_' . $id_competicion]);
+                        ?>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>
 
-        <div class="text-center mb-5">
-            <a href="rutinas.php" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-arrow-left me-1"></i> Volver a Rutinas
-            </a>
-        </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</main>
+
+<style>
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+</style>
+
+<?php 
+include('includes/scripts.php');
+include('includes/footer.php'); 
+?>
