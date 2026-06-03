@@ -387,16 +387,21 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                 </div>
             </div>
 
+            <!-- Campos ocultos siempre presentes para que el JS no falle -->
+            <input type="hidden" id="music_edit_id">
+            <input type="hidden" id="music_club_id">
+            <input type="hidden" id="music_name_val">
+
             <?php if($enable_musica == ''): ?>
-                <form action="rutinas_code.php" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <form action="rutinas_code.php" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="syncMusicInputs(this)">
                     <div class="relative group">
                         <label class="block text-[10px] font-black uppercase text-slate-400 mb-2 px-1">Subir nuevo archivo (.mp3)</label>
                         <input type="file" name="musica" accept=".mp3" required 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold text-slate-500 group-hover:border-indigo-400 transition-all cursor-pointer">
                     </div>
-                    <input type="hidden" name="edit_id" id="music_edit_id">
-                    <input type="hidden" name="club" id="music_club_id">
-                    <input type="hidden" name="music_name" id="music_name_val">
+                    <input type="hidden" name="edit_id" id="form_music_edit_id">
+                    <input type="hidden" name="club" id="form_music_club_id">
+                    <input type="hidden" name="music_name" id="form_music_name_val">
                     <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
                     <button type="submit" name="upload_music" class="w-full py-4 bg-indigo-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-[1.02] transition-all">
                         Guardar Audio
@@ -472,6 +477,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         audio.pause();
         audio.currentTime = 0;
         document.getElementById('musicModal').classList.add('hidden');
+    }
+
+    function syncMusicInputs(form) {
+        document.getElementById('form_music_edit_id').value = document.getElementById('music_edit_id').value;
+        document.getElementById('form_music_club_id').value = document.getElementById('music_club_id').value;
+        document.getElementById('form_music_name_val').value = document.getElementById('music_name_val').value;
     }
 
     function confirmDelete(id, routine, club, participants) {
