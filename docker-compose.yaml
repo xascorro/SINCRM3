@@ -1,0 +1,33 @@
+services:
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    restart: always
+    environment:
+      - MARIADB_DATABASE=sincrm4beta
+      - MARIADB_USER=xas
+      - MARIADB_PASSWORD=79eagle
+      - MARIADB_ROOT_PASSWORD=root_pass_placeholder
+    volumes:
+      - sincrm-db-data:/var/lib/mysql
+
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "8081:80"
+    volumes:
+      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      - DB_HOST=database
+      - DB_USER=xas
+      - DB_PASS=79eagle
+      - DB_NAME=sincrm4beta
+    expose:
+      - 80
+
+volumes:
+  sincrm-db-data:

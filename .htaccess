@@ -1,0 +1,20 @@
+ErrorDocument 404 /404.php
+
+
+
+# --- BEGIN SINCRM PHP LIMITS ---
+<IfModule mod_php.c>
+   php_value upload_max_filesize 1M
+   php_value post_max_size 12M
+   php_value memory_limit 512M
+   php_value max_execution_time 300
+   php_value max_input_vars 1000
+</IfModule>
+<IfModule mod_php7.c>
+   php_value upload_max_filesize 1M
+   php_value post_max_size 12M
+   php_value memory_limit 512M
+   php_value max_execution_time 300
+   php_value max_input_vars 1000
+</IfModule>
+# --- END SINCRM PHP LIMITS ---

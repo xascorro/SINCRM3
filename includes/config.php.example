@@ -1,0 +1,17 @@
+<?php
+/**
+ * Plantilla de configuración consolidada
+ * Copia este archivo como includes/config.php
+ */
+
+// --- Configuración de Debug ---
+define('DEBUG_MODE', false);
+
+// --- Configuración de Email ---
+define('EMAIL_HOST', 'localhost'); 
+define('EMAIL_PORT', 25);
+define('EMAIL_USER', 'admin@tu-dominio.com'); 
+define('EMAIL_PASS', ''); 
+define('EMAIL_FROM', 'admin@tu-dominio.com');
+define('EMAIL_FROM_NAME', 'SINCRM');
+define('EMAIL_DESTINO', 'tu-email@gmail.com'); 

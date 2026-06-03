@@ -1,3 +1,27 @@
-node_modules
+# Configuración sensible
+database/dbconfig.php
+database/debug_config.php
+database/email_config.php
 includes/config.php
-config.php
+
+# Almacenamiento y Logs
+log/*.txt
+# database/backup/*
+!database/backup/.gitkeep
+
+# Dependencias (si se usaran en el futuro)
+node_modules/
+vendor/
+
+# Archivos de sistema y editores
+.vscode/
+.idea/
+.DS_Store
+*.log
+Thumbs.db
+
+# Documentos generados
+docs/*.pdf
+informes/*.pdf
+!informes/*.php
+docker-compose.yaml
