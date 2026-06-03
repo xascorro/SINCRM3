@@ -323,7 +323,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                     <p id="playerRoutine" class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1"></p>
                     <h4 id="playerClub" class="text-lg font-black text-slate-800 mb-4"></h4>
                     <audio id="audioElement" controls class="w-full h-12"></audio>
-                    <p id="fileName" class="text-[10px] font-bold text-indigo-400 mt-4 italic truncate"></p>
+                    <p id="fileName" class="text-[10px] font-bold text-indigo-400 mt-4 italic break-all"></p>
                 </div>
             </div>
 
