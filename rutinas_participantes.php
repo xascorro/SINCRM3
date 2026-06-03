@@ -45,7 +45,7 @@ $id_club_rutina = $data['id_club'];
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-5xl mx-auto w-full font-lexend">
+    <div class="p-6 md:p-10 max-w-5xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header -->
         <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -56,9 +56,14 @@ $id_club_rutina = $data['id_club'];
                 </h1>
                 <p class="text-slate-500 font-medium"><?php echo $nombre_modalidad." ".$nombre_categoria." - ". $nombre_club.' '.$nombre_rutina; ?></p>
             </div>
-            <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
-                <i class="fas fa-chevron-left text-xs"></i> Volver
-            </a>
+            <div class="flex items-center gap-3">
+                <button onclick="saveAllParticipants()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                    <i class="fas fa-save"></i> ASIGNAR TODO
+                </button>
+                <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i class="fas fa-chevron-left text-xs"></i> Volver
+                </a>
+            </div>
         </div>
 
         <?php include('includes/alertas_v4.php'); ?>
@@ -71,14 +76,14 @@ $id_club_rutina = $data['id_club'];
                 </h3>
             </div>
             
-            <div class="p-8 space-y-4">
+            <div class="p-8 space-y-4" id="titulares-container">
                 <?php for ($x=0; $x<$numero_participantes; $x++): 
                     $query_p = "SELECT * FROM rutinas_participantes WHERE id_rutina=$id_rutina AND reserva='no' LIMIT $x,1";
                     $participante = mysqli_fetch_assoc(mysqli_query($connection, $query_p));
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                    <form action="rutinas_participantes_code.php" method="POST" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                         <div class="md:col-span-2">
                             <span class="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">TITULAR <?php echo $x+1; ?></span>
                         </div>
@@ -87,7 +92,7 @@ $id_club_rutina = $data['id_club'];
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
                             ?>
                         </div>
                         <div class="md:col-span-2 flex justify-end gap-2">
@@ -120,14 +125,14 @@ $id_club_rutina = $data['id_club'];
                 </h3>
             </div>
             
-            <div class="p-8 space-y-4">
+            <div class="p-8 space-y-4" id="reservas-container">
                 <?php for ($x=0; $x<$numero_reservas; $x++): 
                     $query_p = "SELECT * FROM rutinas_participantes WHERE id_rutina=$id_rutina AND reserva='si' LIMIT $x,1";
                     $participante = mysqli_fetch_assoc(mysqli_query($connection, $query_p));
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors">
+                    <form action="rutinas_participantes_code.php" method="POST" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors">
                         <div class="md:col-span-2">
                             <span class="px-3 py-1 bg-amber-500 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">RESERVA <?php echo $x+1; ?></span>
                         </div>
@@ -136,7 +141,7 @@ $id_club_rutina = $data['id_club'];
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
                             ?>
                         </div>
                         <div class="md:col-span-2 flex justify-end gap-2">
@@ -163,6 +168,70 @@ $id_club_rutina = $data['id_club'];
 
     </div>
 </main>
+
+<!-- Formulario Oculto para Guardado Masivo -->
+<form id="bulkAssignForm" action="rutinas_participantes_code.php" method="POST" style="display:none;">
+    <input type="hidden" name="bulk_save" value="1">
+    <div id="bulkInputs"></div>
+</form>
+
+<script>
+function saveAllParticipants() {
+    const selects = document.querySelectorAll('.select-nadadora');
+    const selectedValues = [];
+    const bulkInputs = document.getElementById('bulkInputs');
+    bulkInputs.innerHTML = ''; // Limpiar
+    
+    let duplicateFound = false;
+    const swimmerIds = [];
+
+    selects.forEach((select, index) => {
+        const val = select.value.trim();
+        const form = select.closest('.participant-form');
+        const idRegistro = form.querySelector('input[name="id"]').value;
+        const reserva = form.querySelector('input[name="reserva"]').value;
+
+        if (val !== '' && val !== ' ') {
+            // Validar Duplicados
+            if (swimmerIds.includes(val)) {
+                duplicateFound = true;
+                select.classList.add('border-red-500', 'bg-red-50');
+            } else {
+                swimmerIds.push(val);
+                select.classList.remove('border-red-500', 'bg-red-50');
+                
+                // Crear inputs para el form bulk
+                bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][id_nadadora]" value="${val}">`;
+                bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][id_registro]" value="${idRegistro}">`;
+                bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][reserva]" value="${reserva}">`;
+            }
+        }
+    });
+
+    if (duplicateFound) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Nadadoras Duplicadas',
+            text: 'Una nadadora no puede aparecer dos veces en la misma rutina. Por favor, revisa las selecciones marcadas en rojo.',
+            confirmButtonColor: '#3b82f6'
+        });
+        return;
+    }
+
+    if (swimmerIds.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Sin selecciones',
+            text: 'No has seleccionado ninguna nadadora para asignar.',
+            confirmButtonColor: '#3b82f6'
+        });
+        return;
+    }
+
+    // Si todo OK, enviar form bulk
+    document.getElementById('bulkAssignForm').submit();
+}
+</script>
 
 <?php 
 include('includes/scripts.php');
