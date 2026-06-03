@@ -68,6 +68,11 @@ $id_club_rutina = $data['id_club'];
 
         <?php include('includes/alertas_v4.php'); ?>
 
+        <div id="statusMessage" class="mb-6 p-4 rounded-2xl bg-blue-50 border border-blue-100 flex items-center gap-3 text-blue-700 font-medium transition-all">
+            <i class="fas fa-info-circle"></i>
+            <span id="statusText">Selecciona las nadadoras para los puestos disponibles.</span>
+        </div>
+
         <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden mb-10">
             <div class="p-8 border-b border-slate-100 bg-slate-50/50">
                 <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
@@ -176,14 +181,40 @@ $id_club_rutina = $data['id_club'];
 </form>
 
 <script>
+function updateStatus(type, message) {
+    const container = document.getElementById('statusMessage');
+    const text = document.getElementById('statusText');
+    const icon = container.querySelector('i');
+
+    container.className = 'mb-6 p-4 rounded-2xl flex items-center gap-3 font-medium transition-all border';
+    
+    if (type === 'error') {
+        container.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
+        icon.className = 'fas fa-exclamation-circle';
+    } else if (type === 'success') {
+        container.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-700');
+        icon.className = 'fas fa-check-circle';
+    } else {
+        container.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-700');
+        icon.className = 'fas fa-info-circle';
+    }
+    text.textContent = message;
+}
+
 function saveAllParticipants() {
     const selects = document.querySelectorAll('.select-nadadora');
-    const selectedValues = [];
     const bulkInputs = document.getElementById('bulkInputs');
-    bulkInputs.innerHTML = ''; // Limpiar
+    bulkInputs.innerHTML = ''; 
     
     let duplicateFound = false;
     const swimmerIds = [];
+    let count = 0;
+
+    // Reset visuales inicial
+    selects.forEach(s => {
+        s.style.cssText = ''; 
+        s.classList.remove('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
+    });
 
     selects.forEach((select, index) => {
         const val = select.value.trim();
@@ -191,28 +222,20 @@ function saveAllParticipants() {
         const idRegistro = form.querySelector('input[name="id"]').value;
         const reserva = form.querySelector('input[name="reserva"]').value;
 
-        // Reset visual state
-        select.classList.remove('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
-        select.style.borderColor = '';
-        select.style.backgroundColor = '';
-
         if (val !== '' && val !== ' ') {
-            // Validar Duplicados
             if (swimmerIds.includes(val)) {
                 duplicateFound = true;
-                
-                // Buscar todos los elementos que tienen este valor para marcarlos (incluyendo el actual)
-                selects.forEach((s) => {
+                // Marcar todos los que tengan este ID
+                selects.forEach(s => {
                     if (s.value.trim() === val) {
-                        s.classList.add('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
-                        s.style.borderColor = '#ef4444'; // Fallback style
-                        s.style.backgroundColor = '#fef2f2'; // Fallback style
+                        s.style.setProperty('border-color', '#ef4444', 'important');
+                        s.style.setProperty('background-color', '#fef2f2', 'important');
+                        s.style.setProperty('box-shadow', '0 0 0 3px rgba(239, 68, 68, 0.4)', 'important');
                     }
                 });
             } else {
                 swimmerIds.push(val);
-                
-                // Crear inputs para el form bulk
+                count++;
                 bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][id_nadadora]" value="${val}">`;
                 bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][id_registro]" value="${idRegistro}">`;
                 bulkInputs.innerHTML += `<input type="hidden" name="participants[${index}][reserva]" value="${reserva}">`;
@@ -221,26 +244,22 @@ function saveAllParticipants() {
     });
 
     if (duplicateFound) {
+        updateStatus('error', 'Error: Se han detectado nadadoras duplicadas en la misma rutina.');
         Swal.fire({
             icon: 'error',
-            title: 'Nadadoras Duplicadas',
-            text: 'Una nadadora no puede aparecer dos veces en la misma rutina. Por favor, revisa las selecciones marcadas en rojo.',
+            title: 'Validación Fallida',
+            text: 'Una nadadora no puede ser asignada varias veces. Revisa los campos marcados.',
             confirmButtonColor: '#3b82f6'
         });
         return;
     }
 
-    if (swimmerIds.length === 0) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sin selecciones',
-            text: 'No has seleccionado ninguna nadadora para asignar.',
-            confirmButtonColor: '#3b82f6'
-        });
+    if (count === 0) {
+        updateStatus('info', 'No has seleccionado ninguna nadadora para asignar.');
         return;
     }
 
-    // Si todo OK, enviar form bulk
+    updateStatus('success', `Procesando asignación de ${count} nadadoras...`);
     document.getElementById('bulkAssignForm').submit();
 }
 </script>
