@@ -73,6 +73,21 @@ if(isset($_POST['update_btn'])){
         }
     }
 
+    // GESTIÓN DE SUBIDA DE DOCUMENTOS OFICIALES (PDF)
+    $docs_keys = ['normativa', 'nadadoras', 'inscripciones', 'orden', 'resultados', 'liga'];
+    $docs_dir = "docs/";
+    if (!is_dir($docs_dir)) {
+        mkdir($docs_dir, 0777, true);
+    }
+    
+    foreach ($docs_keys as $key) {
+        $input_name = "doc_" . $key;
+        if (!empty($_FILES[$input_name]['name']) && $_FILES[$input_name]['error'] == 0) {
+            $target_file = $docs_dir . $id . "-" . $key . ".pdf";
+            move_uploaded_file($_FILES[$input_name]["tmp_name"], $target_file);
+        }
+    }
+
 	$dias_inicio = !empty($_POST['edit_dias_inicio_inscripcion']) ? intval($_POST['edit_dias_inicio_inscripcion']) : 30;
 	$dias_fin = !empty($_POST['edit_dias_fin_inscripcion']) ? intval($_POST['edit_dias_fin_inscripcion']) : 7;
 	$dias_sorteo = !empty($_POST['edit_dias_sorteo']) ? intval($_POST['edit_dias_sorteo']) : 3;
