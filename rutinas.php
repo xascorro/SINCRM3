@@ -57,17 +57,20 @@ if(isset($_SESSION['club']) && $_SESSION['club'] > 0 && $_SESSION['id_rol'] == 5
 $q_stats = "SELECT 
             COUNT(*) as total,
             SUM(CASE WHEN music_name IS NOT NULL AND music_name != '' THEN 1 ELSE 0 END) as con_musica,
-            SUM(CASE WHEN dd_total > 0 THEN 1 ELSE 0 END) as con_coach_card
+            SUM(CASE WHEN dd_total > 0 THEN 1 ELSE 0 END) as con_coach_card,
+            SUM(CASE WHEN fases.elementos_coach_card > 0 THEN 1 ELSE 0 END) as requieren_coach_card
             FROM rutinas, fases 
             WHERE rutinas.id_fase = fases.id AND fases.id_competicion = $id_competicion $condicion_club";
 $res_stats = mysqli_query($connection, $q_stats);
 $stats = mysqli_fetch_assoc($res_stats);
+
+$has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
 ?>
 
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header -->
         <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -76,16 +79,18 @@ $stats = mysqli_fetch_assoc($res_stats);
                     <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-flag-checkered text-lg"></i></span>
                     Registro de Rutinas
                 </h1>
-                <p class="text-slate-500 font-medium">Gestión de inscripciones, música y Coach Cards.</p>
+                <p class="text-slate-500 font-medium">Gestión de inscripciones, música<?php echo $has_coach_cards ? ' y Coach Cards.' : '.'; ?></p>
             </div>
             <div class="flex flex-wrap gap-3">
                 <?php if($_SESSION['id_rol'] != 5): ?>
                     <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-file-pdf text-red-500"></i> PDF INSCRIPCIONES
                     </a>
-                    <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-puzzle-piece text-amber-500"></i> PDF COACH CARDS
-                    </a>
+                    <?php if($has_coach_cards): ?>
+                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-puzzle-piece text-amber-500"></i> PDF COACH CARDS
+                        </a>
+                    <?php endif; ?>
                     <a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-music text-blue-500"></i> ZIP MÚSICA
                     </a>
@@ -93,9 +98,11 @@ $stats = mysqli_fetch_assoc($res_stats);
                     <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-file-pdf text-red-500"></i> MI INSCRIPCIÓN
                     </a>
-                    <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-puzzle-piece text-amber-500"></i> MIS COACH CARDS
-                    </a>
+                    <?php if($has_coach_cards): ?>
+                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-puzzle-piece text-amber-500"></i> MIS COACH CARDS
+                        </a>
+                    <?php endif; ?>
                     <a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion.'&id_club='.$_SESSION['club'];?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-music text-blue-500"></i> MI MÚSICA
                     </a>
@@ -110,7 +117,7 @@ $stats = mysqli_fetch_assoc($res_stats);
         <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Plazos & KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:<?php echo $has_coach_cards ? 'grid-cols-5' : 'grid-cols-3'; ?> gap-6 mb-12">
             <!-- Plazo Inscripción -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_inscripcion == 'disabled') ? 'border-l-red-500' : 'border-l-blue-500'; ?> group hover:shadow-lg transition-all">
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Cierre Inscripción</p>
@@ -124,11 +131,13 @@ $stats = mysqli_fetch_assoc($res_stats);
                 <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_musica == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
             </div>
             <!-- Plazo Coach Card -->
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_coach_card == 'disabled') ? 'border-l-red-500' : 'border-l-amber-500'; ?> group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Límite Coach Card</p>
-                <h3 class="text-xl font-black <?php echo ($enable_coach_card == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_coach_card); ?></h3>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_coach_card == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
-            </div>
+            <?php if($has_coach_cards): ?>
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_coach_card == 'disabled') ? 'border-l-red-500' : 'border-l-amber-500'; ?> group hover:shadow-lg transition-all">
+                    <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Límite Coach Card</p>
+                    <h3 class="text-xl font-black <?php echo ($enable_coach_card == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_coach_card); ?></h3>
+                    <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_coach_card == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
+                </div>
+            <?php endif; ?>
             <!-- KPI Total -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500 group hover:shadow-lg transition-all">
                 <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Total Rutinas</p>
@@ -137,13 +146,15 @@ $stats = mysqli_fetch_assoc($res_stats);
             </div>
             <!-- KPI Completado -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Música / CC</p>
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1"><?php echo $has_coach_cards ? 'Música / CC' : 'Música'; ?></p>
                 <div class="flex items-center gap-2">
                     <h3 class="text-xl font-black text-emerald-600"><?php echo $stats['con_musica'] ?? 0; ?></h3>
-                    <span class="text-slate-300">/</span>
-                    <h3 class="text-xl font-black text-emerald-600"><?php echo $stats['con_coach_card'] ?? 0; ?></h3>
+                    <?php if($has_coach_cards): ?>
+                        <span class="text-slate-300">/</span>
+                        <h3 class="text-xl font-black text-emerald-600"><?php echo $stats['con_coach_card'] ?? 0; ?></h3>
+                    <?php endif; ?>
                 </div>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase">Subido / Definido</p>
+                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo $has_coach_cards ? 'Subido / Definido' : 'Subida'; ?></p>
             </div>
         </div>
 
