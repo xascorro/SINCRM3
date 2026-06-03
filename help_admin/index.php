@@ -10,7 +10,7 @@ if($_SESSION['id_rol'] != 1) {
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM 4 | Ayuda Admin</title>
+    <title>SINCRM | Ayuda Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
     <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -421,7 +421,7 @@ if($_SESSION['id_rol'] != 1) {
                 <a href="#" class="text-xs font-black uppercase tracking-widest no-underline text-white">Soporte Técnico</a>
             </div>
             <p class="text-slate-600 text-[9px] italic font-medium">
-                © 2026 SINCRM 4 | Diseñado para la precisión en Natación Artística.
+                © 2026 SINCRM | Diseñado para la precisión en Natación Artística.
             </p>
         </div>
     </footer>

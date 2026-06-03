@@ -430,3 +430,11 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-05-12 03:17:28] [WARNING] [xascorro@gmail.com] [162.158.122.145] [lvnaah9mg9ha10pis3ptmq0qfk] Cuenta de usuario eliminada: no@pedrodiaz.eu
 [2026-05-12 05:31:13] [SECURITY] [SISTEMA] [172.68.135.33] [lvnaah9mg9ha10pis3ptmq0qfk] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
 [2026-05-12 05:31:17] [SUCCESS] [xascorro@gmail.com] [188.114.111.48] [lvnaah9mg9ha10pis3ptmq0qfk] Inicio de sesión exitoso
+[2026-06-03 12:47:16] [INFO] [xascorro@gmail.com] [10.0.2.6] Cierre de sesión: xascorro@gmail.com
+[2026-06-03 12:48:00] [INFO] [SISTEMA] [10.0.2.6] Nueva solicitud de registro: xascorro+prueba@gmail.com
+[2026-06-03 12:50:10] [SUCCESS] [SISTEMA] [10.0.2.6] Email verificado con éxito: xascorro+prueba@gmail.com
+[2026-06-03 12:50:23] [SUCCESS] [xascorro+prueba@gmail.com] [10.0.2.6] Inicio de sesión exitoso: prueba nuevo usuario (Invitado)
+[2026-06-03 12:50:23] [SECURITY] [xascorro+prueba@gmail.com] [10.0.2.6] Intento de acceso: Usuario invitado no aprobado (xascorro+prueba@gmail.com)
+[2026-06-03 12:51:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.6] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-06-03 12:51:48] [INFO] [xascorro@gmail.com] [10.0.2.6] Usuario actualizado (ID: 53): xascorro+prueba@gmail.com
+[2026-06-03 12:51:48] [INFO] [xascorro@gmail.com] [10.0.2.6] Email de actualización enviado a xascorro+prueba@gmail.com (Rol: Club)

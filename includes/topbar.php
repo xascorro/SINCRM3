@@ -22,7 +22,7 @@ include('security.php');
             
             <?php if($_SESSION['id_rol'] != '1'): ?>
             <a href="index.php" class="flex items-center no-underline shrink-0">
-                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM4" class="h-10 md:h-14 transition-transform hover:scale-105 block">
+                <img src="./images/logo_sincrm_removebg.png" alt="SINCRM" class="h-10 md:h-14 transition-transform hover:scale-105 block">
             </a>
             <?php endif; ?>
             

@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             $update = "UPDATE usuarios SET OTP_password='$otp', OTP_expires='$expires' WHERE email='$email'";
             if (mysqli_query($connection, $update)) {
-                $subject = "Código de Seguridad - SINCRM4";
+                $subject = "Código de Seguridad - SINCRM";
                 $html = "
                 <h2>Recuperación de Contraseña</h2>
                 <p>Hola <strong>".$user_data['username']."</strong>,</p>
@@ -103,11 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         if (mysqli_query($connection, $update)) {
             // Enviar email de confirmación de éxito
-            $subject_confirm = "Contraseña Actualizada Correctamente - SINCRM4";
+            $subject_confirm = "Contraseña Actualizada Correctamente - SINCRM";
             $html_confirm = "
             <h2 style='color: #10b981;'>¡Contraseña Cambiada!</h2>
             <p>Hola,</p>
-            <p>Te informamos que la contraseña de tu cuenta en <strong>SINCRM4</strong> ha sido actualizada correctamente.</p>
+            <p>Te informamos que la contraseña de tu cuenta en <strong>SINCRM</strong> ha sido actualizada correctamente.</p>
             <div class='alert-box alert-info'>
                 Si no has realizado este cambio, por favor ponte en contacto con nosotros inmediatamente.
             </div>

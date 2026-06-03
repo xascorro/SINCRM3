@@ -6,7 +6,7 @@ session_start();
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM4 - Soporte Técnico</title>
+    <title>SINCRM - Soporte Técnico</title>
     
     <!-- Material Symbols -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -99,7 +99,7 @@ session_start();
 <main class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="flex flex-col items-center mb-12 text-center">
-        <span class="font-headline-xl text-primary tracking-tighter">SINCRM4</span>
+        <span class="font-headline-xl text-primary tracking-tighter">SINCRM</span>
         <h1 class="text-2xl font-bold text-primary-container mt-2">Soporte Técnico</h1>
         <p class="text-on-surface-variant mt-2 max-w-md">¿Tienes alguna duda o incidencia? Estamos aquí para ayudarte.</p>
         <div class="w-24 h-1 oceanic-gradient mt-4 rounded-full"></div>

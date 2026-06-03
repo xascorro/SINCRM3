@@ -8,7 +8,7 @@ $version = getVersion();
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM 4 | Registro de Usuario</title>
+    <title>SINCRM | Registro de Usuario</title>
     
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>

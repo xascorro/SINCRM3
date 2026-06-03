@@ -5,7 +5,7 @@
     "status": "production",
     "build": 20260603,
     "full_version": "v4.1.1-stable",
-    "codename": "SINCRM4 Production",
+    "codename": "SINCRM Production",
     "updated_at": "2026-06-03",
     "description": "Lanzamiento oficial de la versión dockerizada estable."
 }

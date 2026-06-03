@@ -61,11 +61,11 @@ if (isset($_POST['reenviar_verificacion'])) {
         $update = "UPDATE usuarios SET token_confirmacion = '$token' WHERE email = '$email'";
         if (mysqli_query($connection, $update)) {
             require_once 'includes/email_functions.php';
-            $subject = 'Confirma tu email - SINCRM4 (Reenvío)';
+            $subject = 'Confirma tu email - SINCRM (Reenvío)';
             $link = "https://" . $_SERVER['HTTP_HOST'] . "/login_code.php?confirmar_email=" . $token;
             $body = "
             <h2>Hola $username,</h2>
-            <p>Has solicitado el reenvío del enlace de confirmación para tu cuenta en SINCRM4.</p>
+            <p>Has solicitado el reenvío del enlace de confirmación para tu cuenta en SINCRM.</p>
             <div style='text-align: center; margin: 30px 0;'>
                 <a href='$link' style='background-color: #4e73df; color: white; padding: 12px 24px; text-decoration: none; border-radius: 10px; font-weight: bold;'>Confirmar mi Email</a>
             </div>
@@ -294,10 +294,10 @@ if(isset($_POST['login_btn'])){
 
 		// 2. ENVIO EMAIL AL USUARIO (Confirmación de registro + Verificación)
 		$toUser = $register_email;
-		$subjectUser = 'Confirma tu email - SINCRM4';
+		$subjectUser = 'Confirma tu email - SINCRM';
         $link_confirmacion = "https://" . $_SERVER['HTTP_HOST'] . "/login_code.php?confirmar_email=" . $token_verificacion;
 		$bodyUser = "
-		<h2>¡Bienvenido a SINCRM4!</h2>
+		<h2>¡Bienvenido a SINCRM!</h2>
 		<p>Hola <strong>$register_username</strong>,</p>
 		<p>Gracias por registrarte. Para completar el proceso, por favor confirma tu dirección de email haciendo clic en el siguiente enlace:</p>
 		<div style='text-align: center; margin: 30px 0;'>

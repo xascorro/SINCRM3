@@ -1,4 +1,4 @@
-# Guía de Proyecto: SINCRM4-BETA
+# Guía de Proyecto: SINCRM-BETA
 
 ## 🔑 Acceso al Servidor Beta
 - **Host:** `beta.pedrodiaz.eu` | **Usuario:** `ubuntu` | **Puerto:** 22

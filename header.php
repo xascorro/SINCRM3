@@ -7,7 +7,7 @@ include('./lib/my_functions.php');
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>SINCRM4 | Gestión de Natación Artística</title>
+    <title>SINCRM | Gestión de Natación Artística</title>
     <meta name="description" content="Sistema integral para la gestión de competiciones, clubes y auditoría de jueces de Natación Artística. Optimizado para normativa World Aquatics (AQUA).">
     
     <!-- PWA & Mobile Meta -->
@@ -16,8 +16,8 @@ include('./lib/my_functions.php');
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="application-name" content="SINCRM4">
-    <meta name="apple-mobile-web-app-title" content="SINCRM4">
+    <meta name="application-name" content="SINCRM">
+    <meta name="apple-mobile-web-app-title" content="SINCRM">
     
     <!-- Icons suite -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
