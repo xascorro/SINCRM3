@@ -39,6 +39,7 @@ $nombre_club = $data['nombre_club'];
 $nombre_rutina = $data['nombre_rutina'];
 $numero_participantes = $data['numero_participantes'];
 $numero_reservas = $data['numero_reservas'];
+$id_club_rutina = $data['id_club'];
 ?>
 
 <main class="flex-1 flex flex-col min-w-0 bg-surface">

@@ -1,6 +1,8 @@
 <?php
-// Filtro por club (admin ve todo, club solo lo suyo)
-if(isset($_SESSION['club']) && $_SESSION['club'] > 0)
+// Filtro por club (prioridad al club de la rutina si está definido, si no al de la sesión, si no todo)
+if(isset($id_club_rutina) && $id_club_rutina > 0)
+    $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE activo = 1 AND club = ".$id_club_rutina." ORDER BY apellidos, nombre";
+elseif(isset($_SESSION['club']) && $_SESSION['club'] > 0)
     $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE activo = 1 AND club = ".$_SESSION['club']." ORDER BY apellidos, nombre";
 else
     $query = "SELECT id, nombre, apellidos, año_nacimiento, licencia FROM nadadoras WHERE activo = 1 ORDER BY apellidos, nombre";
