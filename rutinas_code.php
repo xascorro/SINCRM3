@@ -58,8 +58,10 @@ if(isset($_POST['update_btn'])){
 if(isset($_POST['delete_btn'])){
 	$id = $_POST['delete_id'];
 	$query = "SELECT id_competicion, music_name FROM rutinas WHERE id=$id";
-//	$query_run = mysqli_query($connection,$query);
-	$archivo_a_borrar = './public/music/'.mysqli_result($query_run,0,0).'/'.$id.'.mp3';
+	$query_run_del = mysqli_query($connection,$query);
+    $row_del = mysqli_fetch_assoc($query_run_del);
+    $id_comp_del = $row_del['id_competicion'];
+	$archivo_a_borrar = './public/music/'.$id_comp_del.'/'.$id.'.mp3';
 	//borro participantes
 	$query = "DELETE FROM rutinas_participantes WHERE id_rutina ='$id'";
 	$query_run = mysqli_query($connection,$query);
@@ -85,11 +87,13 @@ if(isset($_POST['delete_btn'])){
 		$_SESSION['estado'] .= 'Error al eliminar la Coach Card o alguno de sus elementos<br>'.mysqli_error($connection);
 	}
 	//borro archivo
-	if (!unlink($archivo_a_borrar)) {
-			$_SESSION['estado'] .= 'Error al eliminar el archivo de música<br>'.mysqli_error($connection);
-	}
-	else {
-			$_SESSION['correcto'] .= 'Archivo de música eliminado<br>';
+	if (file_exists($archivo_a_borrar)) {
+        if (!unlink($archivo_a_borrar)) {
+			    $_SESSION['estado'] .= 'Error al eliminar el archivo de música<br>';
+	    }
+	    else {
+			    $_SESSION['correcto'] .= 'Archivo de música eliminado<br>';
+	    }
 	}
 }
 
@@ -117,10 +121,8 @@ function stripAccents($str) {
 		$path = './public/music/'.$id_competicion.'/';
 		if (!is_dir($path)) {
     		mkdir($path, 0777, true);
-		}else{
-			move_uploaded_file($_FILES["musica"]["tmp_name"],$path.$id.'.mp3');
-			echo $path.$id;
 		}
+		move_uploaded_file($_FILES["musica"]["tmp_name"],$path.$id.'.mp3');
 	}
 }
 

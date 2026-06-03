@@ -1,33 +1,16 @@
 <?php
 include('security.php');
-//if(isset($_POST['id_competicion'])){
-//	$id_competicion = $_POST['id_competicion'];
-//	$_SESSION['id_competicion_usuario'] = $_POST['id_competicion'];
-//}else{
-//	$id_competicion = $_SESSION['id_competicion_usuario'];
-//}
-//if(isset($_POST['id_rutina'])){
-//	$id_rutina = $_POST['id_rutina'];
-//	$_SESSION['id_rutina'] = $id_rutina;
-//}elseif(isset($_SESSION['id_rutina'])){
-//	$id_rutina = $_SESSION['id_rutina'];
-//}
-//if(isset($_POST['id_fase'])){
-//	$id_fase = $_POST['id_fase'];
-//}elseif(isset($_SESSION['id_fase'])){
-//	$id_fase = $_SESSION['id_fase'];
-//}
+
+$id_rutina = $_SESSION['id_rutina_usuario'] ?? 0;
+$id_competicion = $_SESSION['id_competicion_usuario'] ?? 0;
 
 //Añadir nadadora a rutina
 if(isset($_POST['save_btn'])){
-	$id = $_POST['id'];
 	$id_nadadora = $_POST['id_nadadora'];
-	if($id_nadadora > 0){
-	//	$id_rutina = $_POST['id_rutina'];
+	if($id_nadadora > 0 && $id_rutina > 0){
 		$reserva = $_POST['reserva'];
 
 		$query="INSERT INTO rutinas_participantes (id_nadadora, id_rutina, reserva, id_competicion) VALUES ('".$id_nadadora."','".$id_rutina."', '".$reserva."', '".$id_competicion."')";
-		echo $query;
 		$query_run = mysqli_query($connection,$query);
 		if(mysqli_error($connection) == ''){
             write_log("Participante #$id_nadadora añadida a rutina #$id_rutina (Competición #$id_competicion)", "SUCCESS");
@@ -37,7 +20,7 @@ if(isset($_POST['save_btn'])){
 		}
 	}
 	header('Location: rutinas_participantes.php');
-
+    exit();
 }
 
 //Actualizar nadadora de rutina
