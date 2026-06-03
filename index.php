@@ -403,6 +403,14 @@ $meses_es = [
                                         <p class="text-base font-bold text-slate-400 flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-500"></i> <?php echo $row['lugar']; ?></p>
                                         <a href="<?php echo $row['maps']; ?>" target="_blank" class="px-4 py-2 rounded-xl bg-slate-50 text-slate-500 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2 border border-slate-100 shadow-sm font-black text-xs uppercase italic"><i class="fa-solid fa-map-location-dot"></i> Ver Mapa</a>
                                     </div>
+                                    <?php if(!empty($row['mensaje'])): ?>
+                                    <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-2xl text-amber-700 text-sm font-medium">
+                                        <div class="flex items-start gap-3">
+                                            <i class="fas fa-info-circle mt-1"></i>
+                                            <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 
@@ -590,6 +598,14 @@ $meses_es = [
                                 <div>
                                     <h4 class="text-xl md:text-2xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors italic"><?php echo $row['nombre']; ?></h4>
                                     <p class="text-sm font-bold text-slate-400 uppercase tracking-tighter mt-2 flex items-center gap-3"><i class="fas fa-map-marker-alt text-blue-500 text-xs"></i> <?php echo $row['lugar']; ?></p>
+                                    <?php if(!empty($row['mensaje'])): ?>
+                                    <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
+                                        <div class="flex items-start gap-2">
+                                            <i class="fas fa-info-circle mt-0.5"></i>
+                                            <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
+                                        </div>
+                                    </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="flex items-center gap-4 self-end md:self-center">
@@ -647,6 +663,14 @@ $meses_es = [
                                             <i class="fa-solid fa-map-location-dot text-blue-500 text-sm"></i>
                                             <p class="text-sm font-bold text-slate-500 italic"><?php echo $row['lugar']; ?></p>
                                         </div>
+                                        <?php if(!empty($row['mensaje'])): ?>
+                                        <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
+                                            <div class="flex items-start gap-2">
+                                                <i class="fas fa-info-circle mt-0.5"></i>
+                                                <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
+                                            </div>
+                                        </div>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
 

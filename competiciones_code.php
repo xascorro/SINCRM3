@@ -49,6 +49,7 @@ if(isset($_POST['update_btn'])){
 	$maps = mysqli_real_escape_string($connection, $_POST['edit_maps'] ?? '');	
 	$mascara_licencia = !empty($_POST['edit_mascara_licencia']) ? intval($_POST['edit_mascara_licencia']) : 0;
 	$enlace_sorteo = mysqli_real_escape_string($connection, $_POST['edit_enlace_sorteo'] ?? '');	
+	$mensaje = mysqli_real_escape_string($connection, $_POST['edit_mensaje'] ?? '');
 
     // GESTIÓN DE SUBIDA DE IMÁGENES (CABECERA / PIE)
     $header_informe = mysqli_real_escape_string($connection, $_POST['edit_header_informe'] ?? '');
@@ -69,6 +70,21 @@ if(isset($_POST['update_btn'])){
         $target_file = $target_dir . $file_name;
         if (move_uploaded_file($_FILES["new_footer"]["tmp_name"], $target_file)) {
             $footer_informe = $target_file;
+        }
+    }
+
+    // GESTIÓN DE SUBIDA DE DOCUMENTOS OFICIALES (PDF)
+    $docs_keys = ['normativa', 'nadadoras', 'inscripciones', 'orden', 'resultados', 'liga'];
+    $docs_dir = "docs/";
+    if (!is_dir($docs_dir)) {
+        mkdir($docs_dir, 0777, true);
+    }
+    
+    foreach ($docs_keys as $key) {
+        $input_name = "doc_" . $key;
+        if (!empty($_FILES[$input_name]['name']) && $_FILES[$input_name]['error'] == 0) {
+            $target_file = $docs_dir . $id . "-" . $key . ".pdf";
+            move_uploaded_file($_FILES[$input_name]["tmp_name"], $target_file);
         }
     }
 
@@ -97,6 +113,7 @@ if(isset($_POST['update_btn'])){
 				footer_informe='$footer_informe', 
 				mascara_licencia='$mascara_licencia',
 				enlace_sorteo='$enlace_sorteo',
+				mensaje='$mensaje',
 				dias_inicio_inscripcion='$dias_inicio',
 				dias_fin_inscripcion='$dias_fin',
 				dias_sorteo='$dias_sorteo',

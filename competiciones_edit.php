@@ -45,7 +45,7 @@ function get_gallery_images($prefix) {
             $query_run = mysqli_query($connection, $query);
             foreach ($query_run as $row):
         ?>
-            <form action="competiciones_code.php" method="POST" class="animate-fade-in space-y-10 font-lexend">
+            <form action="competiciones_code.php" method="POST" enctype="multipart/form-data" class="animate-fade-in space-y-10 font-lexend">
                 <input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
 
                 <!-- BLOQUE 1: IDENTIDAD Y SEDE -->
@@ -249,6 +249,38 @@ function get_gallery_images($prefix) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE NUEVO: DOCUMENTACIÓN -->
+                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[6px] border-t-emerald-500">
+                    <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-file-pdf text-emerald-500"></i> Documentación Oficial (PDF)</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <?php
+                        $docs_fields = [
+                            'normativa' => ['label' => 'Normativa', 'icon' => 'fa-file-shield'],
+                            'nadadoras' => ['label' => 'Nadadoras', 'icon' => 'fa-users-viewfinder'],
+                            'inscripciones' => ['label' => 'Inscripciones', 'icon' => 'fa-file-pen'],
+                            'orden' => ['label' => 'Orden Salida', 'icon' => 'fa-list-ol'],
+                            'resultados' => ['label' => 'Resultados', 'icon' => 'fa-trophy'],
+                            'liga' => ['label' => 'Ranking Liga', 'icon' => 'fa-ranking-star']
+                        ];
+                        foreach($docs_fields as $key => $meta):
+                            $file_path = './docs/'.$row['id'].'-'.$key.'.pdf';
+                            $exists = file_exists($file_path);
+                        ?>
+                        <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-4">
+                                <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest flex items-center gap-2"><i class="fas <?php echo $meta['icon']; ?>"></i> <?php echo $meta['label']; ?></label>
+                                <?php if($exists): ?>
+                                    <a href="<?php echo $file_path; ?>" target="_blank" class="text-[9px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">VER ACTUAL</a>
+                                <?php else: ?>
+                                    <span class="text-[9px] font-bold px-2 py-1 bg-slate-200 text-slate-400 rounded-md">NO SUBIDO</span>
+                                <?php endif; ?>
+                            </div>
+                            <input type="file" name="doc_<?php echo $key; ?>" accept=".pdf" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
