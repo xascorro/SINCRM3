@@ -3,11 +3,24 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 
-// Sincronizar ID de competición (prioridad usuario, fallback activa)
-$id_competicion = $_SESSION['id_competicion_usuario'] ?? $_SESSION['id_competicion_activa'] ?? 0;
+// Sincronizar ID de competición (prioridad usuario, fallback solo si es admin)
+$id_competicion = (isset($_SESSION['id_competicion_usuario']) && !empty($_SESSION['id_competicion_usuario'])) ? $_SESSION['id_competicion_usuario'] : 0;
+
+if ($id_competicion == 0 && $_SESSION['id_rol'] == 1 && isset($_SESSION['id_competicion_activa'])) {
+    $id_competicion = $_SESSION['id_competicion_activa'];
+}
 
 if ($id_competicion == 0) {
-    echo "<div class='p-10 text-center font-lexend'><h2 class='text-2xl font-black text-slate-800'>No hay ninguna competición seleccionada</h2><p class='text-slate-500 mt-2'>Por favor, selecciona una competición desde el Dashboard.</p><a href='index.php' class='mt-6 inline-block px-6 py-3 bg-blue-600 text-white font-black rounded-2xl'>Volver al Inicio</a></div>";
+    echo "<div class='p-10 text-center font-lexend bg-white rounded-[2.5rem] shadow-sm border border-slate-200 mt-10 max-w-2xl mx-auto'>
+            <div class='w-20 h-20 bg-blue-50 text-blue-500 rounded-[2rem] flex items-center justify-center text-3xl mx-auto mb-6 shadow-sm border border-blue-100'>
+                <i class='fas fa-trophy'></i>
+            </div>
+            <h2 class='text-2xl font-black text-slate-800 tracking-tighter'>Ninguna Competición Seleccionada</h2>
+            <p class='text-slate-500 mt-2 font-medium'>Para gestionar rutinas, primero debes seleccionar una competición desde el panel principal.</p>
+            <a href='index.php' class='mt-8 inline-flex items-center gap-3 px-8 py-4 bg-slate-800 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-black transition-all'>
+                <i class='fas fa-home'></i> Ir al Dashboard
+            </a>
+          </div>";
     include('includes/footer.php');
     exit();
 }
