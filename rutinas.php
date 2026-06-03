@@ -91,9 +91,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                             <i class="fas fa-puzzle-piece text-amber-500"></i> PDF COACH CARDS
                         </a>
                     <?php endif; ?>
-                    <a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-music text-blue-500"></i> ZIP MÚSICA
-                    </a>
+                    <form action="./download_music.php" method="POST" target="_blank" class="inline">
+                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                        <button type="submit" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-music text-blue-500"></i> ZIP MÚSICA
+                        </button>
+                    </form>
                 <?php else: ?>
                     <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-file-pdf text-red-500"></i> MI INSCRIPCIÓN
@@ -103,9 +106,13 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                             <i class="fas fa-puzzle-piece text-amber-500"></i> MIS COACH CARDS
                         </a>
                     <?php endif; ?>
-                    <a target="_blank" href="./download_music.php?id_competicion=<?php echo $id_competicion.'&id_club='.$_SESSION['club'];?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-music text-blue-500"></i> MI MÚSICA
-                    </a>
+                    <form action="./download_music.php" method="POST" target="_blank" class="inline">
+                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                        <input type="hidden" name="id_club" value="<?php echo $_SESSION['club']; ?>">
+                        <button type="submit" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                            <i class="fas fa-music text-blue-500"></i> MI MÚSICA
+                        </button>
+                    </form>
                 <?php endif; ?>
                 
                 <button onclick="toggleAddRutinaPanel()" <?php echo $enable_inscripcion ?> class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">

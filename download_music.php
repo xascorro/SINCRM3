@@ -4,15 +4,25 @@ set_time_limit(1000);
 ini_set('memory_limit', '512M');
 include('security.php'); 
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
-$id_competicion = isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null;
-$id_club = isset($_GET['id_club']) ? (int)$_GET['id_club'] : null;
+// Prioridad a POST, fallback a GET (pero validado por sesión)
+$id_competicion = isset($_POST['id_competicion']) ? (int)$_POST['id_competicion'] : (isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null);
+$id_club_input = isset($_POST['id_club']) ? (int)$_POST['id_club'] : (isset($_GET['id_club']) ? (int)$_GET['id_club'] : null);
+
+// --- CONTROL DE ACCESO ESTRICTO ---
+// Si es ROL CLUB (5), forzamos que el ID del club sea el suyo de la sesión
+if ($_SESSION['id_rol'] == 5) {
+    $id_club = (int)$_SESSION['club'];
+} else {
+    // Si es Admin u otro, permitimos el filtro de club si viene informado
+    $id_club = $id_club_input;
+}
 
 $condicion_club = '';
-if ($id_club !== null) {
-    $condicion_club = ' AND rutinas.id_club = ' . mysqli_real_escape_string($connection, $id_club);
+if ($id_club !== null && $id_club > 0) {
+    $condicion_club = ' AND rutinas.id_club = ' . (int)$id_club;
 }
 
 if ($id_competicion && !isset($_SESSION['mensajes_descarga_' . $id_competicion])) {
@@ -21,6 +31,7 @@ if ($id_competicion && !isset($_SESSION['mensajes_descarga_' . $id_competicion])
 
 function agregarMensajeDescarga($mensaje, $tipo = 'info') {
     global $id_competicion;
+    if (!$id_competicion) return;
     $hora = date('[H:i:s] ');
     $color = ($tipo == 'error') ? 'text-danger' : (($tipo == 'warning') ? 'text-warning' : 'text-success');
     $_SESSION['mensajes_descarga_' . $id_competicion][] = "<span class='$color'>$hora $mensaje</span>";
@@ -62,33 +73,37 @@ if ($id_competicion !== null && is_dir($path_base)) {
     $ids_en_db = [];
     $rutinas_sin_musica = [];
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        $f_id = $row['id_fase'];
-        $id_rutina = (int)$row['id'];
-        $ids_en_db[] = $id_rutina;
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $f_id = $row['id_fase'];
+            $id_rutina = (int)$row['id'];
+            $ids_en_db[] = $id_rutina;
 
-        // Inicializar fase en el array de estadísticas si no existe
-        if (!isset($stats_fases[$f_id])) {
-            $stats_fases[$f_id] = [
-                'nombre' => $row['mod_nom'] . " " . $row['cat_nom'],
-                'total' => 0,
-                'subidas' => 0
-            ];
-        }
-        $stats_fases[$f_id]['total']++;
+            // Inicializar fase en el array de estadísticas si no existe
+            if (!isset($stats_fases[$f_id])) {
+                $stats_fases[$f_id] = [
+                    'nombre' => $row['mod_nom'] . " " . $row['cat_nom'],
+                    'total' => 0,
+                    'subidas' => 0
+                ];
+            }
+            $stats_fases[$f_id]['total']++;
 
-        // Verificar si existe el archivo
-        if (in_array($id_rutina, $ids_en_disco)) {
-            $stats_fases[$f_id]['subidas']++;
-        } else {
-            $rutinas_sin_musica[] = $row['nombre_club'] . " (" . $row['mod_nom'] . " " . $row['cat_nom'] . ")";
+            // Verificar si existe el archivo
+            if (in_array($id_rutina, $ids_en_disco)) {
+                $stats_fases[$f_id]['subidas']++;
+            } else {
+                $rutinas_sin_musica[] = $row['nombre_club'] . " (" . $row['mod_nom'] . " " . $row['cat_nom'] . ")";
+            }
         }
     }
 
-    // 3. Registro de alertas en el log
-    $huerfanos = array_diff($ids_en_disco, $ids_en_db);
-    foreach ($huerfanos as $h) {
-        agregarMensajeDescarga("HUÉRFANO: El archivo $h.mp3 no pertenece a ninguna rutina activa.", 'warning');
+    // 3. Registro de alertas en el log (solo si es Admin o si son sus propios huérfanos)
+    if ($_SESSION['id_rol'] != 5) {
+        $huerfanos = array_diff($ids_en_disco, $ids_en_db);
+        foreach ($huerfanos as $h) {
+            agregarMensajeDescarga("HUÉRFANO: El archivo $h.mp3 no pertenece a ninguna rutina activa.", 'warning');
+        }
     }
     foreach ($rutinas_sin_musica as $faltante) {
         agregarMensajeDescarga("FALTANTE: Sin música -> $faltante", 'error');
@@ -115,7 +130,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h4 text-gray-800">Gestor de Música por Fase</h1>
+            <h1 class="h4 text-gray-800">Gestor de Música <?php echo ($id_club > 0) ? "- Mi Club" : "por Fase"; ?></h1>
             <img src="https://sincrm.pedrodiaz.eu/images/logo_sincrm_removebg.png" alt="Logo" height="50">
         </div>
 
@@ -170,10 +185,14 @@ if ($id_competicion !== null && is_dir($path_base)) {
 
                             <div class="mt-auto pt-2">
                                 <?php if ($info['subidas'] > 0): ?>
-                                    <a href="descargar_fase.php?id_competicion=<?php echo $id_competicion; ?>&id_fase=<?php echo $id_f; ?>" 
-                                       class="btn btn-primary btn-sm w-100 shadow-sm">
-                                        <i class="fas fa-download me-1"></i> Descargar ZIP
-                                    </a>
+                                    <form action="descargar_fase.php" method="POST">
+                                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                                        <input type="hidden" name="id_fase" value="<?php echo $id_f; ?>">
+                                        <input type="hidden" name="id_club" value="<?php echo $id_club; ?>">
+                                        <button type="submit" class="btn btn-primary btn-sm w-100 shadow-sm">
+                                            <i class="fas fa-download me-1"></i> Descargar ZIP
+                                        </button>
+                                    </form>
                                 <?php else: ?>
                                     <button class="btn btn-secondary btn-sm w-100 disabled" disabled>
                                         <i class="fas fa-exclamation-circle me-1"></i> Sin archivos
@@ -186,7 +205,9 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="col-12">
-                    <div class="alert alert-info">No se encontraron fases o rutinas para esta competición.</div>
+                    <div class="alert <?php echo ($id_competicion) ? 'alert-info' : 'alert-warning'; ?>">
+                        <?php echo ($id_competicion) ? 'No se encontraron rutinas o archivos para los criterios seleccionados.' : 'Falta información de la competición.'; ?>
+                    </div>
                 </div>
             <?php endif; ?>
         </div>
@@ -206,8 +227,8 @@ if ($id_competicion !== null && is_dir($path_base)) {
         <?php endif; ?>
 
         <div class="text-center mb-5">
-            <a href="index.php" class="btn btn-outline-secondary btn-sm">
-                <i class="fas fa-arrow-left me-1"></i> Volver al Panel Principal
+            <a href="rutinas.php" class="btn btn-outline-secondary btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Volver a Rutinas
             </a>
         </div>
     </div>
