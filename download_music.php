@@ -75,12 +75,21 @@ if ($id_competicion !== null && is_dir($path_base)) {
     
     $ids_en_db = [];
     $rutinas_sin_musica = [];
+    $arbol_fases = [];
 
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
             $f_id = $row['id_fase'];
             $id_rutina = (int)$row['id'];
             $ids_en_db[] = $id_rutina;
+
+            // Inicializar fase en el árbol si no existe
+            if (!isset($arbol_fases[$f_id])) {
+                $arbol_fases[$f_id] = [
+                    'nombre' => $row['mod_nom'] . " " . $row['cat_nom'],
+                    'rutinas' => []
+                ];
+            }
 
             // Inicializar fase en el array de estadísticas si no existe
             if (!isset($stats_fases[$f_id])) {
@@ -92,8 +101,18 @@ if ($id_competicion !== null && is_dir($path_base)) {
             }
             $stats_fases[$f_id]['total']++;
 
+            $has_file = in_array($id_rutina, $ids_en_disco);
+            
+            // Añadir rutina al árbol
+            $arbol_fases[$f_id]['rutinas'][] = [
+                'id' => $id_rutina,
+                'club' => $row['nombre_club'],
+                'nadadoras' => $row['nadadoras'],
+                'tiene_musica' => $has_file
+            ];
+
             // Verificar si existe el archivo
-            if (in_array($id_rutina, $ids_en_disco)) {
+            if ($has_file) {
                 $stats_fases[$f_id]['subidas']++;
             } else {
                 $info_rutina = "<strong>#" . $id_rutina . "</strong> " . $row['nombre_club'] . " (" . $row['mod_nom'] . " " . $row['cat_nom'] . ")";
@@ -148,6 +167,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 <p class="text-slate-500 max-w-sm mx-auto">No hay rutinas registradas para los criterios seleccionados en esta competición.</p>
             </div>
         <?php else: ?>
+            <!-- Resumen de Progreso -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
                 <?php foreach ($stats_fases as $id_f => $info): 
                     $porcentaje = ($info['total'] > 0) ? round(($info['subidas'] / $info['total']) * 100) : 0;
@@ -203,24 +223,73 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 </div>
                 <?php endforeach; ?>
             </div>
-        <?php endif; ?>
 
-        <?php if (!empty($_SESSION['mensajes_descarga_' . $id_competicion])): ?>
+            <!-- Diagnóstico de Integridad -->
+            <?php if (!empty($_SESSION['mensajes_descarga_' . $id_competicion])): ?>
+                <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-10">
+                    <div class="px-8 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                            Diagnóstico de Integridad Técnica
+                        </h3>
+                    </div>
+                    <div class="p-8 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 custom-scrollbar bg-slate-50/30">
+                        <div class="space-y-3">
+                            <?php 
+                            foreach ($_SESSION['mensajes_descarga_' . $id_competicion] as $m) {
+                                echo "<div class='flex gap-3 text-[11px] font-bold leading-relaxed border-l-2 border-slate-200 pl-4 py-0.5'>$m</div>";
+                            }
+                            unset($_SESSION['mensajes_descarga_' . $id_competicion]);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <!-- Explorador de Rutinas y Música -->
             <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-10">
-                <div class="px-8 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
-                        Diagnóstico de Integridad Técnica
+                <div class="px-8 py-4 bg-slate-50 border-b border-slate-100">
+                    <h3 class="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-3">
+                        <i class="fas fa-sitemap text-blue-600"></i>
+                        Explorador de Rutinas y Música
                     </h3>
                 </div>
-                <div class="p-8 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 custom-scrollbar bg-slate-50/30">
-                    <div class="space-y-3">
-                        <?php 
-                        foreach ($_SESSION['mensajes_descarga_' . $id_competicion] as $m) {
-                            echo "<div class='flex gap-3 text-[11px] font-bold leading-relaxed border-l-2 border-slate-200 pl-4 py-0.5'>$m</div>";
-                        }
-                        unset($_SESSION['mensajes_descarga_' . $id_competicion]);
-                        ?>
+                <div class="p-8">
+                    <div class="space-y-6">
+                        <?php foreach ($arbol_fases as $id_fase => $fase): ?>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                                        <i class="fas fa-layer-group"></i>
+                                    </div>
+                                    <span class="text-sm font-black text-slate-800 uppercase"><?php echo htmlspecialchars($fase['nombre']); ?></span>
+                                </div>
+                                <div class="ml-4 pl-7 border-l-2 border-slate-100 space-y-2">
+                                    <?php foreach ($fase['rutinas'] as $rutina): ?>
+                                        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
+                                            <div class="flex items-center gap-3 min-w-0">
+                                                <span class="text-[10px] font-black text-slate-300 group-hover:text-slate-500">#<?php echo $rutina['id']; ?></span>
+                                                <div class="flex flex-col min-w-0">
+                                                    <span class="text-xs font-black text-slate-700 truncate"><?php echo htmlspecialchars($rutina['club']); ?></span>
+                                                    <span class="text-[10px] font-bold text-slate-400 truncate"><?php echo htmlspecialchars($rutina['nadadoras'] ?: 'Sin participantes'); ?></span>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-3">
+                                                <?php if($rutina['tiene_musica']): ?>
+                                                    <span class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase">
+                                                        <i class="fas fa-check-circle"></i> MÚSICA OK
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="flex items-center gap-2 px-3 py-1 bg-red-50 text-red-500 rounded-lg text-[9px] font-black uppercase animate-pulse">
+                                                        <i class="fas fa-times-circle"></i> SIN ARCHIVO
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
