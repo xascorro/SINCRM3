@@ -110,14 +110,13 @@ function stripAccents($str) {
     return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
 }
 	$query = "UPDATE rutinas SET music_name='$music_name', music_original_name='".stripAccents($_FILES['musica']['name'])."' WHERE id='$id'";
-	echo $query;
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Acompañamiento músical añadido';
 	}else{
 		$_SESSION['estado'] = 'Error, la música no se ha actualizado <br>'.mysqli_error($connection);
 	}
-	if($_FILES["musica"] != ''){
+	if(isset($_FILES["musica"]) && $_FILES["musica"]["tmp_name"] != ''){
 		$path = './public/music/'.$id_competicion.'/';
 		if (!is_dir($path)) {
     		mkdir($path, 0777, true);
