@@ -76,9 +76,30 @@ if ($id_competicion && $id_fase) {
             $zip->close();
 
             if (file_exists($nombre_zip)) {
-                // Nombre del ZIP final descargado
-                $filename_final = "Musica_Fase_" . $id_fase . ".zip";
-                if ($id_club > 0) $filename_final = "Musica_Club_" . $id_club . "_Fase_" . $id_fase . ".zip";
+                // Obtener datos para el nombre del archivo final si no los tenemos
+                $q_fase_info = "SELECT m.nombre as mod_nom, c.nombre as cat_nom 
+                                FROM fases fs 
+                                JOIN modalidades m ON fs.id_modalidad = m.id 
+                                JOIN categorias c ON fs.id_categoria = c.id 
+                                WHERE fs.id = $id_fase";
+                $fase_info = mysqli_fetch_assoc(mysqli_query($connection, $q_fase_info));
+                
+                $nom_mod = str_replace(' ', '_', $fase_info['mod_nom']);
+                $nom_cat = str_replace(' ', '_', $fase_info['cat_nom']);
+
+                if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
+                    // Nombre para Club: Musica_NombreClub_Modalidad_Categoria.zip
+                    $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
+                    $club_nom = mysqli_result(mysqli_query($connection, $q_club_nom), 0);
+                    $club_nom_clean = str_replace(' ', '_', $club_nom);
+                    $filename_final = "Musica_" . $club_nom_clean . "_" . $nom_mod . "_" . $nom_cat . ".zip";
+                } else {
+                    // Nombre para Admin (Fase completa): Musica_Fase_Modalidad_Categoria.zip
+                    $filename_final = "Musica_Fase_" . $nom_mod . "_" . $nom_cat . ".zip";
+                }
+
+                // Limpiar el nombre final de caracteres extraños
+                $filename_final = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '', $filename_final);
 
                 header('Content-Type: application/zip');
                 header('Content-Disposition: attachment; filename="'.$filename_final.'"');
