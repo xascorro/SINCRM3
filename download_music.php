@@ -276,11 +276,15 @@ if ($id_competicion !== null && is_dir($path_base)) {
                                             </div>
                                             <div class="flex items-center gap-3">
                                                 <?php if($rutina['tiene_musica']): ?>
-                                                    <span class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase">
-                                                        <i class="fas fa-check-circle"></i> MÚSICA OK
+                                                    <button onclick="playMusic('<?php echo './public/music/'.$id_competicion.'/'.$rutina['id'].'.mp3'; ?>', '<?php echo addslashes($rutina['club']); ?>', '<?php echo addslashes($fase['nombre']); ?>')" 
+                                                            class="flex items-center gap-2 px-3 py-1 bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all rounded-lg text-[9px] font-black uppercase border border-indigo-100">
+                                                        <i class="fas fa-play"></i> ESCUCHAR
+                                                    </button>
+                                                    <span class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-lg text-[9px] font-black uppercase border border-emerald-100">
+                                                        <i class="fas fa-check-circle"></i> OK
                                                     </span>
                                                 <?php else: ?>
-                                                    <span class="flex items-center gap-2 px-3 py-1 bg-red-50 text-red-500 rounded-lg text-[9px] font-black uppercase animate-pulse">
+                                                    <span class="flex items-center gap-2 px-3 py-1 bg-red-50 text-red-500 rounded-lg text-[9px] font-black uppercase animate-pulse border border-red-100">
                                                         <i class="fas fa-times-circle"></i> SIN ARCHIVO
                                                     </span>
                                                 <?php endif; ?>
@@ -297,6 +301,54 @@ if ($id_competicion !== null && is_dir($path_base)) {
 
     </div>
 </main>
+
+<!-- Modal Reproductor Flotante -->
+<div id="playModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+    <div class="bg-white rounded-[2.5rem] w-full max-w-md shadow-2xl overflow-hidden animate-zoom-in">
+        <div class="p-8 border-b border-slate-100 flex justify-between items-center bg-indigo-50/30">
+            <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
+                <i class="fas fa-music text-indigo-600"></i> Previsualizar Audio
+            </h3>
+            <button onclick="stopMusic()" class="w-10 h-10 rounded-2xl bg-white text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center shadow-sm">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="p-8 text-center">
+            <p id="playFase" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1"></p>
+            <h4 id="playClub" class="text-xl font-black text-slate-800 mb-8"></h4>
+            
+            <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-2">
+                <audio id="audioPlayer" controls class="w-full h-12"></audio>
+            </div>
+            <p class="text-[9px] font-bold text-slate-400 italic">Verificando integridad del archivo .mp3</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function playMusic(url, club, fase) {
+    const modal = document.getElementById('playModal');
+    const audio = document.getElementById('audioPlayer');
+    const clubEl = document.getElementById('playClub');
+    const faseEl = document.getElementById('playFase');
+
+    clubEl.textContent = club;
+    faseEl.textContent = fase;
+    audio.src = url + '?v=' + new Date().getTime();
+    
+    modal.classList.remove('hidden');
+    audio.play();
+}
+
+function stopMusic() {
+    const modal = document.getElementById('playModal');
+    const audio = document.getElementById('audioPlayer');
+    
+    audio.pause();
+    audio.currentTime = 0;
+    modal.classList.add('hidden');
+}
+</script>
 
 <style>
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
