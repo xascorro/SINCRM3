@@ -1,0 +1,22 @@
+services:
+  beta-app:
+    build: .
+    container_name: sincrm-beta
+    restart: always
+    volumes:
+      - /var/www/html/beta:/var/www/html
+      - ./php.ini:/usr/local/etc/php/conf.d/custom.ini
+    environment:
+      - DB_HOST=${DB_HOST:-host.docker.internal}
+      - DB_USER=${DB_USER:-xas}
+      - DB_PASS=${DB_PASS:-79eagle}
+      - DB_NAME=${DB_NAME:-sincrm4beta}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # El puerto se puede mapear a uno libre, ej: 8081
+    ports:
+      - "8081:80"
+
+networks:
+  default:
+    name: sincrm-network
