@@ -245,7 +245,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                                             $has_music = (!empty($row['music_name']));
                                             $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-indigo-600';
                                             ?>
-                                            <button onclick="openMusicPlayer(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($nombres); ?>', '<?php echo $row['music_name'] ? './public/music/'.$id_competicion.'/'.$row['id'].'.mp3' : ''; ?>', '<?php echo addslashes($row['music_original_name']); ?>', '<?php echo $row['id_club']; ?>')" 
+                                            <button onclick="openMusicPlayer(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($nombres); ?>', '<?php echo $row['music_name'] ? './public/music/'.$id_competicion.'/'.$row['id'].'.mp3' : ''; ?>', '<?php echo addslashes($row['music_original_name']); ?>', '<?php echo $row['id_club']; ?>', '<?php echo $row['logo'] ?: './images/default_club.png'; ?>')" 
                                                     class="w-10 h-10 rounded-xl <?php echo $btn_music_class; ?> flex items-center justify-center hover:text-white transition-all shadow-sm group/btn" title="Acompañamiento Musical">
                                                 <i class="fas <?php echo $has_music ? 'fa-play' : 'fa-music'; ?> text-xs group-hover/btn:scale-110"></i>
                                             </button>
@@ -316,7 +316,10 @@ $stats = mysqli_fetch_assoc($res_stats);
         
         <div class="p-8">
             <div id="playerSection" class="mb-8 hidden">
-                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-6">
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-6 flex flex-col items-center text-center">
+                    <div class="w-24 h-24 rounded-2xl bg-white shadow-sm border border-slate-100 p-3 mb-6 overflow-hidden">
+                        <img id="playerLogo" src="./images/default_club.png" class="w-full h-full object-contain">
+                    </div>
                     <p id="playerRoutine" class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1"></p>
                     <h4 id="playerClub" class="text-lg font-black text-slate-800 mb-4"></h4>
                     <audio id="audioElement" controls class="w-full h-12"></audio>
@@ -381,12 +384,13 @@ $stats = mysqli_fetch_assoc($res_stats);
         if(!panel.classList.contains('hidden')) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function openMusicPlayer(id, routine, club, participants, fileUrl, originalName, clubId) {
+    function openMusicPlayer(id, routine, club, participants, fileUrl, originalName, clubId, logoUrl) {
         document.getElementById('music_edit_id').value = id;
         document.getElementById('music_club_id').value = clubId;
         document.getElementById('music_name_val').value = routine + ' - ' + club + ' - ' + participants;
         document.getElementById('playerRoutine').textContent = routine;
         document.getElementById('playerClub').textContent = club;
+        document.getElementById('playerLogo').src = logoUrl || './images/default_club.png';
         
         const audio = document.getElementById('audioElement');
         const playerSec = document.getElementById('playerSection');
