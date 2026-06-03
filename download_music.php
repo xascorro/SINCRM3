@@ -198,18 +198,18 @@ if ($id_competicion !== null && is_dir($path_base)) {
         <?php endif; ?>
 
         <?php if (!empty($_SESSION['mensajes_descarga_' . $id_competicion])): ?>
-            <div class="bg-slate-900 rounded-[2rem] shadow-2xl overflow-hidden mb-10 border border-white/5">
-                <div class="px-8 py-4 bg-slate-800/50 border-b border-white/5 flex items-center justify-between">
-                    <h3 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                        Consola de Integridad Técnica
+            <div class="bg-white rounded-[2rem] shadow-sm border border-slate-200 overflow-hidden mb-10">
+                <div class="px-8 py-4 bg-slate-50/80 border-b border-slate-100 flex items-center justify-between">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                        Diagnóstico de Integridad Técnica
                     </h3>
                 </div>
-                <div class="p-8 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 custom-scrollbar">
-                    <div class="space-y-2">
+                <div class="p-8 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 custom-scrollbar bg-slate-50/30">
+                    <div class="space-y-3">
                         <?php 
                         foreach ($_SESSION['mensajes_descarga_' . $id_competicion] as $m) {
-                            echo "<div class='flex gap-3 text-xs leading-relaxed'>$m</div>";
+                            echo "<div class='flex gap-3 text-[11px] font-bold leading-relaxed border-l-2 border-slate-200 pl-4 py-0.5'>$m</div>";
                         }
                         unset($_SESSION['mensajes_descarga_' . $id_competicion]);
                         ?>
@@ -224,7 +224,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
 <style>
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.05); border-radius: 10px; }
 </style>
 
 <?php 
