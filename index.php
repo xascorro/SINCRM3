@@ -448,7 +448,18 @@ $meses_es = [
                                 <?php endif; ?>
 
                                 <!-- Plazos Técnicos (Música y Coach Card) -->
-                                <div class="grid <?php echo ($row['figuras'] == 'si') ? 'grid-cols-1' : 'grid-cols-2'; ?> gap-4 w-full sm:w-auto">
+                                <?php 
+                                    $id_c_row = $row['id'];
+                                    $q_has_cc = "SELECT COUNT(*) as num FROM fases WHERE id_competicion = $id_c_row AND elementos_coach_card > 0";
+                                    $has_cc = (mysqli_result(mysqli_query($connection, $q_has_cc), 0) > 0);
+                                    
+                                    // Determinar número de columnas
+                                    $cols = 0;
+                                    if ($row['figuras'] != 'si') $cols++; // Música
+                                    if ($has_cc) $cols++; // Coach Card
+                                ?>
+                                <?php if($cols > 0): ?>
+                                <div class="grid <?php echo ($cols == 1) ? 'grid-cols-1' : 'grid-cols-2'; ?> gap-4 w-full sm:w-auto">
                                     <?php 
                                     $f_musica = date("Y-m-d", strtotime("-".$row['dias_musica']." days", strtotime($row['fecha'])));
                                     if($row['figuras'] == 'si') {
@@ -466,12 +477,15 @@ $meses_es = [
                                     </div>
                                     <?php endif; ?>
 
+                                    <?php if($has_cc): ?>
                                     <div class="p-4 rounded-3xl border border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center text-center">
                                         <i class="fas fa-puzzle-piece text-slate-300 mb-2"></i>
                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Coach Card</p>
                                         <p class="text-xs font-black text-slate-700"><?php echo dateAFecha($f_cc); ?></p>
                                     </div>
+                                    <?php endif; ?>
                                 </div>
+                                <?php endif; ?>
 
                                 <?php if(!empty($row['enlace_sorteo'])): ?>
                                     <div class="text-center">
