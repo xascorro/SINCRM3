@@ -107,7 +107,10 @@ if(isset($_POST['upload_music'])){
 	else
 		  $id_competicion = $_SESSION['id_competicion_activa'];
 function stripAccents($str) {
-    return strtr(utf8_decode($str), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+    if (function_exists('mb_convert_encoding')) {
+        $str = mb_convert_encoding($str, 'ISO-8859-1', 'UTF-8');
+    }
+    return strtr($str, 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ', 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
 }
 	$query = "UPDATE rutinas SET music_name='$music_name', music_original_name='".stripAccents($_FILES['musica']['name'])."' WHERE id='$id'";
 	$query_run = mysqli_query($connection,$query);
