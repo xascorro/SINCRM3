@@ -3,6 +3,15 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 
+// Sincronizar ID de competición (prioridad usuario, fallback activa)
+$id_competicion = $_SESSION['id_competicion_usuario'] ?? $_SESSION['id_competicion_activa'] ?? 0;
+
+if ($id_competicion == 0) {
+    echo "<div class='p-10 text-center font-lexend'><h2 class='text-2xl font-black text-slate-800'>No hay ninguna competición seleccionada</h2><p class='text-slate-500 mt-2'>Por favor, selecciona una competición desde el Dashboard.</p><a href='index.php' class='mt-6 inline-block px-6 py-3 bg-blue-600 text-white font-black rounded-2xl'>Volver al Inicio</a></div>";
+    include('includes/footer.php');
+    exit();
+}
+
 // Fetch deadlines
 $query_fechas = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musica, 
                         date_add(fecha, interval -dias_coach_card day) as fecha_coach_card, 
@@ -10,7 +19,8 @@ $query_fechas = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musi
                         date_add(fecha, interval -dias_inicio_inscripcion day) as fecha_inicio_inscripcion, 
                         date_add(fecha, interval -dias_fin_inscripcion day) as fecha_fin_inscripcion 
                  FROM competiciones WHERE id='.$id_competicion;
-$fechas = mysqli_fetch_assoc(mysqli_query($connection, $query_fechas));
+$res_fechas = mysqli_query($connection, $query_fechas);
+$fechas = ($res_fechas) ? mysqli_fetch_assoc($res_fechas) : [];
 
 $fecha_musica = $fechas['fecha_musica'] ?? '';
 $enable_musica = (date('Y-m-d') >= $fecha_musica && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
