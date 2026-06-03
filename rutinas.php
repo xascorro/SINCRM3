@@ -193,11 +193,26 @@ $stats = mysqli_fetch_assoc($res_stats);
                                   AND fases.id_categoria = categorias.id 
                                   AND rutinas.id_club = clubes.id 
                                   AND fases.id_competicion = $id_competicion $condicion 
-                                  ORDER BY rutinas.id_club, fases.orden, fases.id";
+                                  ORDER BY fases.orden ASC, fases.id ASC, clubes.nombre_corto ASC, rutinas.id ASC";
                         $res = mysqli_query($connection, $query);
 
                         if($res && mysqli_num_rows($res) > 0):
+                            $current_fase = null;
                             while($row = mysqli_fetch_assoc($res)):
+                                if($current_fase !== $row['id_fase']):
+                                    $current_fase = $row['id_fase'];
+                                    ?>
+                                    <tr class="bg-slate-100/80">
+                                        <td colspan="10" class="px-8 py-4">
+                                            <div class="flex items-center gap-3">
+                                                <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+                                                <span class="text-xs font-black text-slate-700 uppercase tracking-widest"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                endif;
+
                                 $q_nombres = "SELECT group_concat(nadadoras.nombre, ' ', nadadoras.apellidos separator ', ') 
                                               FROM rutinas_participantes, nadadoras 
                                               WHERE nadadoras.id = rutinas_participantes.id_nadadora 
