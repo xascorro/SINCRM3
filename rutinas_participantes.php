@@ -88,7 +88,7 @@ $id_club_rutina = $data['id_club'];
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
+                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
                         <div class="md:col-span-2">
                             <span class="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">TITULAR <?php echo $x+1; ?></span>
                         </div>
@@ -137,7 +137,7 @@ $id_club_rutina = $data['id_club'];
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors">
+                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors">
                         <div class="md:col-span-2">
                             <span class="px-3 py-1 bg-amber-500 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">RESERVA <?php echo $x+1; ?></span>
                         </div>
@@ -199,6 +199,57 @@ function updateStatus(type, message) {
         icon.className = 'fas fa-info-circle';
     }
     text.textContent = message;
+}
+
+function validateIndividual(form) {
+    const selects = document.querySelectorAll('.select-nadadora');
+    const currentSelect = form.querySelector('.select-nadadora');
+    const val = currentSelect.value.trim();
+    
+    if (val === '' || val === ' ') {
+        updateStatus('error', 'Por favor, selecciona una nadadora.');
+        return false;
+    }
+
+    let duplicateFound = false;
+    const swimmerIds = [];
+
+    // Reset visuales inicial
+    selects.forEach(s => {
+        s.style.cssText = ''; 
+    });
+
+    selects.forEach((select) => {
+        const sVal = select.value.trim();
+        if (sVal !== '' && sVal !== ' ') {
+            if (swimmerIds.includes(sVal)) {
+                duplicateFound = true;
+                // Marcar todos los que tengan este ID
+                selects.forEach(s => {
+                    if (s.value.trim() === sVal) {
+                        s.style.setProperty('border-color', '#ef4444', 'important');
+                        s.style.setProperty('background-color', '#fef2f2', 'important');
+                        s.style.setProperty('box-shadow', '0 0 0 3px rgba(239, 68, 68, 0.4)', 'important');
+                    }
+                });
+            } else {
+                swimmerIds.push(sVal);
+            }
+        }
+    });
+
+    if (duplicateFound) {
+        updateStatus('error', 'Error: Se han detectado nadadoras duplicadas. No se puede realizar la asignación.');
+        Swal.fire({
+            icon: 'error',
+            title: 'Validación Fallida',
+            text: 'Esta nadadora ya está seleccionada en otro puesto de la rutina.',
+            confirmButtonColor: '#3b82f6'
+        });
+        return false;
+    }
+
+    return true;
 }
 
 function saveAllParticipants() {
