@@ -192,19 +192,21 @@ function saveAllParticipants() {
         const reserva = form.querySelector('input[name="reserva"]').value;
 
         // Reset visual state
-        select.classList.remove('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
+        select.classList.remove('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
+        select.style.borderColor = '';
+        select.style.backgroundColor = '';
 
         if (val !== '' && val !== ' ') {
             // Validar Duplicados
             if (swimmerIds.includes(val)) {
                 duplicateFound = true;
-                // Aplicar estilos de error (Usando !important vía Tailwind si es necesario o asegurando clases)
-                select.classList.add('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
                 
-                // Buscar el primer elemento que tiene este valor para marcarlo también
+                // Buscar todos los elementos que tienen este valor para marcarlos (incluyendo el actual)
                 selects.forEach((s) => {
                     if (s.value.trim() === val) {
-                        s.classList.add('border-red-500', 'bg-red-50', 'ring-2', 'ring-red-500');
+                        s.classList.add('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
+                        s.style.borderColor = '#ef4444'; // Fallback style
+                        s.style.backgroundColor = '#fef2f2'; // Fallback style
                     }
                 });
             } else {
