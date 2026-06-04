@@ -111,24 +111,43 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
         <div id="cardsView" class="space-y-6">
             <?php
             if($is_figuras) {
-                $query = "SELECT f.*, c.nombre as cat_nombre, fig.nombre as fig_nombre, fig.numero as fig_num, fig.grado_dificultad as fig_gd FROM fases f JOIN categorias c ON f.id_categoria = c.id JOIN figuras fig ON f.id_figura = fig.id WHERE f.id_competicion = '$id_comp' ORDER BY f.orden ASC";
+                $query = "SELECT f.*, c.nombre as cat_nombre, fig.nombre as fig_nombre, fig.numero as fig_num, fig.grado_dificultad as fig_gd,
+                          (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase = f.id) as num_items 
+                          FROM fases f 
+                          JOIN categorias c ON f.id_categoria = c.id 
+                          JOIN figuras fig ON f.id_figura = fig.id 
+                          WHERE f.id_competicion = '$id_comp' 
+                          ORDER BY f.orden ASC";
             } else {
-                $query = "SELECT f.*, c.nombre as cat_nombre, m.nombre as mod_nombre, (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id) as num_rutinas FROM fases f JOIN categorias c ON f.id_categoria = c.id JOIN modalidades m ON f.id_modalidad = m.id WHERE f.id_competicion = '$id_comp' ORDER BY f.orden ASC";
+                $query = "SELECT f.*, c.nombre as cat_nombre, m.nombre as mod_nombre, 
+                          (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id) as num_items 
+                          FROM fases f 
+                          JOIN categorias c ON f.id_categoria = c.id 
+                          JOIN modalidades m ON f.id_modalidad = m.id 
+                          WHERE f.id_competicion = '$id_comp' 
+                          ORDER BY f.orden ASC";
             }
             $res = mysqli_query($connection, $query);
             while ($row = mysqli_fetch_assoc($res)):
+                $isEmpty = ($row['num_items'] == 0);
+                $card_border = $isEmpty ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-white';
+                $order_bg = $isEmpty ? 'bg-amber-100 border-amber-200' : 'bg-blue-50 border-blue-100';
+                $order_text = $isEmpty ? 'text-amber-600' : 'text-blue-600';
             ?>
-            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 group hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-8">
+            <div class="<?php echo $card_border; ?> rounded-[2rem] p-6 shadow-sm border group hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-8">
                 <!-- ID Más Visible -->
                 <div class="absolute top-4 right-8 text-[10px] font-black text-slate-400 italic tracking-widest uppercase opacity-40">ID: #<?php echo $row['id']; ?></div>
 
-                <div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <span class="text-[9px] font-black text-blue-300 uppercase leading-none mb-1">Orden</span>
-                    <span class="text-xl font-black text-blue-600 leading-none"><?php echo $row['orden']; ?></span>
+                <div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl <?php echo $order_bg; ?> border shadow-inner group-hover:scale-110 transition-transform duration-500">
+                    <span class="text-[9px] font-black opacity-40 uppercase leading-none mb-1">Orden</span>
+                    <span class="text-xl font-black <?php echo $order_text; ?> leading-none"><?php echo $row['orden']; ?></span>
                 </div>
                 <div class="flex-1">
-                    <div class="mb-2">
+                    <div class="mb-2 flex items-center gap-2">
                         <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200 uppercase tracking-widest"><?php echo $row['cat_nombre']; ?></span>
+                        <?php if($isEmpty): ?>
+                            <span class="px-3 py-1 bg-amber-500 text-white text-[9px] font-black rounded-lg shadow-lg shadow-amber-500/20 uppercase tracking-widest animate-pulse">Fase Vacía</span>
+                        <?php endif; ?>
                     </div>
                     <div class="flex items-center gap-3 mb-1">
                         <h3 class="text-xl font-black text-slate-800 tracking-tight">
@@ -136,14 +155,21 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         </h3>
                     </div>
                     <?php if($is_figuras): ?>
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
+                        <div class="flex items-center gap-4">
+                            <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
+                            <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-users text-blue-400 mr-1"></i> <?php echo $row['num_items']; ?> inscritas.</p>
+                        </div>
                     <?php else: ?>
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <?php echo $row['num_rutinas']; ?> rutinas registradas.</p>
+                        <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <?php echo $row['num_items']; ?> rutinas registradas.</p>
+                    <?php endif; ?>
+                    
+                    <?php if($isEmpty): ?>
+                        <p class="text-[10px] font-bold text-amber-700 mt-2 flex items-center gap-2 italic"><i class="fas fa-info-circle"></i> Puedes eliminar esta fase si no es necesaria antes del sorteo.</p>
                     <?php endif; ?>
                 </div>
                 <div class="flex items-center gap-3">
                     <form action="fases_edit.php" method="POST"><input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>"><button type="submit" name="edit_btn" class="px-5 py-2.5 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2"><i class="fas fa-cog"></i> Configurar</button></form>
-                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');"><input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>"><button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center border border-red-100/50 shadow-sm"><i class="fas fa-trash-alt text-sm"></i></button></form>
+                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');"><input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>"><button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl <?php echo $isEmpty ? 'bg-red-500 text-white animate-bounce-slow' : 'bg-red-50 text-red-400'; ?> hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center border border-red-100/50 shadow-sm" title="Borrar Fase Vacía"><i class="fas fa-trash-alt text-sm"></i></button></form>
                 </div>
             </div>
             <?php endwhile; ?>
