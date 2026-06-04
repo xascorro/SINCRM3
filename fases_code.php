@@ -44,6 +44,7 @@ if(isset($_POST['update_btn'])){
     $error_xl = mysqli_real_escape_string($connection, $_POST['edit_error_xl'] ?? '-3.0');
     
     // Adicionales
+    $obsoleto = (isset($_POST['edit_aqua']) && $_POST['edit_aqua'] == 'si') ? 'no' : 'si';
     $hora_inicio = mysqli_real_escape_string($connection, $_POST['edit_hora_inicio_estimada'] ?? '');
     $elementos_cc = intval($_POST['edit_elementos_coach_card'] ?? 0);
     $corte = intval($_POST['edit_corte'] ?? 0);
@@ -68,6 +69,7 @@ if(isset($_POST['update_btn'])){
                 error_xs = '$error_xs',
                 error_ob = '$error_ob',
                 error_xl = '$error_xl',
+                obsoleto = '$obsoleto',
                 hora_inicio_estimada = '$hora_inicio',
                 elementos_coach_card = '$elementos_cc',
                 corte = '$corte',

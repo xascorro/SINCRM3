@@ -153,7 +153,14 @@ include('includes/navbar.php');
                     </div>
 
                     <!-- Toggles -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10 pt-8 border-t border-slate-100">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mt-10 pt-8 border-t border-slate-100">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                            <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Sistema AQUA</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="edit_aqua" value="si" <?php echo ($row_fase['obsoleto'] != 'si') ? 'checked' : ''; ?> class="sr-only peer">
+                                <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
                         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
                             <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest">Técnico</span>
                             <label class="relative inline-flex items-center cursor-pointer">

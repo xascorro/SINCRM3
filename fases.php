@@ -130,9 +130,22 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
             $res = mysqli_query($connection, $query);
             while ($row = mysqli_fetch_assoc($res)):
                 $isEmpty = ($row['num_items'] == 0);
-                $card_border = $isEmpty ? 'border-amber-400 bg-amber-50/30' : 'border-slate-200 bg-white';
-                $order_bg = $isEmpty ? 'bg-amber-100 border-amber-200' : 'bg-blue-50 border-blue-100';
-                $order_text = $isEmpty ? 'text-amber-600' : 'text-blue-600';
+                $isOldSystem = ($row['obsoleto'] == 'si');
+                
+                // Definición de estilos dinámicos
+                if ($isEmpty) {
+                    $card_border = 'border-amber-400 bg-amber-50/30';
+                    $order_bg = 'bg-amber-100 border-amber-200';
+                    $order_text = 'text-amber-600';
+                } elseif ($isOldSystem) {
+                    $card_border = 'border-slate-200 bg-slate-50/50 grayscale-[0.5]';
+                    $order_bg = 'bg-slate-100 border-slate-200';
+                    $order_text = 'text-slate-400';
+                } else {
+                    $card_border = 'border-slate-200 bg-white';
+                    $order_bg = 'bg-blue-50 border-blue-100';
+                    $order_text = 'text-blue-600';
+                }
             ?>
             <div class="<?php echo $card_border; ?> rounded-[2rem] p-6 shadow-sm border group hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-8">
                 <!-- ID Más Visible -->
@@ -143,14 +156,26 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     <span class="text-xl font-black <?php echo $order_text; ?> leading-none"><?php echo $row['orden']; ?></span>
                 </div>
                 <div class="flex-1">
-                    <div class="mb-2 flex items-center gap-2">
+                    <div class="mb-2 flex flex-wrap items-center gap-2">
                         <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200 uppercase tracking-widest"><?php echo $row['cat_nombre']; ?></span>
+                        
+                        <!-- Badges de Sistema -->
+                        <?php if($isOldSystem): ?>
+                            <span class="px-3 py-1 bg-slate-200 text-slate-600 text-[9px] font-black rounded-lg uppercase tracking-widest flex items-center gap-1 border border-slate-300">
+                                <i class="fas fa-clock-rotate-left"></i> OBSOLETO
+                            </span>
+                        <?php else: ?>
+                            <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg uppercase tracking-widest flex items-center gap-1 border border-blue-100">
+                                <i class="fas fa-certificate"></i> AQUA
+                            </span>
+                        <?php endif; ?>
+
                         <?php if($isEmpty): ?>
                             <span class="px-3 py-1 bg-amber-500 text-white text-[9px] font-black rounded-lg shadow-lg shadow-amber-500/20 uppercase tracking-widest animate-pulse">Fase Vacía</span>
                         <?php endif; ?>
                     </div>
                     <div class="flex items-center gap-3 mb-1">
-                        <h3 class="text-xl font-black text-slate-800 tracking-tight">
+                        <h3 class="text-xl font-black <?php echo $isOldSystem ? 'text-slate-500' : 'text-slate-800'; ?> tracking-tight">
                             <?php echo $is_figuras ? "Figura ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
                         </h3>
                     </div>
