@@ -9,6 +9,7 @@ include('security.php');
 $id_competicion = isset($_POST['id_competicion']) ? (int)$_POST['id_competicion'] : (isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null);
 $id_fase        = isset($_POST['id_fase']) ? (int)$_POST['id_fase'] : (isset($_GET['id_fase']) ? (int)$_GET['id_fase'] : null);
 $id_club_input  = isset($_POST['id_club']) ? (int)$_POST['id_club'] : (isset($_GET['id_club']) ? (int)$_GET['id_club'] : null);
+$descargar_todo = isset($_POST['descargar_todo']) ? (bool)$_POST['descargar_todo'] : (isset($_GET['descargar_todo']) ? (bool)$_GET['descargar_todo'] : false);
 
 // --- CONTROL DE ACCESO ESTRICTO ---
 if ($_SESSION['id_rol'] == 5) {
@@ -22,10 +23,12 @@ if ($id_club !== null && $id_club > 0) {
     $condicion_club = ' AND rutinas.id_club = ' . (int)$id_club;
 }
 
-if ($id_competicion && $id_fase) {
+if ($id_competicion && ($id_fase || $descargar_todo)) {
     $path_base = './public/music/' . $id_competicion . '/';
 
-    // 2. Consulta para obtener las rutinas de la fase
+    $condicion_fase = $id_fase ? " AND rutinas.id_fase = $id_fase " : "";
+
+    // 2. Consulta para obtener las rutinas
     $query = "SELECT 
                 rutinas.id, 
                 rutinas.orden, 
@@ -39,8 +42,8 @@ if ($id_competicion && $id_fase) {
               INNER JOIN modalidades ON fases.id_modalidad = modalidades.id
               INNER JOIN categorias ON fases.id_categoria = categorias.id
               INNER JOIN clubes ON rutinas.id_club = clubes.id
-              WHERE rutinas.id_fase = $id_fase 
-                AND fases.id_competicion = $id_competicion 
+              WHERE fases.id_competicion = $id_competicion 
+                $condicion_fase 
                 $condicion_club";
 
     $result = mysqli_query($connection, $query);
@@ -76,29 +79,44 @@ if ($id_competicion && $id_fase) {
             $zip->close();
 
             if (file_exists($nombre_zip)) {
-                // Obtener datos para el nombre del archivo final si no los tenemos
-                $q_fase_info = "SELECT m.nombre as mod_nom, c.nombre as cat_nom 
-                                FROM fases fs 
-                                JOIN modalidades m ON fs.id_modalidad = m.id 
-                                JOIN categorias c ON fs.id_categoria = c.id 
-                                WHERE fs.id = $id_fase";
-                $fase_info = mysqli_fetch_assoc(mysqli_query($connection, $q_fase_info));
-                
-                $nom_mod = str_replace(' ', '_', $fase_info['mod_nom']);
-                $nom_cat = str_replace(' ', '_', $fase_info['cat_nom']);
-
-                if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
-                    // Nombre para Club: Musica_NombreClub_Modalidad_Categoria.zip
-                    $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
-                    $res_club_nom = mysqli_query($connection, $q_club_nom);
-                    $row_club_nom = mysqli_fetch_assoc($res_club_nom);
-                    $club_nom = $row_club_nom['nombre_corto'] ?? 'Club';
+                // Obtener datos para el nombre del archivo final
+                if ($descargar_todo) {
+                    $q_comp_info = "SELECT nombre FROM competiciones WHERE id = $id_competicion";
+                    $comp_info = mysqli_fetch_assoc(mysqli_query($connection, $q_comp_info));
+                    $nom_comp = str_replace(' ', '_', $comp_info['nombre'] ?? 'Competicion');
                     
-                    $club_nom_clean = str_replace(' ', '_', $club_nom);
-                    $filename_final = "Musica_" . $club_nom_clean . "_" . $nom_mod . "_" . $nom_cat . ".zip";
+                    if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
+                        $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
+                        $club_nom = mysqli_fetch_assoc(mysqli_query($connection, $q_club_nom))['nombre_corto'] ?? 'Club';
+                        $club_nom_clean = str_replace(' ', '_', $club_nom);
+                        $filename_final = "Musica_" . $nom_comp . "_" . $club_nom_clean . ".zip";
+                    } else {
+                        $filename_final = "Musica_Total_" . $nom_comp . ".zip";
+                    }
                 } else {
-                    // Nombre para Admin (Fase completa): Musica_Fase_Modalidad_Categoria.zip
-                    $filename_final = "Musica_Fase_" . $nom_mod . "_" . $nom_cat . ".zip";
+                    $q_fase_info = "SELECT m.nombre as mod_nom, c.nombre as cat_nom 
+                                    FROM fases fs 
+                                    JOIN modalidades m ON fs.id_modalidad = m.id 
+                                    JOIN categorias c ON fs.id_categoria = c.id 
+                                    WHERE fs.id = $id_fase";
+                    $fase_info = mysqli_fetch_assoc(mysqli_query($connection, $q_fase_info));
+                    
+                    $nom_mod = str_replace(' ', '_', $fase_info['mod_nom']);
+                    $nom_cat = str_replace(' ', '_', $fase_info['cat_nom']);
+
+                    if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
+                        // Nombre para Club: Musica_NombreClub_Modalidad_Categoria.zip
+                        $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
+                        $res_club_nom = mysqli_query($connection, $q_club_nom);
+                        $row_club_nom = mysqli_fetch_assoc($res_club_nom);
+                        $club_nom = $row_club_nom['nombre_corto'] ?? 'Club';
+                        
+                        $club_nom_clean = str_replace(' ', '_', $club_nom);
+                        $filename_final = "Musica_" . $club_nom_clean . "_" . $nom_mod . "_" . $nom_cat . ".zip";
+                    } else {
+                        // Nombre para Admin (Fase completa): Musica_Fase_Modalidad_Categoria.zip
+                        $filename_final = "Musica_Fase_" . $nom_mod . "_" . $nom_cat . ".zip";
+                    }
                 }
 
                 // Limpiar el nombre final de caracteres extraños

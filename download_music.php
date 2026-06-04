@@ -6,9 +6,13 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 
-// Prioridad a POST, fallback a GET (pero validado por sesión)
-$id_competicion = isset($_POST['id_competicion']) ? (int)$_POST['id_competicion'] : (isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : null);
+// Prioridad a POST, fallback a GET y luego a SESSION
+$id_competicion = isset($_POST['id_competicion']) ? (int)$_POST['id_competicion'] : (isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : (isset($_SESSION['id_competicion_usuario']) ? (int)$_SESSION['id_competicion_usuario'] : null));
 $id_club_input = isset($_POST['id_club']) ? (int)$_POST['id_club'] : (isset($_GET['id_club']) ? (int)$_GET['id_club'] : null);
+
+// Definición de roles administrativos (coincidente con navbar.php)
+$roles_admin = ['1', '2', '3'];
+$es_admin = in_array($_SESSION['id_rol'], $roles_admin);
 
 // --- CONTROL DE ACCESO ESTRICTO ---
 // Si es ROL CLUB (5), forzamos que el ID del club sea el suyo de la sesión
@@ -74,6 +78,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
     $result = mysqli_query($connection, $query);
     
     $ids_en_db = [];
+    $ids_totales_competicion = []; // Para evitar falsos huérfanos al filtrar por club
     $rutinas_sin_musica = [];
     $arbol_fases = [];
 
@@ -124,11 +129,15 @@ if ($id_competicion !== null && is_dir($path_base)) {
         }
     }
 
-    // 3. Registro de alertas en el log (solo si es Admin o si son sus propios huérfanos)
-    if ($_SESSION['id_rol'] != 5) {
-        $huerfanos = array_diff($ids_en_disco, $ids_en_db);
+    // 2.1 Consulta de control para Huérfanos (siempre toda la competición)
+    if ($es_admin) {
+        $q_huerfanos = "SELECT r.id FROM rutinas r INNER JOIN fases f ON r.id_fase = f.id WHERE f.id_competicion = $id_competicion";
+        $res_huerfanos = mysqli_query($connection, $q_huerfanos);
+        while($r_h = mysqli_fetch_assoc($res_huerfanos)) $ids_totales_competicion[] = (int)$r_h['id'];
+
+        $huerfanos = array_diff($ids_en_disco, $ids_totales_competicion);
         foreach ($huerfanos as $h) {
-            agregarMensajeDescarga("HUÉRFANO: El archivo $h.mp3 no pertenece a ninguna rutina activa.", 'warning');
+            agregarMensajeDescarga("HUÉRFANO: El archivo $h.mp3 no pertenece a ninguna rutina activa en esta competición.", 'warning');
         }
     }
     foreach ($rutinas_sin_musica as $faltante) {
@@ -153,10 +162,55 @@ if ($id_competicion !== null && is_dir($path_base)) {
                     <?php echo ($id_club > 0) ? "Descarga del acompañamiento musical de su club." : "Exploración y descarga de archivos por fase de competición."; ?>
                 </p>
             </div>
-            <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
-                <i class="fas fa-chevron-left text-xs"></i> Volver
-            </a>
+            <div class="flex flex-wrap gap-3">
+                <?php if ($es_admin): ?>
+                    <form action="descargar_fase.php" method="POST">
+                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                        <input type="hidden" name="id_club" value="<?php echo $id_club; ?>">
+                        <input type="hidden" name="descargar_todo" value="1">
+                        <button type="submit" class="px-6 py-3 bg-indigo-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-indigo-700 hover:scale-105 transition-all flex items-center gap-2">
+                            <i class="fas fa-file-archive"></i> Descargar Todo (.zip)
+                        </button>
+                    </form>
+                <?php endif; ?>
+                <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
+                    <i class="fas fa-chevron-left text-xs"></i> Volver
+                </a>
+            </div>
         </div>
+
+        <!-- Filtros (Solo Admin) -->
+        <?php if ($es_admin): ?>
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 mb-10">
+                <form action="download_music.php" method="GET" class="flex flex-col md:flex-row items-end gap-6">
+                    <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                    <div class="flex-1 w-full space-y-2">
+                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Filtrar por Club</label>
+                        <select name="id_club" class="v3-select-fix w-full" onchange="this.form.submit()">
+                            <option value="0">--- Todos los Clubes ---</option>
+                            <?php 
+                            $q_clubes = "SELECT DISTINCT c.id, c.nombre_corto 
+                                         FROM clubes c 
+                                         INNER JOIN rutinas r ON r.id_club = c.id 
+                                         INNER JOIN fases f ON r.id_fase = f.id 
+                                         WHERE f.id_competicion = $id_competicion 
+                                         ORDER BY c.nombre_corto ASC";
+                            $res_clubes = mysqli_query($connection, $q_clubes);
+                            while ($c = mysqli_fetch_assoc($res_clubes)) {
+                                $sel = ($id_club == $c['id']) ? 'selected' : '';
+                                echo "<option value='{$c['id']}' $sel>{$c['nombre_corto']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <a href="download_music.php?id_competicion=<?php echo $id_competicion; ?>" class="px-6 py-3.5 bg-slate-100 text-slate-500 font-black uppercase text-[10px] tracking-widest rounded-xl hover:bg-slate-200 transition-all flex items-center gap-2">
+                            <i class="fas fa-sync-alt"></i> Limpiar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        <?php endif; ?>
 
         <?php if (empty($stats_fases)): ?>
             <div class="bg-white rounded-[2.5rem] p-12 shadow-sm border border-slate-200 text-center">

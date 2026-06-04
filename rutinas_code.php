@@ -123,7 +123,19 @@ function stripAccents($str) {
 		if (!is_dir($path)) {
     		mkdir($path, 0777, true);
 		}
-		move_uploaded_file($_FILES["musica"]["tmp_name"],$path.$id.'.mp3');
+		$target_file = $path.$id.'.mp3';
+		if(move_uploaded_file($_FILES["musica"]["tmp_name"], $target_file)){
+			write_log("Música subida con éxito: $target_file (Original: ".$_FILES['musica']['name'].")", "SUCCESS");
+		} else {
+			$error_code = $_FILES['musica']['error'];
+			write_log("Error al mover el archivo subido a $target_file. Código error PHP: $error_code", "ERROR");
+			$_SESSION['estado'] .= " Error al guardar el archivo físico (Código: $error_code).";
+		}
+	} else {
+		if(isset($_POST['upload_music'])) {
+			$error_code = $_FILES['musica']['error'] ?? 'N/A';
+			write_log("No se recibió archivo o tmp_name está vacío. Código error PHP: $error_code", "WARNING");
+		}
 	}
 }
 

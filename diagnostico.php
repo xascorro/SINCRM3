@@ -184,6 +184,59 @@ include('includes/navbar.php');
                 </div>
             </div>
 
+            <!-- BLOQUE 4: MULTIMEDIA -->
+            <div>
+                <div class="flex items-center gap-4 border-l-[8px] border-indigo-500 pl-6 py-2 mb-8 uppercase tracking-widest text-indigo-600 font-black italic">
+                    Ámbito Multimedia
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Archivos MP3 Huérfanos -->
+                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-indigo-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6 shadow-sm border border-indigo-100"><i class="fas fa-file-audio text-lg"></i></div>
+                            <h3 class="text-xl font-black text-slate-800 mb-2">Música Huérfana</h3>
+                            <p class="text-xs font-medium text-slate-400 italic mb-8">Archivos MP3 en el servidor que no están vinculados a ninguna rutina en la base de datos.</p>
+                        </div>
+                        <?php
+                        $huerfanos_mp3 = 0;
+                        $valid_rutinas = [];
+                        $q_all_rutinas = "SELECT id, id_competicion FROM rutinas";
+                        $res_all = mysqli_query($connection, $q_all_rutinas);
+                        if ($res_all) {
+                            while($row_all = mysqli_fetch_assoc($res_all)) {
+                                $valid_rutinas[$row_all['id_competicion']][$row_all['id']] = true;
+                            }
+                        }
+
+                        $path_base = './public/music/';
+                        if (is_dir($path_base)) {
+                            $items = scandir($path_base);
+                            foreach ($items as $item) {
+                                if ($item === '.' || $item === '..') continue;
+                                $comp_path = $path_base . $item;
+                                if (is_dir($comp_path)) {
+                                    $id_comp = $item;
+                                    $files = scandir($comp_path);
+                                    foreach ($files as $file) {
+                                        if (pathinfo($file, PATHINFO_EXTENSION) === 'mp3') {
+                                            $id_rutina = pathinfo($file, PATHINFO_FILENAME);
+                                            if (!isset($valid_rutinas[$id_comp][$id_rutina])) {
+                                                $huerfanos_mp3++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ?>
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-black <?php echo $huerfanos_mp3 > 0 ? 'text-amber-500' : 'text-slate-400'; ?>"><?php echo $huerfanos_mp3; ?> <span class="text-[10px] uppercase">archivos</span></span>
+                            <button onclick="analizar('archivos_musica_huerfanos')" class="px-6 py-2.5 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">Analizar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -268,6 +321,23 @@ include('includes/navbar.php');
                 });
                 html += '</div>';
 
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+                html += `<div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
+                            <i class="fas fa-database text-blue-400"></i>
+                            <div>
+                                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Ahorro en Base de Datos</p>
+                                <p class="text-base font-black text-blue-700">${data.db_reclaimed}</p>
+                            </div>
+                         </div>`;
+                html += `<div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-center gap-3">
+                            <i class="fas fa-hard-drive text-indigo-400"></i>
+                            <div>
+                                <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Espacio Disco Recuperado</p>
+                                <p class="text-base font-black text-indigo-700">${data.disk_reclaimed}</p>
+                            </div>
+                         </div>`;
+                html += '</div>';
+
                 html += '<div class="p-4 bg-amber-50 rounded-2xl border border-amber-100"><p class="text-[10px] font-bold text-amber-700 italic">Total de registros afectados: <span class="font-black">' + data.total_global + '</span></p></div>';
                 html += '</div>';
 
@@ -343,15 +413,21 @@ include('includes/navbar.php');
         if (data.registros.length === 0) {
             html += '<p class="p-8 text-center text-slate-400 italic font-bold uppercase tracking-widest">No se han detectado inconsistencias</p>';
         } else {
-            html += `<p class="text-xs font-bold text-slate-500 mb-4">${data.mensaje}</p>`;
-            html += '<div class="max-h-64 overflow-y-auto pr-2 space-y-2 custom-scrollbar">';
+            html += `<div class="flex justify-between items-center mb-4">
+                        <p class="text-xs font-bold text-slate-500">${data.mensaje}</p>
+                        ${tipo === 'archivos_musica_huerfanos' ? `<button onclick="borrarTodosHuerfanos()" class="px-3 py-1.5 bg-red-50 text-red-600 text-[9px] font-black uppercase tracking-widest rounded-lg border border-red-100 hover:bg-red-600 hover:text-white transition-all">Borrar Todos</button>` : ''}
+                     </div>`;
+            html += '<div class="max-h-96 overflow-y-auto pr-2 space-y-2 custom-scrollbar">';
             data.registros.forEach(r => {
-                html += `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                html += `<div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center group" id="huerfano-${r.id.replace('/', '-')}">
                             <div>
                                 <p class="text-[11px] font-black text-slate-700 uppercase leading-tight">${r.nombre}</p>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase italic">${r.detalle}</p>
                             </div>
-                            <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">ID: #${r.id}</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-1 rounded-lg">ID: #${r.id}</span>
+                                ${tipo === 'archivos_musica_huerfanos' ? `<button onclick="borrarHuerfano('${r.id}')" class="w-8 h-8 rounded-lg bg-white border border-slate-200 text-red-400 flex items-center justify-center hover:bg-red-50 hover:text-red-600 transition-all opacity-0 group-hover:opacity-100" title="Borrar Archivo"><i class="fas fa-trash-can text-xs"></i></button>` : ''}
+                            </div>
                          </div>`;
             });
             html += '</div>';
@@ -362,9 +438,69 @@ include('includes/navbar.php');
             title: data.titulo,
             html: html,
             icon: data.registros.length > 0 ? 'warning' : 'success',
-            confirmButtonText: 'Entendido',
+            confirmButtonText: 'Cerrar',
             confirmButtonColor: '#1e293b',
-            width: '600px'
+            width: '650px'
+        });
+    }
+
+    function borrarHuerfano(id) {
+        const formData = new FormData();
+        formData.append('action', 'borrar_archivo_huerfano');
+        formData.append('id', id);
+
+        const rowId = 'huerfano-' + id.replace('/', '-');
+        const row = document.getElementById(rowId);
+        if(row) row.style.opacity = '0.5';
+
+        fetch('mantenimiento_code.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                if(row) row.remove();
+                if(data.carpeta_borrada) {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: 'Archivo y carpeta eliminados',
+                        showConfirmButton: false,
+                        timer: 2000
+                    });
+                }
+            } else {
+                if(row) row.style.opacity = '1';
+                alert(data.message);
+            }
+        });
+    }
+
+    async function borrarTodosHuerfanos() {
+        const buttons = document.querySelectorAll('[onclick^="borrarHuerfano("]');
+        if (buttons.length === 0) return;
+
+        if(!confirm(`¿Estás seguro de que quieres borrar los ${buttons.length} archivos detectados?`)) return;
+
+        Swal.fire({
+            title: 'Limpieza masiva...',
+            html: 'Borrando archivos uno a uno...',
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        for (let btn of buttons) {
+            const id = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+            const formData = new FormData();
+            formData.append('action', 'borrar_archivo_huerfano');
+            formData.append('id', id);
+
+            await fetch('mantenimiento_code.php', { method: 'POST', body: formData });
+        }
+
+        Swal.fire('Completado', 'Se han procesado todos los archivos.', 'success').then(() => {
+            location.reload();
         });
     }
 

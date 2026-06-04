@@ -113,11 +113,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                    WHERE pj.id_panel_juez NOT IN (SELECT id FROM panel_jueces)
                    GROUP BY pj.id_panel_juez";
             $res2 = mysqli_query($connection, $q2);
-            while($r = mysqli_fetch_assoc($res2)) {
-                $registros[] = ['id' => $r['id_panel_juez'], 'nombre' => "Rutina #".$r['rut_id'], 'detalle' => $r['n']." notas huérfanas en ".$r['comp']];
+            while($r2 = mysqli_fetch_assoc($res2)) {
+                $registros[] = ['id' => $r2['id_panel_juez'], 'nombre' => "Rutina #".$r2['rut_id'], 'detalle' => $r2['n']." notas huérfanas en ".$r2['comp']];
             }
             break;
-    }
+
+            case 'archivos_musica_huerfanos':
+            $titulo = "Archivos de Música Huérfanos";
+            $mensaje = "Archivos MP3 detectados en el servidor que no pertenecen a ninguna rutina activa en su carpeta correspondiente:";
+            $path_base = './public/music/';
+            if (is_dir($path_base)) {
+                $items = scandir($path_base);
+                foreach ($items as $item) {
+                    if ($item === '.' || $item === '..') continue;
+                    $comp_path = $path_base . $item;
+                    if (is_dir($comp_path)) {
+                        $id_comp = $item;
+                        $comp_exists = false;
+                        $comp_name = "COMPETICIÓN NO ENCONTRADA";
+
+                        if (is_numeric($id_comp)) {
+                            $q_comp = "SELECT nombre FROM competiciones WHERE id = " . (int)$id_comp;
+                            $res_comp = mysqli_query($connection, $q_comp);
+                            if ($res_comp && mysqli_num_rows($res_comp) > 0) {
+                                $comp_exists = true;
+                                $comp_name = mysqli_fetch_assoc($res_comp)['nombre'];
+                            }
+                        }
+
+                        $files = scandir($comp_path);
+                        foreach ($files as $file) {
+                            if (pathinfo($file, PATHINFO_EXTENSION) === 'mp3') {
+                                $id_rutina = pathinfo($file, PATHINFO_FILENAME);
+                                $is_orphan = true;
+
+                                if (is_numeric($id_rutina) && $comp_exists) {
+                                    $q_rut = "SELECT id FROM rutinas WHERE id = " . (int)$id_rutina . " AND id_competicion = " . (int)$id_comp;
+                                    $res_rut = mysqli_query($connection, $q_rut);
+                                    if ($res_rut && mysqli_num_rows($res_rut) > 0) {
+                                        $is_orphan = false;
+                                    }
+                                }
+
+                                if ($is_orphan) {
+                                    $registros[] = [
+                                        'id' => $id_comp . '/' . $id_rutina,
+                                        'nombre' => "MP3: " . $file,
+                                        'detalle' => "Carpeta: " . $id_comp . " (" . $comp_name . ")"
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            break;
+            }
+
 
     echo json_encode([
         'status' => 'success',
@@ -146,30 +198,95 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     
     $conteo = [];
     $total_global = 0;
+    $db_space_bytes = 0;
 
-    $tablas = [
-        ['entidad' => 'Competiciones', 'sql' => "SELECT COUNT(*) FROM competiciones WHERE id IN ($id_list)"],
-        ['entidad' => 'Fases Técnicas', 'sql' => "SELECT COUNT(*) FROM fases WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Inscripciones (Figuras)', 'sql' => "SELECT COUNT(*) FROM inscripciones_figuras WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Rutinas / Equipos', 'sql' => "SELECT COUNT(*) FROM rutinas WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Paneles de Jueces', 'sql' => "SELECT COUNT(*) FROM paneles WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Vínculos de Jueces', 'sql' => "SELECT COUNT(*) FROM panel_jueces WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Participantes Rutinas', 'sql' => "SELECT COUNT(*) FROM rutinas_participantes WHERE id_competicion IN ($id_list)"],
-        ['entidad' => 'Notas de Jueces', 'sql' => "SELECT COUNT(*) FROM puntuaciones_jueces WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))"],
-        ['entidad' => 'Notas Elementos/TRE', 'sql' => "SELECT COUNT(*) FROM puntuaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"],
-        ['entidad' => 'Notas Paneles', 'sql' => "SELECT COUNT(*) FROM puntuaciones_paneles WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))"],
-        ['entidad' => 'Híbridos / Coach Cards', 'sql' => "SELECT COUNT(*) FROM hibridos_rutina WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"],
-        ['entidad' => 'Resultados & Stats', 'sql' => "SELECT (SELECT COUNT(*) FROM resultados_figuras WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM resultados_figuras_categorias WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM resultados_rutinas_categorias WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM auditoria_jueces_stats WHERE id_competicion IN ($id_list)) + (SELECT COUNT(*) FROM auditoria_jueces_puntos WHERE id_competicion IN ($id_list))"]
-    ];
-
-    foreach ($tablas as $t) {
-        $res = mysqli_query($connection, $t['sql']);
-        $count = mysqli_fetch_array($res)[0];
-        $conteo[] = ['entidad' => $t['entidad'], 'total' => (int)$count];
-        $total_global += $count;
+    // Obtener tamaños promedio de tablas para estimación
+    $table_stats = [];
+    $q_stats = "SELECT TABLE_NAME, AVG_ROW_LENGTH FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = DATABASE()";
+    $res_stats = mysqli_query($connection, $q_stats);
+    while($s = mysqli_fetch_assoc($res_stats)) {
+        $table_stats[$s['TABLE_NAME']] = (int)$s['AVG_ROW_LENGTH'];
     }
 
-    echo json_encode(['status' => 'success', 'conteo' => $conteo, 'total_global' => $total_global]);
+    $tablas_map = [
+        'competiciones' => "SELECT COUNT(*) FROM competiciones WHERE id IN ($id_list)",
+        'fases' => "SELECT COUNT(*) FROM fases WHERE id_competicion IN ($id_list)",
+        'inscripciones_figuras' => "SELECT COUNT(*) FROM inscripciones_figuras WHERE id_competicion IN ($id_list)",
+        'rutinas' => "SELECT COUNT(*) FROM rutinas WHERE id_competicion IN ($id_list)",
+        'paneles' => "SELECT COUNT(*) FROM paneles WHERE id_competicion IN ($id_list)",
+        'panel_jueces' => "SELECT COUNT(*) FROM panel_jueces WHERE id_competicion IN ($id_list)",
+        'rutinas_participantes' => "SELECT COUNT(*) FROM rutinas_participantes WHERE id_competicion IN ($id_list)",
+        'puntuaciones_jueces' => "SELECT COUNT(*) FROM puntuaciones_jueces WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+        'puntuaciones_elementos' => "SELECT COUNT(*) FROM puntuaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+        'puntuaciones_paneles' => "SELECT COUNT(*) FROM puntuaciones_paneles WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+        'hibridos_rutina' => "SELECT COUNT(*) FROM hibridos_rutina WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+        'resultados_figuras' => "SELECT COUNT(*) FROM resultados_figuras WHERE id_competicion IN ($id_list)",
+        'resultados_figuras_categorias' => "SELECT COUNT(*) FROM resultados_figuras_categorias WHERE id_competicion IN ($id_list)",
+        'resultados_rutinas_categorias' => "SELECT COUNT(*) FROM resultados_rutinas_categorias WHERE id_competicion IN ($id_list)",
+        'auditoria_jueces_stats' => "SELECT COUNT(*) FROM auditoria_jueces_stats WHERE id_competicion IN ($id_list)",
+        'auditoria_jueces_puntos' => "SELECT COUNT(*) FROM auditoria_jueces_puntos WHERE id_competicion IN ($id_list)",
+        'penalizaciones_rutinas' => "SELECT COUNT(*) FROM penalizaciones_rutinas WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list)) OR id_inscripcion_figuras IN (SELECT id FROM inscripciones_figuras WHERE id_competicion IN ($id_list))",
+        'penalizaciones_artistico' => "SELECT COUNT(*) FROM penalizaciones_artistico WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))",
+        'penalizaciones_elementos' => "SELECT COUNT(*) FROM penalizaciones_elementos WHERE id_rutina IN (SELECT id FROM rutinas WHERE id_competicion IN ($id_list))"
+    ];
+
+    foreach ($tablas_map as $table_name => $sql) {
+        $res = mysqli_query($connection, $sql);
+        $count = mysqli_fetch_array($res)[0];
+        $label = ucwords(str_replace('_', ' ', $table_name));
+        $conteo[] = ['entidad' => $label, 'total' => (int)$count];
+        $total_global += $count;
+        $db_space_bytes += ($count * ($table_stats[$table_name] ?? 100));
+    }
+
+    // Conteo de archivos físicos (Música y PDFs)
+    $total_mp3 = 0;
+    $total_pdf = 0;
+    $disk_space_bytes = 0;
+
+    foreach ($ids as $id_c) {
+        // Música
+        $dir_music = './public/music/' . (int)$id_c;
+        if (is_dir($dir_music)) {
+            $files_mp3 = array_diff(scandir($dir_music), array('.', '..'));
+            foreach ($files_mp3 as $f_mp3) {
+                $total_mp3++;
+                $disk_space_bytes += filesize($dir_music . '/' . $f_mp3);
+            }
+        }
+
+        // Documentos PDF en ./docs/
+        $dir_docs = './docs/';
+        if (is_dir($dir_docs)) {
+            $files_docs = scandir($dir_docs);
+            $prefix = (int)$id_c . '_';
+            foreach ($files_docs as $f_doc) {
+                if (strpos($f_doc, $prefix) === 0 && pathinfo($f_doc, PATHINFO_EXTENSION) === 'pdf') {
+                    $total_pdf++;
+                    $disk_space_bytes += filesize($dir_docs . $f_doc);
+                }
+            }
+        }
+    }
+    
+    $conteo[] = ['entidad' => 'Archivos Música (MP3)', 'total' => $total_mp3];
+    $conteo[] = ['entidad' => 'Documentos Generados (PDF)', 'total' => $total_pdf];
+
+    function formatBytes($bytes, $precision = 2) {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        return round($bytes / pow(1024, $pow), $precision) . ' ' . $units[$pow];
+    }
+
+    echo json_encode([
+        'status' => 'success', 
+        'conteo' => $conteo, 
+        'total_global' => $total_global,
+        'db_reclaimed' => formatBytes($db_space_bytes),
+        'disk_reclaimed' => formatBytes($disk_space_bytes)
+    ]);
     exit;
 }
 
@@ -182,6 +299,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     mysqli_begin_transaction($connection);
     try {
         $total_borrado = 0;
+
+        // 0. Borrar archivos físicos
+        foreach ($ids as $id_c) {
+            // A. Música
+            $dir_music = './public/music/' . (int)$id_c;
+            if (is_dir($dir_music)) {
+                $files = array_diff(scandir($dir_music), array('.', '..'));
+                foreach ($files as $f) {
+                    @unlink($dir_music . '/' . $f);
+                }
+                if (@rmdir($dir_music)) {
+                    write_log("LIMPIEZA CASCADA: Carpeta de música eliminada para competición #$id_c", "INFO");
+                }
+            }
+
+            // B. Documentos PDF (docs/)
+            $dir_docs = './docs/';
+            if (is_dir($dir_docs)) {
+                $files_docs = scandir($dir_docs);
+                $prefix = (int)$id_c . '_';
+                foreach ($files_docs as $f_doc) {
+                    if (strpos($f_doc, $prefix) === 0 && pathinfo($f_doc, PATHINFO_EXTENSION) === 'pdf') {
+                        if (@unlink($dir_docs . $f_doc)) {
+                            $total_borrado++; // Contamos PDFs borrados como registros afectados
+                        }
+                    }
+                }
+            }
+        }
 
         // 1. Borrar Notas y dependencias profundas (usando subqueries)
         $queries_dep = [
@@ -223,10 +369,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         write_log("LIMPIEZA EN CASCADA: Eliminadas competiciones [$id_list]. Total registros borrados: $total_borrado", "SECURITY");
         echo json_encode(['status' => 'success', 'total_borrado' => $total_borrado]);
 
-    } catch (Exception $e) {
+        } catch (Exception $e) {
         mysqli_rollback($connection);
         echo json_encode(['status' => 'error', 'message' => "Fallo en cascada: ".$e->getMessage()]);
-    }
-    exit;
-}
-?>
+        }
+        exit;
+        }
+
+        // Acción: Borrar archivo de música huérfano (y carpeta si queda vacía)
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'borrar_archivo_huerfano') {
+        $rel_path = $_POST['id']; // Recibimos algo como "52/710"
+        if (empty($rel_path) || strpos($rel_path, '..') !== false) {
+        echo json_encode(['status' => 'error', 'message' => 'Ruta no válida']);
+        exit;
+        }
+
+        $path_base = './public/music/';
+        $file_path = $path_base . $rel_path . '.mp3';
+        $dir_path  = dirname($file_path);
+
+        if (file_exists($file_path)) {
+        if (unlink($file_path)) {
+            write_log("ARCHIVO HUÉRFANO ELIMINADO: $file_path", "INFO");
+
+            // Si la carpeta está vacía o la competición no existe, intentamos borrarla
+            $parts = explode('/', $rel_path);
+            $id_comp = (int)$parts[0];
+
+            // Verificar si la competición existe
+            $q_check = "SELECT id FROM competiciones WHERE id = $id_comp";
+            $comp_exists = mysqli_num_rows(mysqli_query($connection, $q_check)) > 0;
+
+            // Escanear carpeta para ver si queda algo
+            $files_left = array_diff(scandir($dir_path), array('.', '..'));
+
+            $borrado_carpeta = false;
+            if (empty($files_left) || !$comp_exists) {
+                // Borrar todos los archivos si la competición no existe
+                if (!$comp_exists) {
+                    foreach ($files_left as $f) {
+                        @unlink($dir_path . '/' . $f);
+                    }
+                }
+
+                if (@rmdir($dir_path)) {
+                    write_log("CARPETA DE MÚSICA ELIMINADA (VACÍA O SIN COMPETICIÓN): $dir_path", "INFO");
+                    $borrado_carpeta = true;
+                }
+            }
+
+            echo json_encode([
+                'status' => 'success', 
+                'message' => 'Archivo eliminado correctamente',
+                'carpeta_borrada' => $borrado_carpeta
+            ]);
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'No se pudo eliminar el archivo físico']);
+        }
+        } else {
+        echo json_encode(['status' => 'error', 'message' => 'El archivo ya no existe']);
+        }
+        exit;
+        }
+        ?>
