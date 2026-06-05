@@ -279,4 +279,29 @@ if(isset($_POST['clone_panel_btn'])){
     exit();
 }
 
+// Vaciar panel en una fase (Borrar composición completa)
+if(isset($_POST['empty_panel_btn'])){
+    $id_panel = mysqli_real_escape_string($connection, $_POST['empty_id_panel']);
+    $id_fase = mysqli_real_escape_string($connection, $_POST['empty_id_fase']);
+
+    // Validar que no haya notas grabadas para este panel en esta fase
+    $q_check = "SELECT COUNT(*) as total FROM puntuaciones_jueces WHERE id_panel_juez IN (SELECT id FROM panel_jueces WHERE id_panel = '$id_panel' AND id_fase = '$id_fase')";
+    $count = mysqli_fetch_assoc(mysqli_query($connection, $q_check))['total'];
+
+    if($count > 0){
+        write_log("BLOQUEADO: Intento de vaciar panel (ID: $id_panel, Fase: $id_fase) con $count notas.", "SECURITY");
+        $_SESSION['estado'] = "⚠️ BLOQUEO: No se puede vaciar este panel porque ya tiene $count notas grabadas en esta fase.";
+    } else {
+        $query = "DELETE FROM panel_jueces WHERE id_panel = '$id_panel' AND id_fase = '$id_fase'";
+        if(mysqli_query($connection, $query)){
+            write_log("VACIADO: Panel Técnico ID $id_panel en Fase #$id_fase", "INFO");
+            $_SESSION['correcto'] = 'Panel vaciado correctamente.';
+        } else {
+            write_log("FALLO VACIAR: Panel ID $id_panel en Fase #$id_fase - Error: ".mysqli_error($connection), "ERROR");
+            $_SESSION['estado'] = 'Error al vaciar el panel.';
+        }
+    }
+    header('Location: paneles_jueces.php');
+    exit();
+}
 ?>

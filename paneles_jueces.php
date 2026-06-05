@@ -357,12 +357,12 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
 
             <?php
             if($_SESSION['figuras'] == 'si'){
-                $query = "SELECT fases.id as id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden 
+                $query = "SELECT fases.id as id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden, fases.obsoleto 
                           FROM fases, categorias, figuras 
                           WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$id_competicion." 
                           ORDER BY fases.orden, fases.id";
             } else {
-                $query = "SELECT fases.id as id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, fases.orden 
+                $query = "SELECT fases.id as id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, fases.orden, fases.obsoleto 
                           FROM fases, categorias, modalidades 
                           WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$id_competicion." 
                           ORDER BY orden, fases.id";
@@ -387,6 +387,11 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                                 <span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-black uppercase tracking-widest border border-slate-200">Fase ID: #<?php echo $id_fase; ?></span>
                                 <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm animate-pulse"></div>
                                 <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest italic">Panel Disponible</span>
+                                <?php if($row['obsoleto'] == 'si'): ?>
+                                    <span class="px-2 py-0.5 bg-slate-200 text-slate-500 rounded text-[9px] font-black uppercase tracking-widest border border-slate-300">OBSOLETO</span>
+                                <?php else: ?>
+                                    <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-[9px] font-black uppercase tracking-widest border border-blue-100">AQUA</span>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -397,9 +402,8 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <?php
-                    $cond_paneles = ($_SESSION['figuras'] == 'si' || (isset($row['elementos_coach_card']) && $row['elementos_coach_card'] > 0)) 
-                                    ? "obsoleto like 'no'" 
-                                    : "obsoleto like 'si' and puntua like 'si'";
+                    $obsoleto_fase = $row['obsoleto'] ?? 'no';
+                    $cond_paneles = "paneles.obsoleto = '$obsoleto_fase'";
 
                     $query_p = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles.color, paneles_tipo.nombre as panel_tipo 
                                 from paneles, paneles_tipo 
@@ -418,11 +422,18 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 italic"><?php echo $p['panel_tipo']; ?></p>
                                 </div>
                             </div>
-                            <button type="button" 
-                                    onclick="openCloneModal(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo $p['nombre']; ?>', '<?php echo $fase_label_origin; ?>')" 
-                                    class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm border border-slate-100 group/btn" title="Clonar Composición">
-                                <i class="fas fa-copy text-sm group-hover/btn:scale-110 transition-transform"></i>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button type="button" 
+                                        onclick="confirmEmptyPanel(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>')" 
+                                        class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-slate-100 group/btn" title="Vaciar Jueces de este Panel">
+                                    <i class="fas fa-eraser text-sm group-hover/btn:scale-110 transition-transform"></i>
+                                </button>
+                                <button type="button" 
+                                        onclick="openCloneModal(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>', '<?php echo addslashes($fase_label_origin); ?>')" 
+                                        class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm border border-slate-100 group/btn" title="Clonar Composición">
+                                    <i class="fas fa-copy text-sm group-hover/btn:scale-110 transition-transform"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="space-y-4 flex-1">
@@ -510,6 +521,13 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
     <input type="hidden" name="delete_btn_panel" value="1">
 </form>
 
+<!-- FORMULARIO OCULTO VACIAR PANEL -->
+<form id="emptyPanelForm" action="paneles_jueces_code.php" method="POST">
+    <input type="hidden" name="empty_id_panel" id="empty_id_panel_val">
+    <input type="hidden" name="empty_id_fase" id="empty_id_fase_val">
+    <input type="hidden" name="empty_panel_btn" value="1">
+</form>
+
 <!-- MODAL CLONAR PANEL -->
 <div id="cloneModal" class="hidden fixed inset-0 z-[100] overflow-y-auto">
     <div class="flex items-center justify-center min-h-screen p-4">
@@ -530,14 +548,20 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                 <input type="hidden" name="id_panel" id="clone_id_panel">
                 <input type="hidden" name="source_fase" id="clone_source_fase">
                 
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Selecciona las fases de destino:</p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selecciona las fases de destino:</p>
+                    <label class="flex items-center gap-2 cursor-pointer group">
+                        <input type="checkbox" id="selectAllFases" onchange="toggleAllFases(this)" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
+                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest group-hover:text-blue-800 transition-colors">Seleccionar Todo</span>
+                    </label>
+                </div>
                 
                 <div class="max-h-60 overflow-y-auto pr-2 space-y-2 mb-8 custom-scrollbar">
                     <?php foreach($todas_las_fases as $fase_dest): 
                         $fase_label = ($_SESSION['figuras'] == 'si') ? "#".$fase_dest['numero']." ".$fase_dest['fig'] : $fase_dest['modali'];
                     ?>
                         <label class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white transition-all cursor-pointer group phase-checkbox-item shadow-sm" data-id="<?php echo $fase_dest['id']; ?>">
-                            <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
+                            <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="target-fase-cb w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer" onchange="checkSelectAllStatus()">
                             <div class="flex-1">
                                 <p class="text-sm font-black text-slate-700 leading-none group-hover:text-blue-600 transition-colors uppercase italic tracking-tighter"><?php echo $fase_label; ?></p>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-widest"><?php echo $fase_dest['cat']; ?></p>
@@ -558,6 +582,25 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
 </div>
 
 <script>
+function confirmEmptyPanel(id_panel, id_fase, name) {
+    Swal.fire({
+        title: '¿Vaciar Panel?',
+        html: `Se desasignarán todos los jueces del panel <b>${name}</b> en esta fase.<br><small class='text-slate-400'>Si ya hay puntuaciones emitidas, la acción se bloqueará por seguridad.</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#94a3b8',
+        confirmButtonText: 'Sí, vaciar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('empty_id_panel_val').value = id_panel;
+            document.getElementById('empty_id_fase_val').value = id_fase;
+            document.getElementById('emptyPanelForm').submit();
+        }
+    });
+}
+
 function togglePanel(id) {
     const p = document.getElementById(id);
     p.classList.toggle('hidden');
@@ -598,6 +641,26 @@ function openCloneModal(id_panel, id_fase, panel_name, fase_name) {
     });
     
     toggleCloneModal();
+}
+
+function toggleAllFases(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.target-fase-cb');
+    checkboxes.forEach(cb => {
+        // Solo marcamos las que están visibles (no ocultas por ser la fase de origen)
+        const parentLabel = cb.closest('label');
+        if (!parentLabel.classList.contains('hidden')) {
+            cb.checked = masterCheckbox.checked;
+        }
+    });
+}
+
+function checkSelectAllStatus() {
+    const visibleCheckboxes = Array.from(document.querySelectorAll('.target-fase-cb')).filter(cb => {
+        return !cb.closest('label').classList.contains('hidden');
+    });
+    
+    const allChecked = visibleCheckboxes.length > 0 && visibleCheckboxes.every(cb => cb.checked);
+    document.getElementById('selectAllFases').checked = allChecked;
 }
 
 function saveFullPanel(btn) {
