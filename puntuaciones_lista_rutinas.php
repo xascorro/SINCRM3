@@ -69,7 +69,7 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                     </thead>
                     <tbody class="divide-y divide-slate-50">
                         <?php
-                        $query = "SELECT r.id, r.dd_total, r.orden, r.nombre as nombre_rutina, r.id_club, r.nota_final, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card 
+                        $query = "SELECT r.id, r.dd_total, r.orden, r.nombre as nombre_rutina, r.id_club, r.nota_final, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card, f.obsoleto 
                                   FROM rutinas r
                                   JOIN fases f ON r.id_fase = f.id
                                   JOIN modalidades m ON f.id_modalidad = m.id
@@ -90,8 +90,10 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                                 
                                 $isBaja = ($row['baja'] == 'si');
                                 $isPS = ($row['orden'] == -1);
+                                $isOldSystem = ($row['obsoleto'] == 'si');
                                 $rowClass = $isBaja ? "bg-red-50/30 opacity-75" : "hover:bg-slate-50 transition-colors";
                                 $orden_display = $isPS ? 'PS' : $row['orden'];
+                                $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
                         ?>
                         <tr class="<?php echo $rowClass; ?> group">
                             <td class="px-4 py-4 text-center font-black <?php echo $isBaja ? 'text-red-400' : 'text-slate-400'; ?> text-lg"><?php echo $orden_display; ?></td>
@@ -153,7 +155,7 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                                     <input type="hidden" name="nombre_rutina" value="<?php echo $row['nombre_rutina']; ?>">
                                     
                                     <button class="px-6 py-3 <?php echo $isBaja ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-100 hover:border-emerald-600 shadow-sm hover:shadow-emerald-500/30'; ?> font-black uppercase text-[10px] tracking-widest rounded-2xl transition-all flex items-center justify-center gap-2 ml-auto" type="submit" name="edit_btn" <?php echo $isBaja ? 'disabled' : ''; ?>>
-                                        <i class="fas fa-star"></i> Puntuar
+                                        <i class="fas <?php echo $icon_puntuar; ?>"></i> Puntuar
                                     </button>
                                 </form>
                             </td>

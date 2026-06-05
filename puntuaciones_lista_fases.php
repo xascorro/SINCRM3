@@ -6,6 +6,9 @@ include('includes/navbar.php');
 $id_comp = $_SESSION['id_competicion_usuario'];
 $is_figuras = ($_SESSION['competicion_figuras_usuario'] == 'si');
 
+// Preferencia de vista (Cookie)
+$vista_actual = $_COOKIE['pref_vista_fases'] ?? 'cards';
+
 // 1. Datos de Contexto y KPIs
 $q_comp = "SELECT nombre, lugar, fecha FROM competiciones WHERE id = '$id_comp'";
 $comp_info = mysqli_fetch_assoc(mysqli_query($connection, $q_comp));
@@ -48,6 +51,14 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                 <p class="text-slate-500 font-medium font-lexend max-w-xl truncate"><?php echo $comp_info['nombre']; ?> @ <span class="text-blue-600 font-bold"><?php echo $comp_info['lugar']; ?></span></p>
             </div>
             <div class="flex gap-3">
+                <div class="bg-white p-1.5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-1">
+                    <button onclick="setVista('cards')" id="btn-vista-cards" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $vista_actual == 'cards' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'; ?>">
+                        <i class="fas fa-th-large mr-2"></i> Tarjetas
+                    </button>
+                    <button onclick="setVista('list')" id="btn-vista-list" class="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all <?php echo $vista_actual == 'list' ? 'bg-slate-900 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'; ?>">
+                        <i class="fas fa-list mr-2"></i> Lista
+                    </button>
+                </div>
                 <button onclick="window.location.reload()" class="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition-all shadow-sm"><i class="fas fa-sync-alt"></i></button>
                 <a href="./informes/informe_puntuaciones_global.php?id_competicion=<?php echo $id_comp; ?>" target="_blank" class="px-6 py-3 bg-slate-800 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-slate-900 transition-all flex items-center gap-2"><i class="fas fa-print text-xs"></i> Global PDF</a>
             </div>
@@ -102,6 +113,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
         <?php include('includes/alertas_v4.php'); ?>
 
         <!-- LISTADO DE FASES (EL GUION) -->
+        <div id="view-container-cards" class="<?php echo $vista_actual == 'cards' ? '' : 'hidden'; ?>">
         <?php
         if($is_figuras) {
             // 1. Obtener las categorías únicas presentes en las fases de esta competición
@@ -134,8 +146,10 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                         while ($row = mysqli_fetch_assoc($res)):
                             $is_puntuada = ($row['puntuada'] == 'si');
                             $has_cc = ($row['elementos_coach_card'] > 0);
+                            $isOldSystem = ($row['obsoleto'] == 'si');
                             $color_status = $is_puntuada ? 'emerald' : 'blue';
                             $target_page = $has_cc ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
+                            $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
                         ?>
                         <div class="bg-white rounded-[2rem] p-7 shadow-sm border border-slate-200 border-t-[6px] border-t-<?php echo $color_status; ?>-500 relative flex flex-col group hover:shadow-xl transition-all">
                             <!-- Badge Superior -->
@@ -165,6 +179,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                     <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
                                     <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
                                     <button type="submit" name="edit_btn" class="w-full py-3.5 bg-<?php echo $color_status; ?>-600 text-white font-black uppercase text-xs tracking-widest rounded-xl shadow-lg shadow-<?php echo $color_status; ?>-500/10 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2">
+                                        <i class="fas <?php echo $icon_puntuar; ?>"></i>
                                         <?php echo $is_puntuada ? 'Revisar' : 'Puntuar'; ?>
                                     </button>
                                 </form>
@@ -201,7 +216,9 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                 $res = mysqli_query($connection, $query);
                 while ($row = mysqli_fetch_assoc($res)):
                     $is_puntuada = ($row['puntuada'] == 'si');
+                    $isOldSystem = ($row['obsoleto'] == 'si');
                     $color_status = $is_puntuada ? 'emerald' : 'blue';
+                    $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
                 ?>
                 <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-t-[8px] border-t-<?php echo $color_status; ?>-500 relative flex flex-col group hover:shadow-2xl transition-all animate-fade-in">
                     <!-- Badge Superior -->
@@ -230,7 +247,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                             <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
                             <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
                             <button type="submit" name="edit_btn" class="w-full py-4 bg-<?php echo $color_status; ?>-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-<?php echo $color_status; ?>-500/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3">
-                                <i class="fas <?php echo $is_puntuada ? 'fa-eye' : 'fa-pen-to-square'; ?>"></i>
+                                <i class="fas <?php echo $icon_puntuar; ?>"></i>
                                 <?php echo $is_puntuada ? 'Revisar' : 'Puntuar'; ?>
                             </button>
                         </form>
@@ -250,6 +267,98 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                 <?php endwhile; ?>
             </div>
         <?php } ?>
+        </div>
+
+        <!-- VISTA DE LISTA COMPACTA -->
+        <div id="view-container-list" class="<?php echo $vista_actual == 'list' ? '' : 'hidden'; ?>">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar pb-4">
+                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                        <thead>
+                            <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100">
+                                <th class="px-6 py-4 w-16 text-center">Orden</th>
+                                <th class="px-6 py-4">Fase / Categoría</th>
+                                <th class="px-6 py-4 text-center">Estado</th>
+                                <th class="px-6 py-4 text-center">Reglamento</th>
+                                <th class="px-6 py-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            <?php
+                            $query = "SELECT f.*, c.nombre as cat_nom, 
+                                      (CASE WHEN '$is_figuras' = 'si' THEN (SELECT nombre FROM figuras WHERE id = f.id_figura) ELSE (SELECT nombre FROM modalidades WHERE id = f.id_modalidad) END) as item_nom,
+                                      (CASE WHEN '$is_figuras' = 'si' THEN (SELECT numero FROM figuras WHERE id = f.id_figura) ELSE NULL END) as item_num
+                                      FROM fases f 
+                                      JOIN categorias c ON f.id_categoria = c.id 
+                                      WHERE f.id_competicion = '$id_comp' 
+                                      ORDER BY f.orden, f.id";
+                            $res = mysqli_query($connection, $query);
+                            while ($row = mysqli_fetch_assoc($res)):
+                                $is_puntuada = ($row['puntuada'] == 'si');
+                                $isOldSystem = ($row['obsoleto'] == 'si');
+                                $color_status = $is_puntuada ? 'emerald' : 'blue';
+                                $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
+                                
+                                if($is_figuras) {
+                                    $target_page = ($row['elementos_coach_card'] > 0) ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
+                                    $label = "Figura " . $row['item_num'] . " - " . $row['item_nom'];
+                                } else {
+                                    $target_page = "puntuaciones_lista_rutinas.php";
+                                    $label = $row['item_nom'];
+                                }
+                            ?>
+                            <tr class="hover:bg-slate-50 transition-colors group">
+                                <td class="px-6 py-5 text-center">
+                                    <span class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-700 shadow-inner group-hover:scale-110 transition-transform"><?php echo $row['orden']; ?></span>
+                                </td>
+                                <td class="px-6 py-5">
+                                    <p class="text-sm font-black text-slate-800 uppercase tracking-tighter leading-tight"><?php echo $label; ?></p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1"><?php echo $row['cat_nom']; ?></p>
+                                </td>
+                                <td class="px-6 py-5 text-center">
+                                    <?php if($is_puntuada): ?>
+                                        <span class="px-3 py-1.5 bg-emerald-50 text-emerald-600 text-[9px] font-black rounded-lg border border-emerald-100 uppercase tracking-widest">Cerrada</span>
+                                    <?php else: ?>
+                                        <span class="px-3 py-1.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-widest animate-pulse">Abierta</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-5 text-center">
+                                    <?php if($isOldSystem): ?>
+                                        <span class="px-3 py-1.5 bg-slate-100 text-slate-500 text-[9px] font-black rounded-lg border border-slate-200 uppercase tracking-widest">OBSOLETO</span>
+                                    <?php else: ?>
+                                        <span class="px-3 py-1.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-widest">AQUA</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td class="px-6 py-5 text-right">
+                                    <div class="flex items-center justify-end gap-3">
+                                        <form action="<?php echo $target_page; ?>" method="POST" target="_blank">
+                                            <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
+                                            <input type="hidden" name="id_categoria" value="<?php echo $row['id_categoria']; ?>">
+                                            <input type="hidden" name="elementos_coach_card" value="<?php echo $row['elementos_coach_card']; ?>">
+                                            <button type="submit" name="edit_btn" class="px-5 py-2.5 bg-<?php echo $color_status; ?>-600 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-lg shadow-<?php echo $color_status; ?>-500/10 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                                                <i class="fas <?php echo $icon_puntuar; ?>"></i> <?php echo $is_puntuada ? 'Revisar' : 'Puntuar'; ?>
+                                            </button>
+                                        </form>
+                                        
+                                        <a href="./informes/informe_puntuaciones.php?id_fase=<?php echo $row['id']; ?>&titulo=Clasificación Detallada" target="_blank" class="w-10 h-10 rounded-xl bg-white border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition-all shadow-sm" title="PDF Resultados">
+                                            <i class="fas fa-file-pdf text-xs"></i>
+                                        </a>
+
+                                        <form action="fases_edit.php" method="POST" target="_blank">
+                                            <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                            <button type="submit" class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 text-slate-300 flex items-center justify-center hover:text-blue-600 transition-all" title="Configuración">
+                                                <i class="fas fa-gear text-xs"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -269,3 +378,38 @@ function toggleAddFasePanel() {
 </script>
 
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>
+
+<script>
+function setVista(tipo) {
+    // Guardar en cookie (30 días)
+    const d = new Date();
+    d.setTime(d.getTime() + (30*24*60*60*1000));
+    document.cookie = "pref_vista_fases=" + tipo + ";expires=" + d.toUTCString() + ";path=/";
+
+    // Cambiar contenedores
+    const contCards = document.getElementById('view-container-cards');
+    const contList = document.getElementById('view-container-list');
+    const btnCards = document.getElementById('btn-vista-cards');
+    const btnList = document.getElementById('btn-vista-list');
+
+    if(tipo === 'cards') {
+        contCards.classList.remove('hidden');
+        contList.classList.add('hidden');
+        
+        btnCards.classList.add('bg-slate-900', 'text-white', 'shadow-lg');
+        btnCards.classList.remove('text-slate-400', 'hover:bg-slate-50');
+        
+        btnList.classList.remove('bg-slate-900', 'text-white', 'shadow-lg');
+        btnList.classList.add('text-slate-400', 'hover:bg-slate-50');
+    } else {
+        contCards.classList.add('hidden');
+        contList.classList.remove('hidden');
+        
+        btnList.classList.add('bg-slate-900', 'text-white', 'shadow-lg');
+        btnList.classList.remove('text-slate-400', 'hover:bg-slate-50');
+        
+        btnCards.classList.remove('bg-slate-900', 'text-white', 'shadow-lg');
+        btnCards.classList.add('text-slate-400', 'hover:bg-slate-50');
+    }
+}
+</script>
