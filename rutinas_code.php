@@ -139,6 +139,35 @@ function stripAccents($str) {
 	}
 }
 
+// Borrar música de rutina
+if(isset($_POST['delete_music']) && isset($_POST['del_music_id'])){
+    $id_rutina = (int)$_POST['del_music_id'];
+    $id_competicion = (int)$_POST['del_music_comp'];
+    
+    // Primero, limpiar base de datos
+    $query = "UPDATE rutinas SET music_name = NULL, music_original_name = NULL WHERE id = $id_rutina AND id_competicion = $id_competicion";
+    if(mysqli_query($connection, $query)){
+        // Luego, intentar borrar el archivo físico
+        $file_path = './public/music/' . $id_competicion . '/' . $id_rutina . '.mp3';
+        if(file_exists($file_path)) {
+            if(unlink($file_path)){
+                write_log("Música eliminada con éxito (Físico y DB): $file_path", "INFO");
+                $_SESSION['correcto'] = 'Archivo de audio eliminado correctamente.';
+            } else {
+                write_log("No se pudo eliminar el archivo físico: $file_path", "ERROR");
+                $_SESSION['estado'] = 'Audio desenlazado, pero no se pudo borrar el archivo físico.';
+            }
+        } else {
+            write_log("Se borró la referencia en DB, pero el archivo físico no existía: $file_path", "WARNING");
+            $_SESSION['correcto'] = 'Acompañamiento musical eliminado.';
+        }
+    } else {
+        $_SESSION['estado'] = 'Error al desenlazar el audio de la base de datos: ' . mysqli_error($connection);
+    }
+    header('Location: rutinas.php');
+    exit();
+}
+
 //Dar de baja/alta rutina
 if(isset($_GET['dar_baja'])){
 	$dar_baja = $_GET['dar_baja'];

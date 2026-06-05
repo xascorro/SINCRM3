@@ -376,7 +376,19 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         
         <div class="p-8">
             <div id="playerSection" class="mb-8 hidden">
-                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-6 flex flex-col items-center text-center">
+                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-100 mb-6 flex flex-col items-center text-center relative">
+                    <!-- Formulario para borrar música -->
+                    <?php if($enable_musica == ''): ?>
+                    <form action="rutinas_code.php" method="POST" class="absolute top-4 right-4" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este archivo de audio? Esta acción no se puede deshacer.');">
+                        <input type="hidden" name="delete_music" value="1">
+                        <input type="hidden" name="del_music_id" id="del_music_id">
+                        <input type="hidden" name="del_music_comp" value="<?php echo $id_competicion; ?>">
+                        <button type="submit" class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center border border-red-100 shadow-sm" title="Eliminar Audio">
+                            <i class="fas fa-trash-alt text-xs"></i>
+                        </button>
+                    </form>
+                    <?php endif; ?>
+                    
                     <div class="w-24 h-24 rounded-2xl bg-white shadow-sm border border-slate-100 p-3 mb-6 overflow-hidden">
                         <img id="playerLogo" src="./images/default_club.png" class="w-full h-full object-contain">
                     </div>
@@ -458,6 +470,9 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         document.getElementById('playerRoutine').textContent = routine;
         document.getElementById('playerClub').textContent = club;
         document.getElementById('playerLogo').src = logoUrl || './images/default_club.png';
+        
+        const delBtn = document.getElementById('del_music_id');
+        if(delBtn) delBtn.value = id;
         
         const audio = document.getElementById('audioElement');
         const playerSec = document.getElementById('playerSection');
