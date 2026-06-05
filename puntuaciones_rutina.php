@@ -328,15 +328,6 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                     </div>
                 </div>
 
-            <?php else: ?>
-                <!-- ========================================== -->
-                <!-- SISTEMA OBSOLETO (ANTIGUO)                 -->
-                <!-- ========================================== -->
-                <div class="bg-amber-50 rounded-[2.5rem] p-8 border border-amber-200 mb-8 flex flex-col items-center justify-center text-center">
-                    <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-2xl mb-4 shadow-sm"><i class="fas fa-clock-rotate-left"></i></div>
-                    <h2 class="text-2xl font-black text-slate-800 tracking-tighter uppercase italic mb-2">Sistema Antiguo Activado</h2>
-                    <p class="text-sm font-bold text-slate-500 max-w-2xl">La interfaz de puntuación específica para el sistema de reglamento antiguo está disponible en el modelo clásico. Para procesar notas bajo este reglamento, revisa los paneles asignados en la configuración de la competición.</p>
-                </div>
             <?php endif; ?>
 
             <!-- ========================================== -->

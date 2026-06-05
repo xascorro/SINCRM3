@@ -145,7 +145,10 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                             </td>
 
                             <td class="px-4 py-4 text-right">
-                                <form target="_blank" action="puntuaciones_rutina.php" method="POST">
+                                <?php 
+                                $action_page = $isOldSystem ? 'puntuaciones_rutina_obsoleta.php' : 'puntuaciones_rutina.php';
+                                ?>
+                                <form target="_blank" action="<?php echo $action_page; ?>" method="POST">
                                     <input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
                                     <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
                                     <input type="hidden" name="id_club" value="<?php echo $row['id_club']; ?>">
