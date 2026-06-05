@@ -99,25 +99,32 @@ if(isset($_POST['delete_btn'])){
 
 //Subir o actualizar musica
 if(isset($_POST['upload_music'])){
-	$id = $_POST['edit_id'];
-	$id_club = $_POST['club'];
-	$music_name = $_POST['music_name'];
+	$id = (int)$_POST['edit_id'];
+	$music_name = mysqli_real_escape_string($connection, $_POST['music_name']);
 	if(isset($_POST['id_competicion']))
-		  $id_competicion = $_POST['id_competicion'];
+		  $id_competicion = (int)$_POST['id_competicion'];
 	else
-		  $id_competicion = $_SESSION['id_competicion_activa'];
-function stripAccents($str) {
-    $search  = array('À','Á','Â','Ã','Ä','Å','Ç','È','É','Ê','Ë','Ì','Í','Î','Ï','Ò','Ó','Ô','Õ','Ö','Ù','Ú','Û','Ü','Ý','à','á','â','ã','ä','å','ç','è','é','ê','ë','ì','í','î','ï','ð','ò','ó','ô','õ','ö','ù','ú','û','ü','ý','ÿ');
-    $replace = array('A','A','A','A','A','A','C','E','E','E','E','I','I','I','I','O','O','O','O','O','U','U','U','U','Y','a','a','a','a','a','a','c','e','e','e','e','i','i','i','i','o','o','o','o','o','o','u','u','u','u','y','y');
-    return str_replace($search, $replace, $str);
-}
-	$query = "UPDATE rutinas SET music_name='$music_name', music_original_name='".stripAccents($_FILES['musica']['name'])."' WHERE id='$id'";
-	$query_run = mysqli_query($connection,$query);
-	if(mysqli_error($connection) == ''){
-		$_SESSION['correcto'] = 'Acompañamiento músical añadido';
-	}else{
-		$_SESSION['estado'] = 'Error, la música no se ha actualizado <br>'.mysqli_error($connection);
-	}
+		  $id_competicion = (int)$_SESSION['id_competicion_activa'];
+
+    function sanitizeFileName($str) {
+        // Intentar convertir a ASCII (quita tildes y caracteres raros)
+        $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+        // Quitar caracteres no permitidos en sistemas de archivos
+        $str = preg_replace('/[^a-zA-Z0-9\._\- ]/', '', $str);
+        return trim($str);
+    }
+
+    $original_name = mysqli_real_escape_string($connection, sanitizeFileName($_FILES['musica']['name']));
+
+    try {
+        $query = "UPDATE rutinas SET music_name='$music_name', music_original_name='$original_name' WHERE id='$id'";
+        $query_run = mysqli_query($connection, $query);
+        $_SESSION['correcto'] = 'Acompañamiento músical añadido';
+    } catch (Exception $e) {
+        write_log("Error DB al subir música: " . $e->getMessage(), "ERROR");
+        $_SESSION['estado'] = 'Error, la música no se ha podido registrar en la base de datos.';
+    }
+
 	if(isset($_FILES["musica"]) && $_FILES["musica"]["tmp_name"] != ''){
 		$path = './public/music/'.$id_competicion.'/';
 		if (!is_dir($path)) {
