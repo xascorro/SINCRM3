@@ -414,20 +414,22 @@ $meses_es = [
                                 </div>
                             </div>
 
-                            <!-- Plazos y Botones -->
                             <div class="flex flex-col sm:flex-row items-center gap-6">
                                 <?php
                                 $fecha_inicio_inscripcion = date("Y-m-d", strtotime("-".$row['dias_inicio_inscripcion']." days", strtotime($row['fecha'])));
                                 $fecha_fin_inscripcion = date("Y-m-d", strtotime("-".($row['dias_fin_inscripcion'])." days", strtotime($row['fecha'])));
+                                // Ajuste para mostrar el último día real
+                                $fecha_fin_inscripcion_visible = date("Y-m-d", strtotime("-1 day", strtotime($fecha_fin_inscripcion)));
+
                                 $fecha_sorteo = date("Y-m-d", strtotime("-".$row['dias_sorteo']." days", strtotime($row['fecha'])));
                                 $hoy = date("Y-m-d");
                                 $enlace_inscripcion = ($row['figuras'] == 'si') ? "./inscripciones_figuras.php" : "./rutinas.php";
 
-                                if($hoy >= $fecha_inicio_inscripcion && $hoy < $fecha_fin_inscripcion): ?>
+                                if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
                                     <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto text-center">
                                         <div class="mb-4 flex flex-col items-center gap-2">
                                             <span class="text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-5 py-2 rounded-full border border-emerald-100 shadow-sm animate-pulse italic">Inscripciones Abiertas</span>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Cierre: <?php echo dateAFecha($fecha_fin_inscripcion); ?></p>
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                         <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
@@ -444,7 +446,7 @@ $meses_es = [
                                     <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto text-center">
                                         <div class="mb-4 flex flex-col items-center gap-2">
                                             <span class="text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-5 py-2 rounded-full border border-red-100 shadow-sm italic">Inscripciones Cerradas</span>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Fecha Límite: <?php echo dateAFecha($fecha_fin_inscripcion); ?></p>
+                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                         <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
@@ -454,7 +456,6 @@ $meses_es = [
                                         </button>
                                     </form>
                                 <?php endif; ?>
-
                                 <!-- Plazos Técnicos (Música y Coach Card) -->
                                 <?php 
                                     $id_c_row = $row['id'];

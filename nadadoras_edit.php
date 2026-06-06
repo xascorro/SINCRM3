@@ -31,11 +31,26 @@ include('includes/navbar.php');
         <?php
         if(isset($_POST['edit_btn'])):
             $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+            
+            // Seguridad: Si es Rol Club (5), verificar que la nadadora le pertenece
+            if ($_SESSION['id_rol'] == 5) {
+                $q_permiso = "SELECT club FROM nadadoras WHERE id = '$id'";
+                $res_permiso = mysqli_query($connection, $q_permiso);
+                $row_permiso = mysqli_fetch_assoc($res_permiso);
+                if (!$row_permiso || $row_permiso['club'] != $_SESSION['club']) {
+                    write_log("Intento de acceso no autorizado a Ficha Deportista ID $id por usuario " . $_SESSION['username'], "SECURITY");
+                    $_SESSION['estado'] = 'Acceso denegado. No tienes permisos para editar esta deportista.';
+                    echo "<script>window.location.href = 'nadadoras.php';</script>";
+                    exit();
+                }
+            }
+
             $query = "SELECT * FROM nadadoras WHERE id = '$id'";
             $query_run = mysqli_query($connection, $query);
             foreach ($query_run as $row):
         ?>
             <form action="nadadoras_code.php" method="POST" class="animate-fade-in space-y-8">
+                <input type="hidden" name="edit_id" value="<?php echo $row['id']?>">
                 <input type="hidden" name="id_nadadora" value="<?php echo $row['id']?>">
 
                 <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[6px] border-t-blue-600 relative overflow-hidden">
@@ -88,12 +103,18 @@ include('includes/navbar.php');
                             <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Club de Pertenencia</label>
                             <div class="relative">
                                 <?php 
-                                $id_club_actual = $row['club'];
-                                ob_start();
-                                include('./includes/club_select_option.php');
-                                echo str_replace('class="form-control"', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 appearance-none text-sm font-bold text-slate-700"', ob_get_clean());
+                                if ($_SESSION['id_rol'] == 5):
+                                    // Club usuario está bloqueado para su propio club
+                                    echo "<input type='hidden' name='club' value='".$_SESSION['club']."'>";
+                                    echo "<div class='w-full px-5 py-4 rounded-2xl bg-slate-100 border border-slate-200 text-sm font-bold text-slate-500 shadow-inner flex items-center gap-2'><i class='fas fa-lock opacity-50'></i> ".$_SESSION['nombre_club']."</div>";
+                                else:
+                                    $id_club_actual = $row['club'];
+                                    ob_start();
+                                    include('./includes/club_select_option.php');
+                                    echo str_replace('class="form-control"', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 appearance-none text-sm font-bold text-slate-700"', ob_get_clean());
+                                    echo "<div class='absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300'><i class='fas fa-chevron-down text-xs'></i></div>";
+                                endif;
                                 ?>
-                                <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300"><i class="fas fa-chevron-down text-xs"></i></div>
                             </div>
                         </div>
                     </div>
