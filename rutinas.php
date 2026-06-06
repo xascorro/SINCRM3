@@ -35,18 +35,22 @@ $query_fechas = 'SELECT date_add(fecha, interval -dias_musica day) as fecha_musi
 $res_fechas = mysqli_query($connection, $query_fechas);
 $fechas = ($res_fechas) ? mysqli_fetch_assoc($res_fechas) : [];
 
-$fecha_musica = $fechas['fecha_musica'] ?? '';
-$enable_musica = (date('Y-m-d') >= $fecha_musica && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
+$fecha_musica_raw = $fechas['fecha_musica'] ?? '';
+// Restamos 1 día para mostrar el último día real de plazo
+$fecha_musica = !empty($fecha_musica_raw) ? date('Y-m-d', strtotime('-1 day', strtotime($fecha_musica_raw))) : '';
+$enable_musica = (date('Y-m-d') > $fecha_musica && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
 
 if($figuras == 'si') {
-    $fecha_coach_card = $fechas['fecha_fin_inscripcion'] ?? '';
+    $fecha_coach_card_raw = $fechas['fecha_fin_inscripcion'] ?? '';
 } else {
-    $fecha_coach_card = $fechas['fecha_coach_card'] ?? '';
+    $fecha_coach_card_raw = $fechas['fecha_coach_card'] ?? '';
 }
-$enable_coach_card = (date('Y-m-d') >= $fecha_coach_card && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
+$fecha_coach_card = !empty($fecha_coach_card_raw) ? date('Y-m-d', strtotime('-1 day', strtotime($fecha_coach_card_raw))) : '';
+$enable_coach_card = (date('Y-m-d') > $fecha_coach_card && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
 
-$fecha_fin_inscripcion = $fechas['fecha_fin_inscripcion'] ?? '';
-$enable_inscripcion = (date('Y-m-d') >= $fecha_fin_inscripcion && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
+$fecha_fin_inscripcion_raw = $fechas['fecha_fin_inscripcion'] ?? '';
+$fecha_fin_inscripcion = !empty($fecha_fin_inscripcion_raw) ? date('Y-m-d', strtotime('-1 day', strtotime($fecha_fin_inscripcion_raw))) : '';
+$enable_inscripcion = (date('Y-m-d') > $fecha_fin_inscripcion && $_SESSION['id_rol'] != 1) ? 'disabled' : '';
 
 // Condición por club
 $condicion_club = '';
@@ -127,20 +131,20 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         <div class="grid grid-cols-1 md:grid-cols-3 lg:<?php echo $has_coach_cards ? 'grid-cols-5' : 'grid-cols-3'; ?> gap-6 mb-12">
             <!-- Plazo Inscripción -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_inscripcion == 'disabled') ? 'border-l-red-500' : 'border-l-blue-500'; ?> group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Cierre Inscripción</p>
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Inscripción</p>
                 <h3 class="text-xl font-black <?php echo ($enable_inscripcion == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_fin_inscripcion); ?></h3>
                 <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_inscripcion == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
             </div>
             <!-- Plazo Música -->
             <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_musica == 'disabled') ? 'border-l-red-500' : 'border-l-indigo-500'; ?> group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Límite Música</p>
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Música</p>
                 <h3 class="text-xl font-black <?php echo ($enable_musica == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_musica); ?></h3>
                 <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_musica == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
             </div>
             <!-- Plazo Coach Card -->
             <?php if($has_coach_cards): ?>
                 <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_coach_card == 'disabled') ? 'border-l-red-500' : 'border-l-amber-500'; ?> group hover:shadow-lg transition-all">
-                    <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Límite Coach Card</p>
+                    <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Coach Card</p>
                     <h3 class="text-xl font-black <?php echo ($enable_coach_card == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_coach_card); ?></h3>
                     <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_coach_card == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
                 </div>

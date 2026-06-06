@@ -320,24 +320,24 @@ $meses_es = [
 
                 <!-- 3. Plazos de Inscripción -->
                 <?php
-                $q_insc = "SELECT id, nombre, fecha, dias_fin_inscripcion FROM competiciones WHERE DATE_SUB(fecha, INTERVAL dias_fin_inscripcion DAY) <= CURDATE() AND DATE_SUB(fecha, INTERVAL dias_fin_inscripcion DAY) >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) AND fecha >= CURDATE()";
+                $q_insc = "SELECT id, nombre, fecha, dias_fin_inscripcion FROM competiciones WHERE DATE_SUB(fecha, INTERVAL (dias_fin_inscripcion - 1) DAY) <= CURDATE() AND DATE_SUB(fecha, INTERVAL dias_fin_inscripcion DAY) >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) AND fecha >= CURDATE()";
                 $res_insc = mysqli_query($connection, $q_insc);
                 while($i = mysqli_fetch_assoc($res_insc)):
                     $tipo = 'INSCRIPCION_CIERRE_'.$i['id'];
                     if(!in_array($tipo, $silenciados)):
-                        $fecha_fin_insc = date("Y-m-d", strtotime("-".$i['dias_fin_inscripcion']." days", strtotime($i['fecha'])));
+                        $fecha_fin_insc = date("Y-m-d", strtotime("-".($i['dias_fin_inscripcion'] - 1)." days", strtotime($i['fecha'])));
                 ?>
                 <div class="relative group">
                     <div class="bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-blue-500 shadow-sm hover:shadow-md transition-all group">
                         <div class="flex justify-between items-start mb-4">
                             <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-all"><i class="fas fa-file-export text-xl"></i></div>
                             <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Cierre: <?php echo date("d-m", strtotime($fecha_fin_insc)); ?></span>
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Plazo: <?php echo date("d-m", strtotime($fecha_fin_insc)); ?></span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
                         <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Enviar Preinscripciones</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> ha terminado. Es necesario enviar la documentación oficial.</p>
+                        <p class="text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> termina hoy. Es necesario enviar la documentación oficial.</p>
                     </div>
                 </div>
                 <?php endif; endwhile; ?>
