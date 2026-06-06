@@ -200,6 +200,7 @@ if(isset($_POST['login_btn'])){
 					'index.php',
 					'security.php',
 					'nadadoras.php',
+					'nadadoras_code.php',
 					'inscripciones_figuras.php',
 					'inscripciones_figuras_code.php',
 					'coach_card_composer.php',
