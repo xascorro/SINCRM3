@@ -73,5 +73,34 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **TRE (Técnico)**: Ajuste del sistema de cálculo de puntuación implementado. **PENDIENTE DE REVISIÓN MANUAL POR EL USUARIO** para validar la normalización de notas basada en el sumatorio de DDs en Junior/Senior.
 
 
+## 🗺️ Roadmap & TODO List (Propuestas de Mejora)
+
+### 1. Comunicación y Automatización
+- [ ] **Notificaciones Push/Bot**: Implementar avisos automáticos a jueces y clubes (Telegram/Email) sobre estados de competición.
+- [ ] **Confirmación de Carga**: Envío de emails automáticos tras subida exitosa de música o cierre de inscripciones.
+
+### 2. Visibilidad y Espectadores
+- [ ] **Live Scoreboard**: Página pública ligera para seguimiento de notas en tiempo real por el público.
+- [ ] **Overlays para Streaming**: Generador de capas visuales para integración en OBS (fondo croma).
+
+### 3. Profundización Técnica (AQUA)
+- [ ] **OCR Coach Cards**: Importador automático de elementos y DD desde PDFs oficiales de World Aquatics.
+- [ ] **Panel Táctil de Sincro**: Interfaz específica para controladores de sincronización en tablet.
+
+### 4. Oficialidad y Gestión
+- [ ] **Firma Digital**: Implementar firma electrónica en actas finales para validez oficial inmediata.
+- [ ] **Auto-Diplomas**: Generador masivo de diplomas de participación y podio por competición.
+
+### 5. Análisis de Datos
+- [ ] **Panel de Evolución**: Gráficos históricos de rendimiento por deportista a lo largo de las temporadas.
+- [ ] **Benchmarking de Clubes**: Análisis comparativo de fortalezas técnicas entre clubes.
+
+### 6. Continuidad Estética (Migración v4 Tailwind)
+- [ ] **Puntuaciones Figuras**: Rediseñar `puntuaciones_lista_figuras.php` y sus subpáginas al estilo v4.
+- [ ] **Wizard de Competición**: Crear un flujo guiado para la configuración inicial de eventos y fases.
+- [ ] **Dashboard de Club**: Refinar la vista de "Mi Equipo" con más analíticas de plantilla.
+
+---
+
 ## 📌 Nota de Sesión
 Esta sesión concluye tras la modernización total del flujo de acceso y el Dashboard principal. Se ha garantizado la compatibilidad de Tailwind con el motor de Bootstrap original desactivando el Preflight.
