@@ -166,69 +166,32 @@ if(isset($_POST['login_btn'])){
             if($_SESSION['id_rol'] == 5) $log_msg .= " - Club: " . ($_SESSION['nombre_club'] ?? 'N/A');
             write_log($log_msg, "SUCCESS");
 
-			//admin
-			if($_SESSION['id_rol'] == '1'){
-				$_SESSION['startPage'] = 'index.php';
+			// Lógica de permisos dinámicos (Nueva versión consolidada)
+            $_SESSION['startPage'] = 'index.php';
+            if($_SESSION['id_rol'] == '1'){
 				$_SESSION['paginas_permitidas'] = '*';
-                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage']);
-			//juez
-			}elseif($_SESSION['id_rol'] == '4'){
-				$_SESSION['startPage'] = 'index.php';
-				$_SESSION['paginas_permitidas'] = array(
-					'login.php',
-					'login_code.php',
-					'index.php',
-					'security.php',
-					'perfil.php',
-					'perfil_code.php',
-					'log_usuario.php',
-                    'ranking_jueces.php',
-                    'perfil_juez.php',
-                    'mi_auditoria.php',
-                    'analisis_jueces.php',
-                    'analisis_juez_detalle.php'
-				);
-                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage']);
-			//club
-			}elseif($_SESSION['id_rol'] == '5'){
-				$_SESSION['startPage'] = 'index.php';
-				$_SESSION['club'] = $usuario['club'];
-				//paginas con acceso para el rol club
-				$_SESSION['paginas_permitidas'] = array(
-					'login.php',
-					'login_code.php',
-					'index.php',
-					'security.php',
-					'nadadoras.php',
-					'nadadoras_code.php',
-					'nadadoras_edit.php',
-					'inscripciones_figuras.php',
-					'inscripciones_figuras_code.php',
-					'coach_card_composer.php',
-					'coach_card_composer_elemento_edit.php',
-					'coach_card_composer_code.php',
-					'dificultad_hibridos_select_option.php',
-					'rutinas.php',
-					'rutinas_code.php',
-					'rutinas_edit.php',
-					'rutinas_participantes.php',
-					'rutinas_participantes_code.php',
-					'inscripciones_rutinas_participantes_code.php',
-					'informe_figuras.php',
-					'perfil.php',
-					'perfil_code.php',
-					'mi_equipo.php',
-					'download_music.php',
-					'descargar_fase.php',
-					'log_usuario.php'
-					);
-				//redirecciono a su pagina inicial pasándole el logo
-                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $club_logo);
+			} else {
+                $rol_id = $_SESSION['id_rol'];
+                if ($rol_id == 5) $_SESSION['club'] = $usuario['club'];
 
-			}else if($_SESSION['id_rol'] == '6'){
+                $q_perms = "SELECT p.archivo FROM permisos_roles pr JOIN paginas_sistema p ON pr.id_pagina = p.id WHERE pr.id_rol = '$rol_id'";
+                $res_perms = mysqli_query($connection, $q_perms);
+                $permitidas = [];
+                while($p_row = mysqli_fetch_assoc($res_perms)) {
+                    $permitidas[] = $p_row['archivo'];
+                }
+                
+                // Asegurar páginas básicas siempre permitidas
+                $core_pages = ['login.php', 'login_code.php', 'index.php', 'security.php', 'perfil.php', 'perfil_code.php'];
+                $_SESSION['paginas_permitidas'] = array_unique(array_merge($permitidas, $core_pages));
+			}
+
+            if($_SESSION['id_rol'] == '6'){
                 write_log("Intento de acceso: Usuario invitado no aprobado ($login_email)", "SECURITY");
                 sendResponse('error', "Estas registrado como Invitado, debes de esperar a que el administrador aprueba tu registro.");
-			}
+            } else {
+                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $club_logo ?? null);
+            }
 		}else {
             write_log("Fallo de autenticación: Contraseña incorrecta para el email $login_email", "SECURITY");
             sendResponse('error', "La contraseña no coincide");
