@@ -6,7 +6,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
     $current_page = basename($_SERVER['PHP_SELF']);
     
     // Agrupación de páginas para estados activos
-    $group_users = ['usuarios.php', 'roles.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
+    $group_users = ['usuarios.php', 'roles.php', 'paginas.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
     $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'jueces.php', 'figuras.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'competiciones_edit.php'];
     $group_operativa = ['fases.php', 'paneles_jueces.php', 'rutinas.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
@@ -149,6 +149,9 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                     </a>
                     <a href="roles.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'roles.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
                         <i class="fas fa-user-lock w-4 text-center"></i> Roles
+                    </a>
+                    <a href="paginas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'paginas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
+                        <i class="fas fa-file-shield w-4 text-center"></i> Catálogo
                     </a>
                 </div>
             </div>
