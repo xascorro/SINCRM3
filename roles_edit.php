@@ -59,6 +59,64 @@ include('includes/navbar.php');
                         </p>
                     </div>
 
+                    <?php if($row['id'] != 1): // Los permisos del admin no se editan, son '*' ?>
+                    <!-- GESTIÓN DE PERMISOS DINÁMICOS -->
+                    <div class="mt-12 pt-12 border-t border-slate-100">
+                        <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-shield-halved text-blue-600"></i> Permisos del Sistema</h2>
+                        
+                        <div class="space-y-10">
+                            <?php
+                            // Obtener permisos actuales del rol
+                            $permisos_actuales = [];
+                            $q_curr = "SELECT id_pagina FROM permisos_roles WHERE id_rol = '".$row['id']."'";
+                            $res_curr = mysqli_query($connection, $q_curr);
+                            while($pc = mysqli_fetch_assoc($res_curr)) $permisos_actuales[] = $pc['id_pagina'];
+
+                            // Obtener todas las páginas agrupadas
+                            $q_groups = "SELECT DISTINCT grupo FROM paginas_sistema ORDER BY grupo ASC";
+                            $res_groups = mysqli_query($connection, $q_groups);
+                            
+                            while($g = mysqli_fetch_assoc($res_groups)):
+                                $grupo = $g['grupo'];
+                            ?>
+                            <div>
+                                <div class="flex items-center justify-between mb-4 px-2">
+                                    <h3 class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em]"><?php echo $grupo; ?></h3>
+                                    <button type="button" onclick="toggleGroup('<?php echo md5($grupo); ?>')" class="text-[9px] font-bold text-blue-500 hover:text-blue-700 uppercase tracking-widest transition-colors">Seleccionar Todo</button>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    <?php
+                                    $q_pages = "SELECT * FROM paginas_sistema WHERE grupo = '$grupo' ORDER BY nombre ASC";
+                                    $res_pages = mysqli_query($connection, $q_pages);
+                                    while($p = mysqli_fetch_assoc($res_pages)):
+                                        $checked = in_array($p['id'], $permisos_actuales) ? 'checked' : '';
+                                    ?>
+                                    <label class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-300 hover:bg-white transition-all cursor-pointer group/item">
+                                        <div class="flex-1 pr-4">
+                                            <p class="text-xs font-black text-slate-700 leading-tight uppercase tracking-tighter"><?php echo $p['nombre']; ?></p>
+                                            <p class="text-[9px] font-bold text-slate-400 italic mt-0.5"><?php echo $p['archivo']; ?></p>
+                                        </div>
+                                        <div class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="permisos[]" value="<?php echo $p['id']; ?>" <?php echo $checked; ?> class="sr-only peer group-<?php echo md5($grupo); ?>">
+                                            <div class="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600 shadow-inner"></div>
+                                        </div>
+                                    </label>
+                                    <?php endwhile; ?>
+                                </div>
+                            </div>
+                            <?php endwhile; ?>
+                        </div>
+                    </div>
+
+                    <script>
+                    function toggleGroup(groupId) {
+                        const checks = document.querySelectorAll('.group-' + groupId);
+                        const anyUnchecked = Array.from(checks).some(c => !c.checked);
+                        checks.forEach(c => c.checked = anyUnchecked);
+                    }
+                    </script>
+                    <?php endif; ?>
+
                     <div class="mt-12 pt-8 border-t border-slate-100 flex items-center justify-between">
                         <div class="text-xs font-medium text-slate-400">Referencia de sistema: ROL_#<?php echo $row['id']; ?></div>
                         <button type="submit" name="update_btn" class="px-10 py-4 bg-emerald-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">

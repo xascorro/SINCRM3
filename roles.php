@@ -71,12 +71,13 @@ include('includes/navbar.php');
                             <th class="px-8 py-4 w-16">ID</th>
                             <th class="px-4 py-4">Denominación del Rol</th>
                             <th class="px-4 py-4 text-center">Nivel</th>
+                            <th class="px-4 py-4 text-center">Permisos</th>
                             <th class="px-4 py-4 text-center w-32">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <?php
-                        $query = "SELECT * FROM roles ORDER BY level DESC";
+                        $query = "SELECT r.*, (SELECT COUNT(*) FROM permisos_roles WHERE id_rol = r.id) as num_permisos FROM roles r ORDER BY level DESC";
                         $res = mysqli_query($connection, $query);
                         while ($row = mysqli_fetch_assoc($res)):
                             $lvl = $row['level'];
@@ -92,6 +93,13 @@ include('includes/navbar.php');
                                 <span class="px-4 py-1 rounded-lg text-xs font-black <?php echo $lvl_color; ?>">
                                     <?php echo $lvl; ?>
                                 </span>
+                            </td>
+                            <td class="px-4 py-5 text-center">
+                                <?php if($row['id'] == 1): ?>
+                                    <span class="px-3 py-1 bg-blue-50 text-blue-600 rounded-lg text-[10px] font-black border border-blue-100">ACCESO TOTAL (*)</span>
+                                <?php else: ?>
+                                    <span class="px-3 py-1 bg-slate-50 text-slate-500 rounded-lg text-[10px] font-black border border-slate-100 italic"><?php echo $row['num_permisos']; ?> PÁGINAS</span>
+                                <?php endif; ?>
                             </td>
                             <td class="px-4 py-5">
                                 <div class="flex items-center justify-center gap-2">

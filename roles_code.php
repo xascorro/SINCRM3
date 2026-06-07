@@ -26,15 +26,34 @@ if(isset($_POST['update_btn'])){
     $nombre = mysqli_real_escape_string($connection, $_POST['edit_nombre']);
     $level = mysqli_real_escape_string($connection, $_POST['edit_level']);
 
-    $query = "UPDATE roles SET nombre='$nombre', level='$level' WHERE id='$id'";
-    $query_run = mysqli_query($connection, $query);
+    mysqli_begin_transaction($connection);
+    try {
+        $query = "UPDATE roles SET nombre='$nombre', level='$level' WHERE id='$id'";
+        mysqli_query($connection, $query);
 
-    if($query_run){
-        write_log("Rol actualizado (ID: $id): $nombre", "INFO");
-        $_SESSION['correcto'] = 'Rol actualizado correctamente';
-    } else {
-        write_log("Error al actualizar rol (ID: $id): " . mysqli_error($connection), "ERROR");
-        $_SESSION['estado'] = 'Error al actualizar el rol.';
+        // Actualizar permisos (si no es admin)
+        if($id != 1 && isset($_POST['permisos'])) {
+            $permisos = $_POST['permisos'];
+            // 1. Borrar antiguos
+            mysqli_query($connection, "DELETE FROM permisos_roles WHERE id_rol = '$id'");
+            // 2. Insertar nuevos
+            foreach($permisos as $id_pag) {
+                $id_pag = (int)$id_pag;
+                mysqli_query($connection, "INSERT INTO permisos_roles (id_rol, id_pagina) VALUES ('$id', '$id_pag')");
+            }
+        } elseif ($id != 1) {
+            // Si no viene ningún permiso y no es admin, borramos todos
+            mysqli_query($connection, "DELETE FROM permisos_roles WHERE id_rol = '$id'");
+        }
+
+        mysqli_commit($connection);
+        write_log("Rol actualizado y permisos sincronizados (ID: $id): $nombre", "INFO");
+        $_SESSION['correcto'] = 'Rol y permisos actualizados correctamente';
+
+    } catch (Exception $e) {
+        mysqli_rollback($connection);
+        write_log("Error al actualizar rol/permisos (ID: $id): " . $e->getMessage(), "ERROR");
+        $_SESSION['estado'] = 'Error técnico al actualizar el rol.';
     }
     header('Location: roles.php');
     exit();
