@@ -7,10 +7,15 @@ include('../lib/my_functions.php');
 
 session_start();
 
-if(!$_SESSION['email']){
+// Validar acceso (Sesión o Token de Cron)
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if (!isset($_SESSION['email']) && $cron_token_provided !== $cron_token_expected) {
     header('Location: login.php');
     exit();
 }
+
 
 // 1. Obtener datos de la competición
 $id_competicion = isset($_GET['id_competicion']) ? intval($_GET['id_competicion']) : $_SESSION['id_competicion_activa'];

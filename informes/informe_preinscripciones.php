@@ -7,8 +7,14 @@ require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
 include('../lib/my_functions.php');
 session_start();
-if(!$_SESSION['email']){
-	header('Location: ../login.php');
+
+// Validar acceso (Sesión o Token de Cron)
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if (!isset($_SESSION['email']) && $cron_token_provided !== $cron_token_expected) {
+    header('Location: ../login.php');
+    exit();
 }
 
     $GLOBALS["id_competicion_activa"] = 0;
@@ -25,7 +31,7 @@ $result= mysqli_query($connection,$query);
 	    $GLOBALS["footer"] = $registro['footer_informe'];	}
 //****************************//
 $extricto = @$_GET['extricto'];
-$titulo = $_GET['titulo'];
+$titulo = $_GET['titulo'] ?? 'Inscripciones Oficiales';
 $titulo_documento = $GLOBALS['nombre_competicion_activa']."<br>$titulo";
 $nombre_documento = $titulo.' '.$GLOBALS['nombre_competicion_activa'].'.pdf';
 $GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."\n <br> Fecha: ".dateAFecha($GLOBALS['fecha']);
