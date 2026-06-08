@@ -91,7 +91,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
             // Inicializar fase en el árbol si no existe
             if (!isset($arbol_fases[$f_id])) {
                 $arbol_fases[$f_id] = [
-                    'nombre' => $row['mod_nom'] . " " . $row['cat_nom'],
+                    'nombre' => $row['orden'] . ". " . $row['mod_nom'] . " " . $row['cat_nom'],
                     'rutinas' => []
                 ];
             }
@@ -99,7 +99,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
             // Inicializar fase en el array de estadísticas si no existe
             if (!isset($stats_fases[$f_id])) {
                 $stats_fases[$f_id] = [
-                    'nombre' => $row['mod_nom'] . " " . $row['cat_nom'],
+                    'nombre' => $row['orden'] . ". " . $row['mod_nom'] . " " . $row['cat_nom'],
                     'total' => 0,
                     'subidas' => 0
                 ];
