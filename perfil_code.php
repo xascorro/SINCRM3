@@ -39,6 +39,32 @@ if(isset($_POST['update_profile_btn'])){
         $query_parts[] = "hash = '$hashed'";
     }
 
+    // Lógica de subida de foto
+    if(isset($_FILES['foto']) && $_FILES['foto']['error'] == 0){
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $filename = $_FILES['foto']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if(in_array($ext, $allowed)){
+            $target_dir = "images/users/";
+            if(!is_dir($target_dir)){
+                mkdir($target_dir, 0777, true);
+            }
+            $new_filename = "user_" . $user_id . "_" . time() . "." . $ext;
+            $target_file = $target_dir . $new_filename;
+            
+            if(move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)){
+                $query_parts[] = "foto = '$target_file'";
+            } else {
+                write_log("Error al mover la foto subida de perfil", "ERROR");
+            }
+        } else {
+            $_SESSION['estado'] = "Formato de imagen no permitido. Usa JPG, PNG, GIF o WEBP.";
+            header('Location: perfil.php');
+            exit();
+        }
+    }
+
     $sql = "UPDATE usuarios SET " . implode(", ", $query_parts) . " WHERE id = '$user_id'";
     $query_run = mysqli_query($connection, $sql);
 

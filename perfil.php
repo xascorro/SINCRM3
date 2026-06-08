@@ -36,7 +36,7 @@ include('includes/navbar.php');
                 $query_run = mysqli_query($connection, $query);
                 $user_data = mysqli_fetch_assoc($query_run);
                 ?>
-                <form action="perfil_code.php" method="POST" class="animate-fade-in">
+                <form action="perfil_code.php" method="POST" enctype="multipart/form-data" class="animate-fade-in">
                     <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 relative overflow-hidden">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                         <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3 italic"><i class="fas fa-id-card text-blue-600"></i> Información de Identidad</h2>
@@ -44,17 +44,21 @@ include('includes/navbar.php');
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div class="space-y-2">
                                 <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nombre Completo</label>
-                                <input type="text" name="username" value="<?php echo $user_data['username']; ?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
+                                <input type="text" name="username" value="<?php echo htmlspecialchars($user_data['username']); ?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
                             </div>
                             <div class="space-y-2">
                                 <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Email de Acceso</label>
-                                <input type="email" name="email" value="<?php echo $user_data['email']; ?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
+                                <input type="email" name="email" value="<?php echo htmlspecialchars($user_data['email']); ?>" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
                             </div>
                             <div class="space-y-2">
                                 <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Teléfono de Contacto</label>
-                                <input type="text" name="telefono" value="<?php echo $user_data['telefono']; ?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
+                                <input type="text" name="telefono" value="<?php echo htmlspecialchars($user_data['telefono']); ?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner">
                             </div>
                             <div class="space-y-2">
+                                <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Foto de Perfil</label>
+                                <input type="file" name="foto" accept="image/*" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold text-slate-700 shadow-inner file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            </div>
+                            <div class="space-y-2 md:col-span-2">
                                 <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Rol asignado</label>
                                 <div class="w-full px-5 py-4 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-black text-slate-400 flex items-center gap-3">
                                     <i class="fas fa-shield-alt text-[10px]"></i>
@@ -98,10 +102,16 @@ include('includes/navbar.php');
                 <div class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-200 text-center relative overflow-hidden group">
                     <div class="absolute -top-10 -left-10 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
-                        <div class="w-24 h-24 rounded-[2rem] oceanic-gradient mx-auto mb-6 flex items-center justify-center text-white text-3xl shadow-xl shadow-blue-500/20 border-4 border-white">
-                            <?php echo strtoupper(substr($user_data['username'], 0, 1)); ?>
-                        </div>
-                        <h3 class="text-xl font-black text-slate-800 leading-tight"><?php echo $user_data['username']; ?></h3>
+                        <?php if (!empty($user_data['foto']) && file_exists($user_data['foto'])): ?>
+                            <div class="w-24 h-24 rounded-[2rem] mx-auto mb-6 flex items-center justify-center shadow-xl border-4 border-white overflow-hidden">
+                                <img src="<?php echo $user_data['foto']; ?>" alt="Foto de perfil" class="w-full h-full object-cover">
+                            </div>
+                        <?php else: ?>
+                            <div class="w-24 h-24 rounded-[2rem] oceanic-gradient mx-auto mb-6 flex items-center justify-center text-white text-3xl shadow-xl shadow-blue-500/20 border-4 border-white">
+                                <?php echo strtoupper(substr($user_data['username'], 0, 1)); ?>
+                            </div>
+                        <?php endif; ?>
+                        <h3 class="text-xl font-black text-slate-800 leading-tight"><?php echo htmlspecialchars($user_data['username']); ?></h3>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1"><?php echo $user_data['rol_nombre']; ?></p>
                         <div class="mt-6 inline-flex px-4 py-1.5 bg-slate-50 text-slate-500 text-[10px] font-black rounded-full border border-slate-100 uppercase italic">
                             Cuenta Verificada
