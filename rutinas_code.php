@@ -39,19 +39,25 @@ if(isset($_POST['save_btn'])){
 
 //Actualizar rutina
 if(isset($_POST['update_btn'])){
-//	$id = $_POST['edit_id'];
-//	$id_fase = $_POST['id_fase'];
-	$id_club = $_POST['club'];
-	$orden = $_POST['orden'];
-	$tematica = $_POST['tematica'];
+	$id_rutina = (int)$_POST['edit_id'];
+	$id_fase = (int)$_POST['id_fase'];
+	$id_club = (int)$_POST['club'];
+	$orden = (int)$_POST['orden'];
+	$tematica = mysqli_real_escape_string($connection, $_POST['tematica'] ?? '');
 
-	$query = "UPDATE rutinas SET id_fase ='$id_fase', id_club='$id_club', orden='$orden', tematica='$tematica' WHERE id='$id_rutina'";
+    $preswimmer = ($orden <= -1) ? 'si' : 'no';
+
+	$query = "UPDATE rutinas SET id_fase ='$id_fase', id_club='$id_club', orden='$orden', tematica='$tematica', preswimmer='$preswimmer' WHERE id='$id_rutina'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
+        write_log("Rutina actualizada (ID: $id_rutina) - Orden: $orden, Preswimmer: $preswimmer", "INFO");
 		$_SESSION['correcto'] = 'Rutina actualizada con éxito';
 	}else{
+        write_log("Error al actualizar la rutina (ID: $id_rutina): " . mysqli_error($connection), "ERROR");
 		$_SESSION['estado'] = 'Error, la Rutina no se ha actualizado <br>'.mysqli_error($connection);
 	}
+    header('Location: rutinas.php');
+    exit();
 }
 
 //Borrar rutina
