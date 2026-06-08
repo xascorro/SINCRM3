@@ -163,7 +163,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 </p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <?php if ($es_admin): ?>
+                <?php if ($es_admin || $_SESSION['id_rol'] == 5): ?>
                     <form action="descargar_fase.php" method="POST">
                         <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
                         <input type="hidden" name="id_club" value="<?php echo $id_club; ?>">

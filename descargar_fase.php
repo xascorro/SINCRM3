@@ -70,7 +70,7 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
 
     if (!empty($archivos_encontrados)) {
         $zip = new ZipArchive();
-        $nombre_zip = 'temp_fase_' . $id_fase . '_' . time() . '.zip';
+        $nombre_zip = sys_get_temp_dir() . '/temp_fase_' . $id_fase . '_' . time() . '.zip';
 
         if ($zip->open($nombre_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             foreach ($archivos_encontrados as $arc) {
