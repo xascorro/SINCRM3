@@ -225,7 +225,8 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                 <table class="w-full text-left border-collapse" id="rutinasTable">
                     <thead>
                         <tr class="bg-slate-50/50">
-                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">ID</th>
+                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center w-24">Orden</th>
+                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest w-24">ID</th>
                             <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Modalidad / Categoría</th>
                             <?php if($_SESSION['id_rol'] != 5): ?>
                                 <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Club</th>
@@ -235,14 +236,14 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <?php
-                        $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, fases.elementos_coach_card 
-                                  FROM rutinas, fases, modalidades, categorias, clubes 
-                                  WHERE rutinas.id_fase = fases.id 
-                                  AND fases.id_modalidad = modalidades.id 
-                                  AND fases.id_categoria = categorias.id 
-                                  AND rutinas.id_club = clubes.id 
-                                  AND fases.id_competicion = $id_competicion $condicion_club 
-                                  ORDER BY fases.orden ASC, fases.id ASC, clubes.nombre_corto ASC, rutinas.id ASC";
+                        $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, fases.elementos_coach_card
+                                  FROM rutinas, fases, modalidades, categorias, clubes
+                                  WHERE rutinas.id_fase = fases.id
+                                  AND fases.id_modalidad = modalidades.id
+                                  AND fases.id_categoria = categorias.id
+                                  AND rutinas.id_club = clubes.id
+                                  AND fases.id_competicion = $id_competicion $condicion_club
+                                  ORDER BY fases.orden ASC, fases.id ASC, rutinas.orden ASC, clubes.nombre_corto ASC, rutinas.id ASC";
                         $res = mysqli_query($connection, $query);
 
                         if($res && mysqli_num_rows($res) > 0):
@@ -262,25 +263,48 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                     <?php
                                 endif;
 
-                                $q_nombres = "SELECT group_concat(nadadoras.nombre, ' ', nadadoras.apellidos separator ', ') 
-                                              FROM rutinas_participantes, nadadoras 
-                                              WHERE nadadoras.id = rutinas_participantes.id_nadadora 
-                                              AND rutinas_participantes.id_rutina = ".$row['id']." 
+                                $q_nombres = "SELECT group_concat(nadadoras.nombre, ' ', nadadoras.apellidos separator ', ')
+                                              FROM rutinas_participantes, nadadoras
+                                              WHERE nadadoras.id = rutinas_participantes.id_nadadora
+                                              AND rutinas_participantes.id_rutina = ".$row['id']."
                                               AND rutinas_participantes.reserva = 'no'";
                                 $nombres = mysqli_result(mysqli_query($connection, $q_nombres), 0);
-                                
-                                $preswimmer_label = '';
-                                if($row['orden'] == -1) $preswimmer_label = ' <span class="px-2 py-0.5 bg-amber-50 text-amber-600 text-[8px] font-black rounded uppercase ml-2">PRESWIMMER</span>';
-                                else if($row['orden'] == -2) $preswimmer_label = ' <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-[8px] font-black rounded uppercase ml-2">EXHIBICIÓN</span>';
+
+                                $isPS = ($row['orden'] < 0 && $row['orden'] > -10);
+                                $isExh = ($row['orden'] <= -10);
+
+                                if ($isExh) {
+                                    $orden_display = 'EX';
+                                } elseif ($isPS) {
+                                    $orden_display = 'PS';
+                                } else {
+                                    $orden_display = $row['orden'] == 0 ? '-' : $row['orden'];
+                                }
                                 ?>
                                 <tr class="hover:bg-slate-50/50 transition-colors group">
+                                    <td class="px-4 py-6">
+                                        <div class="w-10 h-10 mx-auto rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 flex items-center justify-center font-black text-sm shadow-inner transition-colors border border-white/50">
+                                            <?php echo $orden_display; ?>
+                                        </div>
+                                    </td>
                                     <td class="px-8 py-6 text-sm font-black text-slate-400">#<?php echo $row['id']; ?></td>
                                     <td class="px-8 py-6">
                                         <div class="flex flex-col">
-                                            <span class="text-sm font-black text-slate-800 flex items-center"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?><?php echo $preswimmer_label; ?></span>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-sm font-black text-slate-800 uppercase tracking-tighter"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                                <?php if ($isExh): ?>
+                                                    <span class="px-2 py-0.5 bg-amber-100 text-amber-600 text-[8px] font-black rounded uppercase tracking-widest">Exhibición</span>
+                                                <?php elseif ($isPS): ?>
+                                                    <span class="px-2 py-0.5 bg-purple-100 text-purple-600 text-[8px] font-black rounded uppercase tracking-widest">Preswimmer</span>
+                                                <?php endif; ?>
+                                            </div>
+                                            <?php if ($row['nombre_rutina']): ?>
+                                                <p class="text-xs font-bold text-slate-500 italic mb-1"><i class="fas fa-quote-left text-slate-300 mr-1"></i> <?php echo $row['nombre_rutina']; ?></p>
+                                            <?php endif; ?>
                                             <span class="text-[11px] font-bold text-slate-400 mt-1 italic"><?php echo $nombres ?: '<span class="text-red-300">Sin participantes</span>'; ?></span>
                                         </div>
                                     </td>
+
                                     <?php if($_SESSION['id_rol'] != 5): ?>
                                         <td class="px-8 py-6">
                                             <div class="flex items-center gap-3">
