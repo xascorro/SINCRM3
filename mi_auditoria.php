@@ -16,7 +16,7 @@ $user_id = $_SESSION['id_usario'];
 // Si el admin selecciona a un usuario en específico
 if ($es_admin && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) {
     $user_id = (int)$_GET['usuario_id'];
-    $q_user = "SELECT * FROM usuarios WHERE id = '$user_id'";
+    $q_user = "SELECT u.*, r.nombre as rol_nombre FROM usuarios u LEFT JOIN roles r ON u.id_rol = r.id WHERE u.id = '$user_id'";
     $user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
     if ($user_data) {
         $username = $user_data['username'];
@@ -24,7 +24,7 @@ if ($es_admin && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) {
     }
 } else {
     // Usuario por defecto (él mismo)
-    $q_user = "SELECT * FROM usuarios WHERE id = '$user_id'";
+    $q_user = "SELECT u.*, r.nombre as rol_nombre FROM usuarios u LEFT JOIN roles r ON u.id_rol = r.id WHERE u.id = '$user_id'";
     $user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
 }
 
@@ -32,6 +32,12 @@ if ($es_admin && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) {
 $q_juez = "SELECT * FROM jueces WHERE nombre LIKE '%$username%' OR apellidos LIKE '%$username%' LIMIT 1";
 $res_juez = mysqli_query($connection, $q_juez);
 $juez_data = mysqli_fetch_assoc($res_juez);
+
+// Buscar si tiene un informe de auditoría detallado
+$q_find = "SELECT group_key FROM auditoria_jueces_stats WHERE nombre_entidad LIKE '%$username%' AND entidad_tipo = 'GLOBAL' LIMIT 1";
+$res_find = mysqli_query($connection, $q_find);
+$found = mysqli_fetch_assoc($res_find);
+$group_key = $found ? $found['group_key'] : null;
 
 // Generar stats de prueba para el radar
 $stats = [
@@ -45,24 +51,24 @@ $stats = [
 include('includes/header.php');
 include('includes/navbar.php');
 ?>
-<main class="flex-1 flex flex-col min-w-0 bg-slate-900 bg-cover bg-center" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');">
+<main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
     <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend flex flex-col items-center justify-center min-h-[80vh] py-12">
         
         <div class="mb-10 text-center">
-            <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 uppercase drop-shadow-lg">Mi Auditoría</h1>
-            <p class="text-emerald-400 font-bold tracking-widest text-sm uppercase">Perfil Oficial de Juez</p>
+            <h1 class="text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-2 uppercase">Mi Auditoría</h1>
+            <p class="text-emerald-500 font-bold tracking-widest text-sm uppercase">Perfil Oficial del Sistema</p>
         </div>
 
         <?php if ($es_admin): ?>
             <!-- Selector de Administrador -->
-            <div class="w-full max-w-sm mx-auto mb-8 bg-slate-800/80 p-4 rounded-3xl border border-slate-700 shadow-xl backdrop-blur-sm z-50">
+            <div class="w-full max-w-sm mx-auto mb-8 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm z-50">
                 <form action="mi_auditoria.php" method="GET" class="flex flex-col gap-2">
-                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400 px-2">Modo Administrador: Seleccionar Perfil</label>
-                    <select name="usuario_id" class="w-full bg-slate-900 border border-slate-600 text-white rounded-2xl px-4 py-3 text-sm focus:border-emerald-500 outline-none" onchange="this.form.submit()">
+                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-blue-500 px-2">Modo Administrador: Seleccionar Perfil</label>
+                    <select name="usuario_id" class="w-full bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-2xl px-4 py-3 text-sm focus:border-blue-500 outline-none" onchange="this.form.submit()">
                         <option value="0">-- Mi propio perfil --</option>
                         <?php
-                        $q_usuarios_jueces = "SELECT id, username FROM usuarios WHERE id_rol IN (1, 4) AND activo = 1 ORDER BY username ASC";
+                        $q_usuarios_jueces = "SELECT id, username FROM usuarios WHERE id_rol IN (1, 2, 3, 4) AND activo = 1 ORDER BY username ASC";
                         $res_us = mysqli_query($connection, $q_usuarios_jueces);
                         while ($us = mysqli_fetch_assoc($res_us)) {
                             $sel = ($us['id'] == $user_id && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) ? 'selected' : '';
@@ -88,8 +94,8 @@ include('includes/navbar.php');
                     <div class="absolute top-6 left-6 text-emerald-400">
                         <i class="fas fa-star text-xl drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"></i>
                     </div>
-                    <div class="absolute top-6 right-6 text-slate-500 font-black text-xl italic opacity-50">
-                        JZ
+                    <div class="absolute top-6 right-6 text-slate-500 font-black text-xl italic opacity-50 uppercase">
+                        <?php echo substr($user_data['rol_nombre'], 0, 2); ?>
                     </div>
 
                     <!-- FOTO -->
@@ -111,7 +117,7 @@ include('includes/navbar.php');
                         <?php echo htmlspecialchars($username); ?>
                     </h2>
                     <p class="text-[10px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-6">
-                        <?php echo $juez_data ? "Licencia: " . $juez_data['licencia'] : "Juez en Formación"; ?>
+                        <?php echo ($juez_data && !empty($juez_data['licencia'])) ? "Licencia: " . $juez_data['licencia'] : $user_data['rol_nombre']; ?>
                     </p>
 
                     <!-- RADAR CHART -->
@@ -130,6 +136,21 @@ include('includes/navbar.php');
                             <p class="text-lg font-black text-white"><?php echo $stats['Consistencia']; ?>%</p>
                         </div>
                     </div>
+
+                    <!-- ACCESO A INFORME COMPLETO -->
+                    <?php if ($group_key): ?>
+                        <div class="mt-6 w-full">
+                            <a href="perfil_juez.php?key=<?php echo $group_key; ?>" class="flex items-center justify-center gap-2 w-full py-3.5 bg-emerald-600 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-md hover:bg-emerald-500 hover:scale-[1.02] transition-all">
+                                <i class="fas fa-chart-pie"></i> Ver Informe Completo
+                            </a>
+                        </div>
+                    <?php else: ?>
+                        <div class="mt-6 w-full">
+                            <div class="w-full py-3.5 bg-slate-800 text-slate-500 font-black uppercase text-[10px] tracking-widest rounded-xl border border-slate-700 flex items-center justify-center gap-2 italic">
+                                <i class="fas fa-lock"></i> Sin datos de auditoría
+                            </div>
+                        </div>
+                    <?php endif; ?>
 
                 </div>
             </div>
