@@ -89,10 +89,19 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                                 $nombres = mysqli_fetch_assoc($res_nombres)['nombres'] ?? '';
                                 
                                 $isBaja = ($row['baja'] == 'si');
-                                $isPS = ($row['orden'] == -1);
+                                $isPS = ($row['orden'] < 0 && $row['orden'] > -10);
+                                $isExh = ($row['orden'] <= -10);
                                 $isOldSystem = ($row['obsoleto'] == 'si');
                                 $rowClass = $isBaja ? "bg-red-50/30 opacity-75" : "hover:bg-slate-50 transition-colors";
-                                $orden_display = $isPS ? 'PS' : $row['orden'];
+                                
+                                if ($isExh) {
+                                    $orden_display = 'EX';
+                                } elseif ($isPS) {
+                                    $orden_display = 'PS';
+                                } else {
+                                    $orden_display = $row['orden'];
+                                }
+                                
                                 $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
                         ?>
                         <tr class="<?php echo $rowClass; ?> group">
@@ -103,7 +112,9 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                                     <p class="text-sm font-black <?php echo $isBaja ? 'text-red-700' : 'text-slate-800'; ?> uppercase tracking-tighter">
                                         <?php echo $row['nombre_modalidad']." ".$row['nombre_categoria']." ".$row['nombre_club']; ?>
                                     </p>
-                                    <?php if ($isPS): ?>
+                                    <?php if ($isExh): ?>
+                                        <span class="px-2 py-0.5 bg-amber-100 text-amber-600 text-[8px] font-black rounded uppercase tracking-widest">Exhibición</span>
+                                    <?php elseif ($isPS): ?>
                                         <span class="px-2 py-0.5 bg-purple-100 text-purple-600 text-[8px] font-black rounded uppercase tracking-widest">Preswimmer</span>
                                     <?php endif; ?>
                                 </div>

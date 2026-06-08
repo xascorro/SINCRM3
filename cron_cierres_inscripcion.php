@@ -34,12 +34,13 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     // Construimos la URL interna para llamar al generador de PDF
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
     $host = "localhost"; // Ejecución interna en el contenedor
+    $cron_token = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
     
     // Ruta del informe según tipo
     if ($is_figuras) {
-        $report_url = "http://localhost/informes/informe_figuras.php?id_competicion=$id_comp";
+        $report_url = "http://localhost/informes/informe_figuras.php?id_competicion=$id_comp&cron_token=$cron_token";
     } else {
-        $report_url = "http://localhost/informes/informe_preinscripciones.php?id_competicion=$id_comp";
+        $report_url = "http://localhost/informes/informe_preinscripciones.php?id_competicion=$id_comp&cron_token=$cron_token";
     }
 
     // Usamos cURL para obtener el binario del PDF
