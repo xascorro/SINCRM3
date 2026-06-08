@@ -111,11 +111,9 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
             <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
-                <?php if(isset($_SESSION['id_juez_v3']) && $_SESSION['id_juez_v3'] > 0): ?>
-                    <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
-                    </a>
-                <?php endif; ?>
+                <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                    <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
+                </a>
                 <a href="ranking_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-ranking-star w-4 text-center"></i> Ranking Calidad
                 </a>

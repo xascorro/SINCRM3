@@ -1,19 +1,32 @@
 <?php
 include('security.php');
 
-// Si no es juez, redirigir al ranking
-if ($_SESSION['id_rol'] != 4) {
+$roles_permitidos = [1, 2, 3, 4]; // Admin, Editor, Consulta, Juez
+if (!in_array($_SESSION['id_rol'], $roles_permitidos)) {
     header('Location: ranking_jueces.php');
     exit();
 }
+
+$es_admin = in_array($_SESSION['id_rol'], [1, 2, 3]);
 
 $user_email = $_SESSION['email'];
 $username = $_SESSION['username'];
 $user_id = $_SESSION['id_usario'];
 
-// Obtener datos del usuario incluyendo la foto
-$q_user = "SELECT * FROM usuarios WHERE id = '$user_id'";
-$user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
+// Si el admin selecciona a un usuario en específico
+if ($es_admin && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) {
+    $user_id = (int)$_GET['usuario_id'];
+    $q_user = "SELECT * FROM usuarios WHERE id = '$user_id'";
+    $user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
+    if ($user_data) {
+        $username = $user_data['username'];
+        $user_email = $user_data['email'];
+    }
+} else {
+    // Usuario por defecto (él mismo)
+    $q_user = "SELECT * FROM usuarios WHERE id = '$user_id'";
+    $user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
+}
 
 // Intentar encontrar al juez por nombre
 $q_juez = "SELECT * FROM jueces WHERE nombre LIKE '%$username%' OR apellidos LIKE '%$username%' LIMIT 1";
@@ -40,6 +53,26 @@ include('includes/navbar.php');
             <h1 class="text-4xl md:text-5xl font-black text-white tracking-tighter mb-2 uppercase drop-shadow-lg">Mi Auditoría</h1>
             <p class="text-emerald-400 font-bold tracking-widest text-sm uppercase">Perfil Oficial de Juez</p>
         </div>
+
+        <?php if ($es_admin): ?>
+            <!-- Selector de Administrador -->
+            <div class="w-full max-w-sm mx-auto mb-8 bg-slate-800/80 p-4 rounded-3xl border border-slate-700 shadow-xl backdrop-blur-sm z-50">
+                <form action="mi_auditoria.php" method="GET" class="flex flex-col gap-2">
+                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-emerald-400 px-2">Modo Administrador: Seleccionar Perfil</label>
+                    <select name="usuario_id" class="w-full bg-slate-900 border border-slate-600 text-white rounded-2xl px-4 py-3 text-sm focus:border-emerald-500 outline-none" onchange="this.form.submit()">
+                        <option value="0">-- Mi propio perfil --</option>
+                        <?php
+                        $q_usuarios_jueces = "SELECT id, username FROM usuarios WHERE id_rol IN (1, 4) AND activo = 1 ORDER BY username ASC";
+                        $res_us = mysqli_query($connection, $q_usuarios_jueces);
+                        while ($us = mysqli_fetch_assoc($res_us)) {
+                            $sel = ($us['id'] == $user_id && isset($_GET['usuario_id']) && $_GET['usuario_id'] > 0) ? 'selected' : '';
+                            echo "<option value='{$us['id']}' $sel>{$us['username']}</option>";
+                        }
+                        ?>
+                    </select>
+                </form>
+            </div>
+        <?php endif; ?>
 
         <!-- CARTA DE ROL -->
         <div class="relative w-full max-w-sm mx-auto perspective-1000 group">
