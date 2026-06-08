@@ -1,7 +1,7 @@
 <?php
 /**
  * Script de Automatización: Envío de Inscripciones por Email al Cierre
- * Ejecución vía CRON: 00:15 (Procesa cierres del día anterior)
+ * Ejecución vía CRON: 00:15 (Procesa cierres del mismo día)
  */
 
 // Simular entorno web para los scripts de informes
@@ -10,16 +10,16 @@ $_SESSION['id_rol'] = 1;
 include(__DIR__ . '/database/dbconfig.php');
 include(__DIR__ . '/includes/email_functions.php');
 
-// 1. Detectar competiciones cuyo plazo de inscripción terminó AYER
-$ayer = date('Y-m-d', strtotime('-1 day'));
+// 1. Detectar competiciones cuyo plazo de inscripción terminó HOY (hace 15 min)
+$hoy = date('Y-m-d');
 $q_comp = "SELECT id, nombre, figuras, fecha, dias_fin_inscripcion 
            FROM competiciones 
-           WHERE date_add(fecha, interval -dias_fin_inscripcion day) = '$ayer'";
+           WHERE date_add(fecha, interval -dias_fin_inscripcion day) = '$hoy'";
 
 $res_comp = mysqli_query($connection, $q_comp);
 
 if (mysqli_num_rows($res_comp) == 0) {
-    write_log("Cron Inscripciones: No hay cierres para ayer ($ayer)", "INFO");
+    write_log("Cron Inscripciones: No hay cierres para hoy ($hoy)", "INFO");
     exit();
 }
 
@@ -28,7 +28,7 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     $nombre_comp = $comp['nombre'];
     $is_figuras = ($comp['figuras'] == 'si');
     
-    write_log("Cron Inscripciones: Procesando cierre de '$nombre_comp' (ID: $id_comp) terminado el $ayer", "INFO");
+    write_log("Cron Inscripciones: Procesando cierre de '$nombre_comp' (ID: $id_comp) terminado el $hoy", "INFO");
 
     // 2. Generar el PDF mediante captura del buffer de salida
     // Construimos la URL interna para llamar al generador de PDF
