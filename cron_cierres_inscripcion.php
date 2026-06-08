@@ -58,7 +58,7 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     }
 
     // 3. Enviar vía Pulse Hub API (Servidor Blue)
-    $destinatario = "xascorr@gmail.com";
+    $destinatario = "xascorro@gmail.com";
     $asunto = "🔴 CIERRE INSCRIPCIONES: $nombre_comp";
     $cuerpo = "<h2>Notificación Automática de Cierre</h2>
                <p>El plazo de inscripción para la competición <strong>$nombre_comp</strong> ha finalizado hoy.</p>
