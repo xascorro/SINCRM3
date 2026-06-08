@@ -57,10 +57,6 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
         continue;
     }
 
-    // Guardar temporalmente para adjuntar
-    $tmp_pdf = sys_get_temp_dir() . "/Inscripciones_" . $id_comp . ".pdf";
-    file_put_contents($tmp_pdf, $pdf_content);
-
     // 3. Enviar vía Pulse Hub API (Servidor Blue)
     $destinatario = "xascorro@gmail.com";
     $asunto = "🔴 CIERRE INSCRIPCIONES: $nombre_comp";
@@ -74,14 +70,21 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
                </ul>";
 
     $token = "hub_mail_947d82b3c2e1";
-    $api_url = "https://pulse.pedrodiaz.eu/mail/api.php";
+    $api_url = "https://pulse.pedrodiaz.eu/mail/send_resend.php";
     
+    $attachment_data = [
+        [
+            'filename' => "Inscripciones_" . str_replace(' ', '_', $nombre_comp) . ".pdf",
+            'content' => base64_encode($pdf_content)
+        ]
+    ];
+
     $post_fields = [
         'from' => "SINCRM <sincrm@pedrodiaz.eu>",
         'to' => $destinatario,
         'subject' => $asunto,
         'html' => wrap_email_template($asunto, $cuerpo),
-        'attachment' => new CURLFile($tmp_pdf, 'application/pdf', basename($tmp_pdf))
+        'attachments' => json_encode($attachment_data)
     ];
 
     $ch = curl_init();
@@ -92,8 +95,6 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $api_res = curl_exec($ch);
     curl_close($ch);
-
-    @unlink($tmp_pdf); // Borrar temporal
 
     write_log("Cron Inscripciones: Email enviado para '$nombre_comp'. Respuesta API: $api_res", "SUCCESS");
 }
