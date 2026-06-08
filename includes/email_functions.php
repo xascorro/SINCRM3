@@ -69,7 +69,7 @@ function wrap_email_template($title, $content) {
     <body>
         <div class='container'>
             <div class='header'>
-                <div class='logo-text'>SINCRM <span class='logo-accent'>3</span></div>
+                <div class='logo-text'>SINCRM</div>
             </div>
             <div class='content'>
                 $content
