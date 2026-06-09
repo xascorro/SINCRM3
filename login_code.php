@@ -116,7 +116,7 @@ function sendResponse($status, $message, $redirect = 'login.php', $icon = null) 
 if(isset($_POST['login_btn'])){
 	$login_password = $_POST['password'];
 	$login_email = mysqli_real_escape_string($connection, $_POST['email']);
-	$query = "SELECT usuarios.id as id_usuario, usuarios.username, id_rol, id_juez_v3, club, hash, roles.nombre as nombre_rol, icono, activo, email_confirmado FROM usuarios, roles WHERE email='$login_email' and usuarios.id_rol = roles.id";
+	$query = "SELECT usuarios.id as id_usuario, usuarios.username, id_rol, id_juez_v3, club, hash, roles.nombre as nombre_rol, icono, activo, email_confirmado, foto FROM usuarios, roles WHERE email='$login_email' and usuarios.id_rol = roles.id";
 	$query_run = mysqli_query($connection,$query);
 	$usuario = mysqli_fetch_array($query_run);
 	if($usuario != NULL){
@@ -149,6 +149,7 @@ if(isset($_POST['login_btn'])){
             $_SESSION['id_juez_v3'] = $usuario['id_juez_v3'];
             $_SESSION['club'] = $usuario['club'];
             $_SESSION['icono'] = $usuario['icono'];
+            $_SESSION['foto'] = $usuario['foto'];
             
             $club_logo = null;
             if($_SESSION['id_rol'] == 5){

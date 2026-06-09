@@ -23,11 +23,36 @@ if($_SESSION['id_rol'] == 4){
     }
 }
 
-// 1. Obtener Datos Macro del Juez
+// 1. Determinar Identidad del Juez
+$id_juez = 0;
+if (strpos($group_key, 'J_') === 0) {
+    $id_juez = (int)substr($group_key, 2);
+}
+
+// Obtener datos básicos del Juez (Ficha Oficial)
+$q_juez = "SELECT * FROM jueces WHERE id = '$id_juez'";
+$res_juez = mysqli_query($connection, $q_juez);
+$juez_data = mysqli_fetch_assoc($res_juez);
+
+if (!$juez_data) {
+    // Si no está en jueces, buscamos en auditoria (posiblemente un nombre sin ID vinculado)
+    $q_audit_name = "SELECT id_juez, nombre_entidad FROM auditoria_jueces_stats WHERE group_key = '$group_key' LIMIT 1";
+    $res_audit_name = mysqli_query($connection, $q_audit_name);
+    $audit_name = mysqli_fetch_assoc($res_audit_name);
+    
+    if (!$audit_name) {
+        echo "No hay datos para este juez.";
+        exit();
+    }
+    $id_juez = $audit_name['id_juez'];
+    $nombre_display = $audit_name['nombre_entidad'];
+} else {
+    $nombre_display = $juez_data['nombre'] . ' ' . $juez_data['apellidos'];
+}
+
+// 2. Obtener Datos Macro de Auditoría (Opcional)
 $q_macro = "
     SELECT 
-        nombre_entidad as nombre,
-        MAX(id_juez) as id_juez,
         SUM(total_notas) as total_notas,
         AVG(precision_aqua) as precision_media,
         AVG(bias_score) as bias_medio,
@@ -36,25 +61,27 @@ $q_macro = "
         COUNT(DISTINCT id_competicion) as total_eventos
     FROM auditoria_jueces_stats
     WHERE group_key = '$group_key' AND entidad_tipo = 'GLOBAL'
-    GROUP BY group_key
 ";
 $res_macro = mysqli_query($connection, $q_macro);
 $macro = mysqli_fetch_assoc($res_macro);
 
-if (!$macro) {
-    echo "No hay datos para este juez.";
-    exit();
+// Valores por defecto si no tiene auditoría
+if (!$macro || $macro['total_eventos'] == 0) {
+    $macro = [
+        'total_notas' => 0,
+        'precision_media' => 0,
+        'bias_medio' => 0,
+        'total_bajas' => 0,
+        'total_altas' => 0,
+        'total_eventos' => 0
+    ];
 }
 
-$id_juez = $macro['id_juez'];
+$macro['nombre'] = $nombre_display;
 
-// Datos del usuario (foto)
-$q_user = "SELECT u.*, r.nombre as rol_nombre FROM usuarios u LEFT JOIN roles r ON u.id_rol = r.id WHERE u.id_juez_v3 = '$id_juez' OR u.username LIKE '%" . mysqli_real_escape_string($connection, $macro['nombre']) . "%' LIMIT 1";
+// Datos del usuario (foto y rol de sistema)
+$q_user = "SELECT u.*, r.nombre as rol_nombre FROM usuarios u LEFT JOIN roles r ON u.id_rol = r.id WHERE u.id_juez_v3 = '$id_juez' OR u.username LIKE '%" . mysqli_real_escape_string($connection, $nombre_display) . "%' LIMIT 1";
 $user_data = mysqli_fetch_assoc(mysqli_query($connection, $q_user));
-
-// Datos oficiales del Juez
-$q_juez = "SELECT * FROM jueces WHERE id = '$id_juez'";
-$juez_data = mysqli_fetch_assoc(mysqli_query($connection, $q_juez));
 
 // Participaciones por puesto en paneles (Puestos de Juez)
 $q_puestos = "SELECT p.nombre as puesto, COUNT(*) as cantidad 
@@ -75,13 +102,12 @@ while($p = mysqli_fetch_assoc($res_puestos)){
 $radar_stats = [
     'Severidad' => min(100, max(0, 100 - abs($macro['bias_medio'] * 100))),
     'Consistencia' => min(100, max(0, 100 - (($macro['total_bajas'] + $macro['total_altas']) / max(1, $macro['total_notas'])) * 500)),
-    'Velocidad' => rand(60, 95), // Simulado temporalmente
+    'Velocidad' => rand(60, 95), 
     'Alineación (Bias)' => $macro['precision_media'],
-    'Experiencia' => min(100, $macro['total_eventos'] * 10)
+    'Experiencia' => min(100, ($macro['total_eventos'] + $total_paneles/5) * 10)
 ];
 
-// 2. Obtener Historial de Eventos y Posiciones
-// Para calcular la posición, necesitamos comparar con otros jueces en cada evento
+// 3. Obtener Historial de Eventos y Posiciones
 $q_history = "
     SELECT 
         s.id_competicion,
@@ -105,7 +131,6 @@ $res_history = mysqli_query($connection, $q_history);
 $history = [];
 while($h = mysqli_fetch_assoc($res_history)) $history[] = $h;
 
-// Preparar Gráfico de Posición (Invertido: 1 arriba, 10 abajo)
 $chart_labels = array_reverse(array_column($history, 'comp_nombre'));
 $chart_positions = array_reverse(array_column($history, 'posicion_evento'));
 
@@ -122,10 +147,10 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
         <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
             <div>
                 <a href="ranking_jueces.php" class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-2 hover:gap-3 transition-all no-underline"><i class="fas fa-arrow-left"></i> Volver al Ranking</a>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 italic"><?php echo $macro['nombre']; ?></h1>
+                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 italic uppercase"><?php echo $macro['nombre']; ?></h1>
                 <div class="flex items-center gap-3">
                     <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase italic <?php echo $severity_class; ?>">Juez <?php echo $severity_label; ?></span>
-                    <span class="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[10px] font-black rounded-full uppercase italic">Temporada 24/25</span>
+                    <span class="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[10px] font-black rounded-full uppercase italic">Temporada Actual</span>
                 </div>
             </div>
         </div>
@@ -134,42 +159,67 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
             
             <!-- CARTA DE ROL (Izquierda) -->
             <div class="lg:col-span-4 relative perspective-1000 group">
-                <div class="w-full h-full bg-slate-800 rounded-[2.5rem] p-2 shadow-2xl border-4 border-slate-700 relative overflow-hidden transition-transform duration-500 hover:scale-[1.01] hover:-translate-y-1">
-                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/10 to-transparent pointer-events-none z-20"></div>
-                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-blue-500/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="w-full h-full bg-white rounded-[2.5rem] p-2 shadow-xl border border-slate-200 relative overflow-hidden transition-transform duration-500 hover:scale-[1.01] hover:-translate-y-1">
+                    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none z-20"></div>
+                    <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
                     
-                    <div class="bg-slate-900 rounded-[2rem] p-6 relative z-10 border border-slate-700/50 flex flex-col items-center text-center h-full">
+                    <div class="bg-white rounded-[2rem] p-6 relative z-10 border border-slate-100 flex flex-col items-center text-center h-full shadow-inner">
                         
-                        <div class="absolute top-6 left-6 text-emerald-400">
-                            <i class="fas fa-star text-xl drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]"></i>
+                        <div class="absolute top-6 left-6 text-blue-500">
+                            <i class="fas fa-star text-xl drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"></i>
                         </div>
-                        <div class="absolute top-6 right-6 text-slate-500 font-black text-xl italic opacity-50 uppercase">
+                        <div class="absolute top-6 right-6 text-slate-200 font-black text-xl italic opacity-50 uppercase">
                             <?php echo $user_data ? substr($user_data['rol_nombre'], 0, 2) : 'JZ'; ?>
                         </div>
 
                         <div class="relative mb-6 mt-4 group/photo">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500 to-blue-500 rounded-[2rem] rotate-3 opacity-70"></div>
-                            <div class="relative w-36 h-36 rounded-[2rem] bg-slate-800 border-4 border-slate-900 overflow-hidden shadow-inner flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-400 to-emerald-400 rounded-[2rem] rotate-3 opacity-20 transition-transform"></div>
+                            <div class="relative w-36 h-36 rounded-[2rem] bg-slate-50 border-4 border-white overflow-hidden shadow-lg flex items-center justify-center">
                                 <?php if (!empty($user_data['foto']) && file_exists($user_data['foto'])): ?>
                                     <img src="<?php echo $user_data['foto']; ?>" class="w-full h-full object-cover">
                                 <?php else: ?>
-                                    <div class="w-full h-full bg-slate-800 flex items-center justify-center text-5xl text-slate-600 font-black">
+                                    <div class="w-full h-full bg-slate-50 flex items-center justify-center text-5xl text-slate-200 font-black">
                                         <?php echo strtoupper(substr($macro['nombre'], 0, 1)); ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
                         </div>
 
-                        <h2 class="text-xl font-black text-white uppercase tracking-tighter leading-none mb-1">
+                        <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none mb-1">
                             <?php echo htmlspecialchars($macro['nombre']); ?>
                         </h2>
-                        <p class="text-[9px] font-black text-emerald-400 uppercase tracking-[0.3em] mb-6">
-                            <?php echo ($juez_data && !empty($juez_data['licencia'])) ? "Licencia: " . $juez_data['licencia'] : ($user_data ? $user_data['rol_nombre'] : 'Juez Oficial'); ?>
+                        <p class="text-[9px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 uppercase tracking-[0.2em] mb-6 inline-block">
+                            <?php 
+                            if ($juez_data && !empty($juez_data['licencia'])) {
+                                echo "Lic: " . $juez_data['licencia'];
+                            } elseif ($user_data) {
+                                echo $user_data['rol_nombre'];
+                            } else {
+                                echo "JUEZ OFICIAL";
+                            }
+                            ?>
                         </p>
 
-                        <div class="w-full h-44 bg-slate-800/50 rounded-3xl p-2 mb-4 border border-slate-700/50">
+                        <div class="w-full h-44 bg-slate-50/50 rounded-3xl p-2 mb-4 border border-slate-100 shadow-inner">
                             <canvas id="radarChart"></canvas>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 w-full mt-auto">
+                            <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm text-left">
+                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Nivel Técnico</p>
+                                <p class="text-lg font-black text-slate-700"><?php echo number_format($macro['precision_media'], 1); ?>%</p>
+                            </div>
+                            <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm text-left">
+                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Estabilidad</p>
+                                <p class="text-lg font-black text-slate-700">
+                                    <?php 
+                                    $inconsistencias = $macro['total_bajas'] + $macro['total_altas'];
+                                    $estabilidad = max(0, 100 - (($inconsistencias / max(1, $macro['total_notas'])) * 100));
+                                    echo round($estabilidad); 
+                                    ?>%
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -207,8 +257,9 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
                     </div>
                     
                     <?php if(empty($puestos_stats)): ?>
-                        <div class="p-6 bg-slate-50 rounded-2xl text-center">
-                            <p class="text-xs text-slate-500 font-bold italic">No hay registros detallados de participación en esta temporada.</p>
+                        <div class="p-12 bg-slate-50 rounded-3xl text-center border border-dashed border-slate-200">
+                            <i class="fas fa-user-slash text-slate-300 text-3xl mb-4"></i>
+                            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sin registros de participación detallada</p>
                         </div>
                     <?php else: ?>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -260,25 +311,31 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
-                            <?php foreach($history as $h): 
-                                $bg_h = ($h['precision_aqua'] >= 70) ? 'text-emerald-500' : ($h['precision_aqua'] >= 50 ? 'text-amber-500' : 'text-red-500');
-                            ?>
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-6 py-4 font-bold text-slate-700 text-xs">
-                                    <?php echo $h['comp_nombre']; ?>
-                                    <p class="text-[8px] text-slate-400 uppercase"><?php echo dateAFecha($h['fecha']); ?></p>
-                                </td>
-                                <td class="px-6 py-4 text-center font-black <?php echo $bg_h; ?> text-xs"><?php echo number_format($h['precision_aqua'], 1); ?>%</td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black">#<?php echo $h['posicion_evento']; ?></span>
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <a href="analisis_juez_detalle.php?pjs=<?php echo $h['pjs_asociados']; ?>&comp_id=<?php echo $h['id_competicion']; ?>" class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-sm mx-auto ml-auto">
-                                        <i class="fas fa-eye text-[10px]"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                            <?php if(empty($history)): ?>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-12 text-center text-slate-400 italic text-xs">No hay datos de auditoría de puntuación registrados.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach($history as $h): 
+                                    $bg_h = ($h['precision_aqua'] >= 70) ? 'text-emerald-500' : ($h['precision_aqua'] >= 50 ? 'text-amber-500' : 'text-red-500');
+                                ?>
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-6 py-4 font-bold text-slate-700 text-xs">
+                                        <?php echo $h['comp_nombre']; ?>
+                                        <p class="text-[8px] text-slate-400 uppercase"><?php echo dateAFecha($h['fecha']); ?></p>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-black <?php echo $bg_h; ?> text-xs"><?php echo number_format($h['precision_aqua'], 1); ?>%</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black">#<?php echo $h['posicion_evento']; ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="analisis_juez_detalle.php?pjs=<?php echo $h['pjs_asociados']; ?>&comp_id=<?php echo $h['id_competicion']; ?>" class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-sm mx-auto ml-auto">
+                                            <i class="fas fa-eye text-[10px]"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -306,10 +363,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     <?php echo $radar_stats['Alineación (Bias)']; ?>, 
                     <?php echo $radar_stats['Experiencia']; ?>
                 ],
-                backgroundColor: 'rgba(16, 185, 129, 0.2)',
-                borderColor: 'rgba(52, 211, 153, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderColor: 'rgba(59, 130, 246, 0.8)',
                 pointBackgroundColor: '#fff',
-                pointBorderColor: 'rgba(52, 211, 153, 1)',
+                pointBorderColor: 'rgba(59, 130, 246, 1)',
                 borderWidth: 2,
                 pointRadius: 3
             }]
@@ -320,10 +377,10 @@ document.addEventListener("DOMContentLoaded", function() {
             plugins: { legend: { display: false } },
             scales: {
                 r: {
-                    angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    angleLines: { color: 'rgba(0, 0, 0, 0.05)' },
+                    grid: { color: 'rgba(0, 0, 0, 0.05)' },
                     pointLabels: {
-                        color: 'rgba(148, 163, 184, 1)',
+                        color: 'rgba(100, 116, 139, 1)',
                         font: { size: 8, family: "'Lexend', sans-serif", weight: 'bold' }
                     },
                     ticks: { display: false, min: 0, max: 100 }
@@ -336,45 +393,56 @@ document.addEventListener("DOMContentLoaded", function() {
     const labels = <?php echo json_encode($chart_labels); ?>;
     const positions = <?php echo json_encode($chart_positions); ?>;
 
-    new Chart(document.getElementById('rankChart'), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Posición Ranking',
-                data: positions,
-                borderColor: '#3b82f6',
-                borderWidth: 3,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#3b82f6',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                fill: true,
-                backgroundColor: 'rgba(59, 130, 246, 0.05)',
-                tension: 0.3
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    reverse: true, // Puesto 1 arriba
-                    ticks: { precision: 0 },
-                    title: { display: true, text: 'Posición' }
-                },
-                x: { display: false }
+    if (labels.length > 0) {
+        new Chart(document.getElementById('rankChart'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Posición Ranking',
+                    data: positions,
+                    borderColor: '#3b82f6',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#3b82f6',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    fill: true,
+                    backgroundColor: 'rgba(59, 130, 246, 0.05)',
+                    tension: 0.3
+                }]
             },
-            plugins: {
-                legend: { display: false }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        reverse: true, // Puesto 1 arriba
+                        ticks: { precision: 0 },
+                        title: { display: true, text: 'Posición' }
+                    },
+                    x: { display: false }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
             }
-        }
-    });
+        });
+    } else {
+        // Mostrar mensaje si no hay datos para el gráfico
+        const ctx = document.getElementById('rankChart').getContext('2d');
+        ctx.font = "12px Lexend";
+        ctx.fillStyle = "#94a3b8";
+        ctx.textAlign = "center";
+        ctx.fillText("Sin datos de trayectoria", ctx.canvas.width/2, ctx.canvas.height/2);
+    }
 });
 </script>
 
 <style>
 .perspective-1000 { perspective: 1000px; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 </style>
 
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>

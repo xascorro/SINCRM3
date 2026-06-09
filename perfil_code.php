@@ -55,6 +55,7 @@ if(isset($_POST['update_profile_btn'])){
             
             if(move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)){
                 $query_parts[] = "foto = '$target_file'";
+                $_SESSION['foto'] = $target_file;
             } else {
                 write_log("Error al mover la foto subida de perfil", "ERROR");
             }

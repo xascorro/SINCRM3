@@ -63,7 +63,9 @@ include('security.php');
                 </div>
                 <div class="h-10 w-10 md:h-11 md:w-11 rounded-2xl oceanic-gradient flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-oceanic/20 border-2 border-white overflow-hidden transition-transform group-hover:scale-105">
                     <?php 
-                    if(!empty($_SESSION['icono']) && strpos($_SESSION['icono'], '<i') !== false) {
+                    if(!empty($_SESSION['foto']) && file_exists($_SESSION['foto'])) {
+                        echo '<img src="'.$_SESSION['foto'].'" alt="User" class="w-full h-full object-cover">';
+                    } elseif(!empty($_SESSION['icono']) && strpos($_SESSION['icono'], '<i') !== false) {
                         echo str_replace('fa-2x', 'text-xl', $_SESSION['icono']);
                     } else {
                         echo '<i class="fas fa-user text-lg md:text-xl"></i>';
