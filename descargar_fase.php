@@ -53,8 +53,8 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
         $ruta_fisica = $path_base . $row['id'] . '.mp3';
 
         if (file_exists($ruta_fisica)) {
-            // Estructura de carpetas: "Modalidad - Categoria / Orden - Club - NombreMusica.mp3"
-            $nombre_carpeta = $row['nombre_modalidad'] . ' - ' . $row['nombre_categoria'];
+            // Estructura de carpetas: "[OrdenFase]. Modalidad - Categoria / [OrdenNadadora] - Club - NombreMusica.mp3"
+            $nombre_carpeta = $row['orden_fase'] . '. ' . $row['nombre_modalidad'] . ' - ' . $row['nombre_categoria'];
             $nombre_archivo = $row['orden'] . ' - ' . $row['nombre_club'] . ' - ' . $row['music_name'] . '.mp3';
             
             // Limpiar caracteres no permitidos
@@ -70,7 +70,7 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
 
     if (!empty($archivos_encontrados)) {
         $zip = new ZipArchive();
-        $nombre_zip = sys_get_temp_dir() . '/temp_fase_' . $id_fase . '_' . time() . '.zip';
+        $nombre_zip = sys_get_temp_dir() . '/temp_fase_' . ($id_fase ?? 'all') . '_' . time() . '.zip';
 
         if ($zip->open($nombre_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             foreach ($archivos_encontrados as $arc) {
@@ -91,7 +91,7 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
                         $club_nom_clean = str_replace(' ', '_', $club_nom);
                         $filename_final = "Musica_" . $nom_comp . "_" . $club_nom_clean . ".zip";
                     } else {
-                        $filename_final = "Musica_Total_" . $nom_comp . ".zip";
+                        $filename_final = "Musica_" . $nom_comp . ".zip";
                     }
                 } else {
                     $q_fase_info = "SELECT m.nombre as mod_nom, c.nombre as cat_nom 
