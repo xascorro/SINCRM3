@@ -73,11 +73,41 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 - **TRE (Técnico)**: Ajuste del sistema de cálculo de puntuación implementado. **PENDIENTE DE REVISIÓN MANUAL POR EL USUARIO** para validar la normalización de notas basada en el sumatorio de DDs en Junior/Senior.
 
 
+## ✅ Mejoras Recientes (Junio 2026)
+
+### 🔒 Seguridad y Permisos
+- **Sistema de Permisos Dinámicos**: Migración de listas blancas hardcoded a un motor basado en base de datos (`paginas_sistema`, `permisos_roles`).
+- **Catálogo de Páginas**: Nueva interfaz para registrar y organizar scripts PHP del sistema en grupos lógicos.
+- **Rediseño de Roles**: Interfaz de edición de roles modernizada con cuadrícula de permisos, iconos descriptivos y funciones de selección masiva.
+
+### 🤖 Automatización y Cron
+- **Cierre de Inscripciones**: Script automático (`cron_cierres_inscripcion.php`) que se ejecuta a las 00:15 para detectar cierres.
+- **Envío de PDF**: Generación automática de listados oficiales y envío por email a través del Servidor Blue (Pulse Hub) con bypass de seguridad mediante token interno.
+
+### 🏊 Gestión de Rutinas
+- **Edición Moderna**: Rediseño total de `rutinas_edit.php` con estética Tailwind v4.
+- **Lógica de Orden Especial**: 
+    - **PS (Preswimmer)**: Rango de orden -1 a -9.
+    - **EX (Exhibición)**: Rango de orden -10 o inferior.
+- **Ordenación Inteligente**: Listado de rutinas ordenado por Fase -> Orden -> Club -> ID.
+
+### 📁 Descarga de Música
+- **ZIP Estructurado**: Los nombres de las carpetas dentro del ZIP ahora comienzan con el número de orden de la fase.
+- **Nomenclatura Oficial**: El archivo final se genera como `Musica_NombreDelCampeonato.zip`.
+- **Compatibilidad Producción**: Implementado uso de `sys_get_temp_dir()` para evitar bloqueos de escritura en el servidor principal.
+
+### 🃏 Perfil y Carta de Rol
+- **Carta de Rol (Habilidades)**: Integración de un cromo técnico con gráfico de radar (Pentágono) en el perfil de juez.
+- **Participación Técnica**: Estadísticas automáticas de actuación en paneles (Secretario, Juez Árbitro, etc.).
+- **Identidad Visual**: Soporte para subida de foto de perfil e integración en la barra superior (Topbar).
+
+---
+
 ## 🗺️ Roadmap & TODO List (Propuestas de Mejora)
 
 ### 1. Comunicación y Automatización
 - [ ] **Notificaciones Push/Bot**: Implementar avisos automáticos a jueces y clubes (Telegram/Email) sobre estados de competición.
-- [ ] **Confirmación de Carga**: Envío de emails automáticos tras subida exitosa de música o cierre de inscripciones.
+- [x] **Confirmación de Carga**: Envío de emails automáticos tras subida exitosa de música o cierre de inscripciones. (Implementado para Cierres).
 
 ### 2. Visibilidad y Espectadores
 - [ ] **Live Scoreboard**: Página pública ligera para seguimiento de notas en tiempo real por el público.
@@ -98,7 +128,7 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 ### 6. Continuidad Estética (Migración v4 Tailwind)
 - [ ] **Puntuaciones Figuras**: Rediseñar `puntuaciones_lista_figuras.php` y sus subpáginas al estilo v4.
 - [ ] **Wizard de Competición**: Crear un flujo guiado para la configuración inicial de eventos y fases.
-- [ ] **Dashboard de Club**: Refinar la vista de "Mi Equipo" con más analíticas de plantilla.
+- [x] **Dashboard de Club**: Refinar la vista de "Mi Equipo" con más analíticas de plantilla. (Actualizado Perfil Juez).
 
 ---
 
