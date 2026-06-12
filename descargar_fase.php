@@ -70,7 +70,13 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
 
     if (!empty($archivos_encontrados)) {
         $zip = new ZipArchive();
-        $nombre_zip = sys_get_temp_dir() . '/temp_fase_' . ($id_fase ?? 'all') . '_' . time() . '.zip';
+        
+        // Nueva ubicación persistente
+        $dir_zips = './public/zips/';
+        if (!is_dir($dir_zips)) mkdir($dir_zips, 0777, true);
+        
+        $nombre_archivo_zip = 'Musica_Comp_' . $id_competicion . '_' . ($id_fase ?? 'all') . '_' . time() . '.zip';
+        $nombre_zip = $dir_zips . $nombre_archivo_zip;
 
         if ($zip->open($nombre_zip, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
             foreach ($archivos_encontrados as $arc) {
@@ -79,7 +85,7 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
             $zip->close();
 
             if (file_exists($nombre_zip)) {
-                // Obtener datos para el nombre del archivo final
+                // Obtener datos para el nombre del archivo final (para el header)
                 if ($descargar_todo) {
                     $q_comp_info = "SELECT nombre FROM competiciones WHERE id = $id_competicion";
                     $comp_info = mysqli_fetch_assoc(mysqli_query($connection, $q_comp_info));
@@ -105,7 +111,6 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
                     $nom_cat = str_replace(' ', '_', $fase_info['cat_nom']);
 
                     if ($_SESSION['id_rol'] == 5 || ($id_club !== null && $id_club > 0)) {
-                        // Nombre para Club: Musica_NombreClub_Modalidad_Categoria.zip
                         $q_club_nom = "SELECT nombre_corto FROM clubes WHERE id = $id_club";
                         $res_club_nom = mysqli_query($connection, $q_club_nom);
                         $row_club_nom = mysqli_fetch_assoc($res_club_nom);
@@ -114,13 +119,23 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
                         $club_nom_clean = str_replace(' ', '_', $club_nom);
                         $filename_final = "Musica_" . $club_nom_clean . "_" . $nom_mod . "_" . $nom_cat . ".zip";
                     } else {
-                        // Nombre para Admin (Fase completa): Musica_Fase_Modalidad_Categoria.zip
                         $filename_final = "Musica_Fase_" . $nom_mod . "_" . $nom_cat . ".zip";
                     }
                 }
 
                 // Limpiar el nombre final de caracteres extraños
                 $filename_final = str_replace(['/', '\\', ':', '*', '?', '"', '<', '>', '|'], '', $filename_final);
+
+                // Determinar URL pública
+                $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+                $host = $_SERVER['HTTP_HOST'];
+                $public_url = $protocol . "://" . $host . "/public/zips/" . $nombre_archivo_zip;
+
+                // Si es una petición AJAX o queremos mostrar la URL antes de descargar
+                if (isset($_POST['get_url_only'])) {
+                    echo $public_url;
+                    exit();
+                }
 
                 header('Content-Type: application/zip');
                 header('Content-Disposition: attachment; filename="'.$filename_final.'"');
@@ -129,7 +144,7 @@ if ($id_competicion && ($id_fase || $descargar_todo)) {
                 header('Expires: 0');
                 
                 readfile($nombre_zip);
-                unlink($nombre_zip);
+                // unlink($nombre_zip); // COMENTADO PARA NO BORRAR
                 exit();
             }
         } else {

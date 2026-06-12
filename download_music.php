@@ -172,6 +172,19 @@ if ($id_competicion !== null && is_dir($path_base)) {
                             <i class="fas fa-file-archive"></i> Descargar Todo (.zip)
                         </button>
                     </form>
+                    <?php
+                    // Mostrar enlace al último ZIP generado si existe
+                    $dir_zips = '/var/www/html/beta/public/zips/';
+                    if (is_dir($dir_zips)) {
+                        $files = glob($dir_zips . 'Musica_Comp_' . $id_competicion . '_all_*.zip');
+                        if ($files) {
+                            usort($files, function($a, $b) { return filemtime($b) - filemtime($a); });
+                            $last_zip = basename($files[0]);
+                            $url_zip = "/public/zips/" . $last_zip;
+                            echo "<div class='mt-2 text-center'><a href='$url_zip' class='text-[10px] font-bold text-indigo-500 hover:underline' target='_blank'><i class='fas fa-link'></i> URL Último ZIP</a></div>";
+                        }
+                    }
+                    ?>
                 <?php endif; ?>
                 <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
                     <i class="fas fa-chevron-left text-xs"></i> Volver
