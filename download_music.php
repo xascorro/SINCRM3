@@ -174,7 +174,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
                     </form>
                     <?php
                     // Mostrar enlace al último ZIP generado si existe
-                    $dir_zips = '/var/www/html/beta/public/zips/';
+                    $dir_zips = './public/zips/';
                     if (is_dir($dir_zips)) {
                         $files = glob($dir_zips . 'Musica_Comp_' . $id_competicion . '_all_*.zip');
                         if ($files) {
