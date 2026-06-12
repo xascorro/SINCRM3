@@ -169,6 +169,14 @@ if ($id_competicion > 0) {
                                 <i class="fas fa-gavel text-slate-400 text-2xl group-hover:scale-110 transition-transform"></i>
                                 <span class="text-[9px] font-black uppercase text-slate-500">Árbitros</span>
                             </a>
+                            <a href="informes/informe_rutinas_notas_anotadores.php?titulo=Anotadores" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
+                                <i class="fas fa-user-pen text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[9px] font-black uppercase text-slate-500">Anotadores</span>
+                            </a>
+                            <a href="informes/hojas_puntuacion_rutinas_no_cc.php" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
+                                <i class="fas fa-file-pdf text-amber-600 text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[9px] font-black uppercase text-slate-500">Hojas no CC</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -200,6 +208,13 @@ if ($id_competicion > 0) {
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-trophy text-lg"></i></div>
                                 <span class="text-sm font-bold text-slate-700">Resultados Finales</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="informes/informe_figuras_notas_anotadores.php?titulo=Anotadores" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-user-pen"></i></div>
+                                <span class="text-sm font-bold text-slate-700">Anotadores Figuras</span>
                             </div>
                             <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
                         </a>
