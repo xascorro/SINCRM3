@@ -148,6 +148,14 @@ if ($id_competicion > 0) {
                             <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-sort-amount-down text-lg"></i></div>
                             <span class="text-sm font-bold text-slate-700">Orden de Salida</span>
                         </a>
+                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20por%20Clubes&memorial=si&id_fase=0" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-trophy text-lg"></i></div>
+                            <span class="text-sm font-bold text-slate-700">Clasificación Clubes</span>
+                        </a>
+                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20detallada&hoja_tecnica=si&memorial=si" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-medal text-lg"></i></div>
+                            <span class="text-sm font-bold text-slate-700">Resultados Detallados</span>
+                        </a>
                     </div>
 
                     <div class="mt-10 pt-8 border-t border-slate-100">
@@ -215,6 +223,13 @@ if ($id_competicion > 0) {
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-user-pen"></i></div>
                                 <span class="text-sm font-bold text-slate-700">Anotadores Figuras</span>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <a href="informes/informe_figuras_notas_figuras_junior.php?titulo=Notas%20Rutina%20Técnica" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-file-pdf"></i></div>
+                                <span class="text-sm font-bold text-slate-700">Notas Rutina Técnica</span>
                             </div>
                             <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
                         </a>
