@@ -75,3 +75,39 @@ Hemos unificado la lógica de estados (`activo` 1/0 en lugar de `baja` si/no) y 
 
 ## 📌 Nota de Sesión
 Esta sesión concluye tras la modernización total del flujo de acceso y el Dashboard principal. Se ha garantizado la compatibilidad de Tailwind con el motor de Bootstrap original desactivando el Preflight.
+
+## Reglas de Trabajo para AGY
+1. **Directorio Raíz**: Toda consulta, análisis o modificación debe tomar como referencia el directorio raíz `/var/www/html/sincrm`.
+2. **Preservar Credenciales**: Nunca exponer ni modificar contraseñas o claves en `database/dbconfig.php` ni en `~/.ssh/`.
+3. **Compatibilidad y Permisos**: Respetar los permisos de servidor web (`www-data`) y asegurar compatibilidad PHP / MySQL sin romper código legacy ni migraciones v4.
+4. **Auto-resumen de sesión por desconexiones**:
+   - Al finalizar un trabajo o bloque importante en este directorio, crea/actualiza el archivo `.last_session_summary.txt` en la raíz del proyecto (`/var/www/html/sincrm/.last_session_summary.txt`) con un resumen muy breve de los cambios realizados, archivos modificados y estado del proyecto. Esto permitirá al usuario ver de un vistazo qué se hizo si se le corta la conexión SSH en el móvil al entrar con `agy-sincrm`.
+
+
+---
+
+## 🎨 Directrices de Diseño y Estética Visual (Sistema Emil Kowalski + Impeccable + Rauno Freiberg)
+
+Para cualquier desarrollo o mejora en la interfaz web de SINCRM v4 (Dashboards, tablas de clientes, expedientes, facturación, modal forms):
+
+### 1. Físicas de Muelles y Microinteracciones Elásticas (Spring Physics)
+- **Transiciones fluidas**: Usar curvas de muelles naturales para animaciones y aperturas (`--spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1)` y `--spring-smooth: cubic-bezier(0.16, 1, 0.3, 1)`). Evitar transiciones lineales o `ease-in-out` planas.
+- **Feedback táctil elástico**: Todo botón de acción, fila interactiva, pill de estado o selector debe responder al clic o toque con un micro-escalado reactivo (`.tap-press:active { transform: scale(0.97); }` o `active:scale-[0.98]`).
+- **Elevación reactiva elástica**: En tarjetas de resumen, gráficos de facturación y paneles KPI (`.card-hover:hover { transform: translateY(-2px); }`).
+
+### 2. Tipografía y Estabilidad Numérica Obligatoria (`tabular-nums`)
+- **Estabilidad numérica obligatoria**: En cualquier importe monetario (`€`), cifras de ventas, porcentajes de IVA/IRPF, CIF/NIF, números de teléfono, fechas de vencimiento y contadores de clientes, es **obligatorio** usar números tabulares (`font-variant-numeric: tabular-nums;` o clase `tabular-nums`).
+- Evita temblores numéricos, desalineaciones de columnas en listados contables o saltos visuales al ordenar tablas.
+
+### 3. Sombras Multicapa Refinadas (Layered Ambient Shadows) y Bordes Hairline
+- **Profundidad limpia**: No usar sombras negras duras o difuminados opacos que ensucien la interfaz empresarial.
+- Emplear sombras multicapa compuestas sutiles combinadas con tinte ambiental y bordes *hairline* ultra-finos (`1px solid rgba(0, 0, 0, 0.06)` en modo claro o `1px solid rgba(255, 255, 255, 0.08)` en modo oscuro) para delimitar tarjetas, modales y tablas con máxima nitidez.
+
+### 4. Componentes Móviles y Ergonomía Táctil
+- **Modales en Bottom-Sheet**: En resoluciones móviles, los formularios de alta rápida, filtros y selectores deben desplegarse preferentemente desde la parte inferior (*Bottom-Sheet*) con tirador táctil (*drag handle*), esquinas superiores redondeadas y deslizamiento suave.
+- **Micro-respiración orgánica (*Breathing Pulse*)**: Alertas críticas de cobro, tareas pendientes o estados de sync deben usar pulsaciones suaves elásticas (`pulse-breathing`) en vez de parpadeos agresivos.
+- **Jerarquía visual limpia**: Espaciado generoso (múltiplos de 4/8px), separación clara entre métricas primarias destacadas y etiquetas secundarias atenuadas.
+
+### 5. Controles Táctiles y Contraste (Zero-Gray Controls)
+- **Cero inputs o selectores en gris plano**: Prohibido usar selectores `<select>` o cajas de texto en gris opaco plano.
+- **Sustitución por controles segmentados**: Usar conmutadores táctiles, chips de filtro y desplegables con contraste nítido, fondos claros suaves (`#f8fafc`), bordes definidos (`#cbd5e1`), texto oscuro de alto contraste (`#0f172a`), y halo de foco de acento (`#2563eb` / `#4f46e5`).
