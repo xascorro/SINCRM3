@@ -1,23 +1,29 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:24
+Fecha: 2026-11-03 23:28
 =========================================================
 
-1. SIDEBAR - COMPORTAMIENTO INTELIGENTE DE SUBMENÚS (Activo vs Inactivos):
-   - Elemento Padre Activo:
-     * Si el sidebar está cerrado y se pincha por primera vez en el elemento padre activo (ej: Competición/Gestión Activa en fases.php), el sidebar se despliega y el submenú activo se mantiene abierto mostrando sus opciones sin cerrarse.
-   - Elementos Inactivos (Comportamiento Acordeón):
-     * El submenú activo solo se cierra si se pincha sobre un elemento inactivo, desplegando este último y cerrando cualquier otro abierto.
-   - Sincronización al Cerrar/Compactar:
-     * Al compactar el sidebar (o hacer clic fuera), el estado base se restaura limpiamente para que la sección activa sea siempre la predeterminada al reabrir.
+1. INSERCIÓN DE FASES TÉCNICAS (COMPETICIÓN 81 - XIV Liga de Figuras (1ª Jornada)):
+   - Competición Mixta / Híbrida:
+     * Fases 1 a 4: Figuras Alevín (103, 10, 104, 58)
+     * Fases 5 a 8: Figuras Infantil (100, 73, 101, 102)
+     * Fases 9 a 13: Rutinas Técnicas Junior:
+       - Orden 9: Solo Técnico Fem (STF - ID 12)
+       - Orden 10: Solo Técnico Masc (STM - ID 13)
+       - Orden 11: Dúo Técnico (DT - ID 6)
+       - Orden 12: Dúo Mixto Técnico (DMT - ID 14)
+       - Orden 13: Equipo Técnico (ET - ID 7)
+     * Fases 14 a 18: Rutinas Técnicas Absoluta:
+       - Orden 14: Solo Técnico Fem (STF - ID 12)
+       - Orden 15: Solo Técnico Masc (STM - ID 13)
+       - Orden 16: Dúo Técnico (DT - ID 6)
+       - Orden 17: Dúo Mixto Técnico (DMT - ID 14)
+       - Orden 18: Equipo Técnico (ET - ID 7)
+   - Bases de datos actualizadas: `sincrm_prod_db` (Docker producción), `sincrm4` (local) y `sincrm4beta`.
 
-2. SECCIONES MODERNIZADAS PREVIAMENTE:
-   - https://sincrm.pedrodiaz.eu/index.php (Dashboard Principal con filtro de inscripciones y KPI)
-   - https://sincrm.pedrodiaz.eu/ranking_jueces.php (Ranking Calidad)
-   - https://sincrm.pedrodiaz.eu/analisis_jueces.php (Auditoría de Evento)
-   - https://sincrm.pedrodiaz.eu/analisis_juez_detalle.php (Detalle de Juez por Evento)
-   - https://sincrm.pedrodiaz.eu/perfil_juez.php (Perfil de Trayectoria / Ficha de Rol)
-   - https://sincrm.pedrodiaz.eu/mi_auditoria.php (Portal de Juez / Autocontrol)
+2. CORRECCIONES EN SIDEBAR (includes/navbar.php):
+   - Mantenimiento del menú padre activo abierto al expandir desde estado colapsado.
+   - Cierre exclusivo del activo al conmutar a un elemento inactivo (acordeón estricto).
 
 3. ARCHIVOS MODIFICADOS:
    - /var/www/html/sincrm/includes/navbar.php
@@ -25,7 +31,6 @@ Fecha: 2026-11-03 23:24
    - /var/www/html/sincrm/.last_session_summary.txt
 
 4. ESTADO TÉCNICO:
-   - Sintaxis PHP validada con `php -l` (0 errores).
-   - Servidor Beta actualizado y sincronizado (permisos 664).
-   - Git actualizado.
+   - Fases 1 a 18 verificadas en base de datos.
+   - Permisos y enlaces sincronizados.
 =========================================================
