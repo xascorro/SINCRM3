@@ -49,6 +49,11 @@ while ($p = mysqli_fetch_assoc($res_paneles)) {
     }
     $paneles[] = $p;
 }
+
+// Calcular total de penalizaciones
+$q_pen_total = "SELECT SUM(p.puntos) as total FROM penalizaciones_rutinas pr JOIN penalizaciones p ON pr.id_penalizacion = p.id WHERE pr.id_rutina = $id_rutina";
+$res_pen_total = mysqli_query($connection, $q_pen_total);
+$total_pen = mysqli_fetch_assoc($res_pen_total)['total'] ?? 0;
 ?>
 
 <style>
@@ -123,11 +128,6 @@ while ($p = mysqli_fetch_assoc($res_paneles)) {
             <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
             <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
 
-        <form action="puntuaciones_rutina_obsoleta_code.php" enctype="multipart/form-data" method="post" id="formulario">
-            <input type="hidden" name="id_rutina" value="<?php echo $id_rutina; ?>">
-            <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
-            <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
-
             <!-- VISTA DE TARJETAS -->
             <div id="view-cards" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
                 <?php 
@@ -176,8 +176,12 @@ while ($p = mysqli_fetch_assoc($res_paneles)) {
 
                     <div class="px-8 py-6 bg-slate-50 border-t border-slate-100 space-y-3">
                         <div class="flex justify-between items-center">
-                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Media Panel</span>
-                            <span class="text-xl font-black text-slate-800 panel-mean" id="mean_p<?php echo $id_panel; ?>">0.0000</span>
+                            <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Suma / Media Panel</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 panel-sum" id="sum_p<?php echo $id_panel; ?>">0.0</span>
+                                <span class="text-slate-300">/</span>
+                                <span class="text-xl font-black text-slate-800 panel-mean" id="mean_p<?php echo $id_panel; ?>">0.0000</span>
+                            </div>
                         </div>
                         <div class="flex justify-between items-center opacity-60">
                             <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest italic">Contribución Final</span>
@@ -204,6 +208,7 @@ while ($p = mysqli_fetch_assoc($res_paneles)) {
                                     ?>
                                         <th class="px-4 py-6 text-center">J<?php echo $i; ?></th>
                                     <?php endfor; ?>
+                                    <th class="px-4 py-6 text-center">Suma</th>
                                     <th class="px-6 py-6 text-center">Media</th>
                                     <th class="px-8 py-6 text-right">Contribución</th>
                                 </tr>
@@ -242,6 +247,7 @@ while ($p = mysqli_fetch_assoc($res_paneles)) {
                                             <?php endif; ?>
                                         </td>
                                     <?php endfor; ?>
+                                    <td class="px-4 py-5 text-center font-bold text-slate-400 panel-sum-table-<?php echo $id_panel; ?>">0.0</td>
                                     <td class="px-6 py-5 text-center font-black text-slate-700 panel-mean-table-<?php echo $id_panel; ?>">0.0000</td>
                                     <td class="px-8 py-5 text-right font-black text-blue-600 panel-contrib-table-<?php echo $id_panel; ?>">0.0000</td>
                                 </tr>
@@ -589,7 +595,12 @@ function calcularTodo() {
         });
 
         // Actualizar UI
+        document.getElementById(`sum_p${panelId}`).innerText = result.suma.toFixed(1);
         document.getElementById(`mean_p${panelId}`).innerText = result.media.toFixed(4);
+        
+        const cellTableSum = document.querySelector(`.panel-sum-table-${panelId}`);
+        if(cellTableSum) cellTableSum.innerText = result.suma.toFixed(1);
+
         const cellTableMean = document.querySelector(`.panel-mean-table-${panelId}`);
         if(cellTableMean) cellTableMean.innerText = result.media.toFixed(4);
 
@@ -606,8 +617,8 @@ function calcularTodo() {
                         <span class="w-20 text-blue-400 font-black uppercase tracking-widest">${name}</span>
                         <div class="flex-1 bg-white/5 rounded-lg px-3 py-1 flex items-center justify-between">
                             <span class="text-slate-300">Notas: [${result.usadas.map(n => n.val).join(', ')}]</span>
+                            <span class="text-slate-400 text-[10px]">Suma Total: <b>${result.suma.toFixed(1)}</b> / Media: <b>${result.media.toFixed(4)}</b></span>
                             ${result.eliminadas.length > 0 ? `<span class="text-slate-400 text-[10px]">Excluidas: <span class="text-red-400">${result.minVal}</span> y <span class="text-emerald-400">${result.maxVal}</span></span>` : ''}
-                            <span class="font-black text-white ml-4">${result.media.toFixed(4)}</span>
                         </div>
                     </div>`;
     });
@@ -615,6 +626,13 @@ function calcularTodo() {
     if (totalWeights > 0 && totalWeights !== 100) {
         totalScore = (totalScore / totalWeights) * 100;
         logHtml += `<p class="text-[9px] text-amber-400 uppercase font-black tracking-widest mt-4">⚠️ Pesos normalizados (${totalWeights}%)</p>`;
+    }
+    
+    // Restar penalizaciones
+    const totalPen = <?php echo abs($total_pen); ?>;
+    totalScore = Math.max(0, totalScore - totalPen);
+    if(totalPen > 0) {
+        logHtml += `<p class="text-[10px] text-red-400 uppercase font-black tracking-widest mt-4">⚠️ Penalizaciones aplicadas: -${totalPen.toFixed(4)}</p>`;
     }
 
     document.getElementById('totalScore').innerText = totalScore.toFixed(4);
@@ -638,9 +656,9 @@ function calcularPanel(notesMap) {
         maxVal = maxObj.val;
     }
 
-    let suma = usadas.reduce((a, b) => a + b.val, 0);
-    let media = usadas.length > 0 ? (suma / usadas.length) : 0;
+    let suma = validas.reduce((a, b) => a + b.val, 0); // SUMA DE TODAS LAS VÁLIDAS
+    let media = usadas.length > 0 ? (usadas.reduce((a, b) => a + b.val, 0) / usadas.length) : 0;
 
-    return { media, usadas, eliminadas, minVal, maxVal };
+    return { suma, media, usadas, eliminadas, minVal, maxVal };
 }
 </script>

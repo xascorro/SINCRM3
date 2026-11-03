@@ -11,7 +11,7 @@ if ($id_comp == 0 && $_SESSION['id_rol'] == 1 && isset($_SESSION['id_competicion
 }
 
 // Obtener info de la fase
-$query_fase = "SELECT c.nombre as categoria, m.nombre as modalidad 
+$query_fase = "SELECT c.nombre as categoria, m.nombre as modalid 
                FROM fases f 
                JOIN categorias c ON f.id_categoria = c.id 
                JOIN modalidades m ON f.id_modalidad = m.id 
@@ -42,6 +42,13 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                 <p class="text-slate-500 font-medium text-lg uppercase tracking-tight italic"><?php echo $nombre_modalidad." ".$nombre_categoria; ?></p>
             </div>
             <div class="flex flex-wrap gap-3">
+                <a href="./puntuaciones_lista_rutinas_live.php?id_fase=<?php echo $id_fase; ?>" class="px-5 py-3 bg-emerald-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                    </span>
+                    Live Guide
+                </a>
                 <a href="./puntuaciones_fases_rutinas_puntuar_categorias.php?id_fase=<?php echo $id_fase; ?>" target="_blank" class="px-5 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
                     <i class="fas fa-calculator text-blue-500"></i> Calcular Resultados
                 </a>

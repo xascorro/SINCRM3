@@ -6,6 +6,8 @@ includes/config.php
 
 # Almacenamiento y Logs
 log/*.txt
+public/music/*
+public/zips/*
 # database/backup/*
 !database/backup/.gitkeep
 

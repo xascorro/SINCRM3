@@ -11,7 +11,8 @@ $env_name = getenv('DB_NAME');
 
 if ($env_host) {
     // Estamos en Docker / Coolify
-    $servername  = $env_host;
+    // Si el host es el genérico 'database', usar 'sincrm_prod_db' para evitar colisiones en la red compartida
+    $servername  = ($env_host === 'database') ? 'sincrm_prod_db' : $env_host;
     $db_username = $env_user;
     $db_password = $env_pass;
     $db_name     = $env_name;
