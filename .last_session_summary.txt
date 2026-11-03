@@ -1,34 +1,32 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:05
+Fecha: 2026-11-03 23:13
 =========================================================
 
-1. SECCIONES MODERNIZADAS Y OPTIMIZADAS:
-   - https://sincrm.pedrodiaz.eu/index.php (Dashboard Principal)
+1. CORRECCIÓN VISUAL DEL SIDEBAR (Colapso y desbordamiento):
+   - Diagnóstico: En la imagen enviada por Telegram se apreciaba que al hacer clic en un elemento (ej: Fases) y recargar con el sidebar colapsado (lg:w-20), los submenús activos se expandían verticalmente desbordando los iconos hacia la derecha por falta de la clase `hidden` y ausencia de regla forzada `display: none !important;`.
+   - Solución aplicada:
+     * En `includes/header.php`: añadido selector estricto:
+       `#sidebar.lg\:w-20 .sidebar-text, #sidebar.lg\:w-20 [id^="sub-"] { display: none !important; }`
+     * En `includes/navbar.php`: añadida clase `hidden` a todos los contenedores de submenú (`#sub-datos`, `#sub-comp`, `#sub-bias`, `#sub-users`, `#sub-maint`, `#sub-comp-club`) para que en modo colapsado nunca se muestren ni desborden sus iconos.
+
+2. SECCIONES MODERNIZADAS PREVIAMENTE:
+   - https://sincrm.pedrodiaz.eu/index.php (Dashboard Principal con filtro de inscripciones y KPI)
    - https://sincrm.pedrodiaz.eu/ranking_jueces.php (Ranking Calidad)
    - https://sincrm.pedrodiaz.eu/analisis_jueces.php (Auditoría de Evento)
    - https://sincrm.pedrodiaz.eu/analisis_juez_detalle.php (Detalle de Juez por Evento)
    - https://sincrm.pedrodiaz.eu/perfil_juez.php (Perfil de Trayectoria / Ficha de Rol)
    - https://sincrm.pedrodiaz.eu/mi_auditoria.php (Portal de Juez / Autocontrol)
 
-2. MEJORAS APLICADAS EN DASHBOARD (index.php):
-   - Filtro inteligente de Competiciones en Foco vs Calendario:
-     * En "Competiciones en Activo y Próximas" (fichas detalladas) solo se muestran las competiciones con inscripciones abiertas o a las que les falte ≤ 7 días para abrir, y que no haya pasado más de 1 día de su celebración (con fallback a la siguiente más cercana si no hay ninguna en ese margen).
-     * En "Eventos en Calendario" (compacto) se listan únicamente los eventos futuros posteriores, eliminando la duplicidad visual que existía.
-   - Eliminación del contenedor vacío en Tareas Pendientes (Ghost Container):
-     * Ahora se evalúan y almacenan las tarjetas activas; el bloque de encabezado y silenciado solo se renderiza si hay al menos 1 tarea activa real.
-   - Equilibrio de la Fila 1 de Tarjetas KPI:
-     * Para roles 1, 2 y 3 (Admin, Secretario, Delegado) se incorporó la tercera tarjeta de "Competiciones" (programadas en temporada y finalizadas), completando el grid simétrico 3x3.
-   - Tipografía Numérica (`tabular-nums`) y sustitución de funciones obsoletas:
-     * Números tabulares en todas las fechas, contadores y badges.
-     * Reemplazo de llamada legacy `mysqli_result` por `mysqli_fetch_assoc`.
-
 3. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/index.php
-   - /var/www/html/beta/index.php (permisos 664)
+   - /var/www/html/sincrm/includes/header.php
+   - /var/www/html/sincrm/includes/navbar.php
+   - /var/www/html/beta/includes/header.php
+   - /var/www/html/beta/includes/navbar.php
    - /var/www/html/sincrm/.last_session_summary.txt
 
 4. ESTADO TÉCNICO:
    - Sintaxis PHP validada con `php -l` (0 errores).
-   - Servidor Beta actualizado y sincronizado.
+   - Servidor Beta actualizado y sincronizado (permisos 664).
+   - Git actualizado.
 =========================================================

@@ -37,7 +37,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Datos Maestros</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_datos) ? 'rotate-90' : ''; ?>" id="arrow-sub-datos"></i>
             </button>
-            <div id="sub-datos" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-datos" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="competiciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'competiciones.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-trophy w-4 text-center"></i> Competiciones
                 </a>
@@ -71,7 +71,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_operativa) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp"></i>
             </button>
-            <div id="sub-comp" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-comp" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-list-check w-4 text-center"></i> Fases
                 </a>
@@ -123,7 +123,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
                 </a>
@@ -154,7 +154,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                     <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Usuarios</span>
                     <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_users) ? 'rotate-90' : ''; ?>" id="arrow-sub-users"></i>
                 </button>
-                <div id="sub-users" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+                <div id="sub-users" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                     <a href="usuarios.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'usuarios.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
                         <i class="fas fa-users-gear w-4 text-center"></i> Directorio
                     </a>
@@ -177,7 +177,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Mantenimiento</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_mantenimiento) ? 'rotate-90' : ''; ?>" id="arrow-sub-maint"></i>
             </button>
-            <div id="sub-maint" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-maint" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="estado_sistema.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'estado_sistema.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap">
                     <i class="fas fa-chart-line w-4 text-center"></i> Estado
                 </a>
@@ -233,7 +233,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
                 </a>
@@ -302,7 +302,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_club_comp) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp-club"></i>
             </button>
-            <div id="sub-comp-club" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
+            <div id="sub-comp-club" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
                     <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
                         <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras

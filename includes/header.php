@@ -40,6 +40,12 @@ include('./lib/my_functions.php');
         .sidebar-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .oceanic-gradient { background: linear-gradient(135deg, #64748b 0%, #334155 100%); }
 
+        /* Evitar desbordamientos en sidebar colapsado (Desktop) */
+        #sidebar.lg\:w-20 .sidebar-text,
+        #sidebar.lg\:w-20 [id^="sub-"] {
+            display: none !important;
+        }
+
         .nav-item-active {
             background: rgba(255, 255, 255, 0.1) !important;
             border-left: 4px solid #3b82f6 !important;
