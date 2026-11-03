@@ -18,9 +18,11 @@ Fecha: 2026-11-03
   - Validación de cupo federativo: máximo 2 rutinas por club y modalidad técnica.
   - Validación para 2º equipo técnico (requiere que el 1er equipo esté completado).
   - Aviso no bloqueante de duración oficial de audio (Solo: 2:00 min, Dúo: 2:20 min).
-- **Puntuaciones y Clasificación de Liga (`puntuaciones_lista_fases.php`, `puntuaciones_rutina.php`, `puntuaciones_fases_figuras_puntuar_categorias.php`, `informes/informe_figuras_liga.php`, `informe_figuras_liga_categorias.php`)**:
+- **Puntuaciones y Clasificación de Liga (`puntuaciones_lista_fases.php`, `puntuaciones_rutina.php`, `puntuaciones_fases_figuras_puntuar_categorias.php`, `informes/informe_figuras_liga.php`, `informes/informe_figuras_liga_categorias.php`, `informes_competicion.php`)**:
   - Enrutamiento por fase a evaluación de figuras o motor oficial AQUA completo (Elementos, TC con Base Marks, Sincronización, AI y penalizaciones).
   - Regla 9 FNRM: clasificación al 100% de la nota real directa (eliminado baremo antiguo 19, 16, 15...).
-  - Acumulado de las 3 mejores jornadas sobre 4 con descarte automático de la peor nota.
+  - Cálculo exacto N-1 mejores jornadas: se resta la peor puntuación de las N posibles de la liga; la no participación asigna 0.0000.
+  - Trazado visual con tachado (`line-through`) de la jornada descartada (incluso si fue NP / 0.0000).
+  - Acceso directo al Ranking de Liga en `informes_competicion.php` cuando la competición activa pertenece a una liga.
   - Empates mantenidos ex aequo sin desempates forzados.
 - Sincronizados todos los archivos con `/var/www/html/beta`.

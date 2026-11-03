@@ -10,8 +10,15 @@ $total_rutinas = 0;
 $fases_puntuadas = 0;
 $total_fases = 0;
 $porcentaje_fases = 0;
+$clave_liga_comp = '';
 
 if ($id_competicion > 0) {
+    // 0. Datos competición (liga)
+    $q_cl = "SELECT clave_liga FROM competiciones WHERE id = '$id_competicion'";
+    $res_cl = mysqli_query($connection, $q_cl);
+    if($res_cl && $row_cl = mysqli_fetch_assoc($res_cl)) {
+        $clave_liga_comp = trim($row_cl['clave_liga'] ?? '');
+    }
     // 1. Contar nadadoras únicas en esta competición
     $q1 = "SELECT COUNT(DISTINCT id_nadadora) as total FROM rutinas_participantes rp 
            JOIN rutinas r ON rp.id_rutina = r.id 
@@ -233,6 +240,18 @@ if ($id_competicion > 0) {
                             </div>
                             <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
                         </a>
+                        <?php if($clave_liga_comp !== ''): ?>
+                        <a href="./informes/informe_figuras_liga_categorias.php?titulo=Clasificación General Liga" target="_blank" class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 flex items-center justify-between group hover:border-amber-400 hover:bg-amber-100/60 transition-all shadow-sm">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm"><i class="fas fa-ranking-star"></i></div>
+                                <div>
+                                    <span class="text-sm font-bold text-slate-800 block">Ranking Oficial Liga (FNRM)</span>
+                                    <span class="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Liga <?php echo htmlspecialchars($clave_liga_comp); ?> &bull; 3 mejores jornadas</span>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-[10px] text-amber-500 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>

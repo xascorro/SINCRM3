@@ -129,127 +129,167 @@ $pdf->SetFont('helvetica', 'B', 14);
 	$clave_liga = $GLOBALS['clave_liga'];
 	$query = "select año from resultados_figuras where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') group by año order by año desc";
 	$años = mysqli_query($connection,$query);
-	while($año = mysqli_fetch_array($años)){
-        $query = "select nombre_corto, fecha, lugar, color from competiciones where clave_liga like '$clave_liga' order by id asc";
-	$jornadas_liga = mysqli_query($connection,$query);
-        // add a page
-        $GLOBALS['ano'] = $año['año'];
-	$pdf->AddPage('L');
-	$pdf->SetFont('helvetica', '', 14);
-	$html = "<br>";
-	$pdf->writeHTML($html, true, false, true, false, '');
-	$pdf->SetFont('helvetica', '', 12);
-	$html = '<table align="center" border="1" cellpadding="4">';
-	$html.= '<tr style= "font-weight:bold;"><th style="width:3%;"><span>&nbsp;</span><br><span style="font-size:18px">P</span></th><th style="width:36%"><span>&nbsp;</span><br><span style="font-size:18px">Nadadora</span></th><th width="23%"><span>&nbsp;</span><br><span style="font-size:18px">Club</span></th>';
-	while($jornada_liga = mysqli_fetch_array($jornadas_liga)){
-	   $html .= '<th width="10%" style="background-color:'.$jornada_liga['color'].'">'.$jornada_liga['nombre_corto'].'<br><span style="font-size:10px">'.dateAFecha($jornada_liga['fecha']).'</span><br><span style="font-size:10px">'.$jornada_liga['lugar'].'</span></th>';
+
+	// Cache de jornadas de la liga ordenadas por fecha/id
+	$query_jornadas = "SELECT id, nombre_corto, fecha, lugar, color FROM competiciones WHERE clave_liga LIKE '$clave_liga' ORDER BY fecha ASC, id ASC";
+	$res_jornadas_all = mysqli_query($connection, $query_jornadas);
+	$jornadas_liga_arr = [];
+	while($rj = mysqli_fetch_assoc($res_jornadas_all)){
+	    $jornadas_liga_arr[] = $rj;
 	}
-	$html .= '<th width="8%" style="background-color:'.$total_color.'"><span>&nbsp;</span><br><span style="font-size:18px">Total</span></th></tr>';
-	 $i = 0;
-		  $clasificacion_nadadoras[][] = "";
-		  $query = "select distinct(id_nadadora) from resultados_figuras where año = '".$año['año']."'  and id_competicion in (select id from competiciones where clave_liga like '$clave_liga')";
-		  $nadadoras = mysqli_query($connection,$query);
+	$numero_jornadas_liga = count($jornadas_liga_arr);
 
-		  $numero_jornadas_liga = mysqli_result(mysqli_query($connection,"select count(id) from competiciones where clave_liga like '$clave_liga'"), 0);
-		  while($nadadora = mysqli_fetch_array($nadadoras)){
-			$puntos_totales = 0;
-			$query = "select apellidos from nadadoras where id = '".$nadadora['id_nadadora']."'";
-			$nombre_nadadora = mysqli_result(mysqli_query($connection,$query),0);
-			$query = "select nombre from nadadoras where id = '".$nadadora['id_nadadora']."'";
-			$nombre_nadadora .= ", ".mysqli_result(mysqli_query($connection,$query),0);
-			$clasificacion_nadadoras[$i]['nombre'] =$nombre_nadadora;
-			$query = "select nombre from clubes where id in (select club from nadadoras where id = '".$nadadora['id_nadadora']."')";
-			$nombre_club = mysqli_result(mysqli_query($connection,$query),0);
-			$clasificacion_nadadoras[$i]['nombre_club'] =$nombre_club;
-			$query = "select id, color from competiciones where clave_liga like '$clave_liga'";
-			$jornadas_liga = @mysqli_query($connection,$query);
-			while($jornada_liga = mysqli_fetch_array($jornadas_liga)){
-				$id_jornada_liga = $jornada_liga['id'];
-				$query = "select coalesce(nota_final_calculada, puntos, 0) as nota_real, baja from resultados_figuras where id_nadadora = '".$nadadora['id_nadadora']."' and id_competicion = '".$id_jornada_liga."'";
-				$res_puntos_j = mysqli_query($connection,$query);
-				if($res_puntos_j && mysqli_num_rows($res_puntos_j) > 0) {
-					$row_pj = mysqli_fetch_assoc($res_puntos_j);
-					$puntos = (float)$row_pj['nota_real'];
-					$puntos_display = ($puntos > 0) ? number_format($puntos, 4) : '0.0000';
-				} else {
-					$puntos = 0.0000;
-					$puntos_display = 'NP';
-				}
-				if($id_jornada_liga > $GLOBALS['id_competicion_activa']){
-					$puntos = 0.0000;
-					$puntos_display = '-';
-				}
-				$clasificacion_nadadoras[$i]['c'.$id_jornada_liga] = $jornada_liga['color'];
-				$clasificacion_nadadoras[$i][$id_jornada_liga] = $puntos_display;
-				$puntos_totales = (float)$puntos_totales + (float)$puntos;
-			}
-      if(isset($_GET['resta_peor_puntuacion'])){
-        $query = "select coalesce(min(nota_final_calculada), min(puntos), 0) from resultados_figuras where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
-  			$puntos_minimos = (float)@mysqli_result(mysqli_query($connection,$query),0);
-      }else{
-        $puntos_minimos = 0.0000;
-      }
-      $query = "select count(puntos) from resultados_figuras where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
-			$participacion_nadadora = @mysqli_result(mysqli_query($connection,$query),0);
-			if($participacion_nadadora < $numero_jornadas_liga )
-				$puntos_minimos = 0.0000;
-			$clasificacion_nadadoras[$i]['c_puntos_totales'] = $total_color ;
-			$clasificacion_nadadoras[$i]['puntos_totales'] = (float)$puntos_totales;
-			$puntos_final_calc = (float)$puntos_totales - (float)$puntos_minimos;
-			$clasificacion_nadadoras[$i]['puntos_clasificacion'] = $puntos_final_calc;
-			$clasificacion_nadadoras[$i]['Total'] = number_format($puntos_final_calc, 4);
-			if($clasificacion_nadadoras[$i]['puntos_totales'] == 0)
-				unset($clasificacion_nadadoras[$i]);
-		  $i++;
-		  }
-		  @usort($clasificacion_nadadoras,"cmpPuntosDesc");
+	while($año = mysqli_fetch_array($años)){
+        $GLOBALS['ano'] = $año['año'];
+        $pdf->AddPage('L');
+        $pdf->SetFont('helvetica', '', 14);
+        $html = "<br>";
+        $pdf->writeHTML($html, true, false, true, false, '');
+        $pdf->SetFont('helvetica', '', 12);
+        $html = '<table align="center" border="1" cellpadding="4">';
+        $html.= '<tr style= "font-weight:bold;"><th style="width:3%;"><span>&nbsp;</span><br><span style="font-size:18px">P</span></th><th style="width:36%"><span>&nbsp;</span><br><span style="font-size:18px">Nadadora</span></th><th width="23%"><span>&nbsp;</span><br><span style="font-size:18px">Club</span></th>';
+        foreach($jornadas_liga_arr as $jornada_liga){
+            $html .= '<th width="10%" style="background-color:'.$jornada_liga['color'].'">'.$jornada_liga['nombre_corto'].'<br><span style="font-size:10px">'.dateAFecha($jornada_liga['fecha']).'</span><br><span style="font-size:10px">'.$jornada_liga['lugar'].'</span></th>';
+        }
+        $html .= '<th width="8%" style="background-color:'.$total_color.'"><span>&nbsp;</span><br><span style="font-size:18px">Total</span></th></tr>';
+        
+        $i = 0;
+        $clasificacion_nadadoras = [];
+        $query = "select distinct(id_nadadora) from resultados_figuras where año = '".$año['año']."' and id_competicion in (select id from competiciones where clave_liga like '$clave_liga')";
+        $nadadoras = mysqli_query($connection,$query);
 
-		 $puntos_anterior = 1000;
-		 $posicion = 0;
-        $bgcolor1= '#cecece';
+        while($nadadora = mysqli_fetch_array($nadadoras)){
+            $query = "select apellidos from nadadoras where id = '".$nadadora['id_nadadora']."'";
+            $nombre_nadadora = mysqli_result(mysqli_query($connection,$query),0);
+            $query = "select nombre from nadadoras where id = '".$nadadora['id_nadadora']."'";
+            $nombre_nadadora .= ", ".mysqli_result(mysqli_query($connection,$query),0);
+            $query = "select nombre from clubes where id in (select club from nadadoras where id = '".$nadadora['id_nadadora']."')";
+            $nombre_club = mysqli_result(mysqli_query($connection,$query),0);
+
+            $puntos_totales = 0.0;
+            $scores_nadadora = [];
+            $display_nadadora = [];
+
+            foreach($jornadas_liga_arr as $jornada_liga){
+                $id_jornada_liga = $jornada_liga['id'];
+                
+                $query_puntos = "select coalesce(nota_final_calculada, puntos, 0) as nota_real, baja from resultados_figuras where id_nadadora = '".$nadadora['id_nadadora']."' and id_competicion = '".$id_jornada_liga."'";
+                $res_puntos_j = mysqli_query($connection,$query_puntos);
+                
+                if($res_puntos_j && mysqli_num_rows($res_puntos_j) > 0) {
+                    $row_pj = mysqli_fetch_assoc($res_puntos_j);
+                    $puntos = (float)$row_pj['nota_real'];
+                    $puntos_display = ($puntos > 0) ? number_format($puntos, 4) : '0.0000';
+                } else {
+                    $puntos = 0.0000;
+                    $puntos_display = 'NP';
+                }
+
+                if($id_jornada_liga > $GLOBALS['id_competicion_activa']){
+                    $puntos = 0.0000;
+                    $puntos_display = '-';
+                }
+
+                $scores_nadadora[$id_jornada_liga] = $puntos;
+                $display_nadadora[$id_jornada_liga] = $puntos_display;
+                $puntos_totales += $puntos;
+            }
+
+            // Normativa FNRM (Regla 9.2): Puntúan las N-1 mejores jornadas de las N disputadas.
+            // Se resta la peor jornada de las N; por no competir se asigna 0.0000.
+            $jornada_descarte_id = null;
+            $puntos_minimos = 0.0000;
+
+            if($numero_jornadas_liga >= 2 && !isset($_GET['sin_descarte'])) {
+                $min_val = min($scores_nadadora);
+                $puntos_minimos = $min_val;
+
+                foreach($scores_nadadora as $id_j => $sc) {
+                    if(abs($sc - $min_val) < 0.0001) {
+                        $jornada_descarte_id = $id_j;
+                        break;
+                    }
+                }
+            }
+
+            $puntos_final_calc = $puntos_totales - $puntos_minimos;
+            if($puntos_final_calc < 0) $puntos_final_calc = 0.0000;
+
+            $clasificacion_nadadoras[$i] = [
+                'nombre' => $nombre_nadadora,
+                'nombre_club' => $nombre_club
+            ];
+
+            foreach($jornadas_liga_arr as $jornada_liga){
+                $id_j = $jornada_liga['id'];
+                $clasificacion_nadadoras[$i]['c'.$id_j] = $jornada_liga['color'];
+
+                if($jornada_descarte_id !== null && $id_j == $jornada_descarte_id) {
+                    $clasificacion_nadadoras[$i][$id_j] = '<span style="text-decoration:line-through; color:#94a3b8; font-weight:bold;">' . $display_nadadora[$id_j] . '</span>';
+                } else {
+                    $clasificacion_nadadoras[$i][$id_j] = $display_nadadora[$id_j];
+                }
+            }
+
+            $clasificacion_nadadoras[$i]['c_puntos_totales'] = $total_color;
+            $clasificacion_nadadoras[$i]['puntos_totales'] = $puntos_totales;
+            $clasificacion_nadadoras[$i]['puntos_clasificacion'] = $puntos_final_calc;
+            $clasificacion_nadadoras[$i]['Total'] = number_format($puntos_final_calc, 4);
+
+            if($puntos_totales == 0) {
+                unset($clasificacion_nadadoras[$i]);
+            }
+            $i++;
+        }
+
+        @usort($clasificacion_nadadoras, "cmpPuntosDesc");
+
+        $puntos_anterior = 1000;
+        $posicion = 0;
+        $bgcolor1 = '#cecece';
         $bgcolor2 = '#ffffff';
-		 foreach($clasificacion_nadadoras as $clasificacion_nadadora){
-		 	$puntos_liga_final = $clasificacion_nadadora['puntos_clasificacion'];
-		 	unset($clasificacion_nadadora["puntos_totales"]);
 
-		  	if(abs((float)$puntos_liga_final - (float)$puntos_anterior) > 0.0001){
-		  		$posicion++;
+        foreach($clasificacion_nadadoras as $clasificacion_nadadora){
+            $puntos_liga_final = $clasificacion_nadadora['puntos_clasificacion'];
+
+            unset($clasificacion_nadadora["puntos_totales"]);
+            unset($clasificacion_nadadora["puntos_clasificacion"]);
+
+            if(abs((float)$puntos_liga_final - (float)$puntos_anterior) > 0.0001){
+                $posicion++;
                 $bgcolor = $bgcolor1;
                 $bgcolor1 = $bgcolor2;
                 $bgcolor2 = $bgcolor;
             }
             $html .= '<tr style="background-color:'.$bgcolor.'">';
-		  	$html .= '<td style="width:3%; font-size:12px; font-weight:bold; background-color:'.$bgcolor.'">'.$posicion.'</td>';
-		  	$puntos_anterior = $puntos_liga_final;
-            $color = '';
-		  	foreach($clasificacion_nadadora as $k => $v){
-                if(strpos($v, '#') === false and $v != ''){
-                    $html .= '<td style="font-size:11px; background-color:'.$color.'">'.$v.'</td>';
-                    $color = '';
+            $html .= '<td style="width:3%; font-size:12px; font-weight:bold; background-color:'.$bgcolor.'">'.$posicion.'</td>';
+            $puntos_anterior = $puntos_liga_final;
+
+            $color_celda = '';
+            foreach($clasificacion_nadadora as $clave => $valor){
+                if(strpos($valor, '#') === false && $valor !== ''){
+                    $html .= '<td style="font-size:11px; background-color:'.$color_celda.'">'.$valor.'</td>';
+                    $color_celda = '';
+                } else {
+                    $color_celda = $valor;
                 }
-			}
+            }
+            $html .= '</tr>';
+        }
+        unset($clasificacion_nadadoras);
+        $html .= '</table>';
+        $pdf->writeHTML($html, true, false, false, false, '');
 
-		   $html .= '</tr>';
-
-		  }
-		   unset($clasificacion_nadadoras);
-		   	$html .= '</table>';
-	$pdf->writeHTML($html, true, false, false, false, '');
-    /* Explicación normativa FNRM Punto 9 */
-	$html = '<p style="font-size:10px; line-height:1.4;"><strong>Normativa de Clasificación (FNRM - Punto 9):</strong><br>
+        /* Explicación normativa FNRM Punto 9 */
+        $mejores_jornadas_cnt = ($numero_jornadas_liga > 1) ? ($numero_jornadas_liga - 1) : 1;
+        $html = '<p style="font-size:10px; line-height:1.4;"><strong>Normativa de Clasificación (FNRM - Punto 9):</strong><br>
 9.1 El resultado se obtiene del 100% de la puntuación oficial de las figuras y rutinas técnicas en cada jornada.<br>
-9.2 Los resultados de cada nadadora se obtienen de la suma de las figuras y rutinas de las 3 mejores jornadas de las 4 disputadas (descartando la peor jornada).<br>
-9.4 No se contempla el desempate en caso de puntuaciones idénticas (posiciones compartidas <em>ex aequo</em>).</p>';
-	$pdf->SetFont('helvetica', 10);
-	$pdf->writeHTML($html, true, false, false, false, '');
+9.2 Los resultados de cada nadadora se obtienen de la suma de las figuras y rutinas de las ' . $mejores_jornadas_cnt . ' mejores jornadas de las ' . $numero_jornadas_liga . ' en las que puede participar (descartando la peor jornada, marcada con tachado; por no competir se asigna 0.0000).<br>
+9.4 No se contempla el desempate en caso de que lo hubiera (posiciones compartidas <em>ex aequo</em>).</p>';
+        $pdf->SetFont('helvetica', 10);
+        $pdf->writeHTML($html, true, false, false, false, '');
+    }
 
-
-	}
-
-
-
-
-//Función para ordenar clasificacion descendentemente
 function cmpPuntosDesc($jugador1, $jugador2)
 {
      $diff = (float)$jugador2["puntos_clasificacion"] - (float)$jugador1["puntos_clasificacion"];
