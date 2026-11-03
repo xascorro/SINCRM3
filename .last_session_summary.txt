@@ -1,25 +1,25 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 22:13
+Fecha: 2026-11-03 22:25
 =========================================================
 
 1. OBJETIVO DEL BLOQUE:
    Optimización exhaustiva Mobile-First (UI/UX) según directrices de diseño (Emil Kowalski + Rauno Freiberg) en:
-   - https://sincrm.pedrodiaz.eu/informes_competicion.php
+   - https://sincrm.pedrodiaz.eu/configuracion_sistema.php
 
 2. CAMBIOS IMPLEMENTADOS:
-   - informes_competicion.php:
+   - configuracion_sistema.php:
      * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
-     * Cabecera escalable con icono y título compactos para pantallas móviles.
-     * KPIs de competición responsivos con tipografía tabular (tabular-nums), microinteracción táctil elástica (active:scale-[0.98]) y gráfico circular de avance de fases con viewBox escalable (w-14 h-14 sm:w-20 sm:h-20) para evitar desbordamientos.
-     * Paneles técnicos de "Documentación Rutinas" y "Sección Figuras" adaptados con esquinas fluidas (rounded-2xl sm:rounded-[2.5rem]) y paddings proporcionales.
-     * Enlaces de informes de rutinas y figuras con tarjeta táctil reactiva y anchos fluidos para que no rompan texto.
-     * Cuadrícula de "Hojas de Puntuación PDF" optimizada en móviles (3 columnas en móvil compacto, 4 en tablet y 6 en desktop) con iconos vectoriales y labels concisos.
-     * Tarjeta destacada de "Ranking Oficial Liga" adaptada con textos truncables y proporciones móviles.
+     * Cabecera y botón "Ver Estado" responsivos para móviles con microinteracción táctil (active:scale-[0.98]).
+     * Panel de Conexión de BD: campos de host, db, usuario y contraseña adaptados a 1 columna en móvil y 2 en desktop, checkbox táctil y botón de confirmación apilable.
+     * Panel de Optimización de BD: tarjeta de ejecución con botón al 100% en pantallas estrechas y feedback táctil elástico.
+     * Panel de Backups: input de comentario con padding derecho proporcional al botón "Crear SQL" para evitar solapamientos, listado de copias descargables y acciones de restauración/borrado con botones de fácil toque y fechas/tiempos tabulares (tabular-nums).
+     * Panel de Runtime Config (PHP): inputs de límites numéricos (Upload, Post, Memory, Exec Time, Max Input Vars) con fuentes tabulares para estabilidad visual y botón de guardado optimizado.
+     * Panel de Debug Mode: toggle táctil centrado y adaptado para dispositivos móviles.
 
 3. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/informes_competicion.php
-   - Sincronizado a /var/www/html/beta/informes_competicion.php con permisos 664.
+   - /var/www/html/sincrm/configuracion_sistema.php
+   - Sincronizado a /var/www/html/beta/configuracion_sistema.php con permisos 664.
 
 4. ESTADO TÉCNICO:
    - Sintaxis PHP validada con `php -l` (0 errores).
