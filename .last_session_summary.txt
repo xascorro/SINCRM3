@@ -54,5 +54,50 @@ Fecha: 2026-11-03
   - **Tablet/Desktop (`hidden sm:block`)**: Tabla limpia con `overflow-x-auto`, paddings equilibrados (`px-6 py-3.5`) y centrado numérico.
 - **Formulario Rápido**:
   - Desplegable de alta de nadadora y botón "Registrar" adaptados a grid móvil.
-- **Sincronización**:
-  - Actualizado en producción (`/var/www/html/sincrm/inscripciones_figuras.php`) y en Beta (`/var/www/html/beta/inscripciones_figuras.php`).
+
+## 4. Rediseño y Optimización Mobile UI/UX en Paneles de Jueces (`paneles_jueces.php`)
+- **Escala Responsiva y Header**:
+  - Padding exterior fluido (`px-3 py-4 sm:p-6 md:p-10`), botones superiores ("Añadir Juez" y "Definir Panel") apilables y con micro-escalado táctil.
+- **Formularios Colapsables**:
+  - `addJuezPanel` y `defPanelForm`: adaptados a 1 columna en móvil con controles segmentados nítidos y botones full-width.
+- **Vista Dual de Dirección y Secretaría**:
+  - Móvil: tarjetas compactas con avatar de iniciales, nombre, rol y acciones táctiles.
+  - Desktop: tabla con alineación limpia.
+- **Paneles Técnicos por Fase**:
+  - Cabecera elástica con badge de fase, botones de clonación y añadir juez adaptados a móvil.
+  - Filas de slots técnicos con controles de selección táctiles, switch de juez árbitro y botón de asignación rápida responsive.
+- **Modal de Clonación**:
+  - Bottom-sheet amigable con tirador táctil y botones accesibles en móvil.
+
+## 5. Rediseño y Optimización Mobile UI/UX en Fases (`fases.php`)
+- **Header y Conmutador de Vista**:
+  - Conmutador "Verificación" / "Gestión" y botón "Añadir Fase" fluidos en móvil.
+- **KPIs de Fases**:
+  - Censo, Estado de jornada y Carga técnica reestructurados a 1-2 columnas en móviles pequeños con números tabulares (`tabular-nums`).
+- **Vista de Tarjetas**:
+  - Tarjeta de fase con badge de orden alineado, visualización clara del tipo (Figura o Rutina Técnica), grado de dificultad y acciones rápidas ("Configurar" y "Borrar").
+- **Vista de Verificación**:
+  - Tabla adaptada con visualización apilada en móvil que integra nombre, GD e inscripciones sin cortes horizontales.
+
+## 6. Rediseño y Optimización Mobile UI/UX en Sorteo de Figuras (`sorteo_figuras.php`)
+- **Header y Acciones**:
+  - Botones "Sortear", "Anular" y "PDF Oficial" ajustados con `tabular-nums` y microinteracción elástica.
+- **Paneles Colapsables**:
+  - Configuración de sorteo por categoría y panel de anulación con espaciados y botones adaptados a ergonomía táctil.
+- **Listado Dinámico por Cortes**:
+  - Cabeceras de categoría con chips de corte compactos (`C1`, `C2`, etc.).
+  - Filas de nadadoras en tarjeta fluida con borde de color según corte, badge de orden de salida (`1`, `2` o `PS`/`E`) con ancho fijo y tipografía tabular sin temblores.
+
+## 7. Rediseño y Optimización Mobile UI/UX en Catálogo de Figuras (`figuras.php`)
+- **KPIs y Métricas**:
+  - Censo técnico, GD Promedio y Reto Máximo en grid responsivo con `tabular-nums`.
+- **Panel de Registro de Figura**:
+  - Inputs con espaciado táctil y validaciones claras.
+- **Buscador en Tiempo Real y Vista Dual**:
+  - **Móvil (`md:hidden`)**: Lista de tarjetas individuales (`.figura-mobile-card`) con número en badge destacado, nombre oficial completo, chip de GD en color azul, estado activo/inactivo y botones de editar/desactivar accesibles.
+  - **Desktop (`hidden md:block`)**: Tabla completa con columnas ordenadas.
+  - **Buscador integrado**: Filtra instantáneamente tanto las tarjetas móviles como las filas de la tabla de escritorio.
+
+## 8. Sincronización y Git
+- Todos los cambios verificados con `php -l` (cero errores de sintaxis).
+- Sincronizados a `/var/www/html/beta/` con permisos `chmod 664`.

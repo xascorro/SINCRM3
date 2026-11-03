@@ -22,25 +22,25 @@ $v3_colors = [
     
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <!-- Header de Sección -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fa-solid fa-shapes text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fa-solid fa-shapes text-base sm:text-lg"></i></span>
                     Sorteo de Figuras
                 </h1>
-                <p class="text-slate-500 font-medium font-lexend">Distribución técnica por cortes · Competición #<?php echo $id_comp; ?></p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium font-lexend">Distribución técnica por cortes · Competición #<span class="tabular-nums"><?php echo $id_comp; ?></span></p>
             </div>
-            <div class="flex flex-wrap gap-3">
-                <button onclick="toggleAddSorteoPanel()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <button onclick="toggleAddSorteoPanel()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center gap-2">
                     <i class="fas fa-random text-xs"></i> Sortear
                 </button>
-                <button onclick="toggleAnularPanel()" class="px-5 py-3 bg-white border border-red-100 text-red-500 font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all flex items-center gap-2 shadow-sm">
+                <button onclick="toggleAnularPanel()" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-red-200 text-red-500 font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-red-50 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm">
                     <i class="fas fa-trash-can text-xs"></i> Anular
                 </button>
-                <a href="./informes/informe_figuras_orden_salida_cortes.php?titulo=Orden de salida" target="_blank" class="px-5 py-3 bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10">
+                <a href="./informes/informe_figuras_orden_salida_cortes.php?titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
                     <i class="fas fa-file-pdf text-xs"></i> PDF Oficial
                 </a>
             </div>
@@ -51,11 +51,11 @@ $v3_colors = [
 
 
         <!-- Panel Nuevo Sorteo (Colapsable) -->
-        <div id="addSorteoPanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+        <div id="addSorteoPanel" class="hidden mb-6 sm:mb-10 animate-fade-in-down">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl border border-blue-100 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-dice text-blue-600"></i> Configurar Sorteo por Categoría</h2>
-                <form action="sorteo_figuras_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3"><i class="fas fa-dice text-blue-600"></i> Configurar Sorteo por Categoría</h2>
+                <form action="sorteo_figuras_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
                     <div class="md:col-span-6 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Categoría a sortear</label>
                         <?php 
@@ -77,27 +77,27 @@ $v3_colors = [
                     </div>
                     <div class="md:col-span-3 flex items-end">
                         <input type="hidden" name="save_btn" value="1">
-                        <button type="submit" class="w-full py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all">Ejecutar Sorteo</button>
+                        <button type="submit" class="w-full py-3.5 sm:py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all">Ejecutar Sorteo</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- Panel Anular (Colapsable) -->
-        <div id="anularPanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-red-50 rounded-[2.5rem] p-8 border border-red-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex items-center gap-6">
-                    <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-sm border border-red-100"><i class="fas fa-trash-can text-2xl"></i></div>
-                    <div><h3 class="text-lg font-black text-red-800 leading-tight">Limpiar sorteos de figuras</h3><p class="text-sm text-red-600 font-medium">Se eliminarán todos los órdenes de salida para la sesión de figuras.</p></div>
+        <div id="anularPanel" class="hidden mb-6 sm:mb-10 animate-fade-in-down">
+            <div class="bg-red-50 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 border border-red-100 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-8">
+                <div class="flex items-center gap-4 sm:gap-6 w-full md:w-auto">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-sm border border-red-100 flex-shrink-0"><i class="fas fa-trash-can text-lg sm:text-2xl"></i></div>
+                    <div><h3 class="text-base sm:text-lg font-black text-red-800 leading-tight">Limpiar sorteos de figuras</h3><p class="text-xs sm:text-sm text-red-600 font-medium">Se eliminarán todos los órdenes de salida para la sesión de figuras.</p></div>
                 </div>
-                <form action="sorteo_figuras_code.php" method="POST" class="flex gap-4">
-                    <button type="submit" name="delete_btn" class="px-10 py-3 bg-red-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl">Confirmar Borrado</button>
+                <form action="sorteo_figuras_code.php" method="POST" class="w-full md:w-auto flex gap-4">
+                    <button type="submit" name="delete_btn" class="w-full md:w-auto px-6 sm:px-10 py-3 bg-red-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md active:scale-[0.98] transition-all">Confirmar Borrado</button>
                 </form>
             </div>
         </div>
 
         <!-- LISTADO DINÁMICO -->
-        <div class="space-y-20">
+        <div class="space-y-10 sm:space-y-16">
             <?php
             $q_cat = "SELECT DISTINCT f.id_categoria, c.nombre 
                       FROM fases f, categorias c 
@@ -119,13 +119,13 @@ $v3_colors = [
                 $num_cortes = count($map_fases);
             ?>
             <div>
-                <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
-                    <h2 class="text-3xl font-black text-slate-800 tracking-tighter uppercase italic"><?php echo $row_cat['nombre'];?></h2>
-                    <div class="flex flex-wrap gap-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-6 border-b border-slate-200/80 pb-3 sm:pb-4">
+                    <h2 class="text-xl sm:text-3xl font-black text-slate-800 tracking-tight uppercase italic"><?php echo $row_cat['nombre'];?></h2>
+                    <div class="flex flex-wrap gap-1.5 sm:gap-2">
                         <?php for($c=1; $c <= $num_cortes; $c++): 
                             $c_style = $v3_colors[$c] ?? $v3_colors[1];
                         ?>
-                            <span class="px-3 py-1 <?php echo $c_style['badge']; ?> text-[9px] font-black rounded-lg uppercase">C<?php echo $c; ?></span>
+                            <span class="px-2.5 sm:px-3 py-0.5 sm:py-1 <?php echo $c_style['badge']; ?> text-[9px] font-black rounded uppercase">C<?php echo $c; ?></span>
                         <?php endfor; ?>
                     </div>
                 </div>
@@ -167,11 +167,11 @@ $v3_colors = [
                                 $corte_label = "C".$pos_corte;
                             }
                     ?>
-                    <div class="<?php echo $bg_color; ?> rounded-xl p-4 border border-slate-100 border-l-[6px] <?php echo $accent_color; ?> flex items-center gap-6 hover:shadow-md transition-all group">
-                        <div class="w-12 text-center flex-shrink-0">
+                    <div class="<?php echo $bg_color; ?> rounded-xl p-3 sm:p-4 border border-slate-100/80 border-l-4 sm:border-l-[6px] <?php echo $accent_color; ?> flex items-center gap-3 sm:gap-6 hover:shadow-sm transition-all group">
+                        <div class="w-9 sm:w-12 text-center flex-shrink-0">
                             <?php 
                                 $orden_display = $row['orden'];
-                                $text_size = "text-xs";
+                                $text_size = "text-xs sm:text-sm";
                                 if($row['orden'] <= -1 && $row['orden'] >= -9) {
                                     $orden_display = "PS";
                                     $text_size = "text-[10px]";
@@ -179,18 +179,18 @@ $v3_colors = [
                                     $orden_display = "E";
                                 }
                             ?>
-                            <span class="<?php echo $text_size; ?> font-black text-slate-800"><?php echo $orden_display; ?></span>
+                            <span class="<?php echo $text_size; ?> font-black text-slate-800 tabular-nums"><?php echo $orden_display; ?></span>
                         </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-black text-slate-700 leading-tight"><?php echo $row['apellidos'].', '.$row['nombre']; ?></p>
-                            <div class="flex items-center gap-4 mt-0.5">
-                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest"><?php echo $row['club']; ?></span>
-                                <span class="text-[9px] font-medium text-slate-300 italic"><?php echo $row['año']; ?></span>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs sm:text-sm font-black text-slate-700 leading-tight truncate"><?php echo $row['apellidos'].', '.$row['nombre']; ?></p>
+                            <div class="flex items-center gap-2 sm:gap-4 mt-0.5">
+                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider truncate"><?php echo $row['club']; ?></span>
+                                <span class="text-[9px] font-medium text-slate-300 italic tabular-nums"><?php echo $row['año']; ?></span>
                             </div>
                         </div>
                         <?php if($corte_label): ?>
-                        <div class="flex-shrink-0 px-3 py-1 rounded-lg border <?php echo $badge_color; ?> shadow-sm">
-                            <span class="text-[10px] font-black uppercase tracking-widest"><?php echo $corte_label; ?></span>
+                        <div class="flex-shrink-0 px-2 sm:px-3 py-0.5 sm:py-1 rounded-md sm:rounded-lg border <?php echo $badge_color; ?> shadow-xs">
+                            <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider"><?php echo $corte_label; ?></span>
                         </div>
                         <?php endif; ?>
                     </div>

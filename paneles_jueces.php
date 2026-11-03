@@ -32,22 +32,22 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido de la Página -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <!-- Header de Sección -->
-        <div class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div class="space-y-2">
-                <h1 class="text-5xl font-black text-slate-800 tracking-tighter italic text-primary flex items-center gap-4">
-                    <span class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-gavel text-2xl"></i></span>
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+            <div class="space-y-1 sm:space-y-2">
+                <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-slate-800 tracking-tighter italic text-primary flex items-center gap-3 sm:gap-4">
+                    <span class="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-xs border border-slate-200 shrink-0"><i class="fas fa-gavel text-base sm:text-2xl"></i></span>
                     Paneles y Jueces
                 </h1>
-                <p class="text-lg text-slate-500 font-medium">Configuración de la dirección y paneles técnicos de la competición.</p>
+                <p class="text-xs sm:text-base text-slate-500 font-medium">Configuración de la dirección y paneles técnicos de la competición.</p>
             </div>
-            <div class="flex flex-wrap gap-3">
-                <button onclick="togglePanel('addJuezPanel')" class="px-6 py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+            <div class="flex flex-wrap gap-2.5 sm:gap-3 w-full sm:w-auto">
+                <button onclick="togglePanel('addJuezPanel')" class="w-full sm:w-auto px-4 py-3 sm:px-6 sm:py-3.5 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md shadow-blue-500/20 active:scale-95 transition-all flex items-center justify-center gap-2">
                     <i class="fas fa-user-plus"></i> Añadir Juez
                 </button>
-                <button onclick="togglePanel('addPanelPanel')" class="px-6 py-4 bg-slate-800 text-white font-black uppercase text-xs tracking-[0.2em] rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <button onclick="togglePanel('addPanelPanel')" class="w-full sm:w-auto px-4 py-3 sm:px-6 sm:py-3.5 bg-slate-800 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2">
                     <i class="fas fa-layer-group"></i> Nuevo Panel
                 </button>
             </div>
@@ -57,45 +57,45 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
         <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Formulario Añadir Juez (Estilo competiciones_edit) -->
-        <div id="addJuezPanel" class="hidden mb-12 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[10px] border-t-blue-600 relative overflow-hidden">
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+        <div id="addJuezPanel" class="hidden mb-8 sm:mb-12 animate-fade-in-down">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 md:p-10 shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-blue-600 relative overflow-hidden">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-6 sm:mb-8 flex items-center gap-2.5 sm:gap-3">
                     <i class="fas fa-id-card text-blue-600"></i> Asignar Juez a Dirección
                 </h2>
-                <form action="paneles_jueces_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
-                    <div class="md:col-span-5 space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Puesto en Competición</label>
+                <form action="paneles_jueces_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8 items-end">
+                    <div class="md:col-span-5 space-y-1.5 sm:space-y-2">
+                        <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Puesto en Competición</label>
                         <div class="relative">
                             <?php 
                             ob_start();
                             include('./includes/puestos_select_option.php');
                             $select = ob_get_clean();
                             $select = preg_replace('/<label.*?>.*?<\/label>/i', '', $select);
-                            $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold appearance-none shadow-inner"', $select);
+                            $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-xs sm:text-sm font-bold appearance-none shadow-inner"', $select);
                             echo $select;
                             ?>
-                            <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="md:col-span-5 space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Seleccionar Juez</label>
+                    <div class="md:col-span-5 space-y-1.5 sm:space-y-2">
+                        <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Seleccionar Juez</label>
                         <div class="relative">
                             <?php 
                             ob_start();
                             include('./includes/juez_select_option.php');
                             $select = ob_get_clean();
-                            $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-sm font-bold appearance-none shadow-inner"', $select);
+                            $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-blue-500 transition-all text-xs sm:text-sm font-bold appearance-none shadow-inner"', $select);
                             echo $select;
                             ?>
-                            <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                            <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                 <i class="fas fa-chevron-down text-xs"></i>
                             </div>
                         </div>
                     </div>
                     <div class="md:col-span-2">
-                        <button type="submit" name="save_btn" class="w-full py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all">
+                        <button type="submit" name="save_btn" class="w-full py-3 sm:py-3.5 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md shadow-blue-500/20 active:scale-95 transition-all">
                             <i class="fas fa-plus"></i> Añadir
                         </button>
                     </div>
@@ -104,85 +104,85 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
         </div>
 
         <!-- Formulario Añadir Panel (Estilo competiciones_edit) -->
-        <div id="addPanelPanel" class="hidden mb-12 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[10px] border-t-purple-600 relative overflow-hidden">
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+        <div id="addPanelPanel" class="hidden mb-8 sm:mb-12 animate-fade-in-down">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 md:p-10 shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-purple-600 relative overflow-hidden">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-6 sm:mb-8 flex items-center gap-2.5 sm:gap-3">
                     <i class="fas fa-layer-group text-purple-600"></i> Definir Nuevo Panel Técnico
                 </h2>
-                <form action="paneles_jueces_code.php" method="POST" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                        <div class="md:col-span-8 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nombre del Panel</label>
-                            <input type="text" name="nombre" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-sm font-bold text-slate-700 shadow-inner" placeholder="Ej: Panel 1 - Elementos">
+                <form action="paneles_jueces_code.php" method="POST" class="space-y-6 sm:space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-8">
+                        <div class="md:col-span-8 space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nombre del Panel</label>
+                            <input type="text" name="nombre" required class="w-full px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-xs sm:text-sm font-bold text-slate-700 shadow-inner" placeholder="Ej: Panel 1 - Elementos">
                         </div>
-                        <div class="md:col-span-4 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Tipo de Panel</label>
+                        <div class="md:col-span-4 space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Tipo de Panel</label>
                             <div class="relative">
                                 <?php 
                                 ob_start();
                                 include("./includes/paneles_tipo_select_option.php");
                                 $select = ob_get_clean();
                                 $select = preg_replace('/<label.*?>.*?<\/label>/i', '', $select);
-                                $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-sm font-bold appearance-none shadow-inner"', $select);
+                                $select = preg_replace('/class=["\'].*?["\']/', 'class="w-full px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-xs sm:text-sm font-bold appearance-none shadow-inner"', $select);
                                 echo $select;
                                 ?>
-                                <div class="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
+                                <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
                                     <i class="fas fa-chevron-down text-xs"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nº Jueces</label>
-                            <input type="number" name="numero_jueces" value="5" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-sm font-bold text-center shadow-inner">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-8">
+                        <div class="space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Nº Jueces</label>
+                            <input type="number" name="numero_jueces" value="5" required class="w-full px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-xs sm:text-sm font-bold text-center shadow-inner tabular-nums">
                         </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">% Peso Nota</label>
+                        <div class="space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">% Peso Nota</label>
                             <div class="relative">
-                                <input type="number" name="peso" value="100" required class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-sm font-bold text-center shadow-inner">
-                                <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-slate-400 font-bold">%</div>
+                                <input type="number" name="peso" value="100" required class="w-full px-3 py-2.5 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-xs sm:text-sm font-bold text-center shadow-inner tabular-nums">
+                                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-400 font-bold text-xs">%</div>
                             </div>
                         </div>
-                        <div class="md:col-span-2 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Color</label>
+                        <div class="col-span-2 space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Color</label>
                             <div class="flex gap-2">
-                                <input type="text" id="newColorText" name="color" value="#3b82f6" class="flex-1 px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-sm shadow-inner">
-                                <input type="color" value="#3b82f6" oninput="document.getElementById('newColorText').value = this.value" class="w-14 h-[58px] rounded-2xl border-0 p-0 overflow-hidden cursor-pointer shadow-sm">
+                                <input type="text" id="newColorText" name="color" value="#3b82f6" class="flex-1 px-4 py-2.5 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 font-bold text-xs sm:text-sm shadow-inner">
+                                <input type="color" value="#3b82f6" oninput="document.getElementById('newColorText').value = this.value" class="w-12 h-10 sm:w-14 sm:h-[52px] rounded-xl sm:rounded-2xl border-0 p-0 overflow-hidden cursor-pointer shadow-sm">
                             </div>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Tipo de Puntuación <span class="text-blue-500">(obsoleto: no/si)</span></label>
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
-                                <span class="text-sm font-bold text-slate-700 italic">AQUA (Reglamento Actual)</span>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
+                        <div class="space-y-3 sm:space-y-4">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Tipo de Puntuación <span class="text-blue-500 font-bold">(obsoleto: no/si)</span></label>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 shadow-inner">
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 italic">AQUA (Reglamento Actual)</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="add_check_aqua" name="add_puntuacion_aqua" value="si" checked onchange="toggleExcluyenteAdd('aqua')" class="sr-only peer">
                                     <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                 </label>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
-                                <span class="text-sm font-bold text-slate-700 italic">Sincronizada (Reglamento Anterior)</span>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 shadow-inner">
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 italic">Sincronizada (Reglamento Anterior)</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="add_check_sincro" name="add_puntuacion_sincro" value="si" onchange="toggleExcluyenteAdd('sincro')" class="sr-only peer">
                                     <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-slate-500"></div>
                                 </label>
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Contabilización <span class="text-emerald-500">(puntua: si/no)</span></label>
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
-                                <span class="text-sm font-bold text-slate-700 italic">Puntúa (Suma nota)</span>
+                        <div class="space-y-3 sm:space-y-4">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Contabilización <span class="text-emerald-500 font-bold">(puntua: si/no)</span></label>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 shadow-inner">
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 italic">Puntúa (Suma nota)</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="add_check_puntua" name="add_contabilizacion_puntua" value="si" checked onchange="toggleExcluyenteAdd('puntua')" class="sr-only peer">
                                     <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
                                 </label>
                             </div>
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 shadow-inner">
-                                <span class="text-sm font-bold text-slate-700 italic">DTC / Sincronización</span>
+                            <div class="flex items-center justify-between p-3 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 shadow-inner">
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 italic">DTC / Sincronización</span>
                                 <label class="relative inline-flex items-center cursor-pointer">
                                     <input type="checkbox" id="add_check_dtc" name="add_contabilizacion_dtc" value="si" onchange="toggleExcluyenteAdd('dtc')" class="sr-only peer">
                                     <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-rose-500"></div>
@@ -191,14 +191,14 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                         </div>
                     </div>
 
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Descripción / Notas internas</label>
-                        <input type="text" name="descripcion" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-sm font-bold shadow-inner" placeholder="Opcional...">
+                    <div class="space-y-1.5 sm:space-y-2">
+                        <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Descripción / Notas internas</label>
+                        <input type="text" name="descripcion" class="w-full px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 focus:border-purple-500 transition-all text-xs sm:text-sm font-bold shadow-inner" placeholder="Opcional...">
                     </div>
 
-                    <div class="flex justify-end gap-4 pt-8 border-t border-slate-50">
-                        <button type="button" onclick="togglePanel('addPanelPanel')" class="px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Cerrar</button>
-                        <button type="submit" name="save_btn_panel" class="px-12 py-4 bg-slate-800 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                    <div class="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4 pt-6 sm:pt-8 border-t border-slate-100">
+                        <button type="button" onclick="togglePanel('addPanelPanel')" class="w-full sm:w-auto px-6 py-3 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Cerrar</button>
+                        <button type="submit" name="save_btn_panel" class="w-full sm:w-auto px-8 py-3.5 bg-slate-800 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2">
                             <i class="fas fa-save"></i> Crear Panel
                         </button>
                     </div>
@@ -206,105 +206,210 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
             </div>
         </div>
 
-        <div class="flex flex-col gap-10 mb-16">
+        <div class="flex flex-col gap-6 sm:gap-10 mb-10 sm:mb-16">
             
             <!-- SECCIÓN: DIRECCIÓN -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-blue-600 overflow-hidden flex flex-col transition-all">
-                <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Dirección de la Competición</h2>
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><i class="fas fa-user-tie"></i></div>
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-blue-600 overflow-hidden flex flex-col transition-all">
+                <div class="px-4 py-4 sm:px-10 sm:py-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+                    <h2 class="text-lg sm:text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Dirección de la Competición</h2>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><i class="fas fa-user-tie text-sm sm:text-base"></i></div>
                 </div>
-                <div class="overflow-x-auto no-scrollbar flex-1">
+
+                <?php
+                $query = "select puesto_juez.id, jueces.nombre, jueces.apellidos, jueces.licencia, puestos_juez.id as id_puestos_juez, puestos_juez.nombre as nombre_puestos_juez, federaciones.nombre_corto 
+                          from puesto_juez, jueces, puestos_juez, federaciones 
+                          where puesto_juez.id_juez = jueces.id and puesto_juez.id_puestos_juez = puestos_juez.id and jueces.federacion = federaciones.id 
+                          and puesto_juez.id_competicion ='".$id_competicion."'";
+                $query_run = mysqli_query($connection,$query);
+                $dir_jueces = [];
+                if($query_run) {
+                    while($row = mysqli_fetch_assoc($query_run)) {
+                        $dir_jueces[] = $row;
+                    }
+                }
+                ?>
+
+                <!-- Vista Móvil: Tarjetas compactas -->
+                <div class="block sm:hidden divide-y divide-slate-100 bg-white">
+                    <?php if(empty($dir_jueces)): ?>
+                        <div class="p-6 text-center text-xs text-slate-400 font-bold italic">No hay jueces asignados a dirección.</div>
+                    <?php else: foreach($dir_jueces as $row): ?>
+                        <div class="p-3.5 space-y-2 hover:bg-blue-50/20 transition-colors">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 rounded-lg text-[9px] font-black uppercase tracking-wider border border-blue-100">
+                                    <?php echo $row['nombre_puestos_juez']; ?>
+                                </span>
+                                <span class="text-[10px] font-bold text-slate-500 italic">
+                                    <?php echo $row['nombre_corto']; ?>
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-black text-slate-800 uppercase tracking-tight truncate"><?php echo $row['nombre'].' '.$row['apellidos']; ?></p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase italic mt-0.5 tracking-wider"><?php echo $row['licencia']; ?></p>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <form action="paneles_jueces_edit.php" method="POST">
+                                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="id_puestos_juez" value="<?php echo $row['id_puestos_juez']; ?>">
+                                        <button type="submit" name="edit_btn" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-blue-600 bg-slate-50 border border-slate-200/60 active:scale-95 shadow-xs" title="Editar"><i class="fas fa-edit text-xs"></i></button>
+                                    </form>
+                                    <form action="paneles_jueces_code.php" method="POST" onsubmit="return confirm('¿Eliminar juez de la dirección?');">
+                                        <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" name="delete_btn" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 bg-slate-50 border border-slate-200/60 active:scale-95 shadow-xs" title="Eliminar"><i class="fas fa-trash text-xs"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; endif; ?>
+                </div>
+
+                <!-- Vista Desktop: Tabla tradicional -->
+                <div class="hidden sm:block overflow-x-auto no-scrollbar flex-1">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50 text-slate-400 text-[11px] font-black uppercase tracking-[0.2em]">
-                                <th class="px-10 py-5">Puesto</th>
-                                <th class="px-4 py-5">Nombre y Licencia</th>
-                                <th class="px-4 py-5">Federación</th>
-                                <th class="px-10 py-5 text-center">Acciones</th>
+                            <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">
+                                <th class="px-6 py-4">Puesto</th>
+                                <th class="px-6 py-4">Nombre y Licencia</th>
+                                <th class="px-4 py-4">Federación</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <?php
-                            $query = "select puesto_juez.id, jueces.nombre, jueces.apellidos, jueces.licencia, puestos_juez.id as id_puestos_juez, puestos_juez.nombre as nombre_puestos_juez, federaciones.nombre_corto 
-                                      from puesto_juez, jueces, puestos_juez, federaciones 
-                                      where puesto_juez.id_juez = jueces.id and puesto_juez.id_puestos_juez = puestos_juez.id and jueces.federacion = federaciones.id 
-                                      and puesto_juez.id_competicion ='".$id_competicion."'";
-                            $query_run = mysqli_query($connection,$query);
-                            if(mysqli_num_rows($query_run) > 0){
-                                while ($row = mysqli_fetch_assoc($query_run)):
-                            ?>
+                            <?php if(empty($dir_jueces)): ?>
+                                <tr><td colspan='4' class='px-6 py-12 text-center text-slate-400 italic font-bold uppercase tracking-widest opacity-60'>No hay jueces asignados</td></tr>
+                            <?php else: foreach($dir_jueces as $row): ?>
                             <tr class="hover:bg-blue-50/20 transition-colors group">
-                                <td class="px-10 py-6">
+                                <td class="px-6 py-4">
                                     <span class="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-100"><?php echo $row['nombre_puestos_juez']; ?></span>
                                 </td>
-                                <td class="px-4 py-6">
+                                <td class="px-6 py-4">
                                     <p class="text-sm font-black text-slate-700 leading-tight group-hover:text-blue-700 transition-colors uppercase tracking-tighter"><?php echo $row['nombre'].' '.$row['apellidos']; ?></p>
                                     <p class="text-[10px] font-bold text-slate-400 uppercase italic mt-1 leading-none tracking-widest"><?php echo $row['licencia']; ?></p>
                                 </td>
-                                <td class="px-4 py-6">
+                                <td class="px-4 py-4">
                                     <span class="text-xs font-bold text-slate-500 italic"><?php echo $row['nombre_corto']; ?></span>
                                 </td>
-                                <td class="px-10 py-6 text-center">
-                                    <div class="flex items-center justify-center gap-3">
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-2">
                                         <form action="paneles_jueces_edit.php" method="POST">
                                             <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                                             <input type="hidden" name="id_puestos_juez" value="<?php echo $row['id_puestos_juez']; ?>">
-                                            <button type="submit" name="edit_btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-blue-600 hover:bg-blue-50 transition-all border border-transparent hover:border-blue-100" title="Editar"><i class="fas fa-edit text-sm"></i></button>
+                                            <button type="submit" name="edit_btn" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all border border-transparent hover:border-blue-100 active:scale-95 shadow-xs" title="Editar"><i class="fas fa-edit text-xs"></i></button>
                                         </form>
                                         <form action="paneles_jueces_code.php" method="POST" onsubmit="return confirm('¿Eliminar juez de la dirección?');">
                                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit" name="delete_btn" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100" title="Eliminar"><i class="fas fa-trash text-sm"></i></button>
+                                            <button type="submit" name="delete_btn" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100 active:scale-95 shadow-xs" title="Eliminar"><i class="fas fa-trash text-xs"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                            <?php endwhile; } else { echo "<tr><td colspan='4' class='px-10 py-16 text-center text-slate-400 italic font-bold uppercase tracking-widest opacity-50'>No hay jueces asignados</td></tr>"; } ?>
+                            <?php endforeach; endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
 
             <!-- SECCIÓN: PANELES TÉCNICOS -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-purple-600 overflow-hidden flex flex-col transition-all">
-                <div class="px-10 py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
-                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Paneles de Calificación</h2>
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600"><i class="fas fa-layer-group"></i></div>
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-purple-600 overflow-hidden flex flex-col transition-all">
+                <div class="px-4 py-4 sm:px-10 sm:py-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/30">
+                    <h2 class="text-lg sm:text-2xl font-black text-slate-800 uppercase tracking-tighter italic">Paneles de Calificación</h2>
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0"><i class="fas fa-layer-group text-sm sm:text-base"></i></div>
                 </div>
-                <div class="overflow-x-auto no-scrollbar flex-1">
+
+                <?php
+                $query_paneles_def = "SELECT paneles.color, paneles.nombre, paneles.id, paneles.peso, paneles.descripcion, paneles.numero_jueces, paneles_tipo.nombre as tipo_panel, paneles_tipo.id as id_tipo, paneles.obsoleto, paneles.puntua 
+                                      from paneles, paneles_tipo 
+                                      where paneles.id_paneles_tipo = paneles_tipo.id and id_competicion = '".$id_competicion."'";
+                $res_paneles_def = mysqli_query($connection, $query_paneles_def);
+                $paneles_def_list = [];
+                if($res_paneles_def) {
+                    while($row = mysqli_fetch_assoc($res_paneles_def)) {
+                        $paneles_def_list[] = $row;
+                    }
+                }
+                ?>
+
+                <!-- Vista Móvil: Tarjetas compactas -->
+                <div class="block sm:hidden divide-y divide-slate-100 bg-white">
+                    <?php if(empty($paneles_def_list)): ?>
+                        <div class="p-6 text-center text-xs text-slate-400 font-bold italic">No hay paneles definidos para esta competición.</div>
+                    <?php else: foreach($paneles_def_list as $row): 
+                        $is_aqua = ($row['obsoleto'] == 'no');
+                        $sum_nota = ($row['puntua'] == 'si');
+                    ?>
+                        <div class="p-3.5 space-y-2 hover:bg-purple-50/20 transition-colors">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <div class="w-3.5 h-3.5 rounded-full shadow-xs border-2 border-white ring-1 ring-slate-100 shrink-0" style="background-color: <?php echo $row['color']; ?>;"></div>
+                                    <h4 class="text-sm font-black text-slate-800 uppercase tracking-tight truncate"><?php echo $row['nombre']; ?></h4>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <form action="paneles_jueces_edit.php" method="POST">
+                                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="id_paneles_tipo" value="<?php echo $row['id_tipo']; ?>">
+                                        <button type="submit" name="edit_btn_panel" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-purple-600 bg-slate-50 border border-slate-200/60 active:scale-95 shadow-xs" title="Editar"><i class="fas fa-edit text-xs"></i></button>
+                                    </form>
+                                    <button type="button" onclick="confirmDeletePanel('<?php echo $row['id']; ?>', '<?php echo $row['nombre']; ?>')" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 bg-slate-50 border border-slate-200/60 active:scale-95 shadow-xs" title="Eliminar"><i class="fas fa-trash text-xs"></i></button>
+                                </div>
+                            </div>
+                            <?php if(!empty($row['descripcion'])): ?>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase italic truncate"><?php echo $row['descripcion']; ?></p>
+                            <?php endif; ?>
+                            <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-50">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded"><?php echo $row['tipo_panel']; ?></span>
+                                    <?php if($is_aqua): ?>
+                                        <span class="text-[8px] font-black text-blue-600 uppercase border border-blue-100 px-1.5 py-0.5 rounded bg-blue-50/60">AQUA</span>
+                                    <?php else: ?>
+                                        <span class="text-[8px] font-black text-slate-500 uppercase border border-slate-200 px-1.5 py-0.5 rounded bg-slate-100/60">SINCRO</span>
+                                    <?php endif; ?>
+                                    <?php if($sum_nota): ?>
+                                        <span class="text-[8px] font-black text-emerald-600 uppercase border border-emerald-100 px-1.5 py-0.5 rounded bg-emerald-50/60">SUMA</span>
+                                    <?php else: ?>
+                                        <span class="text-[8px] font-black text-rose-500 uppercase border border-rose-100 px-1.5 py-0.5 rounded bg-rose-50/60">DTC</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex items-center gap-2 text-right tabular-nums">
+                                    <span class="text-xs font-black text-slate-700 italic"><?php echo $row['numero_jueces']; ?> Jueces</span>
+                                    <span class="text-[10px] font-black text-purple-600 tracking-wider"><?php echo $row['peso']; ?>%</span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; endif; ?>
+                </div>
+
+                <!-- Vista Desktop: Tabla tradicional -->
+                <div class="hidden sm:block overflow-x-auto no-scrollbar flex-1">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50/50 text-slate-400 text-[11px] font-black uppercase tracking-[0.2em]">
-                                <th class="px-10 py-5">Nombre del Panel</th>
-                                <th class="px-4 py-5">Parámetros</th>
-                                <th class="px-4 py-5 text-center">Config</th>
-                                <th class="px-10 py-5 text-center">Acciones</th>
+                            <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-slate-100">
+                                <th class="px-6 py-4">Nombre del Panel</th>
+                                <th class="px-6 py-4">Parámetros</th>
+                                <th class="px-4 py-4 text-center">Config</th>
+                                <th class="px-6 py-4 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            <?php
-                            $query = "SELECT paneles.color, paneles.nombre, paneles.id, paneles.peso, paneles.descripcion, paneles.numero_jueces, paneles_tipo.nombre as tipo_panel, paneles_tipo.id as id_tipo, paneles.obsoleto, paneles.puntua 
-                                      from paneles, paneles_tipo 
-                                      where paneles.id_paneles_tipo = paneles_tipo.id and id_competicion = '".$id_competicion."'";
-                            $query_run = mysqli_query($connection,$query);
-                            if(mysqli_num_rows($query_run) > 0){
-                                while ($row = mysqli_fetch_assoc($query_run)):
-                                    $is_aqua = ($row['obsoleto'] == 'no');
-                                    $sum_nota = ($row['puntua'] == 'si');
+                            <?php if(empty($paneles_def_list)): ?>
+                                <tr><td colspan='4' class='px-6 py-12 text-center text-slate-400 italic font-bold uppercase tracking-widest opacity-60'>No hay paneles definidos</td></tr>
+                            <?php else: foreach($paneles_def_list as $row): 
+                                $is_aqua = ($row['obsoleto'] == 'no');
+                                $sum_nota = ($row['puntua'] == 'si');
                             ?>
                             <tr class="hover:bg-purple-50/20 transition-colors group">
-                                <td class="px-10 py-6">
-                                    <div class="flex items-center gap-4">
-                                        <div class="w-4 h-4 rounded-full shadow-md border-2 border-white ring-1 ring-slate-100" style="background-color: <?php echo $row['color']; ?>;"></div>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-4 h-4 rounded-full shadow-xs border-2 border-white ring-1 ring-slate-100 shrink-0" style="background-color: <?php echo $row['color']; ?>;"></div>
                                         <div>
                                             <p class="text-sm font-black text-slate-700 leading-tight group-hover:text-purple-700 transition-colors uppercase tracking-tighter"><?php echo $row['nombre']; ?></p>
                                             <?php if($row['descripcion']): ?>
-                                                <p class="text-[10px] font-bold text-slate-400 uppercase italic mt-1 truncate max-w-[180px] leading-none tracking-widest"><?php echo $row['descripcion']; ?></p>
+                                                <p class="text-[10px] font-bold text-slate-400 uppercase italic mt-1 truncate max-w-[200px] leading-none tracking-widest"><?php echo $row['descripcion']; ?></p>
                                             <?php endif; ?>
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-6">
+                                <td class="px-6 py-4">
                                     <div class="flex flex-col gap-1">
                                         <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded-lg w-fit"><?php echo $row['tipo_panel']; ?></span>
                                         <div class="flex gap-2">
@@ -322,24 +427,24 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-4 py-6 text-center">
-                                    <div class="flex flex-col items-center">
+                                <td class="px-4 py-4 text-center">
+                                    <div class="flex flex-col items-center tabular-nums">
                                         <span class="text-xs font-black text-slate-700 italic"><?php echo $row['numero_jueces']; ?> Jueces</span>
-                                        <span class="text-[10px] font-black text-purple-500 tracking-widest"><?php echo $row['peso']; ?>% Nota</span>
+                                        <span class="text-[10px] font-black text-purple-600 tracking-wider"><?php echo $row['peso']; ?>% Nota</span>
                                     </div>
                                 </td>
-                                <td class="px-10 py-6 text-center">
-                                    <div class="flex items-center justify-center gap-3">
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-2">
                                         <form action="paneles_jueces_edit.php" method="POST">
                                             <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                                             <input type="hidden" name="id_paneles_tipo" value="<?php echo $row['id_tipo']; ?>">
-                                            <button type="submit" name="edit_btn_panel" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-purple-600 hover:bg-purple-50 transition-all border border-transparent hover:border-purple-100" title="Editar"><i class="fas fa-edit text-sm"></i></button>
+                                            <button type="submit" name="edit_btn_panel" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-purple-600 hover:bg-purple-50 transition-all border border-transparent hover:border-purple-100 active:scale-95 shadow-xs" title="Editar"><i class="fas fa-edit text-xs"></i></button>
                                         </form>
-                                        <button type="button" onclick="confirmDeletePanel('<?php echo $row['id']; ?>', '<?php echo $row['nombre']; ?>')" class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100" title="Eliminar"><i class="fas fa-trash text-sm"></i></button>
+                                        <button type="button" onclick="confirmDeletePanel('<?php echo $row['id']; ?>', '<?php echo $row['nombre']; ?>')" class="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100 active:scale-95 shadow-xs" title="Eliminar"><i class="fas fa-trash text-xs"></i></button>
                                     </div>
                                 </td>
                             </tr>
-                            <?php endwhile; } else { echo "<tr><td colspan='4' class='px-10 py-16 text-center text-slate-400 italic font-bold uppercase tracking-widest opacity-50'>No hay paneles definidos</td></tr>"; } ?>
+                            <?php endforeach; endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -347,12 +452,12 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
         </div>
 
         <!-- SECCIÓN: COMPOSICIÓN DE PANELES POR FASE -->
-        <div class="space-y-20">
-            <div class="flex items-center gap-6 mb-12">
+        <div class="space-y-10 sm:space-y-20">
+            <div class="flex items-center gap-3 sm:gap-6 mb-8 sm:mb-12">
                 <div class="h-1 flex-1 bg-slate-200 rounded-full opacity-50"></div>
                 <div class="flex flex-col items-center">
-                    <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter italic">Configuración por Fases</h2>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">Asignación de jueces a paneles técnicos</p>
+                    <h2 class="text-xl sm:text-3xl font-black text-slate-800 uppercase tracking-tighter italic text-center">Configuración por Fases</h2>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 text-center">Asignación de jueces a paneles técnicos</p>
                 </div>
                 <div class="h-1 flex-1 bg-slate-200 rounded-full opacity-50"></div>
             </div>
@@ -379,15 +484,15 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
             ?>
             <div class="animate-fade-in group">
                 <!-- Header de Fase Minimalista -->
-                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 pb-4 border-b-2 border-slate-100 group-hover:border-blue-500/20 transition-all">
-                    <div class="flex items-center gap-5">
-                        <div class="w-2 h-14 rounded-full oceanic-gradient shadow-lg shadow-blue-500/10 transition-all group-hover:h-16"></div>
-                        <div>
-                            <h3 class="text-3xl font-black italic tracking-tighter uppercase text-slate-800 leading-none"><?php echo $fase_label_origin; ?></h3>
-                            <div class="flex items-center gap-3 mt-2">
-                                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[9px] font-black uppercase tracking-widest border border-slate-200">Fase ID: #<?php echo $id_fase; ?></span>
-                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-sm animate-pulse"></div>
-                                <span class="text-[10px] font-black text-emerald-600 uppercase tracking-widest italic">Panel Disponible</span>
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 sm:gap-4 mb-4 sm:mb-8 pb-3 sm:pb-4 border-b-2 border-slate-100 group-hover:border-blue-500/20 transition-all">
+                    <div class="flex items-center gap-3 sm:gap-5 min-w-0">
+                        <div class="w-1.5 sm:w-2 h-10 sm:h-14 rounded-full oceanic-gradient shadow-md shadow-blue-500/10 transition-all group-hover:h-16 shrink-0"></div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-lg sm:text-2xl md:text-3xl font-black italic tracking-tighter uppercase text-slate-800 leading-snug break-words"><?php echo $fase_label_origin; ?></h3>
+                            <div class="flex flex-wrap items-center gap-2 mt-1 sm:mt-2">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[9px] font-black uppercase tracking-wider border border-slate-200 tabular-nums">Fase #<?php echo $id_fase; ?></span>
+                                <div class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-xs animate-pulse"></div>
+                                <span class="text-[9px] sm:text-[10px] font-black text-emerald-600 uppercase tracking-wider italic">Panel Disponible</span>
                                 <?php if($row['obsoleto'] == 'si'): ?>
                                     <span class="px-2 py-0.5 bg-slate-200 text-slate-500 rounded text-[9px] font-black uppercase tracking-widest border border-slate-300">OBSOLETO</span>
                                 <?php else: ?>
@@ -396,12 +501,12 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                             </div>
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <span class="px-4 py-2 bg-white text-slate-400 text-[10px] font-black rounded-2xl border border-slate-100 shadow-sm uppercase tracking-widest italic"><?php echo $categoria_fase; ?></span>
+                    <div class="flex gap-2 self-start md:self-auto">
+                        <span class="px-3 py-1.5 sm:px-4 sm:py-2 bg-white text-slate-500 text-[10px] font-black rounded-xl sm:rounded-2xl border border-slate-100 shadow-xs uppercase tracking-wider italic shrink-0"><?php echo $categoria_fase; ?></span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
                     <?php
                     $obsoleto_fase = $row['obsoleto'] ?? 'no';
                     $cond_paneles = "paneles.obsoleto = '$obsoleto_fase'";
@@ -414,31 +519,31 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                     while ($p = mysqli_fetch_assoc($query_run_p)):
                         $id_panel = $p['id'];
                     ?>
-                    <div class="bg-white rounded-[2.5rem] p-8 border border-slate-200 flex flex-col shadow-sm hover:shadow-xl transition-all border-t-[10px]" style="border-top-color: <?php echo $p['color']; ?>;">
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-lg" style="background-color: <?php echo $p['color']; ?>;"><i class="fas fa-users-cog text-sm"></i></div>
-                                <div>
-                                    <h4 class="text-lg font-black text-slate-800 uppercase italic tracking-tighter leading-none"><?php echo $p['nombre']; ?></h4>
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-6 md:p-8 border border-slate-200 flex flex-col shadow-sm hover:shadow-xl transition-all border-t-[8px] sm:border-t-[10px]" style="border-top-color: <?php echo $p['color']; ?>;">
+                        <div class="flex items-center justify-between mb-4 sm:mb-8">
+                            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                                <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl flex items-center justify-center text-white shadow-md shrink-0" style="background-color: <?php echo $p['color']; ?>;"><i class="fas fa-users-cog text-xs sm:text-sm"></i></div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-base sm:text-lg font-black text-slate-800 uppercase italic tracking-tight leading-none truncate"><?php echo $p['nombre']; ?></h4>
                                     <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 italic"><?php echo $p['panel_tipo']; ?></p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
                                 <button type="button" 
                                         onclick="confirmEmptyPanel(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>')" 
-                                        class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm border border-slate-100 group/btn" title="Vaciar Jueces de este Panel">
-                                    <i class="fas fa-eraser text-sm group-hover/btn:scale-110 transition-transform"></i>
+                                        class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 text-slate-400 rounded-xl sm:rounded-2xl hover:bg-red-500 hover:text-white active:scale-95 transition-all flex items-center justify-center shadow-xs border border-slate-100 group/btn" title="Vaciar Jueces de este Panel">
+                                    <i class="fas fa-eraser text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                                 <button type="button" 
                                         onclick="openCloneModal(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>', '<?php echo addslashes($fase_label_origin); ?>')" 
-                                        class="w-10 h-10 bg-slate-50 text-slate-400 rounded-2xl hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm border border-slate-100 group/btn" title="Clonar Composición">
-                                    <i class="fas fa-copy text-sm group-hover/btn:scale-110 transition-transform"></i>
+                                        class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 text-slate-400 rounded-xl sm:rounded-2xl hover:bg-blue-600 hover:text-white active:scale-95 transition-all flex items-center justify-center shadow-xs border border-slate-100 group/btn" title="Clonar Composición">
+                                    <i class="fas fa-copy text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="space-y-4 flex-1">
-                            <div class="grid grid-cols-1 gap-2.5">
+                        <div class="space-y-3 sm:space-y-4 flex-1">
+                            <div class="grid grid-cols-1 gap-2">
                                 <?php
                                 for($x=1; $x <= $p['numero_jueces']; $x++):
                                     $q_pj = "SELECT id, id_juez from panel_jueces WHERE id_panel = $id_panel and numero_juez = $x and id_fase = $id_fase";
@@ -447,55 +552,40 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                                     $id_registro = $pj_data['id'] ?? '';
                                     $id_juez_actual = $pj_data['id_juez'] ?? 0;
                                 ?>
-                                <form action="paneles_jueces_code.php" method="POST" class="flex items-center gap-3 group bg-slate-50/30 p-1.5 rounded-2xl border border-slate-100 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-md transition-all">
+                                <form action="paneles_jueces_code.php" method="POST" class="flex items-center gap-2 sm:gap-3 group bg-slate-50/50 p-1.5 rounded-xl sm:rounded-2xl border border-slate-100 focus-within:border-blue-400 focus-within:bg-white focus-within:shadow-md transition-all">
                                     <input type="hidden" name="id_panel" value="<?php echo $id_panel; ?>">
                                     <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
                                     <input type="hidden" name="bulk_num[]" value="<?php echo $x; ?>">
                                     <input type="hidden" name="bulk_id[]" value="<?php echo $id_registro; ?>">
                                     
-                                    <div class="flex-shrink-0 w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-400 group-focus-within:bg-slate-800 group-focus-within:text-white group-focus-within:border-slate-800 transition-all shadow-sm">
+                                    <div class="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-400 group-focus-within:bg-slate-800 group-focus-within:text-white group-focus-within:border-slate-800 transition-all shadow-xs tabular-nums">
                                         <?php echo $x; ?>
                                     </div>
-                                    <div class="flex-1 relative">
+                                    <div class="flex-1 relative min-w-0">
                                         <?php 
                                         $_POST['id_juez'] = $id_juez_actual;
                                         ob_start();
                                         include('./includes/juez_select_option.php');
                                         $select_j = ob_get_clean();
-                                        // Robust replacement: swap name and override ALL classes
                                         $select_j = str_replace("name='id_juez'", "name='bulk_id_juez[]'", $select_j);
-                                        $select_j = preg_replace('/class=["\'].*?["\']/', 'class="w-full pl-4 pr-10 py-2.5 rounded-xl bg-white border border-slate-100 focus:border-blue-500 text-[11px] font-black appearance-none shadow-sm"', $select_j);
+                                        $select_j = preg_replace('/class=["\'].*?["\']/', 'class="w-full pl-3 pr-8 sm:pl-4 sm:pr-10 py-2 sm:py-2.5 rounded-lg sm:rounded-xl bg-white border border-slate-100 focus:border-blue-500 text-[11px] font-black appearance-none shadow-xs"', $select_j);
                                         echo $select_j;
                                         ?>
-                                        <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-300">
-                                            <i class="fas fa-chevron-down text-[9px]"></i>
+                                        <div class="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                            <i class="fas fa-chevron-down text-[8px] sm:text-[9px]"></i>
                                         </div>
                                     </div>
-                                    <button type="submit" name="panel_jueces_bulk_save_btn" class="w-9 h-9 rounded-xl bg-white text-slate-200 hover:text-emerald-500 border border-slate-100 hover:border-emerald-200 transition-all flex items-center justify-center shadow-sm hover:shadow-md" title="Guardar este juez">
+                                    <button type="submit" name="panel_jueces_bulk_save_btn" class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-white text-slate-300 hover:text-emerald-500 border border-slate-100 hover:border-emerald-200 active:scale-95 transition-all flex items-center justify-center shadow-xs" title="Guardar este juez">
                                         <i class="fas fa-check text-xs"></i>
                                     </button>
                                 </form>
                                 <?php endfor; ?>
                             </div>
 
-                            <form action="paneles_jueces_code.php" method="POST" class="pt-6 mt-4 border-t border-slate-100">
+                            <form action="paneles_jueces_code.php" method="POST" class="pt-4 sm:pt-6 mt-3 sm:mt-4 border-t border-slate-100">
                                 <input type="hidden" name="id_panel" value="<?php echo $id_panel; ?>">
                                 <input type="hidden" name="id_fase" value="<?php echo $id_fase; ?>">
-                                <?php
-                                // Campos ocultos para el guardado masivo
-                                for($x=1; $x <= $p['numero_jueces']; $x++):
-                                    $q_pj = "SELECT id, id_juez from panel_jueces WHERE id_panel = $id_panel and numero_juez = $x and id_fase = $id_fase";
-                                    $res_pj = mysqli_query($connection, $q_pj);
-                                    $pj_data = mysqli_fetch_assoc($res_pj);
-                                    $id_registro = $pj_data['id'] ?? '';
-                                    $id_juez_actual = $pj_data['id_juez'] ?? 0;
-                                    // Nota: Para el masivo real necesitaríamos que los selects estuvieran dentro, 
-                                    // pero como el usuario quiere independencia, el botón grande actuará como un "Guardar todos los cambios realizados" 
-                                    // si implementamos una lógica JS, o simplemente lo mantenemos para coherencia visual si el código ya lo maneja.
-                                    // Por ahora, para cumplir estrictamente el 'individual save', cada fila es su propio form.
-                                endfor;
-                                ?>
-                                <button type="button" onclick="saveFullPanel(this)" class="w-full py-4 bg-slate-900 text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-2xl shadow-lg hover:bg-black hover:scale-[1.01] active:scale-95 transition-all flex items-center justify-center gap-3">
+                                <button type="button" onclick="saveFullPanel(this)" class="w-full py-3 sm:py-4 bg-slate-900 text-white font-black uppercase text-[10px] tracking-[0.2em] rounded-xl sm:rounded-2xl shadow-md hover:bg-black active:scale-95 transition-all flex items-center justify-center gap-2 sm:gap-3">
                                     <i class="fas fa-save"></i> Guardar Panel Completo
                                 </button>
                             </form>
@@ -506,9 +596,9 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
             </div>
             <?php endwhile; 
             else: ?>
-                <div class="p-20 bg-white rounded-[3rem] border border-slate-100 text-center shadow-sm">
-                    <div class="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mx-auto mb-8"><i class="fas fa-calendar-times text-4xl"></i></div>
-                    <p class="text-slate-400 font-black italic uppercase tracking-widest text-base">No hay fases definidas para configurar paneles</p>
+                <div class="p-8 sm:p-20 bg-white rounded-2xl sm:rounded-[3rem] border border-slate-100 text-center shadow-sm">
+                    <div class="w-16 h-16 sm:w-24 sm:h-24 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mx-auto mb-4 sm:mb-8"><i class="fas fa-calendar-times text-2xl sm:text-4xl"></i></div>
+                    <p class="text-slate-400 font-black italic uppercase tracking-widest text-xs sm:text-base">No hay fases definidas para configurar paneles</p>
                 </div>
             <?php endif; ?>
         </div>
@@ -531,50 +621,50 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
 
 <!-- MODAL CLONAR PANEL -->
 <div id="cloneModal" class="hidden fixed inset-0 z-[100] overflow-y-auto">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="toggleCloneModal()"></div>
-        <div class="relative bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up border border-slate-200">
-            <div class="px-8 py-8 bg-slate-50 border-b border-slate-100 relative">
-                <h2 class="text-2xl font-black text-slate-800 tracking-tighter uppercase italic flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/20"><i class="fas fa-copy text-sm"></i></span>
+    <div class="flex items-center justify-center min-h-screen p-3 sm:p-4">
+        <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" onclick="toggleCloneModal()"></div>
+        <div class="relative bg-white rounded-2xl sm:rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up border border-slate-200">
+            <div class="px-5 py-5 sm:px-8 sm:py-8 bg-slate-50 border-b border-slate-100 relative">
+                <h2 class="text-xl sm:text-2xl font-black text-slate-800 tracking-tighter uppercase italic flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0"><i class="fas fa-copy text-xs sm:text-sm"></i></span>
                     Clonar Panel
                 </h2>
-                <div class="mt-4 flex flex-wrap gap-2">
-                    <span id="clone_panel_title" class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-[9px] font-black uppercase tracking-widest border border-blue-200"></span>
-                    <span id="clone_fase_title" class="px-3 py-1 bg-slate-200 text-slate-500 rounded-lg text-[9px] font-black uppercase tracking-widest border border-slate-300 italic"></span>
+                <div class="mt-3 sm:mt-4 flex flex-wrap gap-1.5 sm:gap-2">
+                    <span id="clone_panel_title" class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-lg text-[9px] font-black uppercase tracking-wider border border-blue-200"></span>
+                    <span id="clone_fase_title" class="px-2.5 py-1 bg-slate-200 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-wider border border-slate-300 italic"></span>
                 </div>
             </div>
             
-            <form action="paneles_jueces_code.php" method="POST" class="p-8">
+            <form action="paneles_jueces_code.php" method="POST" class="p-4 sm:p-8">
                 <input type="hidden" name="id_panel" id="clone_id_panel">
                 <input type="hidden" name="source_fase" id="clone_source_fase">
                 
-                <div class="flex items-center justify-between mb-4">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Selecciona las fases de destino:</p>
-                    <label class="flex items-center gap-2 cursor-pointer group">
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Selecciona las fases de destino:</p>
+                    <label class="flex items-center gap-1.5 sm:gap-2 cursor-pointer group">
                         <input type="checkbox" id="selectAllFases" onchange="toggleAllFases(this)" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
-                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-widest group-hover:text-blue-800 transition-colors">Seleccionar Todo</span>
+                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-wider group-hover:text-blue-800 transition-colors">Seleccionar Todo</span>
                     </label>
                 </div>
                 
-                <div class="max-h-60 overflow-y-auto pr-2 space-y-2 mb-8 custom-scrollbar">
+                <div class="max-h-60 overflow-y-auto pr-1 sm:pr-2 space-y-1.5 sm:space-y-2 mb-6 sm:mb-8 custom-scrollbar">
                     <?php foreach($todas_las_fases as $fase_dest): 
                         $is_dest_fig = (!empty($fase_dest['id_figura']) && $fase_dest['id_figura'] > 0);
                         $fase_label = $is_dest_fig ? "#".$fase_dest['numero']." ".$fase_dest['fig'] : $fase_dest['modali'];
                     ?>
-                        <label class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white transition-all cursor-pointer group phase-checkbox-item shadow-sm" data-id="<?php echo $fase_dest['id']; ?>">
-                            <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="target-fase-cb w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer" onchange="checkSelectAllStatus()">
-                            <div class="flex-1">
-                                <p class="text-sm font-black text-slate-700 leading-none group-hover:text-blue-600 transition-colors uppercase italic tracking-tighter"><?php echo $fase_label; ?></p>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-widest"><?php echo $fase_dest['cat']; ?></p>
+                        <label class="flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white active:scale-[0.99] transition-all cursor-pointer group phase-checkbox-item shadow-xs" data-id="<?php echo $fase_dest['id']; ?>">
+                            <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="target-fase-cb w-4 h-4 sm:w-5 sm:h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs sm:text-sm font-black text-slate-700 leading-snug group-hover:text-blue-600 transition-colors uppercase italic tracking-tight truncate"><?php echo $fase_label; ?></p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase mt-0.5 tracking-wider"><?php echo $fase_dest['cat']; ?></p>
                             </div>
                         </label>
                     <?php endforeach; ?>
                 </div>
 
-                <div class="flex items-center justify-between gap-4 pt-6 border-t border-slate-100">
+                <div class="flex items-center justify-between gap-3 sm:gap-4 pt-4 sm:pt-6 border-t border-slate-100">
                     <button type="button" onclick="toggleCloneModal()" class="text-[10px] font-black uppercase text-slate-400 hover:text-slate-600 transition-colors tracking-widest">Cerrar</button>
-                    <button type="submit" name="clone_panel_btn" class="px-8 py-4 bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg hover:bg-black hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
+                    <button type="submit" name="clone_panel_btn" class="px-6 py-3 sm:px-8 sm:py-3.5 bg-slate-900 text-white font-black uppercase text-[10px] tracking-wider rounded-xl sm:rounded-2xl shadow-md hover:bg-black active:scale-95 transition-all flex items-center gap-2">
                         <i class="fas fa-check"></i> Ejecutar Clonación
                     </button>
                 </div>

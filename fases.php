@@ -45,33 +45,33 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
     
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <!-- Header -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-list-check text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-list-check text-base sm:text-lg"></i></span>
                     Fases
                 </h1>
-                <p class="text-slate-500 font-medium">Configuración técnica de la competición activa.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Configuración técnica de la competición activa.</p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <!-- Botón de Conmutación de Vista -->
-                <button onclick="toggleView()" id="viewBtn" class="px-5 py-3 bg-white border border-slate-200 text-slate-400 font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2 italic">
-                    <i class="fas fa-table-list" id="viewIcon"></i> <span id="viewText">Vista Verificación</span>
+                <button onclick="toggleView()" id="viewBtn" class="flex-1 sm:flex-initial justify-center px-4 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-500 font-black uppercase text-[10px] tracking-wider rounded-xl sm:rounded-2xl shadow-sm hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-2 italic">
+                    <i class="fas fa-table-list" id="viewIcon"></i> <span id="viewText">Verificación</span>
                 </button>
-                <button onclick="toggleAddFasePanel()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <button onclick="toggleAddFasePanel()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center gap-2">
                     <i class="fas fa-plus text-xs"></i> Añadir Fase
                 </button>
             </div>
         </div>
 
         <!-- Panel Añadir Fase -->
-        <div id="addFasePanel" class="hidden mb-10 relative z-30 scroll-mt-28">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative">
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Nueva Fase</h2>
-                <form action="fases_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div id="addFasePanel" class="hidden mb-6 sm:mb-10 relative z-30 scroll-mt-28">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl border border-blue-100 relative">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Nueva Fase</h2>
+                <form action="fases_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
                     <div class="md:col-span-4 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Categoría</label>
                         <?php 
@@ -147,34 +147,34 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     </div>
                     <div class="md:col-span-2 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Orden</label>
-                        <input type="number" name="orden" value="<?php echo $next_order; ?>" required class="w-full px-5 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner">
+                        <input type="number" name="orden" value="<?php echo $next_order; ?>" required class="w-full px-4 sm:px-5 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold shadow-inner tabular-nums">
                     </div>
-                    <div class="md:col-span-2 flex items-end gap-3">
-                        <button type="button" onclick="toggleAddFasePanel()" class="w-1/2 py-4 bg-slate-100 text-slate-500 font-black uppercase text-[10px] tracking-widest rounded-2xl border border-slate-200 hover:bg-slate-200 transition-all">Cancelar</button>
-                        <button type="submit" name="save_btn" class="w-1/2 py-4 bg-blue-600 text-white font-black uppercase text-[10px] tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all">Crear</button>
+                    <div class="md:col-span-2 flex items-end gap-2 sm:gap-3">
+                        <button type="button" onclick="toggleAddFasePanel()" class="w-1/2 py-3 sm:py-4 bg-slate-100 text-slate-500 font-black uppercase text-[10px] tracking-wider rounded-xl sm:rounded-2xl border border-slate-200 hover:bg-slate-200 active:scale-[0.98] transition-all">Cancelar</button>
+                        <button type="submit" name="save_btn" class="w-1/2 py-3 sm:py-4 bg-blue-600 text-white font-black uppercase text-[10px] tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all">Crear</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- DASHBOARD: KPIs -->
-        <div id="kpiContainer" class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div class="md:col-span-2 bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-blue-600 group hover:shadow-xl transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Censo de Participación</p>
-                <h3 class="text-3xl font-black text-slate-800">Participantes: <?php echo $p_unicas; ?></h3>
+        <div id="kpiContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-10">
+            <div class="sm:col-span-2 bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-[6px] border-l-blue-600 group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Censo de Participación</p>
+                <h3 class="text-xl sm:text-3xl font-black text-slate-800 tabular-nums">Participantes: <?php echo $p_unicas; ?></h3>
             </div>
-            <div class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 group hover:shadow-xl transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Estado Jornada</p>
-                <h3 class="text-2xl font-black text-emerald-600"><?php echo $f_puntuadas; ?> <span class="text-xs text-slate-300">/ <?php echo $total_fases; ?></span></h3>
+            <div class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-[6px] border-l-emerald-500 group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Estado Jornada</p>
+                <h3 class="text-xl sm:text-2xl font-black text-emerald-600 tabular-nums"><?php echo $f_puntuadas; ?> <span class="text-xs text-slate-300">/ <?php echo $total_fases; ?></span></h3>
             </div>
-            <div class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500 group hover:shadow-xl transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Carga Técnica</p>
-                <h3 class="text-2xl font-black text-purple-600"><?php echo $stats_p['total_ins'] ?? 0; ?></h3>
+            <div class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-[6px] border-l-purple-500 group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Carga Técnica</p>
+                <h3 class="text-xl sm:text-2xl font-black text-purple-600 tabular-nums"><?php echo $stats_p['total_ins'] ?? 0; ?></h3>
             </div>
         </div>
 
         <!-- VISTA 1: TARJETAS -->
-        <div id="cardsView" class="space-y-6">
+        <div id="cardsView" class="space-y-4 sm:space-y-6">
             <?php
             $query = "SELECT f.*, c.nombre as cat_nombre, 
                       fig.nombre as fig_nombre, fig.numero as fig_num, fig.grado_dificultad as fig_gd,
@@ -205,20 +205,39 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     $order_bg = 'bg-slate-100 border-slate-200';
                     $order_text = 'text-slate-400';
                 } else {
-                    $card_border = 'border-slate-200 bg-white';
+                    $card_border = 'border-slate-200/80 bg-white';
                     $order_bg = 'bg-blue-50 border-blue-100';
                     $order_text = 'text-blue-600';
                 }
             ?>
-            <div class="<?php echo $card_border; ?> rounded-[2rem] p-6 shadow-sm border group hover:shadow-xl transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-8">
+            <div class="<?php echo $card_border; ?> rounded-2xl sm:rounded-[2rem] p-4 sm:p-6 shadow-sm border group hover:shadow-md transition-all relative overflow-hidden flex flex-col md:flex-row md:items-center gap-4 sm:gap-6">
                 <!-- ID Más Visible -->
-                <div class="absolute top-4 right-8 text-[10px] font-black text-slate-400 italic tracking-widest uppercase opacity-40">ID: #<?php echo $row['id']; ?></div>
+                <div class="absolute top-3 right-4 sm:top-4 sm:right-8 text-[10px] font-black text-slate-400 italic tracking-wider uppercase opacity-40">ID: #<?php echo $row['id']; ?></div>
 
-                <div class="flex-shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl <?php echo $order_bg; ?> border shadow-inner group-hover:scale-110 transition-transform duration-500">
-                    <span class="text-[9px] font-black opacity-40 uppercase leading-none mb-1">Orden</span>
-                    <span class="text-xl font-black <?php echo $order_text; ?> leading-none"><?php echo $row['orden']; ?></span>
+                <div class="flex items-center gap-3 md:block">
+                    <div class="flex-shrink-0 flex flex-col items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl <?php echo $order_bg; ?> border shadow-inner group-hover:scale-105 transition-transform duration-300">
+                        <span class="text-[8px] sm:text-[9px] font-black opacity-40 uppercase leading-none mb-0.5 sm:mb-1">Orden</span>
+                        <span class="text-base sm:text-xl font-black <?php echo $order_text; ?> leading-none tabular-nums"><?php echo $row['orden']; ?></span>
+                    </div>
+                    <div class="md:hidden flex-1 min-w-0 pr-12">
+                        <div class="flex flex-wrap items-center gap-1.5 mb-1">
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded border border-slate-200 uppercase"><?php echo $row['cat_nombre']; ?></span>
+                            <?php if($is_phase_figura): ?>
+                                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded border border-blue-100 uppercase"><i class="fas fa-person-swimming mr-1"></i> Figura</span>
+                            <?php else: ?>
+                                <span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-[9px] font-black rounded border border-purple-100 uppercase"><i class="fas fa-music mr-1"></i> Rutina Téc.</span>
+                            <?php endif; ?>
+                            <?php if($isEmpty): ?>
+                                <span class="px-2 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded uppercase">Vacía</span>
+                            <?php endif; ?>
+                        </div>
+                        <h3 class="text-sm font-black <?php echo $isOldSystem ? 'text-slate-500' : 'text-slate-800'; ?> truncate">
+                            <?php echo $is_phase_figura ? "Fig. ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
+                        </h3>
+                    </div>
                 </div>
-                <div class="flex-1">
+
+                <div class="hidden md:block flex-1">
                     <div class="mb-2 flex flex-wrap items-center gap-2">
                         <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200 uppercase tracking-widest"><?php echo $row['cat_nombre']; ?></span>
                         
@@ -240,7 +259,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         <?php endif; ?>
 
                         <?php if($isEmpty): ?>
-                            <span class="px-3 py-1 bg-amber-500 text-white text-[9px] font-black rounded-lg shadow-lg shadow-amber-500/20 uppercase tracking-widest animate-pulse">Fase Vacía</span>
+                            <span class="px-3 py-1 bg-amber-500 text-white text-[9px] font-black rounded-lg shadow-lg shadow-amber-500/20 uppercase tracking-widest">Fase Vacía</span>
                         <?php endif; ?>
                     </div>
                     <div class="flex items-center gap-3 mb-1">
@@ -250,48 +269,67 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     </div>
                     <?php if($is_phase_figura): ?>
                         <div class="flex items-center gap-4">
-                            <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
-                            <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-users text-blue-400 mr-1"></i> <?php echo $row['num_items']; ?> inscritas.</p>
+                            <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black tabular-nums"><?php echo $row['fig_gd']; ?></span></p>
+                            <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-users text-blue-400 mr-1"></i> <span class="tabular-nums"><?php echo $row['num_items']; ?></span> inscritas.</p>
                         </div>
                     <?php else: ?>
-                        <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <?php echo $row['num_items']; ?> rutinas registradas.</p>
+                        <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <span class="tabular-nums"><?php echo $row['num_items']; ?></span> rutinas registradas.</p>
                     <?php endif; ?>
                     
                     <?php if($isEmpty): ?>
                         <p class="text-[10px] font-bold text-amber-700 mt-2 flex items-center gap-2 italic"><i class="fas fa-info-circle"></i> Puedes eliminar esta fase si no es necesaria antes del sorteo.</p>
                     <?php endif; ?>
                 </div>
-                <div class="flex items-center gap-3">
-                    <form action="fases_edit.php" method="POST"><input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>"><button type="submit" name="edit_btn" class="px-5 py-2.5 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/30 transition-all flex items-center gap-2"><i class="fas fa-cog"></i> Configurar</button></form>
-                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');"><input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>"><button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl <?php echo $isEmpty ? 'bg-red-500 text-white animate-bounce-slow' : 'bg-red-50 text-red-400'; ?> hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-500/30 transition-all flex items-center justify-center border border-red-100/50 shadow-sm" title="Borrar Fase Vacía"><i class="fas fa-trash-alt text-sm"></i></button></form>
+
+                <!-- Detalle en Móvil -->
+                <div class="md:hidden flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
+                    <?php if($is_phase_figura): ?>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[11px] font-bold text-slate-500"><i class="fas fa-chart-line text-blue-500 mr-1"></i> GD: <strong class="text-blue-700 tabular-nums"><?php echo $row['fig_gd']; ?></strong></span>
+                            <span class="text-[11px] font-bold <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-500'; ?>"><i class="fas fa-users text-blue-400 mr-1"></i> <strong class="tabular-nums"><?php echo $row['num_items']; ?></strong> ins.</span>
+                        </div>
+                    <?php else: ?>
+                        <span class="text-[11px] font-bold <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-500'; ?>"><i class="fas fa-swimmer text-purple-500 mr-1"></i> <strong class="tabular-nums"><?php echo $row['num_items']; ?></strong> rutinas</span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+                    <form action="fases_edit.php" method="POST" class="flex-1 md:flex-initial">
+                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                        <button type="submit" name="edit_btn" class="w-full md:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-blue-50 text-blue-600 font-black text-[10px] uppercase tracking-wider rounded-xl hover:bg-blue-600 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"><i class="fas fa-cog"></i> Configurar</button>
+                    </form>
+                    <form action="fases_code.php" method="POST" onsubmit="return confirm('¿Borrar?');">
+                        <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                        <button type="submit" name="delete_btn" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl <?php echo $isEmpty ? 'bg-red-500 text-white' : 'bg-red-50 text-red-400'; ?> hover:bg-red-600 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center border border-red-100 shadow-sm" title="Borrar Fase Vacía"><i class="fas fa-trash-alt text-xs sm:text-sm"></i></button>
+                    </form>
                 </div>
             </div>
             <?php endwhile; ?>
         </div>
 
         <!-- VISTA 2: LISTA DE VERIFICACIÓN -->
-        <div id="listView" class="hidden animate-fade-in">
+        <div id="listView" class="hidden animate-fade-in space-y-3 sm:space-y-4">
             <?php
             $q_cat_list = "SELECT DISTINCT c.id, c.nombre FROM fases f JOIN categorias c ON f.id_categoria = c.id WHERE f.id_competicion = '$id_comp' ORDER BY c.orden, c.id";
             $res_cat_list = mysqli_query($connection, $q_cat_list);
             while($c_row = mysqli_fetch_assoc($res_cat_list)):
                 $id_cat_row = $c_row['id'];
             ?>
-            <div class="bg-white rounded-[1.5rem] border border-slate-200 overflow-hidden mb-4 shadow-sm">
-                <div class="bg-slate-50 px-8 py-2 border-b border-slate-100 flex items-center gap-3">
+            <div class="bg-white rounded-xl sm:rounded-[1.5rem] border border-slate-200/80 overflow-hidden shadow-sm">
+                <div class="bg-slate-50 px-4 sm:px-8 py-2.5 sm:py-3 border-b border-slate-100 flex items-center gap-2.5 sm:gap-3">
                     <div class="w-2 h-2 rounded-full bg-blue-600"></div>
-                    <h3 class="text-[10px] font-black uppercase text-slate-500 tracking-widest italic">Categoría: <?php echo $c_row['nombre']; ?></h3>
+                    <h3 class="text-[10px] font-black uppercase text-slate-500 tracking-wider">Categoría: <?php echo $c_row['nombre']; ?></h3>
                 </div>
                 <table class="w-full text-left border-collapse">
                     <thead class="hidden md:table-header-group">
-                        <tr class="text-[8px] font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-50">
-                            <th class="px-8 py-2 w-20">ORDEN</th>
-                            <th class="px-4 py-2"><?php echo $is_figuras ? 'Identificación de la Figura' : 'Modalidad de Rutina'; ?></th>
-                            <th class="px-4 py-2 text-center">G.D.</th>
-                            <th class="px-8 py-2 text-right w-32">INSCRIPCIONES</th>
+                        <tr class="text-[9px] font-black text-slate-400 uppercase tracking-wider italic border-b border-slate-100 bg-slate-50/50">
+                            <th class="px-8 py-3 w-20">ORDEN</th>
+                            <th class="px-4 py-3"><?php echo $is_figuras ? 'Identificación de la Figura' : 'Modalidad de Rutina'; ?></th>
+                            <th class="px-4 py-3 text-center">G.D.</th>
+                            <th class="px-8 py-3 text-right w-32">INSCRIPCIONES</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-50">
+                    <tbody class="divide-y divide-slate-100">
                         <?php
                         $q_f_list = "SELECT f.*, 
                                      fig.nombre as f_nom, fig.numero as f_num, fig.grado_dificultad as f_gd, 
@@ -311,40 +349,40 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                             $fl_nom = $is_fl_fig ? ($fl['f_num'].' - '.$fl['f_nom']) : ($fl['m_nom'] ?? 'Rutina');
                             $fl_gd = $is_fl_fig ? $fl['f_gd'] : '-';
                         ?>
-                        <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-4 md:p-0">
+                        <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-3.5 sm:p-4 md:p-0">
                             <!-- Mobile: Línea 1 (Orden + Nombre) | Desktop: Col Orden -->
-                            <td class="px-0 md:px-8 py-0 md:py-2 font-black text-slate-300 italic mb-1 md:mb-0">
-                                <span class="md:hidden text-slate-400 mr-1">#<?php echo $fl['orden']; ?></span>
+                            <td class="px-0 md:px-8 py-0 md:py-3 font-black text-slate-400 italic mb-1 md:mb-0 tabular-nums">
+                                <span class="md:hidden text-blue-600 mr-1.5 font-bold">#<?php echo $fl['orden']; ?></span>
                                 <span class="hidden md:inline">#<?php echo $fl['orden']; ?></span>
                                 <!-- Nombre integrado en móvil -->
-                                <span class="md:hidden text-xs font-black text-slate-800 uppercase italic tracking-tighter ml-2 leading-none">
+                                <span class="md:hidden text-xs font-black text-slate-800 uppercase tracking-tight ml-1 leading-snug">
                                     <?php echo $fl_nom; ?>
                                 </span>
                             </td>
 
                             <!-- Desktop Only: Nombre -->
-                            <td class="hidden md:table-cell px-4 py-2">
-                                <p class="text-xs font-black text-slate-800 italic uppercase tracking-tighter">
+                            <td class="hidden md:table-cell px-4 py-3">
+                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight">
                                     <?php echo $fl_nom; ?>
                                 </p>
                             </td>
 
                             <!-- Línea 2 en Mobile (Badges GD e INS) | Desktop: Celdas separadas -->
-                            <td class="px-0 md:px-4 py-0 md:py-2 md:text-center">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-[10px] font-black text-blue-600 bg-blue-50 md:bg-transparent px-2 py-0.5 md:px-0 rounded-md border border-blue-100 md:border-0">
-                                        <span class="md:hidden opacity-50 mr-1">GD:</span><?php echo $fl_gd; ?>
+                            <td class="px-0 md:px-4 py-0 md:py-3 md:text-center mt-1.5 md:mt-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-black text-blue-600 bg-blue-50 md:bg-transparent px-2 py-0.5 md:px-0 rounded border border-blue-100 md:border-0 tabular-nums">
+                                        <span class="md:hidden text-slate-400 mr-1">GD:</span><?php echo $fl_gd; ?>
                                     </span>
                                     <span class="md:hidden w-1 h-1 rounded-full bg-slate-200"></span>
-                                    <span class="md:hidden px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded-md border border-slate-200">
-                                        <span class="opacity-50 mr-1">INS:</span><?php echo $fl['num_ins']; ?>
+                                    <span class="md:hidden px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded border border-slate-200 tabular-nums">
+                                        <span class="text-slate-400 mr-1">INS:</span><?php echo $fl['num_ins']; ?>
                                     </span>
                                 </div>
                             </td>
 
                             <!-- Desktop Only: Inscripciones -->
-                            <td class="hidden md:table-cell px-8 py-2 text-right">
-                                <span class="px-3 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-lg border border-blue-100">
+                            <td class="hidden md:table-cell px-8 py-3 text-right">
+                                <span class="px-3 py-0.5 bg-blue-50 text-blue-700 text-[10px] font-black rounded-lg border border-blue-100 tabular-nums">
                                     <?php echo $fl['num_ins']; ?>
                                 </span>
                             </td>
