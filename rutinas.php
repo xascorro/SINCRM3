@@ -74,52 +74,52 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-flag-checkered text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-flag-checkered text-base sm:text-lg"></i></span>
                     Registro de Rutinas
                 </h1>
-                <p class="text-slate-500 font-medium">Gestión de inscripciones, música<?php echo $has_coach_cards ? ' y Coach Cards.' : '.'; ?></p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Gestión de inscripciones, música<?php echo $has_coach_cards ? ' y Coach Cards.' : '.'; ?></p>
             </div>
-            <div class="flex flex-wrap gap-3">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <?php if($_SESSION['id_rol'] != 5): ?>
-                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-file-pdf text-red-500"></i> PDF INSCRIPCIONES
+                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fas fa-file-pdf text-red-500"></i> <span class="hidden sm:inline">PDF</span> INSCRIPCIONES
                     </a>
                     <?php if($has_coach_cards): ?>
-                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                            <i class="fas fa-puzzle-piece text-amber-500"></i> PDF COACH CARDS
+                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_competicion=<?php echo $id_competicion;?>" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-puzzle-piece text-amber-500"></i> <span class="hidden sm:inline">PDF</span> CC
                         </a>
                     <?php endif; ?>
                     <form action="./download_music.php" method="POST" target="_blank" class="inline">
                         <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
-                        <button type="submit" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                        <button type="submit" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
                             <i class="fas fa-music text-blue-500"></i> ZIP MÚSICA
                         </button>
                     </form>
                 <?php else: ?>
-                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fas fa-file-pdf text-red-500"></i> MI INSCRIPCIÓN
+                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fas fa-file-pdf text-red-500"></i> INSCRIPCIÓN
                     </a>
                     <?php if($has_coach_cards): ?>
-                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                            <i class="fas fa-puzzle-piece text-amber-500"></i> MIS COACH CARDS
+                        <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                            <i class="fas fa-puzzle-piece text-amber-500"></i> COACH CARDS
                         </a>
                     <?php endif; ?>
                     <form action="./download_music.php" method="POST" target="_blank" class="inline">
                         <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
                         <input type="hidden" name="id_club" value="<?php echo $_SESSION['club']; ?>">
-                        <button type="submit" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-600 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
+                        <button type="submit" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
                             <i class="fas fa-music text-blue-500"></i> MI MÚSICA
                         </button>
                     </form>
                 <?php endif; ?>
                 
-                <button onclick="toggleAddRutinaPanel()" <?php echo $enable_inscripcion ?> class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button onclick="toggleAddRutinaPanel()" <?php echo $enable_inscripcion ?> class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg active:scale-[0.98] transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <i class="fas fa-plus text-xs"></i> Añadir Rutina
                 </button>
             </div>
@@ -128,56 +128,56 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         <?php include('includes/alertas_v4.php'); ?>
 
         <!-- Plazos & KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 lg:<?php echo $has_coach_cards ? 'grid-cols-5' : 'grid-cols-3'; ?> gap-6 mb-12">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:<?php echo $has_coach_cards ? 'grid-cols-5' : 'grid-cols-3'; ?> gap-2.5 sm:gap-6 mb-6 sm:mb-12">
             <!-- Plazo Inscripción -->
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_inscripcion == 'disabled') ? 'border-l-red-500' : 'border-l-blue-500'; ?> group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Inscripción</p>
-                <h3 class="text-xl font-black <?php echo ($enable_inscripcion == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_fin_inscripcion); ?></h3>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_inscripcion == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
+            <div class="bg-white p-3.5 sm:p-6 rounded-xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-4 sm:border-l-[6px] <?php echo ($enable_inscripcion == 'disabled') ? 'border-l-red-500' : 'border-l-blue-500'; ?> group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Inscripción</p>
+                <h3 class="text-sm sm:text-xl font-black <?php echo ($enable_inscripcion == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?> tabular-nums"><?php echo dateAFecha($fecha_fin_inscripcion); ?></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-2 uppercase"><?php echo ($enable_inscripcion == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
             </div>
             <!-- Plazo Música -->
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_musica == 'disabled') ? 'border-l-red-500' : 'border-l-indigo-500'; ?> group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Música</p>
-                <h3 class="text-xl font-black <?php echo ($enable_musica == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_musica); ?></h3>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_musica == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
+            <div class="bg-white p-3.5 sm:p-6 rounded-xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-4 sm:border-l-[6px] <?php echo ($enable_musica == 'disabled') ? 'border-l-red-500' : 'border-l-indigo-500'; ?> group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Música</p>
+                <h3 class="text-sm sm:text-xl font-black <?php echo ($enable_musica == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?> tabular-nums"><?php echo dateAFecha($fecha_musica); ?></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-2 uppercase"><?php echo ($enable_musica == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
             </div>
             <!-- Plazo Coach Card -->
             <?php if($has_coach_cards): ?>
-                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] <?php echo ($enable_coach_card == 'disabled') ? 'border-l-red-500' : 'border-l-amber-500'; ?> group hover:shadow-lg transition-all">
-                    <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Plazo Coach Card</p>
-                    <h3 class="text-xl font-black <?php echo ($enable_coach_card == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?>"><?php echo dateAFecha($fecha_coach_card); ?></h3>
-                    <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo ($enable_coach_card == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
+                <div class="bg-white p-3.5 sm:p-6 rounded-xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-4 sm:border-l-[6px] <?php echo ($enable_coach_card == 'disabled') ? 'border-l-red-500' : 'border-l-amber-500'; ?> group hover:shadow-md transition-all">
+                    <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Coach Card</p>
+                    <h3 class="text-sm sm:text-xl font-black <?php echo ($enable_coach_card == 'disabled') ? 'text-red-600' : 'text-slate-800'; ?> tabular-nums"><?php echo dateAFecha($fecha_coach_card); ?></h3>
+                    <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-2 uppercase"><?php echo ($enable_coach_card == 'disabled') ? 'Cerrado' : 'Abierto'; ?></p>
                 </div>
             <?php endif; ?>
             <!-- KPI Total -->
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500 group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1">Total Rutinas</p>
-                <h3 class="text-xl font-black text-purple-600"><?php echo $stats['total'] ?? 0; ?></h3>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase">Inscritas</p>
+            <div class="bg-white p-3.5 sm:p-6 rounded-xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-4 sm:border-l-[6px] border-l-purple-500 group hover:shadow-md transition-all">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1">Total Rutinas</p>
+                <h3 class="text-sm sm:text-xl font-black text-purple-600 tabular-nums"><?php echo $stats['total'] ?? 0; ?></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-2 uppercase">Inscritas</p>
             </div>
             <!-- KPI Completado -->
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 group hover:shadow-lg transition-all">
-                <p class="text-[9px] font-black uppercase text-slate-400 tracking-widest mb-1"><?php echo $has_coach_cards ? 'Música / CC' : 'Música'; ?></p>
+            <div class="bg-white p-3.5 sm:p-6 rounded-xl sm:rounded-[2rem] shadow-sm border border-slate-200/80 border-l-4 sm:border-l-[6px] border-l-emerald-500 group hover:shadow-md transition-all col-span-2 sm:col-span-1">
+                <p class="text-[9px] font-black uppercase text-slate-400 tracking-wider mb-1"><?php echo $has_coach_cards ? 'Música / CC' : 'Música'; ?></p>
                 <div class="flex items-center gap-2">
-                    <h3 class="text-xl font-black text-emerald-600" title="Música subida / Total rutinas">
-                        <?php echo ($stats['con_musica'] ?? 0); ?><span class="text-slate-300 text-sm font-medium">/<?php echo ($stats['total'] ?? 0); ?></span>
+                    <h3 class="text-sm sm:text-xl font-black text-emerald-600 tabular-nums" title="Música subida / Total rutinas">
+                        <?php echo ($stats['con_musica'] ?? 0); ?><span class="text-slate-300 text-xs sm:text-sm font-medium">/<?php echo ($stats['total'] ?? 0); ?></span>
                     </h3>
                     <?php if($has_coach_cards): ?>
                         <span class="text-slate-200">|</span>
-                        <h3 class="text-xl font-black text-emerald-600" title="Coach Cards definidas / Total necesarias">
-                            <?php echo ($stats['con_coach_card'] ?? 0); ?><span class="text-slate-300 text-sm font-medium">/<?php echo ($stats['requieren_coach_card'] ?? 0); ?></span>
+                        <h3 class="text-sm sm:text-xl font-black text-emerald-600 tabular-nums" title="Coach Cards definidas / Total necesarias">
+                            <?php echo ($stats['con_coach_card'] ?? 0); ?><span class="text-slate-300 text-xs sm:text-sm font-medium">/<?php echo ($stats['requieren_coach_card'] ?? 0); ?></span>
                         </h3>
                     <?php endif; ?>
                 </div>
-                <p class="text-[10px] font-bold text-slate-400 mt-2 uppercase"><?php echo $has_coach_cards ? 'Subidas / Definidas' : 'Subidas'; ?></p>
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 sm:mt-2 uppercase"><?php echo $has_coach_cards ? 'Subidas / Definidas' : 'Subidas'; ?></p>
             </div>
         </div>
 
         <!-- Panel Añadir -->
-        <div id="addRutinaPanel" class="hidden mb-12 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Registrar Rutina</h2>
-                <form action="rutinas_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div id="addRutinaPanel" class="hidden mb-6 sm:mb-12 animate-fade-in-down">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Registrar Rutina</h2>
+                <form action="rutinas_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
                     <div class="md:col-span-6 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1"><?php echo ($figuras == 'si') ? 'Nadadora' : 'Club'; ?></label>
                         <?php 
@@ -197,65 +197,202 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                         echo str_replace('<select', '<select name="id_fase" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', ob_get_clean()));
                         ?>
                     </div>
-                    <div class="md:col-span-12 flex justify-end gap-3 pt-4">
+                    <div class="md:col-span-12 flex justify-end gap-3 pt-3 sm:pt-4">
                         <input type="hidden" name="id_competicion" value="<?php echo $id_competicion?>">
-                        <button type="button" onclick="toggleAddRutinaPanel()" class="px-8 py-3 bg-slate-100 text-slate-500 font-black uppercase text-xs tracking-widest rounded-2xl hover:bg-slate-200 transition-all">Cancelar</button>
-                        <button type="submit" name="save_btn" class="px-8 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 transition-all">Guardar Rutina</button>
+                        <button type="button" onclick="toggleAddRutinaPanel()" class="px-5 sm:px-8 py-2.5 sm:py-3 bg-slate-100 text-slate-500 font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl hover:bg-slate-200 active:scale-[0.98] transition-all">Cancelar</button>
+                        <button type="submit" name="save_btn" class="px-5 sm:px-8 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all">Guardar Rutina</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <!-- LISTADO DE RUTINAS -->
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
-                <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
-                    <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fas fa-list-ul"></i></span>
+        <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200/80 overflow-hidden">
+            <div class="p-4 sm:p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 sm:gap-4 bg-slate-50/40">
+                <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fas fa-list-ul"></i></span>
                     Detalle de Inscripciones
                 </h3>
                 <div class="relative w-full md:w-80">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><i class="fas fa-search text-xs"></i></span>
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i class="fas fa-search text-xs"></i></span>
                     <input type="text" id="rutinaSearchInput" placeholder="Buscar por club, modalidad o nadadora..." 
-                           class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-transparent rounded-2xl text-xs font-bold text-slate-700 focus:bg-white focus:border-blue-500 transition-all outline-none"
+                           class="w-full pl-9 pr-4 py-2 sm:py-2.5 bg-white border border-slate-200 rounded-xl sm:rounded-2xl text-xs font-bold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none"
                            onkeyup="filterRutinas()">
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <?php
+            $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, fases.elementos_coach_card
+                      FROM rutinas, fases, modalidades, categorias, clubes
+                      WHERE rutinas.id_fase = fases.id
+                      AND fases.id_modalidad = modalidades.id
+                      AND fases.id_categoria = categorias.id
+                      AND rutinas.id_club = clubes.id
+                      AND fases.id_competicion = $id_competicion $condicion_club
+                      ORDER BY fases.orden ASC, fases.id ASC, rutinas.orden ASC, clubes.nombre_corto ASC, rutinas.id ASC";
+            $res = mysqli_query($connection, $query);
+
+            $rutinas_items = [];
+            if($res && mysqli_num_rows($res) > 0) {
+                while($r = mysqli_fetch_assoc($res)) {
+                    $q_n = "SELECT group_concat(nadadoras.nombre, ' ', nadadoras.apellidos separator ', ') as atletas
+                            FROM rutinas_participantes, nadadoras
+                            WHERE nadadoras.id = rutinas_participantes.id_nadadora
+                            AND rutinas_participantes.id_rutina = ".$r['id']."
+                            AND rutinas_participantes.reserva = 'no'";
+                    $res_n = mysqli_query($connection, $q_n);
+                    $r['nombres'] = ($res_n && mysqli_num_rows($res_n) > 0) ? (mysqli_fetch_assoc($res_n)['atletas'] ?? '') : '';
+                    $rutinas_items[] = $r;
+                }
+            }
+            ?>
+
+            <!-- VISTA MÓVIL (Tarjetas Fluidas) -->
+            <div class="md:hidden p-3 sm:p-4 space-y-3" id="rutinasMobileContainer">
+                <?php if (!empty($rutinas_items)): 
+                    $curr_fase_m = null;
+                    foreach ($rutinas_items as $row):
+                        $isPS = ($row['orden'] < 0 && $row['orden'] > -10);
+                        $isExh = ($row['orden'] <= -10);
+                        if ($isExh) {
+                            $orden_display = 'EX';
+                        } elseif ($isPS) {
+                            $orden_display = 'PS';
+                        } else {
+                            $orden_display = $row['orden'] == 0 ? '-' : $row['orden'];
+                        }
+                        $has_music = (!empty($row['music_name']));
+                        $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400';
+
+                        if ($curr_fase_m !== $row['id_fase']):
+                            $curr_fase_m = $row['id_fase'];
+                ?>
+                            <div class="pt-2 pb-1">
+                                <div class="flex items-center gap-2 px-1">
+                                    <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
+                                    <span class="text-xs font-black text-slate-700 uppercase tracking-wide"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="rutina-mobile-card bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-xs space-y-2.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 min-w-0">
+                                    <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-black text-xs tabular-nums border border-slate-200">
+                                        Ord <?php echo $orden_display; ?>
+                                    </span>
+                                    <span class="text-[10px] font-black text-slate-400 tabular-nums">#<?php echo $row['id']; ?></span>
+                                    <?php if ($isExh): ?>
+                                        <span class="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[8px] font-black rounded uppercase">Exh</span>
+                                    <?php elseif ($isPS): ?>
+                                        <span class="px-1.5 py-0.5 bg-purple-100 text-purple-700 text-[8px] font-black rounded uppercase">PS</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-xs font-black text-blue-700 uppercase"><?php echo $row['nombre_club']; ?></span>
+                                    <?php if (!empty($row['logo'])): ?>
+                                        <img src="<?php echo $row['logo']; ?>" class="w-5 h-5 object-contain">
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h4 class="text-xs font-black text-slate-800 uppercase tracking-tight"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></h4>
+                                <?php if ($row['nombre_rutina']): ?>
+                                    <p class="text-xs font-bold text-slate-500 italic mt-0.5"><i class="fas fa-quote-left text-slate-300 mr-1 text-[9px]"></i><?php echo $row['nombre_rutina']; ?></p>
+                                <?php endif; ?>
+                                <p class="text-[11px] font-medium text-slate-500 italic mt-1 leading-snug">
+                                    <?php echo $row['nombres'] ?: '<span class="text-red-400">Sin participantes asignadas</span>'; ?>
+                                </p>
+                            </div>
+
+                            <!-- Botones táctiles -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-1.5">
+                                <div class="flex items-center gap-1.5">
+                                    <!-- Participantes -->
+                                    <form action="./rutinas_participantes.php" method="POST">
+                                        <input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
+                                        <input type="hidden" name="club" value="<?php echo $row['id_club']; ?>">
+                                        <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                                        <button type="submit" <?php echo $enable_inscripcion ?> class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center active:scale-[0.98] border border-blue-100" title="Participantes">
+                                            <i class="fas fa-users text-xs"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Música -->
+                                    <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>)' 
+                                            class="w-9 h-9 rounded-lg <?php echo $btn_music_class; ?> flex items-center justify-center active:scale-[0.98] border border-indigo-100" title="Música">
+                                        <i class="fas <?php echo $has_music ? 'fa-play' : 'fa-music'; ?> text-xs"></i>
+                                    </button>
+
+                                    <!-- Coach Card -->
+                                    <?php if($row['elementos_coach_card'] > 0): ?>
+                                        <form action="coach_card_composer.php" method="POST">
+                                            <input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
+                                            <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
+                                            <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
+                                            <button type="submit" <?php echo $enable_coach_card; ?> class="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center active:scale-[0.98] border border-amber-200 relative" title="Coach Card Composer">
+                                                <i class="fas fa-puzzle-piece text-xs"></i>
+                                                <span class="absolute -top-1.5 -right-1.5 bg-slate-800 text-white text-[7px] font-black px-1 rounded-full tabular-nums"><?php echo $row['dd_total']; ?></span>
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+                                </div>
+
+                                <div class="flex items-center gap-1.5">
+                                    <!-- Editar -->
+                                    <?php if($_SESSION['id_rol'] != 5): ?>
+                                        <form action="rutinas_edit.php" method="POST">
+                                            <input type="hidden" name="id_rutina" value="<?php echo $row['id']; ?>">
+                                            <input type="hidden" name="id_fase" value="<?php echo $row['id_fase']; ?>">
+                                            <input type="hidden" name="club" value="<?php echo $row['id_club']; ?>">
+                                            <button type="submit" class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center active:scale-[0.98] border border-emerald-100" title="Editar">
+                                                <i class="fas fa-edit text-xs"></i>
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <!-- Borrar -->
+                                    <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($row['nombres']); ?>')" 
+                                            <?php echo $enable_inscripcion ?> class="w-9 h-9 rounded-lg bg-red-50 text-red-500 flex items-center justify-center active:scale-[0.98] border border-red-100 disabled:opacity-30" title="Eliminar">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; else: ?>
+                    <div class="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
+                        <p class="text-xs font-black uppercase text-slate-400">No hay rutinas registradas</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- VISTA ESCRITORIO (Tabla Clásica) -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left border-collapse" id="rutinasTable">
                     <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center w-24">Orden</th>
-                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest w-24">ID</th>
-                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Modalidad / Categoría</th>
+                        <tr class="bg-slate-50/50 border-b border-slate-100">
+                            <th class="px-8 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center w-24">Orden</th>
+                            <th class="px-8 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest w-24">ID</th>
+                            <th class="px-8 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Modalidad / Categoría</th>
                             <?php if($_SESSION['id_rol'] != 5): ?>
-                                <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest">Club</th>
+                                <th class="px-8 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Club</th>
                             <?php endif; ?>
-                            <th class="px-8 py-5 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Acciones</th>
+                            <th class="px-8 py-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
-                        <?php
-                        $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, fases.elementos_coach_card
-                                  FROM rutinas, fases, modalidades, categorias, clubes
-                                  WHERE rutinas.id_fase = fases.id
-                                  AND fases.id_modalidad = modalidades.id
-                                  AND fases.id_categoria = categorias.id
-                                  AND rutinas.id_club = clubes.id
-                                  AND fases.id_competicion = $id_competicion $condicion_club
-                                  ORDER BY fases.orden ASC, fases.id ASC, rutinas.orden ASC, clubes.nombre_corto ASC, rutinas.id ASC";
-                        $res = mysqli_query($connection, $query);
-
-                        if($res && mysqli_num_rows($res) > 0):
-                            $current_fase = null;
-                            while($row = mysqli_fetch_assoc($res)):
-                                if($current_fase !== $row['id_fase']):
-                                    $current_fase = $row['id_fase'];
+                        <?php if(!empty($rutinas_items)): 
+                            $curr_fase_d = null;
+                            foreach($rutinas_items as $row):
+                                if($curr_fase_d !== $row['id_fase']):
+                                    $curr_fase_d = $row['id_fase'];
                                     ?>
                                     <tr class="bg-slate-100/80">
-                                        <td colspan="10" class="px-8 py-4">
+                                        <td colspan="10" class="px-8 py-3.5">
                                             <div class="flex items-center gap-3">
-                                                <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+                                                <span class="w-2 h-5 bg-blue-600 rounded-full"></span>
                                                 <span class="text-xs font-black text-slate-700 uppercase tracking-widest"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
                                             </div>
                                         </td>
@@ -263,16 +400,8 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                     <?php
                                 endif;
 
-                                $q_nombres = "SELECT group_concat(nadadoras.nombre, ' ', nadadoras.apellidos separator ', ')
-                                              FROM rutinas_participantes, nadadoras
-                                              WHERE nadadoras.id = rutinas_participantes.id_nadadora
-                                              AND rutinas_participantes.id_rutina = ".$row['id']."
-                                              AND rutinas_participantes.reserva = 'no'";
-                                $nombres = mysqli_result(mysqli_query($connection, $q_nombres), 0);
-
                                 $isPS = ($row['orden'] < 0 && $row['orden'] > -10);
                                 $isExh = ($row['orden'] <= -10);
-
                                 if ($isExh) {
                                     $orden_display = 'EX';
                                 } elseif ($isPS) {
@@ -280,18 +409,20 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                 } else {
                                     $orden_display = $row['orden'] == 0 ? '-' : $row['orden'];
                                 }
+                                $has_music = (!empty($row['music_name']));
+                                $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-indigo-600';
                                 ?>
                                 <tr class="hover:bg-slate-50/50 transition-colors group">
-                                    <td class="px-4 py-6">
-                                        <div class="w-10 h-10 mx-auto rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 flex items-center justify-center font-black text-sm shadow-inner transition-colors border border-white/50">
+                                    <td class="px-4 py-5">
+                                        <div class="w-10 h-10 mx-auto rounded-xl bg-slate-50 text-slate-400 group-hover:bg-blue-50 group-hover:text-blue-600 flex items-center justify-center font-black text-sm shadow-inner transition-colors border border-white/50 tabular-nums">
                                             <?php echo $orden_display; ?>
                                         </div>
                                     </td>
-                                    <td class="px-8 py-6 text-sm font-black text-slate-400">#<?php echo $row['id']; ?></td>
-                                    <td class="px-8 py-6">
+                                    <td class="px-8 py-5 text-sm font-black text-slate-400 tabular-nums">#<?php echo $row['id']; ?></td>
+                                    <td class="px-8 py-5">
                                         <div class="flex flex-col">
                                             <div class="flex items-center gap-2 mb-1">
-                                                <span class="text-sm font-black text-slate-800 uppercase tracking-tighter"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                                <span class="text-sm font-black text-slate-800 uppercase tracking-tight"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
                                                 <?php if ($isExh): ?>
                                                     <span class="px-2 py-0.5 bg-amber-100 text-amber-600 text-[8px] font-black rounded uppercase tracking-widest">Exhibición</span>
                                                 <?php elseif ($isPS): ?>
@@ -301,12 +432,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                             <?php if ($row['nombre_rutina']): ?>
                                                 <p class="text-xs font-bold text-slate-500 italic mb-1"><i class="fas fa-quote-left text-slate-300 mr-1"></i> <?php echo $row['nombre_rutina']; ?></p>
                                             <?php endif; ?>
-                                            <span class="text-[11px] font-bold text-slate-400 mt-1 italic"><?php echo $nombres ?: '<span class="text-red-300">Sin participantes</span>'; ?></span>
+                                            <span class="text-[11px] font-bold text-slate-400 mt-1 italic"><?php echo $row['nombres'] ?: '<span class="text-red-300">Sin participantes</span>'; ?></span>
                                         </div>
                                     </td>
 
                                     <?php if($_SESSION['id_rol'] != 5): ?>
-                                        <td class="px-8 py-6">
+                                        <td class="px-8 py-5">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-lg bg-slate-100 flex-shrink-0 flex items-center justify-center p-1.5 overflow-hidden">
                                                     <img src="<?php echo $row['logo'] ?: './images/default_club.png'; ?>" class="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity">
@@ -315,7 +446,7 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                             </div>
                                         </td>
                                     <?php endif; ?>
-                                    <td class="px-8 py-6">
+                                    <td class="px-8 py-5">
                                         <div class="flex items-center justify-center gap-2">
                                             <!-- Participantes -->
                                             <form action="./rutinas_participantes.php" method="POST">
@@ -329,11 +460,7 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                             </form>
 
                                             <!-- Música -->
-                                            <?php 
-                                            $has_music = (!empty($row['music_name']));
-                                            $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-indigo-600';
-                                            ?>
-                                            <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($nombres); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>)' 
+                                            <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>)' 
                                                     class="w-10 h-10 rounded-xl <?php echo $btn_music_class; ?> flex items-center justify-center hover:text-white transition-all shadow-sm group/btn" title="Acompañamiento Musical">
                                                 <i class="fas <?php echo $has_music ? 'fa-play' : 'fa-music'; ?> text-xs group-hover/btn:scale-110"></i>
                                             </button>
@@ -346,7 +473,7 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                                     <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
                                                     <button type="submit" <?php echo $enable_coach_card; ?> class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center hover:bg-amber-600 hover:text-white transition-all shadow-sm group/btn relative" title="Coach Card Composer">
                                                         <i class="fas fa-puzzle-piece text-xs group-hover/btn:scale-110"></i>
-                                                        <span class="absolute -top-2 -right-2 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full border-2 border-white"><?php echo $row['dd_total']; ?></span>
+                                                        <span class="absolute -top-2 -right-2 bg-slate-800 text-white text-[8px] font-black px-1.5 py-0.5 rounded-full border-2 border-white tabular-nums"><?php echo $row['dd_total']; ?></span>
                                                     </button>
                                                 </form>
                                             <?php endif; ?>
@@ -364,14 +491,14 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                             <?php endif; ?>
 
                                             <!-- Borrar -->
-                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($nombres); ?>')" 
+                                            <button onclick="confirmDelete(<?php echo $row['id']; ?>, '<?php echo addslashes($row['nombre_modalidad'].' '.$row['nombre_categoria']); ?>', '<?php echo addslashes($row['nombre_club']); ?>', '<?php echo addslashes($row['nombres']); ?>')" 
                                                     <?php echo $enable_inscripcion ?> class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm group/btn disabled:opacity-30" title="Eliminar Rutina">
                                                 <i class="fas fa-trash-alt text-xs group-hover/btn:scale-110"></i>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
-                            <?php endwhile; ?>
+                            <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
                                 <td colspan="10" class="px-8 py-20 text-center">
@@ -584,24 +711,34 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
 
     function filterRutinas() {
         const input = document.getElementById('rutinaSearchInput');
-        const filter = input.value.toUpperCase();
+        const filter = input.value.toUpperCase().trim();
+        
+        // 1. Filtrar tabla escritorio
         const table = document.getElementById('rutinasTable');
-        const tr = table.getElementsByTagName('tr');
-
-        for (let i = 1; i < tr.length; i++) {
-            let td = tr[i].getElementsByTagName('td');
-            let found = false;
-            for (let j = 0; j < td.length; j++) {
-                if (td[j]) {
-                    let textValue = td[j].textContent || td[j].innerText;
-                    if (textValue.toUpperCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
+        if (table) {
+            const tr = table.getElementsByTagName('tr');
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName('td');
+                let found = false;
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        let textValue = td[j].textContent || td[j].innerText;
+                        if (textValue.toUpperCase().indexOf(filter) > -1) {
+                            found = true;
+                            break;
+                        }
                     }
                 }
+                tr[i].style.display = found ? "" : "none";
             }
-            tr[i].style.display = found ? "" : "none";
         }
+
+        // 2. Filtrar tarjetas móviles
+        const cards = document.querySelectorAll('.rutina-mobile-card');
+        cards.forEach(card => {
+            let textValue = card.textContent || card.innerText;
+            card.style.display = textValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        });
     }
 </script>
 

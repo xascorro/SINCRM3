@@ -109,6 +109,34 @@ Fecha: 2026-11-03
   - **Móvil (`md:hidden`)**: Badge de orden de salida compacto (`w-11 h-11`), badge de club con fondo suave, ID interna y nombres de participantes apilados con tipografía nítida sin deformar la pantalla.
   - **Desktop (`hidden md:flex`)**: Estructura de carril con orden amplio, club con divisor vertical, participantes y opacidad dinámica en hover.
 
-## 9. Sincronización y Git
+## 9. Rediseño y Optimización Mobile UI/UX en Rutinas (`rutinas.php`)
+- **Header y Acciones**:
+  - Contenedor elástico (`px-3 py-4 sm:p-6 md:p-10`), botones de reportes ("PDF Inscriptos", "CC", "ZIP Música") compactos y adaptativos, y botón "Añadir Rutina" optimizado para móvil.
+- **Plazos y KPIs**:
+  - Grid responsivo de 2 columnas en smartphone y hasta 5 en escritorio, con valores tabulares (`tabular-nums`).
+- **Vista Dual de Rutinas**:
+  - **Móvil (`md:hidden`)**: Tarjetas individuales por rutina (`.rutina-mobile-card`) con número de orden en bloque fijo (`Ord 1` / `PS` / `EX`), ID, chip de entidad/club con escudo, título de modalidad/categoría, participantes y barra de herramientas táctil (Participantes, Música con reproductor, Coach Card con DD badge, Editar y Borrar).
+  - **Desktop (`hidden md:block`)**: Tabla completa con columnas amplias y alineadas.
+  - **Buscador en Tiempo Real**: Filtrado sincronizado en directo para tarjetas móviles y tabla de escritorio.
+
+## 10. Rediseño y Optimización Mobile UI/UX en Competiciones (`competiciones.php`)
+- **Header y Creación de Eventos**:
+  - Barra de búsqueda y botón "Crear Evento" apilables de forma natural en móvil con microinteracción táctil (`active:scale-[0.98]`).
+- **Dashboard de Tipología y KPIs**:
+  - Barra tricolor de distribución técnica (Figuras, Rutinas, Pases) adaptable a 1-2 columnas con métricas en `tabular-nums`.
+- **Fichas Premium de Competición**:
+  - Tarjetas (`.comp-card`) con fecha destacada en español (`w-14 h-14 sm:w-20 sm:h-20`), badges elásticos (Mixta, Figuras, Rutinas, Escolar), switch de activación táctil y botones de configuración/borrado optimizados para smartphones.
+
+## 11. Rediseño y Optimización Mobile UI/UX en Guion de Puntuaciones (`puntuaciones_lista_fases.php`)
+- **Header de Mesa Técnica**:
+  - Conmutador de vista (Tarjetas / Lista) con estilo pill táctil, botón de recarga y acceso rápido al informe global en PDF.
+- **Progreso de la Jornada**:
+  - Gráfico de progreso circular responsivo (`w-24 h-24 sm:w-32 sm:h-32`), desglose de fases puntuadas y participaciones en cuadrícula móvil limpia.
+- **Fichas de Fase (Figuras y Rutinas)**:
+  - Tarjetas de fase con orden destacado, pill de estado (Abierta / Cerrada) y botones de acción rápida ("Puntuar/Revisar", "PDF", "Ver").
+- **Vista de Lista Compacta**:
+  - Tabla estilizada con celdas compactas (`px-3 sm:px-6 py-3 sm:py-5`), badges de reglamento (AQUA / OBSOLETO) y tipografía tabular sin temblores.
+
+## 12. Sincronización y Git
 - Todos los cambios verificados con `php -l` (cero errores de sintaxis).
 - Sincronizados a `/var/www/html/beta/` con permisos `chmod 664`.
