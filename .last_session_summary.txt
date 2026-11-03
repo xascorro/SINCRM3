@@ -1,36 +1,35 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:28
+Fecha: 2026-11-03 23:35
 =========================================================
 
-1. INSERCIÓN DE FASES TÉCNICAS (COMPETICIÓN 81 - XIV Liga de Figuras (1ª Jornada)):
-   - Competición Mixta / Híbrida:
-     * Fases 1 a 4: Figuras Alevín (103, 10, 104, 58)
-     * Fases 5 a 8: Figuras Infantil (100, 73, 101, 102)
-     * Fases 9 a 13: Rutinas Técnicas Junior:
-       - Orden 9: Solo Técnico Fem (STF - ID 12)
-       - Orden 10: Solo Técnico Masc (STM - ID 13)
-       - Orden 11: Dúo Técnico (DT - ID 6)
-       - Orden 12: Dúo Mixto Técnico (DMT - ID 14)
-       - Orden 13: Equipo Técnico (ET - ID 7)
-     * Fases 14 a 18: Rutinas Técnicas Absoluta:
-       - Orden 14: Solo Técnico Fem (STF - ID 12)
-       - Orden 15: Solo Técnico Masc (STM - ID 13)
-       - Orden 16: Dúo Técnico (DT - ID 6)
-       - Orden 17: Dúo Mixto Técnico (DMT - ID 14)
-       - Orden 18: Equipo Técnico (ET - ID 7)
-   - Bases de datos actualizadas: `sincrm_prod_db` (Docker producción), `sincrm4` (local) y `sincrm4beta`.
+1. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
+   - Competiciones registradas y sincronizadas en sincrm_prod_db, sincrm4 y sincrm4beta:
+     * #81 (2026-11-14): XIV Liga de Figuras (1ª Jornada) [Mixta] - Sede conservada
+     * #83 (2026-11-21): Pase de Nivel 1 [Figuras / Nivel - Alhama]
+     * #84 (2026-12-19): Pase de Nivel 2 [Figuras / Nivel - Alhama]
+     * #85 (2027-01-23): Pase de Nivel 3 [Figuras / Nivel - Alhama]
+     * #86 (2027-02-20): XIV Liga de Figuras (2ª Jornada) [Mixta - Lorca]
+     * #87 (2027-03-06): Pase de Nivel 4 [Figuras / Nivel - Alhama]
+     * #88 (2027-03-13): Campeonato Regional Escolar de Figuras [Escolar / No Fed.]
+     * #89 (2027-04-10): XX Campeonato Regional OPEN [Solo Rutinas]
+     * #90 (2027-05-15): XIV Liga de Figuras (3ª Jornada) [Mixta]
+     * #91 (2027-06-12): XIV Liga de Figuras (4ª Jornada) [Mixta]
+     * #92 (2027-06-19): Campeonato Regional Escolar de Rutinas OPEN [Escolar / No Fed.]
 
-2. CORRECCIONES EN SIDEBAR (includes/navbar.php):
-   - Mantenimiento del menú padre activo abierto al expandir desde estado colapsado.
-   - Cierre exclusivo del activo al conmutar a un elemento inactivo (acordeón estricto).
+2. FASES TÉCNICAS INSERTADAS EN COMPETICIÓN 81:
+   - Fases 9 a 18 (Rutinas Técnicas Junior y Absoluta) dadas de alta operativas.
 
-3. ARCHIVOS MODIFICADOS:
+3. COMPORTAMIENTO INTELIGENTE DEL SIDEBAR:
+   - Padre activo se mantiene abierto al expandir desde estado colapsado.
+   - Conmutación en acordeón al seleccionar elementos inactivos.
+
+4. ARCHIVOS MODIFICADOS:
    - /var/www/html/sincrm/includes/navbar.php
    - /var/www/html/beta/includes/navbar.php
    - /var/www/html/sincrm/.last_session_summary.txt
 
-4. ESTADO TÉCNICO:
-   - Fases 1 a 18 verificadas en base de datos.
-   - Permisos y enlaces sincronizados.
+5. ESTADO TÉCNICO:
+   - Bases de datos operativas y sincronizadas.
+   - Git actualizado en master.
 =========================================================
