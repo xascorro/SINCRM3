@@ -266,23 +266,4 @@ function launchConfirmDeleteJuez(id, name) {
 }
 </script>
 
-function launchConfirmDeleteJuez(id, name) {
-    Swal.fire({
-        title: '¿Eliminar Juez?',
-        html: `Estás a punto de borrar la ficha de <b>${name}</b>.<br><small class='text-slate-400'>Esta acción es irreversible.</small>`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#94a3b8',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Mantener'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('deleteJuezID').value = id;
-            document.getElementById('deleteJuezForm').submit();
-        }
-    });
-}
-</script>
-
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>
