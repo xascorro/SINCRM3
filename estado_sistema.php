@@ -41,7 +41,8 @@ include('includes/navbar.php');
                 </div>
                 <?php
                 $ip_privada = @explode(' ', @shell_exec("hostname -I"))[0] ?? '127.0.0.1';
-                $ip_publica = @file_get_contents('https://api.ipify.org') ?? 'No disponible';
+                $ctx_ip = stream_context_create(["http" => ["timeout" => 1]]);
+                $ip_publica = @file_get_contents('https://api.ipify.org', false, $ctx_ip) ?: 'No disponible';
                 ?>
                 <h3 class="text-xs sm:text-sm font-black text-slate-800 truncate mb-2 sm:mb-3"><?php echo $_SERVER['SERVER_NAME']; ?></h3>
                 <div class="space-y-1.5 sm:space-y-2">
@@ -81,7 +82,7 @@ include('includes/navbar.php');
                 <div class="space-y-3 sm:space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">CPU</span>
-                        <span class="text-[10px] font-black text-slate-600 truncate max-w-[120px] italic"><?php echo trim($cpu_info); ?></span>
+                        <span class="text-[10px] font-black text-slate-600 truncate max-w-[160px] sm:max-w-[220px] italic"><?php echo trim($cpu_info); ?></span>
                     </div>
                     <div class="space-y-1">
                         <div class="flex justify-between items-end">
@@ -126,7 +127,7 @@ include('includes/navbar.php');
                     <div class="flex flex-col gap-0.5 sm:gap-1">
                         <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Sistema & Web</span>
                         <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-black text-slate-700 truncate max-w-[100px]"><?php echo trim($so_info); ?></span>
+                            <span class="text-[10px] font-black text-slate-700 truncate max-w-[140px] sm:max-w-[180px]"><?php echo trim($so_info); ?></span>
                             <span class="text-[10px] font-bold text-indigo-500">Apache <?php echo trim($apache_ver); ?></span>
                         </div>
                     </div>
@@ -217,25 +218,6 @@ include('includes/navbar.php');
                             $line = str_replace(['[SUCCESS]', '[ERROR]', '[WARNING]', '[INFO]', '[SECURITY]'], ['<span class="text-emerald-400 font-bold">[SUCCESS]</span>', '<span class="text-red-400 font-bold">[ERROR]</span>', '<span class="text-amber-400">[WARNING]</span>', '<span class="text-sky-400">[INFO]</span>', '<span class="text-purple-400 font-bold">[SECURITY]</span>'], $line);
                             $line = preg_replace('/^\[(.*?)\]/', '<span class="text-slate-600">[$1]</span>', $line);
                             echo '<div class="hover:bg-white/5 py-1 px-1.5 sm:px-2 rounded transition-colors whitespace-nowrap">' . $line . '</div>';
-                        }
-                    }
-                }
-                ?>
-            </div>
-        </div>
-
-    </div>
-</main>
-                <?php
-                $log_file = './log/log.txt';
-                if (file_exists($log_file)) {
-                    $lines = @file($log_file);
-                    if ($lines) {
-                        foreach (array_slice(array_reverse($lines), 0, 50) as $line) {
-                            $line = htmlspecialchars($line);
-                            $line = str_replace(['[SUCCESS]', '[ERROR]', '[WARNING]', '[INFO]', '[SECURITY]'], ['<span class="text-emerald-400 font-bold">[SUCCESS]</span>', '<span class="text-red-400 font-bold">[ERROR]</span>', '<span class="text-amber-400">[WARNING]</span>', '<span class="text-sky-400">[INFO]</span>', '<span class="text-purple-400 font-bold">[SECURITY]</span>'], $line);
-                            $line = preg_replace('/^\[(.*?)\]/', '<span class="text-slate-600">[$1]</span>', $line);
-                            echo '<div class="hover:bg-white/5 py-1 px-2 rounded transition-colors whitespace-nowrap">' . $line . '</div>';
                         }
                     }
                 }

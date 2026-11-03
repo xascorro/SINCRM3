@@ -1,30 +1,23 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 22:29
+Fecha: 2026-11-03 22:32
 =========================================================
 
-1. OBJETIVO DEL BLOQUE:
-   Optimización exhaustiva Mobile-First (UI/UX) según directrices de diseño (Emil Kowalski + Rauno Freiberg) en:
+1. CORRECCIÓN Y REFINAMIENTO:
    - https://sincrm.pedrodiaz.eu/estado_sistema.php
    - https://sincrm.pedrodiaz.eu/diagnostico.php
 
-2. CAMBIOS IMPLEMENTADOS:
+2. DETALLE DE LA CORRECCIÓN:
    - estado_sistema.php:
-     * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
-     * Cabecera y botón de configuración con microinteracción táctil (active:scale-[0.98]).
-     * Cuadrícula de KPIs Técnicos (Conectividad, Hardware/Salud, Software/Stack, Diagnóstico) adaptada a 1 columna en móvil, 2 en tablet y 4 en desktop con estabilidad numérica (tabular-nums).
-     * Panel de Estructura y Salud de Base de Datos con tarjetas de tablas compactas (py-3 px-3.5 sm:py-4 sm:px-5) para visualización táctil rápida sin desbordamiento.
-     * Terminal de logs en tiempo real con scroll horizontal protegido (overflow-x-auto) y botón de vaciado ergonómico.
-   - diagnostico.php:
-     * Contenedor adaptativo con padding fluido y botón "Volver" con toque elástico.
-     * Separadores de sección (Ámbitos Deportistas, Arbitral, Operativa, Multimedia) con tipografía proporcionada y bordes hairline/acento ajustados.
-     * Tarjetas de diagnóstico técnico adaptadas a móviles con paddings proporcionales (p-4 sm:p-8), contadores en tabular-nums y botones de acción con respuesta rápida.
-     * Modales SweetAlert2 de análisis y cascada con ancho responsivo (width: window.innerWidth < 640 ? '95%' : '650px') para visualización óptima en smartphones.
+     * Solucionado el error de estructura HTML: se había colado un bloque duplicado de terminal al pie de página que provocaba etiquetas mal cerradas (</div></main> repetidos).
+     * Eliminado el bloque duplicado y cerrado el contenedor principal limpiamente.
+     * Añadido timeout de 1s a la comprobación de IP pública para evitar bloqueos por latencia de red.
+     * Ampliado el ancho máximo de truncado en información de CPU y Sistema Operativo para evitar cortes prematuros de texto.
+     * Validado y sincronizado a /var/www/html/beta/estado_sistema.php con permisos 664.
 
 3. ARCHIVOS MODIFICADOS:
    - /var/www/html/sincrm/estado_sistema.php
-   - /var/www/html/sincrm/diagnostico.php
-   - Sincronizados a /var/www/html/beta/ con permisos 664.
+   - /var/www/html/beta/estado_sistema.php
 
 4. ESTADO TÉCNICO:
    - Sintaxis PHP validada con `php -l` (0 errores).
