@@ -42,7 +42,7 @@ include('includes/navbar.php');
                 <input type="hidden" name="edit_id" value="<?php echo $row_fase['id']?>">
 
                 <!-- BLOQUE 1: IDENTIFICACIÓN -->
-                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[6px] border-t-blue-600 relative overflow-hidden">
+                <div class="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-slate-200 border-t-[6px] border-t-blue-600 relative z-20">
                     <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-tag text-blue-600"></i> Clasificación</h2>
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
                         <div class="md:col-span-2 space-y-2">
@@ -56,12 +56,21 @@ include('includes/navbar.php');
                             ob_start(); include('includes/categoria_select_option.php');
                             $select_cat = ob_get_clean();
                             $select_cat = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_cat);
-                            $select_cat = preg_replace('/class=[\'"].*?[\'"]/i', '', $select_cat);
-                            echo str_replace('<select', '<select name="id_categoria" class="v3-select-fix"', $select_cat);
+                            $select_cat = preg_replace('/<select[^>]*>/i', '<select name="id_categoria" id="categoria" class="v3-select-fix">', $select_cat);
+                            echo $select_cat;
                             ?>
                         </div>
                         <div class="md:col-span-5 space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1"><?php echo $is_fase_figura ? 'Figura' : 'Modalidad'; ?></label>
+                            <div class="flex items-center justify-between px-1">
+                                <label class="text-[10px] font-black uppercase text-slate-400"><?php echo $is_fase_figura ? 'Figura' : 'Modalidad'; ?></label>
+                                <?php if($is_fase_figura): ?>
+                                    <span id="figuraCount" class="text-[9px] font-bold text-blue-500">Filtrar búsqueda</span>
+                                <?php endif; ?>
+                            </div>
+                            <?php if($is_fase_figura): ?>
+                                <input type="text" id="figuraFilter" placeholder="🔍 Escribe número o nombre (ej: 301, barracuda)..." 
+                                    class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium mb-1">
+                            <?php endif; ?>
                             <?php 
                             if($is_fase_figura) {
                                 $id_figura_actual = $row_fase['id_figura'];
@@ -72,9 +81,9 @@ include('includes/navbar.php');
                             }
                             $select_mod = ob_get_clean();
                             $select_mod = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_mod);
-                            $select_mod = preg_replace('/class=[\'"].*?[\'"]/i', '', $select_mod);
-                            $name_attr = $is_fase_figura ? 'name="id_figura"' : 'name="id_modalidad"';
-                            echo str_replace('<select', '<select '.$name_attr.' class="v3-select-fix"', $select_mod);
+                            $name_attr = $is_fase_figura ? 'name="id_figura" id="figura"' : 'name="id_modalidad" id="modalidad"';
+                            $select_mod = preg_replace('/<select[^>]*>/i', '<select '.$name_attr.' class="v3-select-fix">', $select_mod);
+                            echo $select_mod;
                             ?>
                         </div>
                     </div>
@@ -208,5 +217,48 @@ include('includes/navbar.php');
         ?>
     </div>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const filter = document.getElementById('figuraFilter');
+    const select = document.getElementById('figura');
+    const count = document.getElementById('figuraCount');
+    
+    if (select) {
+        select.addEventListener('focus', function() {
+            const rect = this.getBoundingClientRect();
+            if (window.innerHeight - rect.bottom < 350) {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+
+    if (filter && select) {
+        const originalOptions = Array.from(select.options).map(opt => ({
+            value: opt.value,
+            text: opt.text,
+            selected: opt.selected
+        }));
+        
+        filter.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            const matched = originalOptions.filter(o => o.text.toLowerCase().includes(term));
+            
+            select.innerHTML = '';
+            matched.forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o.value;
+                opt.textContent = o.text;
+                if (o.selected) opt.selected = true;
+                select.appendChild(opt);
+            });
+            
+            if (count) {
+                count.textContent = matched.length + ' de ' + originalOptions.length;
+            }
+        });
+    }
+});
+</script>
 
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>

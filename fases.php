@@ -57,26 +57,44 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
         </div>
 
         <!-- Panel Añadir Fase -->
-        <div id="addFasePanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+        <div id="addFasePanel" class="hidden mb-10 relative z-30 scroll-mt-28">
+            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative">
                 <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Nueva Fase</h2>
                 <form action="fases_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
                     <div class="md:col-span-4 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Categoría</label>
                         <?php 
                         ob_start(); include('includes/categoria_select_option.php');
-                        echo str_replace('<select', '<select name="id_categoria" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', ob_get_clean()));
+                        $cat_html = ob_get_clean();
+                        $cat_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $cat_html);
+                        $cat_html = preg_replace('/<select[^>]*>/i', '<select name="id_categoria" id="categoria" class="v3-select-fix">', $cat_html);
+                        echo $cat_html;
                         ?>
                     </div>
                     <div class="md:col-span-4 space-y-2">
                         <?php if($is_figuras): ?>
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1">Figura</label>
-                            <?php ob_start(); include('includes/figura_select_option.php');
-                            echo str_replace('<select', '<select name="id_figura" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', ob_get_clean())); ?>
+                            <div class="flex items-center justify-between px-1">
+                                <label class="text-[10px] font-black uppercase text-slate-400">Figura</label>
+                                <span id="figuraCount" class="text-[9px] font-bold text-blue-500">Filtrar búsqueda</span>
+                            </div>
+                            <input type="text" id="figuraFilter" placeholder="🔍 Escribe número o nombre (ej: 301, barracuda)..." 
+                                class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium mb-1">
+                            <?php 
+                            ob_start(); include('includes/figura_select_option.php');
+                            $fig_html = ob_get_clean();
+                            $fig_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $fig_html);
+                            $fig_html = preg_replace('/<select[^>]*>/i', '<select name="id_figura" id="figura" class="v3-select-fix">', $fig_html);
+                            echo $fig_html;
+                            ?>
                         <?php else: ?>
                             <label class="text-[10px] font-black uppercase text-slate-400 px-1">Modalidad</label>
-                            <?php ob_start(); include('includes/modalidad_select_option.php');
-                            echo str_replace('<select', '<select name="id_modalidad" class="v3-select-fix"', preg_replace('/<label.*?>.*?<\/label>/i', '', ob_get_clean())); ?>
+                            <?php 
+                            ob_start(); include('includes/modalidad_select_option.php');
+                            $mod_html = ob_get_clean();
+                            $mod_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $mod_html);
+                            $mod_html = preg_replace('/<select[^>]*>/i', '<select name="id_modalidad" id="modalidad" class="v3-select-fix">', $mod_html);
+                            echo $mod_html;
+                            ?>
                         <?php endif; ?>
                     </div>
                     <div class="md:col-span-2 space-y-2">
@@ -280,7 +298,62 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
 </main>
 
 <script>
-function toggleAddFasePanel() { document.getElementById('addFasePanel').classList.toggle('hidden'); }
+function toggleAddFasePanel() { 
+    const panel = document.getElementById('addFasePanel');
+    const wasHidden = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden');
+    if (wasHidden) {
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const filterInput = document.getElementById('figuraFilter');
+        if (filterInput) {
+            setTimeout(() => filterInput.focus(), 300);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const filter = document.getElementById('figuraFilter');
+    const select = document.getElementById('figura');
+    const count = document.getElementById('figuraCount');
+    
+    if (select) {
+        // Al recibir foco, si está muy abajo en pantalla, desplazar para asegurar apertura hacia abajo
+        select.addEventListener('focus', function() {
+            const rect = this.getBoundingClientRect();
+            if (window.innerHeight - rect.bottom < 350) {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+
+    if (filter && select) {
+        const originalOptions = Array.from(select.options).map(opt => ({
+            value: opt.value,
+            text: opt.text,
+            selected: opt.selected
+        }));
+        
+        filter.addEventListener('input', function() {
+            const term = this.value.toLowerCase().trim();
+            const matched = originalOptions.filter(o => o.text.toLowerCase().includes(term));
+            
+            select.innerHTML = '';
+            matched.forEach(o => {
+                const opt = document.createElement('option');
+                opt.value = o.value;
+                opt.textContent = o.text;
+                select.appendChild(opt);
+            });
+            
+            if (matched.length > 0) {
+                select.selectedIndex = 0;
+            }
+            if (count) {
+                count.textContent = matched.length + ' de ' + originalOptions.length;
+            }
+        });
+    }
+});
 
 function toggleView() {
     const cards = document.getElementById('cardsView');

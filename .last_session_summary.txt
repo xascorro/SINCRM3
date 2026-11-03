@@ -1,0 +1,11 @@
+# Resumen de Sesión - Corrección Selector de Figura en Fases
+
+- **Problema**: El desplegable de figuras se abría hacia arriba debido a falta de espacio vertical inferior en la vista inicial sin scroll. Al abrirse hacia arriba con 91 opciones, la lista chocaba con la cabecera fija/sticky superior (`topbar` con `z-40` y fondo blanco) y con el borde superior de la ventana, tapando las opciones superiores.
+- **Solución Implementada**:
+  - `fases.php`:
+    - Añadido scroll suave automático al pulsar "Añadir Fase" (`block: 'start'` con `scroll-mt-28`), posicionando el panel inmediatamente debajo del topbar y garantizando el 100% de espacio hacia abajo para que el `<select>` se abra **siempre hacia abajo**.
+    - Evento `focus` en el select para auto-centrar si el usuario interactúa estando muy pegado al fondo.
+    - Buscador / filtro dinámico en tiempo real (`#figuraFilter`): permite buscar por número o nombre (ej: "301", "barracuda"), reduciendo las 91 opciones a 1 o 2 instantáneamente.
+  - `fases_edit.php`: Mismo filtro rápido y comportamiento de foco suave.
+  - `includes/header.php`: Estilos forzados para los `<option>` en selectores v3.
+  - Sincronizado en producción (`sincrm.pedrodiaz.eu`) y en el entorno beta (`beta.pedrodiaz.eu`).

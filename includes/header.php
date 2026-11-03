@@ -82,6 +82,13 @@ include('./lib/my_functions.php');
             background-color: #fff !important;
             outline: none !important;
         }
+
+        select:not([class*="swal2"]) option, .v3-select-fix option {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            font-weight: 600 !important;
+            padding: 8px 12px !important;
+        }
     </style>
 
     <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
