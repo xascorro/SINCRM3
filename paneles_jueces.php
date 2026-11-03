@@ -509,7 +509,8 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
                     <?php
                     $obsoleto_fase = $row['obsoleto'] ?? 'no';
-                    $cond_paneles = "paneles.obsoleto = '$obsoleto_fase'";
+                    $filtro_tipo = $is_phase_fig ? "paneles.id_paneles_tipo = 6" : "paneles.id_paneles_tipo != 6";
+                    $cond_paneles = "paneles.obsoleto = '$obsoleto_fase' AND $filtro_tipo";
 
                     $query_p = "SELECT paneles.id, numero_jueces, paneles.nombre, paneles.color, paneles_tipo.nombre as panel_tipo 
                                 from paneles, paneles_tipo 
@@ -535,7 +536,7 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                                     <i class="fas fa-eraser text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
                                 <button type="button" 
-                                        onclick="openCloneModal(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>', '<?php echo addslashes($fase_label_origin); ?>')" 
+                                        onclick="openCloneModal(<?php echo $id_panel; ?>, <?php echo $id_fase; ?>, '<?php echo addslashes($p['nombre']); ?>', '<?php echo addslashes($fase_label_origin); ?>', <?php echo $is_phase_fig ? '1' : '0'; ?>)" 
                                         class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-50 text-slate-400 rounded-xl sm:rounded-2xl hover:bg-blue-600 hover:text-white active:scale-95 transition-all flex items-center justify-center shadow-xs border border-slate-100 group/btn" title="Clonar Composición">
                                     <i class="fas fa-copy text-xs sm:text-sm group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
@@ -652,7 +653,7 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                         $is_dest_fig = (!empty($fase_dest['id_figura']) && $fase_dest['id_figura'] > 0);
                         $fase_label = $is_dest_fig ? "#".$fase_dest['numero']." ".$fase_dest['fig'] : $fase_dest['modali'];
                     ?>
-                        <label class="flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white active:scale-[0.99] transition-all cursor-pointer group phase-checkbox-item shadow-xs" data-id="<?php echo $fase_dest['id']; ?>">
+                        <label class="flex items-center gap-3 sm:gap-4 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white active:scale-[0.99] transition-all cursor-pointer group phase-checkbox-item shadow-xs" data-id="<?php echo $fase_dest['id']; ?>" data-is-fig="<?php echo $is_dest_fig ? '1' : '0'; ?>">
                             <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="target-fase-cb w-4 h-4 sm:w-5 sm:h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer">
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs sm:text-sm font-black text-slate-700 leading-snug group-hover:text-blue-600 transition-colors uppercase italic tracking-tight truncate"><?php echo $fase_label; ?></p>
@@ -721,16 +722,26 @@ function toggleCloneModal() {
     document.getElementById('cloneModal').classList.toggle('hidden');
 }
 
-function openCloneModal(id_panel, id_fase, panel_name, fase_name) {
+function openCloneModal(id_panel, id_fase, panel_name, fase_name, is_fig) {
     document.getElementById('clone_id_panel').value = id_panel;
     document.getElementById('clone_source_fase').value = id_fase;
     document.getElementById('clone_panel_title').innerText = panel_name;
     document.getElementById('clone_fase_title').innerText = fase_name;
     
     document.querySelectorAll('.phase-checkbox-item').forEach(item => {
-        if(item.dataset.id == id_fase) item.classList.add('hidden');
-        else item.classList.remove('hidden');
+        const itemIsFig = (item.dataset.isFig === '1' || item.dataset.isFig === 1);
+        const matchesType = (itemIsFig === (is_fig === 1 || is_fig === '1' || is_fig === true));
+        if (item.dataset.id == id_fase || !matchesType) {
+            item.classList.add('hidden');
+            const cb = item.querySelector('.target-fase-cb');
+            if (cb) cb.checked = false;
+        } else {
+            item.classList.remove('hidden');
+        }
     });
+
+    const master = document.getElementById('selectAllFases');
+    if (master) master.checked = false;
     
     toggleCloneModal();
 }

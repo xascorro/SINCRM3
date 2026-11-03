@@ -1,25 +1,34 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:40
+Fecha: 2026-11-03 23:49
 =========================================================
 
-1. ENVÍO DE CALENDARIO 2026-2027 (OUTLOOK / GOOGLE CALENDAR):
-   - Generado archivo estándar iCalendar RFC-5545:
-     `Calendario_Sincro_2026_2027.ics` (4.7 KB)
-     con los 11 eventos oficiales de la temporada (fechas, sedes, descripciones técnicas y enlaces a SINCRM).
-   - Servidor Blue (Pulse Hub API):
-     * Correo enviado con éxito a: `pedrofrancisco.diaz@elpozo.com` (ID Mensaje: 01a1a391-3d48-7921-a308-7abdc0bedb1d)
-     * Copia enviada con éxito a: `xascorro@gmail.com` (ID Mensaje: 01a1a391-3e80-7b25-8af7-dfbc85e41eff)
-   - Descarga directa online habilitada en:
-     `https://sincrm.pedrodiaz.eu/Calendario_Sincro_2026_2027.ics`
+1. PANELES TÉCNICOS POR TIPO DE FASE (paneles_jueces.php y paneles_jueces_code.php):
+   - Diagnóstico e investigación:
+     * El panel 'Panel 1' (ID 121, tipo Figuras #6) y 'CT' (ID 122, Controladores Técnicos #4) se mostraban indiscriminadamente en todas las fases de la competición 81.
+     * En la creación de paneles (save_btn_panel), se omitían los campos `obsoleto` y `puntua`, guardándose CT como `puntua = 'si'` en lugar de `puntua = 'no'` (DTC / Sincro).
+   - Soluciones aplicadas:
+     * Filtro inteligente por fase en paneles_jueces.php:
+       - Fases de Figuras (Alevín / Infantil): Únicamente se renderizan paneles de tipo Figuras (id_paneles_tipo = 6).
+       - Fases de Rutinas (Junior / Absoluta): Únicamente se renderizan paneles de Rutinas (id_paneles_tipo != 6, como CT, Elementos, Impresión Artística, Sincro).
+     * Modal de Clonación Inteligente:
+       - Ahora discrimina por tipo de fase: al clonar la composición de un panel de Rutinas (ej. CT), solo muestra las otras 9 fases de rutinas para poder replicar el panel general con un solo clic.
+     * Base de datos: Panel 122 (CT) actualizado a `puntua = 'no'` (DTC).
+     * Código `paneles_jueces_code.php`: Añadida persistencia de `obsoleto` y `puntua` en el alta de paneles.
 
-2. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
+2. ENVÍO DE CALENDARIO 2026-2027 (OUTLOOK / GOOGLE CALENDAR):
+   - Generado archivo estándar iCalendar RFC-5545: `Calendario_Sincro_2026_2027.ics`.
+   - Enviado vía Servidor Blue a `pedrofrancisco.diaz@elpozo.com` y `xascorro@gmail.com`.
+
+3. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
    - Competiciones registradas y sincronizadas en sincrm_prod_db, sincrm4 y sincrm4beta (#81 a #92).
 
-3. COMPORTAMIENTO INTELIGENTE DEL SIDEBAR:
+4. COMPORTAMIENTO INTELIGENTE DEL SIDEBAR:
    - Padre activo se mantiene abierto al expandir desde estado colapsado.
    - Conmutación en acordeón al seleccionar elementos inactivos.
 
-4. ESTADO TÉCNICO:
-   - Todos los servicios verificados y funcionando al 100%.
+5. ESTADO TÉCNICO:
+   - Sintaxis PHP validada con `php -l`.
+   - Entorno Beta sincronizado (permisos 664).
+   - Git actualizado en master.
 =========================================================

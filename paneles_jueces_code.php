@@ -70,8 +70,24 @@ if(isset($_POST['save_btn_panel'])){
     $descripcion = mysqli_real_escape_string($connection, $_POST['descripcion'] ?? '');
     $color = mysqli_real_escape_string($connection, $_POST['color'] ?? '#3b82f6');
 
-	$query="INSERT INTO paneles (nombre, id_paneles_tipo, numero_jueces, peso, descripcion, color, id_competicion) 
-            VALUES ('$nombre', '$id_paneles_tipo', '$numero_jueces', '$peso', '$descripcion', '$color', '$id_competicion')";
+    // Lógica Excluyente: Tipo de Puntuación (AQUA vs Sincro)
+    $obsoleto = 'no'; // Default AQUA
+    if (isset($_POST['add_puntuacion_sincro'])) {
+        $obsoleto = 'si';
+    } elseif (isset($_POST['add_puntuacion_aqua'])) {
+        $obsoleto = 'no';
+    }
+
+    // Lógica Excluyente: Contabilización (Puntúa vs DTC / Sincro)
+    $puntua = 'si'; // Default Puntúa
+    if (isset($_POST['add_contabilizacion_dtc'])) {
+        $puntua = 'no';
+    } elseif (isset($_POST['add_contabilizacion_puntua'])) {
+        $puntua = 'si';
+    }
+
+	$query="INSERT INTO paneles (nombre, id_paneles_tipo, numero_jueces, peso, descripcion, color, id_competicion, obsoleto, puntua) 
+            VALUES ('$nombre', '$id_paneles_tipo', '$numero_jueces', '$peso', '$descripcion', '$color', '$id_competicion', '$obsoleto', '$puntua')";
 	
     if(mysqli_query($connection, $query)){
         write_log("CREADO: Panel Técnico '$nombre' - $numero_jueces Jueces, Peso: $peso%", "SUCCESS");
