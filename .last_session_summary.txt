@@ -1,36 +1,36 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 22:04
+Fecha: 2026-11-03 22:11
 =========================================================
 
 1. OBJETIVO DEL BLOQUE:
    Optimización exhaustiva Mobile-First (UI/UX) según directrices de diseño (Emil Kowalski + Rauno Freiberg) en:
-   - https://sincrm.pedrodiaz.eu/nadadoras.php
-   - https://sincrm.pedrodiaz.eu/clubes.php
-   - https://sincrm.pedrodiaz.eu/federaciones.php
+   - https://sincrm.pedrodiaz.eu/categorias.php
+   - https://sincrm.pedrodiaz.eu/jueces.php
 
 2. CAMBIOS IMPLEMENTADOS:
-   - nadadoras.php:
+   - categorias.php:
      * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
-     * KPIs compactos y responsive (grid 2 columnas móvil / 4 columnas desktop) con fuentes tabulares (tabular-nums).
-     * Panel colapsable de alta de deportista con inputs proporcionales y botones táctiles con microinteracción (active:scale-[0.98]).
+     * Header y buscador en tiempo real apilables en móvil y alineados en desktop.
+     * KPIs compactos y responsive (2 columnas móvil / 4 desktop) con números tabulares (tabular-nums).
+     * Panel de creación de categoría adaptado con inputs proporcionales y botones táctiles elásticos (active:scale-[0.98]).
      * Implementada Doble Vista (Dual-View):
-       - Vista Móvil (md:hidden): Tarjetas fluidas (.nadadora-mobile-card) con nombre destacado, badges de estado (#ID, inactiva), píldoras de club, año de nacimiento, licencia y botones de acción rápida.
-       - Vista Desktop (hidden md:block): Tabla clásica con scroll horizontal controlado.
-     * Buscador dinámico en tiempo real actualizado para filtrar simultáneamente la tabla de escritorio y las tarjetas móviles.
-   - clubes.php:
-     * Padding exterior fluido y cabecera responsive con buscador integrado y botón "Nuevo Club".
-     * Rejilla de KPIs optimizada con tarjeta de entidades activas al 100% de ancho en móviles y números tabulares.
-     * Cuadrícula de tarjetas de club con dimensiones y paddings proporcionales en móvil (p-4 sm:p-8, logo responsive w-20 h-20 sm:w-32 sm:h-32) y botones táctiles ergonómicos.
-   - federaciones.php:
-     * Padding adaptativo, cabecera flexible con buscador y botón de alta.
-     * Tarjetas de KPI simplificadas para evitar saltos de línea y con números tabulares.
-     * Rejilla de tarjetas de federación adaptada con escudos optimizados, métricas de clubes/jueces alineadas y botones táctiles.
+       - Móvil (md:hidden): Tarjetas fluidas (.categoria-mobile-card) con orden visual (#ORD), nombre con inicial estilizada, código corto, badges de estado (Activo/Inactivo), rangos de edad y acciones táctiles.
+       - Escritorio (hidden md:block): Tabla clásica completa con cabeceras limpias.
+     * Buscador dinámico sincronizado para filtrar tanto tabla de escritorio como tarjetas móviles.
+   - jueces.php:
+     * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
+     * Cabecera y buscador optimizados para pantallas táctiles.
+     * KPIs técnicos responsivos con números tabulares.
+     * Panel de alta de juez colapsable y formulario adaptativo.
+     * Implementada Doble Vista (Dual-View):
+       - Móvil (md:hidden): Tarjetas fluidas (.juez-mobile-card) con ID, nombre completo, pill de estado (Activo/Baja), siglas de federación, número de licencia y botones de acción rápida con confirmación SweetAlert2.
+       - Escritorio (hidden md:block): Tabla de censo oficial completa.
+     * Buscador dinámico sincronizado para filtrar tanto tabla de escritorio como tarjetas móviles.
 
 3. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/nadadoras.php
-   - /var/www/html/sincrm/clubes.php
-   - /var/www/html/sincrm/federaciones.php
+   - /var/www/html/sincrm/categorias.php
+   - /var/www/html/sincrm/jueces.php
    - Sincronizados a /var/www/html/beta/ con permisos 664.
 
 4. ESTADO TÉCNICO:
