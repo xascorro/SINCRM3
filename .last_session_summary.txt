@@ -1,35 +1,25 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:35
+Fecha: 2026-11-03 23:40
 =========================================================
 
-1. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
-   - Competiciones registradas y sincronizadas en sincrm_prod_db, sincrm4 y sincrm4beta:
-     * #81 (2026-11-14): XIV Liga de Figuras (1ª Jornada) [Mixta] - Sede conservada
-     * #83 (2026-11-21): Pase de Nivel 1 [Figuras / Nivel - Alhama]
-     * #84 (2026-12-19): Pase de Nivel 2 [Figuras / Nivel - Alhama]
-     * #85 (2027-01-23): Pase de Nivel 3 [Figuras / Nivel - Alhama]
-     * #86 (2027-02-20): XIV Liga de Figuras (2ª Jornada) [Mixta - Lorca]
-     * #87 (2027-03-06): Pase de Nivel 4 [Figuras / Nivel - Alhama]
-     * #88 (2027-03-13): Campeonato Regional Escolar de Figuras [Escolar / No Fed.]
-     * #89 (2027-04-10): XX Campeonato Regional OPEN [Solo Rutinas]
-     * #90 (2027-05-15): XIV Liga de Figuras (3ª Jornada) [Mixta]
-     * #91 (2027-06-12): XIV Liga de Figuras (4ª Jornada) [Mixta]
-     * #92 (2027-06-19): Campeonato Regional Escolar de Rutinas OPEN [Escolar / No Fed.]
+1. ENVÍO DE CALENDARIO 2026-2027 (OUTLOOK / GOOGLE CALENDAR):
+   - Generado archivo estándar iCalendar RFC-5545:
+     `Calendario_Sincro_2026_2027.ics` (4.7 KB)
+     con los 11 eventos oficiales de la temporada (fechas, sedes, descripciones técnicas y enlaces a SINCRM).
+   - Servidor Blue (Pulse Hub API):
+     * Correo enviado con éxito a: `pedrofrancisco.diaz@elpozo.com` (ID Mensaje: 01a1a391-3d48-7921-a308-7abdc0bedb1d)
+     * Copia enviada con éxito a: `xascorro@gmail.com` (ID Mensaje: 01a1a391-3e80-7b25-8af7-dfbc85e41eff)
+   - Descarga directa online habilitada en:
+     `https://sincrm.pedrodiaz.eu/Calendario_Sincro_2026_2027.ics`
 
-2. FASES TÉCNICAS INSERTADAS EN COMPETICIÓN 81:
-   - Fases 9 a 18 (Rutinas Técnicas Junior y Absoluta) dadas de alta operativas.
+2. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
+   - Competiciones registradas y sincronizadas en sincrm_prod_db, sincrm4 y sincrm4beta (#81 a #92).
 
 3. COMPORTAMIENTO INTELIGENTE DEL SIDEBAR:
    - Padre activo se mantiene abierto al expandir desde estado colapsado.
    - Conmutación en acordeón al seleccionar elementos inactivos.
 
-4. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/includes/navbar.php
-   - /var/www/html/beta/includes/navbar.php
-   - /var/www/html/sincrm/.last_session_summary.txt
-
-5. ESTADO TÉCNICO:
-   - Bases de datos operativas y sincronizadas.
-   - Git actualizado en master.
+4. ESTADO TÉCNICO:
+   - Todos los servicios verificados y funcionando al 100%.
 =========================================================
