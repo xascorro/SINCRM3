@@ -42,5 +42,17 @@ Fecha: 2026-11-03
   - Botones de inscripción adaptables a ancho completo en móvil (`w-full sm:w-auto`).
 - **Eventos en Calendario e Historial**:
   - Filas y badges de fecha optimizados para smartphones con espaciados proporcionales y tipografía limpia.
+
+## 3. Rediseño y Optimización Mobile UI/UX en Inscripciones de Figuras (`inscripciones_figuras.php`)
+- **Cabecera y Plazos**:
+  - Reducción de contenedor a escala fluida (`px-3 py-4 sm:p-6 md:p-10`).
+  - Píldoras de plazo con `tabular-nums` y botón de Exportar PDF a ancho completo en pantallas móviles con microescalado `active:scale-[0.98]`.
+- **Donut Chart y KPIs de Categorías**:
+  - Donut responsivo (`w-32 h-32 sm:w-40 sm:h-40`) con cuadrícula de categorías y KPIs de Clubes/CC adaptados a 2 columnas en móvil.
+- **Vista Dual de Nadadoras Inscritas**:
+  - **Móvil (`block sm:hidden`)**: Tarjetas individuales por nadadora con nombre y apellidos completos, chip de año de nacimiento, club, botones de Coach Card y eliminación con confirmación accesible, y selector o input de orden de salida interactivo con botón de guardado táctil.
+  - **Tablet/Desktop (`hidden sm:block`)**: Tabla limpia con `overflow-x-auto`, paddings equilibrados (`px-6 py-3.5`) y centrado numérico.
+- **Formulario Rápido**:
+  - Desplegable de alta de nadadora y botón "Registrar" adaptados a grid móvil.
 - **Sincronización**:
-  - Actualizado en producción (`/var/www/html/sincrm/index.php`) y en Beta (`/var/www/html/beta/index.php`).
+  - Actualizado en producción (`/var/www/html/sincrm/inscripciones_figuras.php`) y en Beta (`/var/www/html/beta/inscripciones_figuras.php`).
