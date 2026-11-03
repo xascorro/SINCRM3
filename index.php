@@ -35,10 +35,10 @@ $meses_es = [
             <p class="text-sm sm:text-base text-slate-500 font-medium">Panel central de gestión SINCRM</p>
         </div>
 
-        <!-- FILA 1: Tarjetas Informativas -->
+        <!-- FILA 1: Tarjetas Informativas (Grid 3 columnas equilibrado) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
             
-            <!-- Mi Club -->
+            <!-- Mi Club (SÓLO CLUBES) -->
             <?php if($_SESSION['id_rol'] == 5): ?>
             <div class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-red-500 group hover:shadow-xl transition-all">
                 <div class="flex justify-between items-start mb-4 sm:mb-6">
@@ -57,7 +57,7 @@ $meses_es = [
             </div>
             <?php endif; ?>
 
-            <!-- Mi Equipo -->
+            <!-- Mi Equipo (PARA TODOS LOS ROLES) -->
             <a href="mi_equipo.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-emerald-500 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
                 <div class="flex justify-between items-start mb-4 sm:mb-6">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-users-gear text-xl sm:text-2xl"></i></div>
@@ -143,7 +143,27 @@ $meses_es = [
                 $numero_nadadoras_baja = mysqli_num_rows($query_run);
                 ?>
                 <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none mb-2 tabular-nums"><?php echo $numero_nadadoras_activas?> <span class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest italic font-bold">Nadadoras Activas</span></h3>
-                <p class="text-xs font-bold text-orange-500 uppercase italic tracking-tighter"><?php echo $numero_nadadoras_baja?> nadadoras en historial</p>
+                <p class="text-xs font-bold text-orange-500 uppercase italic tracking-tighter tabular-nums"><?php echo $numero_nadadoras_baja?> nadadoras en historial</p>
+            </a>
+            <?php endif; ?>
+
+            <!-- Competiciones (TERCERA TARJETA PARA ADMINS / SECRETARIOS / DELEGADOS) -->
+            <?php if(in_array($_SESSION['id_rol'], [1, 2, 3])): 
+                $q_comp_kpi = "SELECT 
+                    COUNT(*) as total, 
+                    SUM(CASE WHEN fecha >= CURDATE() THEN 1 ELSE 0 END) as futuras,
+                    SUM(CASE WHEN fecha < CURDATE() THEN 1 ELSE 0 END) as pasadas
+                FROM competiciones";
+                $res_comp_kpi = mysqli_query($connection, $q_comp_kpi);
+                $comp_stats = mysqli_fetch_assoc($res_comp_kpi);
+            ?>
+            <a href="competiciones.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-amber-500 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-trophy text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Competiciones</span>
+                </div>
+                <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none mb-2 tabular-nums"><?php echo (int)($comp_stats['futuras'] ?? 0); ?> <span class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest italic font-bold">Programadas</span></h3>
+                <p class="text-xs font-bold text-slate-500 uppercase italic tracking-tighter tabular-nums"><?php echo (int)($comp_stats['total'] ?? 0); ?> en temporada (<?php echo (int)($comp_stats['pasadas'] ?? 0); ?> finalizadas)</p>
             </a>
             <?php endif; ?>
 
@@ -170,7 +190,7 @@ $meses_es = [
 
         </div>
 
-        <!-- SECCIÓN: TAREAS PENDIENTES (SÓLO ADMIN) -->
+        <!-- SECCIÓN: TAREAS PENDIENTES (SÓLO ADMIN Y SI HAY TAREAS ACTIVAS) -->
         <?php if($_SESSION['id_rol'] == 1): ?>
         <?php
         // Obtener avisos silenciados para este usuario
@@ -180,8 +200,167 @@ $meses_es = [
         $silenciados = [];
         while($s = mysqli_fetch_assoc($res_sils)) { $silenciados[] = $s['tipo_aviso']; }
 
-        // Si la sección completa está silenciada, no mostramos nada
-        if(!in_array('GLOBAL_TASKS', $silenciados)):
+        // Función auxiliar para renderizar el botón de silenciar
+        if (!function_exists('renderSilenciar')) {
+            function renderSilenciar($tipo) {
+                return '
+                <div class="relative inline-block text-left ml-2" onclick="event.preventDefault(); event.stopPropagation();">
+                    <button type="button" onclick="toggleSilencioMenu(\''.$tipo.'\')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all active:scale-[0.95]">
+                        <i class="fas fa-clock text-xs"></i>
+                    </button>
+                    <div id="menu-'.$tipo.'" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-white shadow-2xl border border-slate-100 z-[100] p-2 overflow-hidden animate-fade-in-down">
+                        <p class="text-[9px] font-black uppercase text-slate-400 px-3 py-2 border-b border-slate-50 mb-1 italic">Pausar Aviso</p>
+                        <button onclick="silenciarAviso(\''.$tipo.'\', 1, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-hourglass-start opacity-50"></i> 1 hora</button>
+                        <button onclick="silenciarAviso(\''.$tipo.'\', 24, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-calendar-day opacity-50"></i> 1 día</button>
+                        <button onclick="silenciarAviso(\''.$tipo.'\', 72, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-calendar-days opacity-50"></i> 3 días</button>
+                        <button onclick="silenciarAviso(\''.$tipo.'\', 168, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-moon opacity-50"></i> 1 semana</button>
+                        <div class="h-px bg-slate-50 my-1"></div>
+                        <button onclick="silenciarAviso(\''.$tipo.'\', 87600, 1)" class="w-full text-left px-4 py-2.5 text-xs font-black text-red-500 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 uppercase italic"><i class="fas fa-trash-can opacity-50"></i> Descartar</button>
+                    </div>
+                </div>';
+            }
+        }
+
+        $task_cards_html = [];
+
+        // 1. Usuarios pendientes de aprobación
+        $tipo = 'REGISTROS_PENDIENTES';
+        if(!in_array($tipo, $silenciados)):
+            $q_pend = "SELECT COUNT(*) as total, MIN(creado) as mas_antiguo FROM usuarios WHERE id_rol = 6 AND activo = 1";
+            $res_pend = mysqli_query($connection, $q_pend);
+            $pend_data = mysqli_fetch_assoc($res_pend);
+            $pend_users = $pend_data['total'] ?? 0;
+            if($pend_users > 0):
+                ob_start();
+                ?>
+                <div class="relative group">
+                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-purple-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-all"><i class="fas fa-user-clock text-lg sm:text-xl"></i></div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest tabular-nums">Desde <?php echo date("d-m", strtotime($pend_data['mas_antiguo'])); ?></span>
+                                <?php echo renderSilenciar($tipo); ?>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Registros Pendientes</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-purple-600 font-black tabular-nums"><?php echo $pend_users; ?></span> usuarios esperando aprobación o configuración de rol.</p>
+                    </a>
+                </div>
+                <?php
+                $task_cards_html[] = ob_get_clean();
+            endif;
+        endif;
+
+        // 1b. Jueces sin vincular
+        $tipo = 'JUECES_SIN_VINCULAR';
+        if(!in_array($tipo, $silenciados)):
+            $q_no_vinc = "SELECT COUNT(*) as total FROM usuarios WHERE id_rol = 4 AND (id_juez_v3 IS NULL OR id_juez_v3 = 0) AND activo = 1";
+            $res_no_vinc = mysqli_query($connection, $q_no_vinc);
+            $no_vinc_data = mysqli_fetch_assoc($res_no_vinc);
+            $no_vinc_users = $no_vinc_data['total'] ?? 0;
+            if($no_vinc_users > 0):
+                ob_start();
+                ?>
+                <div class="relative group">
+                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-amber-400 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all"><i class="fas fa-link-slash text-lg sm:text-xl"></i></div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Acción Requerida</span>
+                                <?php echo renderSilenciar($tipo); ?>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Vinculación de Jueces</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-amber-600 font-black tabular-nums"><?php echo $no_vinc_users; ?></span> usuarios con rol Juez sin perfil oficial vinculado.</p>
+                    </a>
+                </div>
+                <?php
+                $task_cards_html[] = ob_get_clean();
+            endif;
+        endif;
+
+        // 2. Auditorías Bias Pendientes
+        $q_bias = "SELECT id, nombre, fecha FROM competiciones WHERE fecha < CURDATE() AND id NOT IN (SELECT DISTINCT id_competicion FROM auditoria_jueces_stats) ORDER BY fecha DESC LIMIT 3";
+        $res_bias = mysqli_query($connection, $q_bias);
+        while($b = mysqli_fetch_assoc($res_bias)):
+            $tipo = 'BIAS_PENDIENTE_'.$b['id'];
+            if(!in_array($tipo, $silenciados)):
+                ob_start();
+                ?>
+                <div class="relative group">
+                    <a href="analisis_jueces.php?comp_id=<?php echo $b['id']; ?>" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-red-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-all"><i class="fas fa-magnifying-glass-chart text-lg sm:text-xl"></i></div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest tabular-nums">Finalizó <?php echo date("d-m", strtotime($b['fecha'])); ?></span>
+                                <?php echo renderSilenciar($tipo); ?>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Falta Análisis BIAS</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">La competición <span class="text-red-600 font-black"><?php echo $b['nombre']; ?></span> ha finalizado y no tiene auditoría grabada.</p>
+                    </a>
+                </div>
+                <?php
+                $task_cards_html[] = ob_get_clean();
+            endif;
+        endwhile;
+
+        // 3. Plazos de Inscripción
+        $q_insc = "SELECT id, nombre, fecha, dias_fin_inscripcion FROM competiciones WHERE DATE_SUB(fecha, INTERVAL (dias_fin_inscripcion - 1) DAY) <= CURDATE() AND DATE_SUB(fecha, INTERVAL dias_fin_inscripcion DAY) >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) AND fecha >= CURDATE()";
+        $res_insc = mysqli_query($connection, $q_insc);
+        while($i = mysqli_fetch_assoc($res_insc)):
+            $tipo = 'INSCRIPCION_CIERRE_'.$i['id'];
+            if(!in_array($tipo, $silenciados)):
+                $fecha_fin_insc = date("Y-m-d", strtotime("-".($i['dias_fin_inscripcion'] - 1)." days", strtotime($i['fecha'])));
+                ob_start();
+                ?>
+                <div class="relative group">
+                    <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-blue-500 shadow-sm hover:shadow-md transition-all group">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-all"><i class="fas fa-file-export text-lg sm:text-xl"></i></div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest tabular-nums">Plazo: <?php echo date("d-m", strtotime($fecha_fin_insc)); ?></span>
+                                <?php echo renderSilenciar($tipo); ?>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Enviar Preinscripciones</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> termina hoy. Es necesario enviar la documentación oficial.</p>
+                    </div>
+                </div>
+                <?php
+                $task_cards_html[] = ob_get_clean();
+            endif;
+        endwhile;
+
+        // 4. Sorteos Próximos
+        $q_sorteo_task = "SELECT id, nombre, fecha, dias_sorteo FROM competiciones WHERE DATE_SUB(fecha, INTERVAL dias_sorteo DAY) <= DATE_ADD(CURDATE(), INTERVAL 2 DAY) AND DATE_SUB(fecha, INTERVAL dias_sorteo DAY) >= CURDATE() AND fecha >= CURDATE()";
+        $res_sorteo_task = mysqli_query($connection, $q_sorteo_task);
+        while($s = mysqli_fetch_assoc($res_sorteo_task)):
+            $tipo = 'SORTEO_PROXIMO_'.$s['id'];
+            if(!in_array($tipo, $silenciados)):
+                $fecha_sorteo_task = date("Y-m-d", strtotime("-".$s['dias_sorteo']." days", strtotime($s['fecha'])));
+                ob_start();
+                ?>
+                <div class="relative group">
+                    <a href="fases.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-emerald-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-all"><i class="fas fa-dice text-lg sm:text-xl"></i></div>
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest tabular-nums"><?php echo date("d-m", strtotime($fecha_sorteo_task)); ?></span>
+                                <?php echo renderSilenciar($tipo); ?>
+                            </div>
+                        </div>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Preparar Sorteo</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El sorteo de <span class="text-emerald-600 font-black"><?php echo $s['nombre']; ?></span> es inminente. Verifica las fases y el orden.</p>
+                    </a>
+                </div>
+                <?php
+                $task_cards_html[] = ob_get_clean();
+            endif;
+        endwhile;
+
+        // Renderizado condicional: SÓLO si la sección no está silenciada y hay al menos 1 tarea activa
+        if(!in_array('GLOBAL_TASKS', $silenciados) && !empty($task_cards_html)):
         ?>
         <div class="mb-8 sm:mb-12" id="tareas-pendientes-section">
             <div class="flex items-center justify-between border-l-[6px] sm:border-l-[8px] border-amber-500 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
@@ -208,168 +387,50 @@ $meses_es = [
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                
-                <?php
-                // Función auxiliar para renderizar el botón de silenciar
-                function renderSilenciar($tipo) {
-                    return '
-                    <div class="relative inline-block text-left ml-2" onclick="event.preventDefault(); event.stopPropagation();">
-                        <button type="button" onclick="toggleSilencioMenu(\''.$tipo.'\')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all active:scale-[0.95]">
-                            <i class="fas fa-clock text-xs"></i>
-                        </button>
-                        <div id="menu-'.$tipo.'" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-white shadow-2xl border border-slate-100 z-[100] p-2 overflow-hidden animate-fade-in-down">
-                            <p class="text-[9px] font-black uppercase text-slate-400 px-3 py-2 border-b border-slate-50 mb-1 italic">Pausar Aviso</p>
-                            <button onclick="silenciarAviso(\''.$tipo.'\', 1, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-hourglass-start opacity-50"></i> 1 hora</button>
-                            <button onclick="silenciarAviso(\''.$tipo.'\', 24, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-calendar-day opacity-50"></i> 1 día</button>
-                            <button onclick="silenciarAviso(\''.$tipo.'\', 72, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-calendar-days opacity-50"></i> 3 días</button>
-                            <button onclick="silenciarAviso(\''.$tipo.'\', 168, 0)" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 rounded-xl transition-all flex items-center gap-2"><i class="fas fa-moon opacity-50"></i> 1 semana</button>
-                            <div class="h-px bg-slate-50 my-1"></div>
-                            <button onclick="silenciarAviso(\''.$tipo.'\', 87600, 1)" class="w-full text-left px-4 py-2.5 text-xs font-black text-red-500 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 uppercase italic"><i class="fas fa-trash-can opacity-50"></i> Descartar</button>
-                        </div>
-                    </div>';
-                }
-                ?>
-
-                <!-- 1. Usuarios pendientes de aprobación -->
-                <?php
-                $tipo = 'REGISTROS_PENDIENTES';
-                if(!in_array($tipo, $silenciados)):
-                    $q_pend = "SELECT COUNT(*) as total, MIN(creado) as mas_antiguo FROM usuarios WHERE id_rol = 6 AND activo = 1";
-                    $res_pend = mysqli_query($connection, $q_pend);
-                    $pend_data = mysqli_fetch_assoc($res_pend);
-                    $pend_users = $pend_data['total'];
-                    if($pend_users > 0):
-                ?>
-                <div class="relative group">
-                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-purple-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
-                        <div class="flex justify-between items-start mb-3 sm:mb-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-all"><i class="fas fa-user-clock text-lg sm:text-xl"></i></div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Desde <?php echo date("d-m", strtotime($pend_data['mas_antiguo'])); ?></span>
-                                <?php echo renderSilenciar($tipo); ?>
-                            </div>
-                        </div>
-                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Registros Pendientes</h4>
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-purple-600 font-black"><?php echo $pend_users; ?></span> usuarios esperando aprobación o configuración de rol.</p>
-                    </a>
-                </div>
-                <?php endif; endif; ?>
-
-                <!-- 1b. Jueces sin vincular -->
-                <?php
-                $tipo = 'JUECES_SIN_VINCULAR';
-                if(!in_array($tipo, $silenciados)):
-                    $q_no_vinc = "SELECT COUNT(*) as total FROM usuarios WHERE id_rol = 4 AND (id_juez_v3 IS NULL OR id_juez_v3 = 0) AND activo = 1";
-                    $res_no_vinc = mysqli_query($connection, $q_no_vinc);
-                    $no_vinc_data = mysqli_fetch_assoc($res_no_vinc);
-                    $no_vinc_users = $no_vinc_data['total'];
-                    if($no_vinc_users > 0):
-                ?>
-                <div class="relative group">
-                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-amber-400 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
-                        <div class="flex justify-between items-start mb-3 sm:mb-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all"><i class="fas fa-link-slash text-lg sm:text-xl"></i></div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Acción Requerida</span>
-                                <?php echo renderSilenciar($tipo); ?>
-                            </div>
-                        </div>
-                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Vinculación de Jueces</h4>
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-amber-600 font-black"><?php echo $no_vinc_users; ?></span> usuarios con rol Juez sin perfil oficial vinculado.</p>
-                    </a>
-                </div>
-                <?php endif; endif; ?>
-
-                <!-- 2. Auditorías Bias Pendientes -->
-                <?php
-                $q_bias = "SELECT id, nombre, fecha FROM competiciones WHERE fecha < CURDATE() AND id NOT IN (SELECT DISTINCT id_competicion FROM auditoria_jueces_stats) ORDER BY fecha DESC LIMIT 3";
-                $res_bias = mysqli_query($connection, $q_bias);
-                while($b = mysqli_fetch_assoc($res_bias)):
-                    $tipo = 'BIAS_PENDIENTE_'.$b['id'];
-                    if(!in_array($tipo, $silenciados)):
-                ?>
-                <div class="relative group">
-                    <a href="analisis_jueces.php?comp_id=<?php echo $b['id']; ?>" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-red-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
-                        <div class="flex justify-between items-start mb-3 sm:mb-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-all"><i class="fas fa-magnifying-glass-chart text-lg sm:text-xl"></i></div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Finalizó <?php echo date("d-m", strtotime($b['fecha'])); ?></span>
-                                <?php echo renderSilenciar($tipo); ?>
-                            </div>
-                        </div>
-                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Falta Análisis BIAS</h4>
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">La competición <span class="text-red-600 font-black"><?php echo $b['nombre']; ?></span> ha finalizado y no tiene auditoría grabada.</p>
-                    </a>
-                </div>
-                <?php endif; endwhile; ?>
-
-                <!-- 3. Plazos de Inscripción -->
-                <?php
-                $q_insc = "SELECT id, nombre, fecha, dias_fin_inscripcion FROM competiciones WHERE DATE_SUB(fecha, INTERVAL (dias_fin_inscripcion - 1) DAY) <= CURDATE() AND DATE_SUB(fecha, INTERVAL dias_fin_inscripcion DAY) >= DATE_SUB(CURDATE(), INTERVAL 5 DAY) AND fecha >= CURDATE()";
-                $res_insc = mysqli_query($connection, $q_insc);
-                while($i = mysqli_fetch_assoc($res_insc)):
-                    $tipo = 'INSCRIPCION_CIERRE_'.$i['id'];
-                    if(!in_array($tipo, $silenciados)):
-                        $fecha_fin_insc = date("Y-m-d", strtotime("-".($i['dias_fin_inscripcion'] - 1)." days", strtotime($i['fecha'])));
-                ?>
-                <div class="relative group">
-                    <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-blue-500 shadow-sm hover:shadow-md transition-all group">
-                        <div class="flex justify-between items-start mb-3 sm:mb-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-all"><i class="fas fa-file-export text-lg sm:text-xl"></i></div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Plazo: <?php echo date("d-m", strtotime($fecha_fin_insc)); ?></span>
-                                <?php echo renderSilenciar($tipo); ?>
-                            </div>
-                        </div>
-                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Enviar Preinscripciones</h4>
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> termina hoy. Es necesario enviar la documentación oficial.</p>
-                    </div>
-                </div>
-                <?php endif; endwhile; ?>
-
-                <!-- 4. Sorteos Próximos -->
-                <?php
-                $q_sorteo_task = "SELECT id, nombre, fecha, dias_sorteo FROM competiciones WHERE DATE_SUB(fecha, INTERVAL dias_sorteo DAY) <= DATE_ADD(CURDATE(), INTERVAL 2 DAY) AND DATE_SUB(fecha, INTERVAL dias_sorteo DAY) >= CURDATE() AND fecha >= CURDATE()";
-                $res_sorteo_task = mysqli_query($connection, $q_sorteo_task);
-                while($s = mysqli_fetch_assoc($res_sorteo_task)):
-                    $tipo = 'SORTEO_PROXIMO_'.$s['id'];
-                    if(!in_array($tipo, $silenciados)):
-                        $fecha_sorteo_task = date("Y-m-d", strtotime("-".$s['dias_sorteo']." days", strtotime($s['fecha'])));
-                ?>
-                <div class="relative group">
-                    <a href="fases.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-emerald-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
-                        <div class="flex justify-between items-start mb-3 sm:mb-4">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-all"><i class="fas fa-dice text-lg sm:text-xl"></i></div>
-                            <div class="flex flex-col items-end">
-                                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest"><?php echo date("d-m", strtotime($fecha_sorteo_task)); ?></span>
-                                <?php echo renderSilenciar($tipo); ?>
-                            </div>
-                        </div>
-                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Preparar Sorteo</h4>
-                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El sorteo de <span class="text-emerald-600 font-black"><?php echo $s['nombre']; ?></span> es inminente. Verifica las fases y el orden.</p>
-                    </a>
-                </div>
-                <?php endif; endwhile; ?>
-
+                <?php foreach($task_cards_html as $c_html) echo $c_html; ?>
             </div>
         </div>
-        <?php endif; // Fin in_array GLOBAL_TASKS ?>
+        <?php endif; // Fin !empty task_cards_html ?>
         <?php endif; // Fin id_rol == 1 ?>
 
 
-        <!-- SECCIÓN: PRÓXIMAS COMPETICIONES -->
+        <!-- SECCIÓN: PRÓXIMAS COMPETICIONES (EN FOCO: INSCRIPCIÓN ABIERTA O PRÓXIMA A ABRIRSE EN ≤ 7 DÍAS) -->
+        <?php
+        // Regla: mostrar competiciones que estén con inscripción abierta o falte ≤ 7 días para abrir, y no haya pasado 1 día desde su fecha
+        $q_foco = "SELECT * FROM competiciones 
+                   WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) 
+                   AND CURDATE() >= DATE_SUB(fecha, INTERVAL (dias_inicio_inscripcion + 7) DAY) 
+                   ORDER BY fecha ASC";
+        $res_foco = mysqli_query($connection, $q_foco);
+        $foco_list = [];
+        $foco_ids = [];
+        if ($res_foco) {
+            while ($r = mysqli_fetch_assoc($res_foco)) {
+                $foco_list[] = $r;
+                $foco_ids[] = (int)$r['id'];
+            }
+        }
+
+        // Fallback: Si ninguna está en esa ventana inmediata pero hay competiciones futuras, mostrar la siguiente más próxima
+        if (empty($foco_list)) {
+            $res_prox = mysqli_query($connection, "SELECT * FROM competiciones WHERE fecha >= CURDATE() ORDER BY fecha ASC LIMIT 1");
+            if ($res_prox && ($prox = mysqli_fetch_assoc($res_prox))) {
+                $foco_list[] = $prox;
+                $foco_ids[] = (int)$prox['id'];
+            }
+        }
+        ?>
+
         <div class="space-y-8 sm:space-y-12 mb-12 sm:mb-20">
             <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-blue-600 pl-4 sm:pl-6 py-1.5 sm:py-2">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
-                    Próximas Competiciones
+                    Competiciones en Activo y Próximas
                 </h2>
             </div>
 
             <?php
-            $query = 'SELECT * FROM competiciones WHERE fecha >= (SELECT CURDATE() AS Today) ORDER BY fecha asc';
-            $query_run = mysqli_query($connection,$query);
-            if(mysqli_num_rows($query_run) > 0){
-                while ($row = mysqli_fetch_assoc($query_run)):
+            if(!empty($foco_list)){
+                foreach ($foco_list as $row):
                     $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
             ?>
                 <div class="bg-white rounded-2xl sm:rounded-[3rem] p-4 sm:p-8 md:p-12 shadow-sm border-x border-b border-slate-200 border-t-[8px] sm:border-t-[12px] relative overflow-hidden group transition-all hover:shadow-xl" style="border-top-color: <?php echo $color; ?> !important;">
@@ -415,7 +476,7 @@ $meses_es = [
                                     <div class="w-full sm:w-auto text-center">
                                         <div class="mb-3 flex flex-col items-center gap-1">
                                             <span class="text-[11px] sm:text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 shadow-xs animate-pulse italic">Inscripciones Abiertas</span>
-                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <?php if($es_mixta_row): ?>
                                             <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center w-full sm:w-auto">
@@ -448,14 +509,14 @@ $meses_es = [
                                         <?php endif; ?>
                                     </div>
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
-                                    <div class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-slate-50 text-slate-500 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] border border-slate-100 text-center italic">
+                                    <div class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-slate-50 text-slate-500 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] border border-slate-100 text-center italic tabular-nums">
                                         <i class="fas fa-lock mr-2 opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
                                 <?php else: ?>
                                     <div class="w-full sm:w-auto text-center">
                                         <div class="mb-3 flex flex-col items-center gap-1">
                                             <span class="text-[11px] sm:text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-4 py-1.5 rounded-full border border-red-100 shadow-xs italic">Inscripciones Cerradas</span>
-                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <?php if($es_mixta_row): ?>
                                             <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center w-full sm:w-auto">
@@ -491,9 +552,9 @@ $meses_es = [
 
                                 <!-- Plazos Técnicos (Música y Coach Card) -->
                                 <?php 
-                                    $id_c_row = $row['id'];
-                                    $q_has_cc = "SELECT COUNT(*) as num FROM fases WHERE id_competicion = $id_c_row AND elementos_coach_card > 0";
-                                    $has_cc = (mysqli_result(mysqli_query($connection, $q_has_cc), 0) > 0);
+                                    $id_c_row = (int)$row['id'];
+                                    $res_cc = mysqli_query($connection, "SELECT COUNT(*) as num FROM fases WHERE id_competicion = $id_c_row AND elementos_coach_card > 0");
+                                    $has_cc = ($res_cc && ($row_cc = mysqli_fetch_assoc($res_cc)) && $row_cc['num'] > 0);
                                     
                                     // Determinar número de columnas
                                     $cols = 0;
@@ -531,7 +592,7 @@ $meses_es = [
 
                                 <?php if(!empty($row['enlace_sorteo'])): ?>
                                     <div class="text-center w-full sm:w-auto">
-                                        <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
+                                        <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2 tabular-nums">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
                                         <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-blue-600 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
                                             <i class="fa-solid fa-video text-base"></i> Unirse al Sorteo
                                         </a>
@@ -683,7 +744,7 @@ $meses_es = [
                         </div>
                     </div>
                 </div>
-            <?php endwhile; } else { ?>
+            <?php endforeach; } else { ?>
                 <div class="p-8 sm:p-16 bg-white rounded-2xl sm:rounded-[3rem] border border-slate-100 text-center shadow-sm">
                     <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mx-auto mb-4 sm:mb-6"><i class="fas fa-calendar-times text-2xl sm:text-3xl"></i></div>
                     <p class="text-slate-400 font-black italic uppercase tracking-widest text-xs sm:text-sm">No existen competiciones programadas</p>
@@ -691,20 +752,26 @@ $meses_es = [
             <?php } ?>
         </div>
 
-        <!-- SECCIÓN: EVENTOS EN CALENDARIO (COMPACTO) -->
+        <!-- SECCIÓN: EVENTOS EN CALENDARIO (RESTO DE TEMPORADA - SIN DUPLICAR) -->
+        <?php
+        $not_in_foco = !empty($foco_ids) ? "AND id NOT IN (" . implode(',', $foco_ids) . ")" : "";
+        $query_cal = "SELECT * FROM competiciones WHERE fecha >= CURDATE() $not_in_foco ORDER BY fecha ASC";
+        $query_run_cal = mysqli_query($connection, $query_cal);
+        $total_calendario = mysqli_num_rows($query_run_cal);
+        ?>
         <div class="mb-12 sm:mb-20">
-            <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-emerald-500 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
+            <div class="flex items-center justify-between border-l-[6px] sm:border-l-[8px] border-emerald-500 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic flex items-center gap-3">
-                    <i class="fas fa-trophy text-emerald-500"></i> Eventos en Calendario
+                    <i class="fas fa-calendar-days text-emerald-500"></i> Eventos en Calendario
                 </h2>
+                <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest tabular-nums"><?php echo $total_calendario; ?> posteriores</span>
             </div>
+            
             <div class="bg-white rounded-2xl sm:rounded-[3rem] p-4 sm:p-8 md:p-12 shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-emerald-500">
                 <div class="space-y-4 sm:space-y-6">
                     <?php
-                    $query = 'select * FROM competiciones WHERE fecha >= (SELECT CURDATE() + 1) ORDER BY fecha asc';
-                    $query_run = mysqli_query($connection,$query);
-                    if(mysqli_num_rows($query_run) > 0){
-                        while ($row = mysqli_fetch_assoc($query_run)):
+                    if($total_calendario > 0){
+                        while ($row = mysqli_fetch_assoc($query_run_cal)):
                     ?>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg transition-all group gap-4 sm:gap-8">
                             <div class="flex items-start sm:items-center gap-4 sm:gap-8">
@@ -730,13 +797,13 @@ $meses_es = [
                             </div>
                         </div>
                     <?php endwhile; } else { ?>
-                        <div class="text-center p-8 sm:p-12 text-xs sm:text-sm font-bold text-slate-400 uppercase italic">No existen eventos programados próximamente.</div>
+                        <div class="text-center p-8 sm:p-12 text-xs sm:text-sm font-bold text-slate-400 uppercase italic">No existen más competiciones posteriores en el calendario.</div>
                     <?php } ?>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: HISTORIAL (CON VIDILLA) -->
+        <!-- SECCIÓN: HISTORIAL -->
         <div>
             <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-slate-400 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
@@ -772,7 +839,7 @@ $meses_es = [
                                     </div>
                                 </td>
 
-                                <!-- Columna 2: Nombre y Localidad (Con mapa antes) -->
+                                <!-- Columna 2: Nombre y Localidad -->
                                 <td class="px-0 md:px-6 py-0 md:py-6 mb-4 md:mb-0">
                                     <div>
                                         <h4 class="text-lg sm:text-xl font-black text-slate-900 leading-tight italic uppercase tracking-tighter mb-1 sm:mb-2 break-words"><?php echo $row['nombre']; ?></h4>
@@ -831,7 +898,7 @@ $meses_es = [
             if(menu.id !== 'menu-' + tipo) menu.classList.add('hidden');
         });
         const menu = document.getElementById('menu-' + tipo);
-        menu.classList.toggle('hidden');
+        if (menu) menu.classList.toggle('hidden');
     }
 
     function silenciarAviso(tipo, horas, es_descarte = 0) {
@@ -851,25 +918,29 @@ $meses_es = [
                 if(tipo === 'GLOBAL_TASKS') {
                     // Animación de salida para toda la sección
                     const section = document.getElementById('tareas-pendientes-section');
-                    section.style.transition = 'all 0.8s ease';
-                    section.style.opacity = '0';
-                    section.style.transform = 'translateY(-20px)';
-                    setTimeout(() => { section.style.display = 'none'; }, 800);
+                    if(section) {
+                        section.style.transition = 'all 0.8s ease';
+                        section.style.opacity = '0';
+                        section.style.transform = 'translateY(-20px)';
+                        setTimeout(() => { section.style.display = 'none'; }, 800);
+                    }
                 } else {
                     // Animación de salida y ocultar la tarjeta individual
                     const menu = document.getElementById('menu-' + tipo);
                     if(menu) {
                         const card = menu.closest('.relative.group');
-                        card.style.transition = 'all 0.5s ease';
-                        card.style.opacity = '0';
-                        card.style.transform = 'scale(0.9)';
-                        setTimeout(() => { 
-                            card.style.display = 'none';
-                            // Recargar si no quedan tareas para que desaparezca la sección
-                            if(document.querySelectorAll('#tareas-pendientes-section .grid > .relative.group:not([style*="display: none"])').length === 0) {
-                                location.reload();
-                            }
-                        }, 500);
+                        if (card) {
+                            card.style.transition = 'all 0.5s ease';
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.9)';
+                            setTimeout(() => { 
+                                card.style.display = 'none';
+                                // Recargar si no quedan tareas para que desaparezca la sección
+                                if(document.querySelectorAll('#tareas-pendientes-section .grid > .relative.group:not([style*="display: none"])').length === 0) {
+                                    location.reload();
+                                }
+                            }, 500);
+                        }
                     }
                 }
             } else {
