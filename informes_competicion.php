@@ -52,69 +52,69 @@ if ($id_competicion > 0) {
     
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <!-- Header de Sección -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-file-pdf text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-file-pdf text-base sm:text-lg"></i></span>
                     Informes
                 </h1>
-                <p class="text-slate-500 font-medium">Gestión de resultados y documentación oficial.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Gestión de resultados y documentación oficial.</p>
             </div>
         </div>
 
         <!-- KPIs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-12">
             
             <!-- Inscripciones -->
-            <a href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas" target="_blank" class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-blue-600 transition-all hover:shadow-xl hover:-translate-y-1 group">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-                        <i class="fas fa-users-line text-xl"></i>
+            <a href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-600 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
+                <div class="flex justify-between items-center mb-3 sm:mb-6">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fas fa-users-line text-lg sm:text-xl"></i>
                     </div>
-                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Participación</span>
+                    <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 tracking-widest bg-slate-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-slate-100">Participación</span>
                 </div>
-                <h3 class="text-3xl font-black text-slate-800 mb-1 leading-none"><?php echo $total_nadadoras; ?></h3>
-                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-6">Atletas Registradas</p>
-                <div class="pt-4 border-t border-slate-50 flex items-center justify-between text-blue-600 text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-blue-700">
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mb-0.5 sm:mb-1 leading-none tabular-nums"><?php echo $total_nadadoras; ?></h3>
+                <p class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-3 sm:mb-6">Atletas Registradas</p>
+                <div class="pt-3 sm:pt-4 border-t border-slate-50 flex items-center justify-between text-blue-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-blue-700">
                     <span>Descargar Listado</span>
                     <i class="fas fa-arrow-right animate-pulse"></i>
                 </div>
             </a>
 
             <!-- Rutinas -->
-            <a href="./informes/inscripciones_numericas_rutinas.php?titulo=Orden%20de%20salida" target="_blank" class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-purple-500 transition-all hover:shadow-xl hover:-translate-y-1 group">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
-                        <i class="fas fa-list-ol text-xl"></i>
+            <a href="./informes/inscripciones_numericas_rutinas.php?titulo=Orden%20de%20salida" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-purple-500 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
+                <div class="flex justify-between items-center mb-3 sm:mb-6">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
+                        <i class="fas fa-list-ol text-lg sm:text-xl"></i>
                     </div>
-                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest bg-slate-50 px-3 py-1 rounded-full border border-slate-100">Competición</span>
+                    <span class="text-[8px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest bg-slate-50 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-slate-100">Competición</span>
                 </div>
-                <h3 class="text-3xl font-black text-slate-800 mb-1 leading-none"><?php echo $total_rutinas; ?></h3>
-                <p class="text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-6">Rutinas en Sorteo</p>
-                <div class="pt-4 border-t border-slate-50 flex items-center justify-between text-purple-600 text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-purple-700">
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mb-0.5 sm:mb-1 leading-none tabular-nums"><?php echo $total_rutinas; ?></h3>
+                <p class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-3 sm:mb-6">Rutinas en Sorteo</p>
+                <div class="pt-3 sm:pt-4 border-t border-slate-50 flex items-center justify-between text-purple-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-purple-700">
                     <span>Ver Orden Salida</span>
                     <i class="fas fa-arrow-right animate-pulse"></i>
                 </div>
             </a>
 
             <!-- Fases (Con Gráfico Circular) -->
-            <a href="./informes/informe_figuras_resultados_categorias.php?titulo=Resultados" target="_blank" class="bg-white p-7 rounded-[2rem] shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 transition-all hover:shadow-xl hover:-translate-y-1 group relative overflow-hidden">
-                <div class="flex justify-between items-start mb-4">
+            <a href="./informes/informe_figuras_resultados_categorias.php?titulo=Resultados" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-emerald-500 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group relative overflow-hidden">
+                <div class="flex justify-between items-start mb-2 sm:mb-4">
                     <div>
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm mb-6">
-                            <i class="fas fa-medal text-xl"></i>
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-sm mb-3 sm:mb-6">
+                            <i class="fas fa-medal text-lg sm:text-xl"></i>
                         </div>
-                        <h3 class="text-3xl font-black text-slate-800 mb-1 leading-none">
-                            <?php echo $fases_puntuadas; ?> <span class="text-lg text-slate-300 font-bold italic">/ <?php echo $total_fases; ?></span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mb-0.5 sm:mb-1 leading-none tabular-nums">
+                            <?php echo $fases_puntuadas; ?> <span class="text-sm sm:text-lg text-slate-300 font-bold italic tabular-nums">/ <?php echo $total_fases; ?></span>
                         </h3>
-                        <p class="text-[11px] font-bold text-slate-500 uppercase tracking-tight">Fases Puntuadas</p>
+                        <p class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-tight">Fases Puntuadas</p>
                     </div>
                     
-                    <div class="relative w-20 h-20 shrink-0">
-                        <svg class="w-full h-full transform -rotate-90">
+                    <div class="relative w-14 h-14 sm:w-20 sm:h-20 shrink-0">
+                        <svg viewBox="0 0 80 80" class="w-full h-full transform -rotate-90">
                             <circle cx="40" cy="40" r="34" stroke="currentColor" stroke-width="8" fill="transparent" class="text-slate-100" />
                             <circle cx="40" cy="40" r="34" stroke="currentColor" stroke-width="8" fill="transparent" 
                                     stroke-dasharray="213.6" 
@@ -122,75 +122,75 @@ if ($id_competicion > 0) {
                                     class="text-emerald-500 transition-all duration-1000 ease-out" 
                                     stroke-linecap="round" />
                         </svg>
-                        <div class="absolute inset-0 flex items-center justify-center text-[11px] font-black text-emerald-600">
+                        <div class="absolute inset-0 flex items-center justify-center text-[10px] sm:text-[11px] font-black text-emerald-600 tabular-nums">
                             <?php echo $porcentaje_fases; ?>%
                         </div>
                     </div>
                 </div>
-                <div class="pt-4 border-t border-slate-50 flex items-center justify-between text-emerald-600 text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-emerald-700">
+                <div class="pt-3 sm:pt-4 border-t border-slate-50 flex items-center justify-between text-emerald-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-emerald-700">
                     <span>Ver Resultados</span>
                     <i class="fas fa-arrow-right animate-pulse"></i>
                 </div>
             </a>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8 mb-6 sm:mb-10">
             <!-- COLUMNA IZQUIERDA: RUTINAS -->
-            <div class="lg:col-span-7 space-y-8">
-                <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-t-[6px] border-t-blue-600">
-                    <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+            <div class="lg:col-span-7 space-y-4 sm:space-y-8">
+                <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-blue-600">
+                    <h2 class="text-base sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3">
                         <i class="fa-solid fa-water text-blue-600"></i> Documentación Rutinas
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <a href="informes/inscripciones_numericas_rutinas.php?titulo=Rutinas" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-clipboard-list text-lg"></i></div>
-                            <span class="text-sm font-bold text-slate-700">Inscripciones Numéricas</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4">
+                        <a href="informes/inscripciones_numericas_rutinas.php?titulo=Rutinas" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 active:scale-[0.98] transition-all flex items-center gap-3 sm:gap-4">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors shrink-0"><i class="fas fa-clipboard-list text-base sm:text-lg"></i></div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Inscripciones Numéricas</span>
                         </a>
-                        <a href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-person-swimming text-lg"></i></div>
-                            <span class="text-sm font-bold text-slate-700">Nadadoras Inscritas</span>
+                        <a href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 active:scale-[0.98] transition-all flex items-center gap-3 sm:gap-4">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors shrink-0"><i class="fas fa-person-swimming text-base sm:text-lg"></i></div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Nadadoras Inscritas</span>
                         </a>
-                        <a href="./informes/inscripciones_numericas_rutinas.php?titulo=Orden%20de%20salida" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-sort-amount-down text-lg"></i></div>
-                            <span class="text-sm font-bold text-slate-700">Orden de Salida</span>
+                        <a href="./informes/inscripciones_numericas_rutinas.php?titulo=Orden%20de%20salida" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 active:scale-[0.98] transition-all flex items-center gap-3 sm:gap-4">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors shrink-0"><i class="fas fa-sort-amount-down text-base sm:text-lg"></i></div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Orden de Salida</span>
                         </a>
-                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20por%20Clubes&memorial=si&id_fase=0" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-trophy text-lg"></i></div>
-                            <span class="text-sm font-bold text-slate-700">Clasificación Clubes</span>
+                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20por%20Clubes&memorial=si&id_fase=0" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 active:scale-[0.98] transition-all flex items-center gap-3 sm:gap-4">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors shrink-0"><i class="fas fa-trophy text-base sm:text-lg"></i></div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Clasificación Clubes</span>
                         </a>
-                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20detallada&hoja_tecnica=si&memorial=si" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 transition-all flex items-center gap-4">
-                            <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors"><i class="fas fa-medal text-lg"></i></div>
-                            <span class="text-sm font-bold text-slate-700">Resultados Detallados</span>
+                        <a href="./informes/informe_puntuaciones.php?titulo=Clasificación%20detallada&hoja_tecnica=si&memorial=si" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 group hover:border-blue-200 active:scale-[0.98] transition-all flex items-center gap-3 sm:gap-4 sm:col-span-2">
+                            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-blue-600 shadow-sm transition-colors shrink-0"><i class="fas fa-medal text-base sm:text-lg"></i></div>
+                            <span class="text-xs sm:text-sm font-bold text-slate-700">Resultados Detallados</span>
                         </a>
                     </div>
 
-                    <div class="mt-10 pt-8 border-t border-slate-100">
-                        <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-6 px-1">Hojas de Puntuación PDF</h4>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            <a href="informes/hojas_puntuacion_rutinas.php" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Ejecución</span>
+                    <div class="mt-6 sm:mt-10 pt-4 sm:pt-8 border-t border-slate-100">
+                        <h4 class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 tracking-widest mb-3 sm:mb-6 px-1">Hojas de Puntuación PDF</h4>
+                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 sm:gap-4">
+                            <a href="informes/hojas_puntuacion_rutinas.php" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-file-pdf text-red-500 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Ejecución</span>
                             </a>
-                            <a href="informes/hojas_puntuacion_rutinas_sincronizacion.php" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Sincro</span>
+                            <a href="informes/hojas_puntuacion_rutinas_sincronizacion.php" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-file-pdf text-red-500 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Sincro</span>
                             </a>
-                            <a href="informes/hojas_puntuacion_rutinas_ia.php" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-file-pdf text-red-500 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Artística</span>
+                            <a href="informes/hojas_puntuacion_rutinas_ia.php" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-file-pdf text-red-500 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Artística</span>
                             </a>
-                            <a href="./informes/informe_puntuaciones.php?titulo=Árbitros&hoja_tecnica=si&id_fase=0" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-gavel text-slate-400 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Árbitros</span>
+                            <a href="./informes/informe_puntuaciones.php?titulo=Árbitros&hoja_tecnica=si&id_fase=0" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-gavel text-slate-400 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Árbitros</span>
                             </a>
-                            <a href="informes/informe_rutinas_notas_anotadores.php?titulo=Anotadores" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-user-pen text-blue-500 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Anotadores</span>
+                            <a href="informes/informe_rutinas_notas_anotadores.php?titulo=Anotadores" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-user-pen text-blue-500 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Anotadores</span>
                             </a>
-                            <a href="informes/hojas_puntuacion_rutinas_no_cc.php" target="_blank" class="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all group">
-                                <i class="fas fa-file-pdf text-amber-600 text-2xl group-hover:scale-110 transition-transform"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-500">Hojas no CC</span>
+                            <a href="informes/hojas_puntuacion_rutinas_no_cc.php" target="_blank" class="flex flex-col items-center gap-1.5 sm:gap-3 p-2.5 sm:p-4 rounded-xl sm:rounded-2xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all group text-center">
+                                <i class="fas fa-file-pdf text-amber-600 text-xl sm:text-2xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-500 truncate w-full">Hojas no CC</span>
                             </a>
                         </div>
                     </div>
@@ -198,58 +198,58 @@ if ($id_competicion > 0) {
             </div>
 
             <!-- COLUMNA DERECHA: FIGURAS -->
-            <div class="lg:col-span-5 space-y-8">
-                <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-t-[6px] border-t-emerald-500 h-full">
-                    <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3">
+            <div class="lg:col-span-5 space-y-4 sm:space-y-8">
+                <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-emerald-500 h-full">
+                    <h2 class="text-base sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3">
                         <i class="fa-solid fa-shapes text-emerald-500"></i> Sección Figuras
                     </h2>
                     
-                    <div class="space-y-3">
-                        <a href="informes/informe_figuras.php?titulo=Inscripciones" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-signature"></i></div>
-                                <span class="text-sm font-bold text-slate-700">Inscripciones Figuras</span>
+                    <div class="space-y-2.5 sm:space-y-3">
+                        <a href="informes/informe_figuras.php?titulo=Inscripciones" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm shrink-0"><i class="fas fa-signature text-sm sm:text-base"></i></div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">Inscripciones Figuras</span>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
-                        <a href="informes/informe_figuras.php?titulo=orden" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-list-ol"></i></div>
-                                <span class="text-sm font-bold text-slate-700">Orden de Actuación</span>
+                        <a href="informes/informe_figuras.php?titulo=orden" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm shrink-0"><i class="fas fa-list-ol text-sm sm:text-base"></i></div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">Orden de Actuación</span>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
-                        <a href="./informes/informe_figuras_resultados_categorias.php?titulo=Resultados por categorias&hoja_tecnica=si" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-trophy text-lg"></i></div>
-                                <span class="text-sm font-bold text-slate-700">Resultados Finales</span>
+                        <a href="./informes/informe_figuras_resultados_categorias.php?titulo=Resultados por categorias&hoja_tecnica=si" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm shrink-0"><i class="fas fa-trophy text-sm sm:text-base"></i></div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">Resultados Finales</span>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
-                        <a href="informes/informe_figuras_notas_anotadores.php?titulo=Anotadores" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-user-pen"></i></div>
-                                <span class="text-sm font-bold text-slate-700">Anotadores Figuras</span>
+                        <a href="informes/informe_figuras_notas_anotadores.php?titulo=Anotadores" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm shrink-0"><i class="fas fa-user-pen text-sm sm:text-base"></i></div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">Anotadores Figuras</span>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
-                        <a href="informes/informe_figuras_notas_figuras_junior.php?titulo=Notas%20Rutina%20Técnica" target="_blank" class="p-5 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 transition-all">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm"><i class="fas fa-file-pdf"></i></div>
-                                <span class="text-sm font-bold text-slate-700">Notas Rutina Técnica</span>
+                        <a href="informes/informe_figuras_notas_figuras_junior.php?titulo=Notas%20Rutina%20Técnica" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 active:scale-[0.98] transition-all">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-sm shrink-0"><i class="fas fa-file-pdf text-sm sm:text-base"></i></div>
+                                <span class="text-xs sm:text-sm font-bold text-slate-700 truncate">Notas Rutina Técnica</span>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-slate-300 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
                         <?php if($clave_liga_comp !== ''): ?>
-                        <a href="./informes/informe_figuras_liga_categorias.php?titulo=Clasificación General Liga" target="_blank" class="p-5 rounded-2xl bg-amber-50/80 border border-amber-200 flex items-center justify-between group hover:border-amber-400 hover:bg-amber-100/60 transition-all shadow-sm">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm"><i class="fas fa-ranking-star"></i></div>
-                                <div>
-                                    <span class="text-sm font-bold text-slate-800 block">Ranking Oficial Liga (FNRM)</span>
-                                    <span class="text-[10px] text-amber-700 font-bold uppercase tracking-wider">Liga <?php echo htmlspecialchars($clave_liga_comp); ?> &bull; 3 mejores jornadas</span>
+                        <a href="./informes/informe_figuras_liga_categorias.php?titulo=Clasificación General Liga" target="_blank" class="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-amber-50/80 border border-amber-200 flex items-center justify-between group hover:border-amber-400 hover:bg-amber-100/60 active:scale-[0.98] transition-all shadow-sm">
+                            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-amber-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm shrink-0"><i class="fas fa-ranking-star text-sm sm:text-base"></i></div>
+                                <div class="min-w-0">
+                                    <span class="text-xs sm:text-sm font-bold text-slate-800 block truncate">Ranking Oficial Liga</span>
+                                    <span class="text-[9px] sm:text-[10px] text-amber-700 font-bold uppercase tracking-wider block truncate">Liga <?php echo htmlspecialchars($clave_liga_comp); ?> &bull; 3 mejores</span>
                                 </div>
                             </div>
-                            <i class="fas fa-chevron-right text-[10px] text-amber-500 group-hover:translate-x-1 transition-transform"></i>
+                            <i class="fas fa-chevron-right text-[10px] text-amber-500 group-hover:translate-x-1 transition-transform shrink-0"></i>
                         </a>
                         <?php endif; ?>
                     </div>
