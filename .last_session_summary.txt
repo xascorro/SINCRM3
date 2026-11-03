@@ -1,142 +1,39 @@
-# Resumen de Sesión - SINCRM v4
-Fecha: 2026-11-03
+=========================================================
+SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
+Fecha: 2026-11-03 22:04
+=========================================================
 
-## 1. Implementación de Competiciones Mixtas y Rutinas Técnicas Junior/Absoluta (Normativa FNRM / AQUA)
-- **Base de Datos**:
-  - Ampliada columna `competiciones.figuras` a `VARCHAR(10)` para admitir 'mixta'.
-  - Modificada columna `resultados_figuras_categorias.puntos` a `DECIMAL(10,4)` para notas reales exactas.
-  - Creadas modalidades oficiales: `Solo Técnico Fem` (12), `Solo Técnico Masc` (13), `Dúo Mixto Técnico` (14), y activado `coach_card = 'si'` para rutinas técnicas.
-- **Configuración de Competiciones (`competiciones_edit.php`, `competiciones_code.php`, `competiciones.php`)**:
-  - Selector segmentado con 3 opciones: 'Solo Figuras', 'Solo Rutinas' y 'Mixta / Combinada'.
-  - Badge visual dinámico para competiciones mixtas.
-- **Navegación (`includes/navbar.php` y `navbar.php`)**:
-  - En competiciones mixtas, administradores y clubes disponen de accesos directos independientes a 'Inscripciones Figuras' y 'Rutinas Técnicas'.
-- **Gestión de Fases (`fases.php`, `fases_code.php`, `fases_edit.php`, `includes/fases_select_option.php`)**:
-  - Selector inteligente en el alta de fases: conmuta automáticamente entre Figuras (Alevín/Infantil) y Rutinas Técnicas (Junior/Absoluta).
-  - Listado en tarjetas y vista verificación adaptadas para renderizar figuras y rutinas con sus respectivos badges y contadores.
-- **Inscripciones y Cupos Federativos (`rutinas_code.php`, `rutinas.php`)**:
-  - Validación de cupo federativo: máximo 2 rutinas por club y modalidad técnica.
-  - Validación para 2º equipo técnico (requiere que el 1er equipo esté completado).
-  - Aviso no bloqueante de duración oficial de audio (Solo: 2:00 min, Dúo: 2:20 min).
-- **Puntuaciones y Clasificación de Liga (`puntuaciones_lista_fases.php`, `puntuaciones_rutina.php`, `puntuaciones_fases_figuras_puntuar_categorias.php`, `informes/informe_figuras_liga.php`, `informes/informe_figuras_liga_categorias.php`, `informes_competicion.php`)**:
-  - Enrutamiento por fase a evaluación de figuras o motor oficial AQUA completo (Elementos, TC con Base Marks, Sincronización, AI y penalizaciones).
-  - Regla 9 FNRM: clasificación al 100% de la nota real directa (eliminado baremo antiguo 19, 16, 15...).
-  - Cálculo exacto N-1 mejores jornadas: se resta la peor puntuación de las N posibles de la liga; la no participación asigna 0.0000.
-  - Trazado visual con tachado (`line-through`) de la jornada descartada (incluso si fue NP / 0.0000).
-  - Acceso directo al Ranking de Liga en `informes_competicion.php` cuando la competición activa pertenece a una liga.
-  - Empates mantenidos ex aequo sin desempates forzados.
-- **Nueva Competición y Figura Registradas**:
-  - Figura `301h` (`Barracuda 301h`, GD `2.4`).
-  - Competición `Control Técnico de Figuras` (`CT-FIG`, Temporada 2026-2027) con fase Alevín II.
+1. OBJETIVO DEL BLOQUE:
+   Optimización exhaustiva Mobile-First (UI/UX) según directrices de diseño (Emil Kowalski + Rauno Freiberg) en:
+   - https://sincrm.pedrodiaz.eu/nadadoras.php
+   - https://sincrm.pedrodiaz.eu/clubes.php
+   - https://sincrm.pedrodiaz.eu/federaciones.php
 
-## 2. Rediseño y Optimización Mobile UI/UX en Dashboard (`index.php`)
-- **Contenedores y Escala Elástica**:
-  - Sustituidos paddings rígidos (`p-6` / `p-8` / `p-12`) por escala fluida (`px-3 py-4 sm:p-6 md:p-10`).
-  - Bordes redondeados responsivos (`rounded-2xl sm:rounded-[2.5rem]` / `sm:rounded-[3rem]`) evitando deformaciones y pérdida de espacio en pantallas móviles estrechas (360px - 430px).
-- **Eliminación de Textos Cortados en Fases (Vista Dual Responsiva)**:
-  - **Móvil (`block sm:hidden`)**: Tarjetas de fase compactas e intuitivas con chip de categoría, badge `#301h`, nombre íntegro sin recortes y badge GD / participantes flotante.
-  - **Tablet/Desktop (`hidden sm:block`)**: Tabla detallada con `overflow-x-auto` y paddings armonizados (`px-6 py-4`).
-- **Hero Card de Competición**:
-  - Bloque de fecha compacto (`w-16 h-18 sm:w-24 sm:h-24`) con soporte `tabular-nums`.
-  - Título escalable (`text-xl sm:text-3xl md:text-4xl`) y etiquetas de mapa / piscina elásticas con microinteracción táctil (`active:scale-[0.98]`).
-  - Botones de inscripción adaptables a ancho completo en móvil (`w-full sm:w-auto`).
-- **Eventos en Calendario e Historial**:
-  - Filas y badges de fecha optimizados para smartphones con espaciados proporcionales y tipografía limpia.
+2. CAMBIOS IMPLEMENTADOS:
+   - nadadoras.php:
+     * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
+     * KPIs compactos y responsive (grid 2 columnas móvil / 4 columnas desktop) con fuentes tabulares (tabular-nums).
+     * Panel colapsable de alta de deportista con inputs proporcionales y botones táctiles con microinteracción (active:scale-[0.98]).
+     * Implementada Doble Vista (Dual-View):
+       - Vista Móvil (md:hidden): Tarjetas fluidas (.nadadora-mobile-card) con nombre destacado, badges de estado (#ID, inactiva), píldoras de club, año de nacimiento, licencia y botones de acción rápida.
+       - Vista Desktop (hidden md:block): Tabla clásica con scroll horizontal controlado.
+     * Buscador dinámico en tiempo real actualizado para filtrar simultáneamente la tabla de escritorio y las tarjetas móviles.
+   - clubes.php:
+     * Padding exterior fluido y cabecera responsive con buscador integrado y botón "Nuevo Club".
+     * Rejilla de KPIs optimizada con tarjeta de entidades activas al 100% de ancho en móviles y números tabulares.
+     * Cuadrícula de tarjetas de club con dimensiones y paddings proporcionales en móvil (p-4 sm:p-8, logo responsive w-20 h-20 sm:w-32 sm:h-32) y botones táctiles ergonómicos.
+   - federaciones.php:
+     * Padding adaptativo, cabecera flexible con buscador y botón de alta.
+     * Tarjetas de KPI simplificadas para evitar saltos de línea y con números tabulares.
+     * Rejilla de tarjetas de federación adaptada con escudos optimizados, métricas de clubes/jueces alineadas y botones táctiles.
 
-## 3. Rediseño y Optimización Mobile UI/UX en Inscripciones de Figuras (`inscripciones_figuras.php`)
-- **Cabecera y Plazos**:
-  - Reducción de contenedor a escala fluida (`px-3 py-4 sm:p-6 md:p-10`).
-  - Píldoras de plazo con `tabular-nums` y botón de Exportar PDF a ancho completo en pantallas móviles con microescalado `active:scale-[0.98]`.
-- **Donut Chart y KPIs de Categorías**:
-  - Donut responsivo (`w-32 h-32 sm:w-40 sm:h-40`) con cuadrícula de categorías y KPIs de Clubes/CC adaptados a 2 columnas en móvil.
-- **Vista Dual de Nadadoras Inscritas**:
-  - **Móvil (`block sm:hidden`)**: Tarjetas individuales por nadadora con nombre y apellidos completos, chip de año de nacimiento, club, botones de Coach Card y eliminación con confirmación accesible, y selector o input de orden de salida interactivo con botón de guardado táctil.
-  - **Tablet/Desktop (`hidden sm:block`)**: Tabla limpia con `overflow-x-auto`, paddings equilibrados (`px-6 py-3.5`) y centrado numérico.
-- **Formulario Rápido**:
-  - Desplegable de alta de nadadora y botón "Registrar" adaptados a grid móvil.
+3. ARCHIVOS MODIFICADOS:
+   - /var/www/html/sincrm/nadadoras.php
+   - /var/www/html/sincrm/clubes.php
+   - /var/www/html/sincrm/federaciones.php
+   - Sincronizados a /var/www/html/beta/ con permisos 664.
 
-## 4. Rediseño y Optimización Mobile UI/UX en Paneles de Jueces (`paneles_jueces.php`)
-- **Escala Responsiva y Header**:
-  - Padding exterior fluido (`px-3 py-4 sm:p-6 md:p-10`), botones superiores ("Añadir Juez" y "Definir Panel") apilables y con micro-escalado táctil.
-- **Formularios Colapsables**:
-  - `addJuezPanel` y `defPanelForm`: adaptados a 1 columna en móvil con controles segmentados nítidos y botones full-width.
-- **Vista Dual de Dirección y Secretaría**:
-  - Móvil: tarjetas compactas con avatar de iniciales, nombre, rol y acciones táctiles.
-  - Desktop: tabla con alineación limpia.
-- **Paneles Técnicos por Fase**:
-  - Cabecera elástica con badge de fase, botones de clonación y añadir juez adaptados a móvil.
-  - Filas de slots técnicos con controles de selección táctiles, switch de juez árbitro y botón de asignación rápida responsive.
-- **Modal de Clonación**:
-  - Bottom-sheet amigable con tirador táctil y botones accesibles en móvil.
-
-## 5. Rediseño y Optimización Mobile UI/UX en Fases (`fases.php`)
-- **Header y Conmutador de Vista**:
-  - Conmutador "Verificación" / "Gestión" y botón "Añadir Fase" fluidos en móvil.
-- **KPIs de Fases**:
-  - Censo, Estado de jornada y Carga técnica reestructurados a 1-2 columnas en móviles pequeños con números tabulares (`tabular-nums`).
-- **Vista de Tarjetas**:
-  - Tarjeta de fase con badge de orden alineado, visualización clara del tipo (Figura o Rutina Técnica), grado de dificultad y acciones rápidas ("Configurar" y "Borrar").
-- **Vista de Verificación**:
-  - Tabla adaptada con visualización apilada en móvil que integra nombre, GD e inscripciones sin cortes horizontales.
-
-## 6. Rediseño y Optimización Mobile UI/UX en Sorteo de Figuras (`sorteo_figuras.php`)
-- **Header y Acciones**:
-  - Botones "Sortear", "Anular" y "PDF Oficial" ajustados con `tabular-nums` y microinteracción elástica.
-- **Paneles Colapsables**:
-  - Configuración de sorteo por categoría y panel de anulación con espaciados y botones adaptados a ergonomía táctil.
-- **Listado Dinámico por Cortes**:
-  - Cabeceras de categoría con chips de corte compactos (`C1`, `C2`, etc.).
-  - Filas de nadadoras en tarjeta fluida con borde de color según corte, badge de orden de salida (`1`, `2` o `PS`/`E`) con ancho fijo y tipografía tabular sin temblores.
-
-## 7. Rediseño y Optimización Mobile UI/UX en Catálogo de Figuras (`figuras.php`)
-- **KPIs y Métricas**:
-  - Censo técnico, GD Promedio y Reto Máximo en grid responsivo con `tabular-nums`.
-- **Panel de Registro de Figura**:
-  - Inputs con espaciado táctil y validaciones claras.
-- **Buscador en Tiempo Real y Vista Dual**:
-  - **Móvil (`md:hidden`)**: Lista de tarjetas individuales (`.figura-mobile-card`) con número en badge destacado, nombre oficial completo, chip de GD en color azul, estado activo/inactivo y botones de editar/desactivar accesibles.
-  - **Desktop (`hidden md:block`)**: Tabla completa con columnas ordenadas.
-  - **Buscador integrado**: Filtra instantáneamente tanto las tarjetas móviles como las filas de la tabla de escritorio.
-
-## 8. Rediseño y Optimización Mobile UI/UX en Sorteo de Rutinas (`sorteo_rutinas.php`)
-- **Header y Acciones**:
-  - Título elástico, contenedor fluido (`px-3 py-4 sm:p-6 md:p-10`) y botones "Nuevo Sorteo", "Anular Todo" y "PDF Oficial" accesibles en móvil con micro-escalado `active:scale-[0.98]`.
-- **Paneles Colapsables**:
-  - Formulario de sorteo por fase y alerta de confirmación de anulación adaptados a pantallas táctiles.
-- **Sticky Header de Fases y Carriles**:
-  - Barra de fase con blur translúcido, badge de inicial de modalidad, título truncado dinámico y pill de conteo de rutinas con `tabular-nums`.
-- **Tarjetas de Rutina Dual-View**:
-  - **Móvil (`md:hidden`)**: Badge de orden de salida compacto (`w-11 h-11`), badge de club con fondo suave, ID interna y nombres de participantes apilados con tipografía nítida sin deformar la pantalla.
-  - **Desktop (`hidden md:flex`)**: Estructura de carril con orden amplio, club con divisor vertical, participantes y opacidad dinámica en hover.
-
-## 9. Rediseño y Optimización Mobile UI/UX en Rutinas (`rutinas.php`)
-- **Header y Acciones**:
-  - Contenedor elástico (`px-3 py-4 sm:p-6 md:p-10`), botones de reportes ("PDF Inscriptos", "CC", "ZIP Música") compactos y adaptativos, y botón "Añadir Rutina" optimizado para móvil.
-- **Plazos y KPIs**:
-  - Grid responsivo de 2 columnas en smartphone y hasta 5 en escritorio, con valores tabulares (`tabular-nums`).
-- **Vista Dual de Rutinas**:
-  - **Móvil (`md:hidden`)**: Tarjetas individuales por rutina (`.rutina-mobile-card`) con número de orden en bloque fijo (`Ord 1` / `PS` / `EX`), ID, chip de entidad/club con escudo, título de modalidad/categoría, participantes y barra de herramientas táctil (Participantes, Música con reproductor, Coach Card con DD badge, Editar y Borrar).
-  - **Desktop (`hidden md:block`)**: Tabla completa con columnas amplias y alineadas.
-  - **Buscador en Tiempo Real**: Filtrado sincronizado en directo para tarjetas móviles y tabla de escritorio.
-
-## 10. Rediseño y Optimización Mobile UI/UX en Competiciones (`competiciones.php`)
-- **Header y Creación de Eventos**:
-  - Barra de búsqueda y botón "Crear Evento" apilables de forma natural en móvil con microinteracción táctil (`active:scale-[0.98]`).
-- **Dashboard de Tipología y KPIs**:
-  - Barra tricolor de distribución técnica (Figuras, Rutinas, Pases) adaptable a 1-2 columnas con métricas en `tabular-nums`.
-- **Fichas Premium de Competición**:
-  - Tarjetas (`.comp-card`) con fecha destacada en español (`w-14 h-14 sm:w-20 sm:h-20`), badges elásticos (Mixta, Figuras, Rutinas, Escolar), switch de activación táctil y botones de configuración/borrado optimizados para smartphones.
-
-## 11. Rediseño y Optimización Mobile UI/UX en Guion de Puntuaciones (`puntuaciones_lista_fases.php`)
-- **Header de Mesa Técnica**:
-  - Conmutador de vista (Tarjetas / Lista) con estilo pill táctil, botón de recarga y acceso rápido al informe global en PDF.
-- **Progreso de la Jornada**:
-  - Gráfico de progreso circular responsivo (`w-24 h-24 sm:w-32 sm:h-32`), desglose de fases puntuadas y participaciones en cuadrícula móvil limpia.
-- **Fichas de Fase (Figuras y Rutinas)**:
-  - Tarjetas de fase con orden destacado, pill de estado (Abierta / Cerrada) y botones de acción rápida ("Puntuar/Revisar", "PDF", "Ver").
-- **Vista de Lista Compacta**:
-  - Tabla estilizada con celdas compactas (`px-3 sm:px-6 py-3 sm:py-5`), badges de reglamento (AQUA / OBSOLETO) y tipografía tabular sin temblores.
-
-## 12. Sincronización y Git
-- Todos los cambios verificados con `php -l` (cero errores de sintaxis).
-- Sincronizados a `/var/www/html/beta/` con permisos `chmod 664`.
+4. ESTADO TÉCNICO:
+   - Sintaxis PHP validada con `php -l` (0 errores).
+   - Servidor Beta actualizado y sincronizado.
+=========================================================
