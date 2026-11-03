@@ -25,4 +25,10 @@ Fecha: 2026-11-03
   - Trazado visual con tachado (`line-through`) de la jornada descartada (incluso si fue NP / 0.0000).
   - Acceso directo al Ranking de Liga en `informes_competicion.php` cuando la competición activa pertenece a una liga.
   - Empates mantenidos ex aequo sin desempates forzados.
-- Sincronizados todos los archivos con `/var/www/html/beta`.
+- **Dashboard Principal (`index.php`)**:
+  - Corregida la consulta y renderizado de fases en el Dashboard para competiciones mixtas (`figuras = 'mixta'`). Ahora muestra correctamente todas las figuras (Alevín e Infantil con número y GD) y las rutinas técnicas (Junior con participantes).
+  - Adaptados los botones de inscripción para competiciones mixtas con acceso dual ("Figuras Alev/Inf" y "Rutinas Jun/Abs").
+- **Nueva Competición y Figura Registradas**:
+  - Figura `301h` (`Barracuda 301h`, GD `2.4`).
+  - Competición `Control Técnico de Figuras` (`CT-FIG`, Temporada 2026-2027) con fase Alevín II.
+- Sincronizados todos los archivos en producción (`sincrm_prod_db` / `sincrm.pedrodiaz.eu`) y en el entorno beta (`beta.pedrodiaz.eu`).

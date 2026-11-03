@@ -423,38 +423,85 @@ $meses_es = [
 
                                 $fecha_sorteo = date("Y-m-d", strtotime("-".$row['dias_sorteo']." days", strtotime($row['fecha'])));
                                 $hoy = date("Y-m-d");
+                                $es_mixta_row = ($row['figuras'] == 'mixta');
                                 $enlace_inscripcion = ($row['figuras'] == 'si') ? "./inscripciones_figuras.php" : "./rutinas.php";
 
                                 if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
-                                    <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto text-center">
+                                    <div class="w-full sm:w-auto text-center">
                                         <div class="mb-4 flex flex-col items-center gap-2">
                                             <span class="text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-5 py-2 rounded-full border border-emerald-100 shadow-sm animate-pulse italic">Inscripciones Abiertas</span>
                                             <p class="text-[10px] font-bold text-slate-400 uppercase italic">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
-                                        <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
-                                        <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
-                                        <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                        <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-800 text-white font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-xl hover:bg-black hover:scale-105 transition-all flex items-center justify-center gap-4">
-                                            <i class="fas fa-user-plus text-lg"></i> Gestionar Inscripciones
-                                        </button>
-                                    </form>
+                                        <?php if($es_mixta_row): ?>
+                                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                                <form action="./inscripciones_figuras.php" method="post">
+                                                    <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                    <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                    <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-emerald-600 text-white font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 hover:scale-105 transition-all flex items-center justify-center gap-2">
+                                                        <i class="fa-solid fa-shapes text-sm"></i> Figuras (Alev/Inf)
+                                                    </button>
+                                                </form>
+                                                <form action="./rutinas.php" method="post">
+                                                    <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                    <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                    <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:scale-105 transition-all flex items-center justify-center gap-2">
+                                                        <i class="fa-solid fa-water text-sm"></i> Rutinas (Jun/Abs)
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
+                                                <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-800 text-white font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-xl hover:bg-black hover:scale-105 transition-all flex items-center justify-center gap-4">
+                                                    <i class="fas fa-user-plus text-lg"></i> Gestionar Inscripciones
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
                                     <div class="px-10 py-5 bg-slate-50 text-slate-400 font-black uppercase text-sm tracking-widest rounded-[2rem] border border-slate-100 text-center italic">
                                         <i class="fas fa-lock mr-2 opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
                                 <?php else: ?>
-                                    <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto text-center">
+                                    <div class="w-full sm:w-auto text-center">
                                         <div class="mb-4 flex flex-col items-center gap-2">
                                             <span class="text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-5 py-2 rounded-full border border-red-100 shadow-sm italic">Inscripciones Cerradas</span>
                                             <p class="text-[10px] font-bold text-slate-400 uppercase italic">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
-                                        <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
-                                        <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
-                                        <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                        <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-100 text-slate-500 font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-sm hover:bg-slate-200 hover:text-slate-700 transition-all flex items-center justify-center gap-4 border border-slate-200">
-                                            <i class="fas fa-eye text-lg"></i> Comprobar Inscripciones
-                                        </button>
-                                    </form>
+                                        <?php if($es_mixta_row): ?>
+                                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                                <form action="./inscripciones_figuras.php" method="post">
+                                                    <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                    <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                    <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-sm hover:bg-slate-200 transition-all flex items-center justify-center gap-2 border border-slate-200">
+                                                        <i class="fas fa-eye text-sm text-emerald-600"></i> Figuras
+                                                    </button>
+                                                </form>
+                                                <form action="./rutinas.php" method="post">
+                                                    <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                    <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                    <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-sm hover:bg-slate-200 transition-all flex items-center justify-center gap-2 border border-slate-200">
+                                                        <i class="fas fa-eye text-sm text-blue-600"></i> Rutinas Técnicas
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        <?php else: ?>
+                                            <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
+                                                <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
+                                                <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
+                                                <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
+                                                <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-100 text-slate-500 font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-sm hover:bg-slate-200 hover:text-slate-700 transition-all flex items-center justify-center gap-4 border border-slate-200">
+                                                    <i class="fas fa-eye text-lg"></i> Comprobar Inscripciones
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php endif; ?>
                                 <!-- Plazos Técnicos (Música y Coach Card) -->
                                 <?php 
@@ -513,28 +560,61 @@ $meses_es = [
                                 <thead>
                                     <tr class="bg-slate-100/50 text-sm font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-200/50">
                                         <th class="px-8 py-5">Categoría</th>
-                                        <th class="px-6 py-5"><?php echo ($row['figuras'] == 'si') ? 'Figura' : 'Modalidad'; ?></th>
-                                        <th class="px-6 py-5 text-center"><?php echo ($row['figuras'] == 'si') ? 'G.D.' : 'Participantes'; ?></th>
+                                        <th class="px-6 py-5"><?php echo ($row['figuras'] == 'si') ? 'Figura' : (($row['figuras'] == 'mixta') ? 'Prueba (Figura / Rutina)' : 'Modalidad'); ?></th>
+                                        <th class="px-6 py-5 text-center"><?php echo ($row['figuras'] == 'si') ? 'G.D.' : (($row['figuras'] == 'mixta') ? 'Detalle Técnico' : 'Participantes'); ?></th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100">
                                     <?php
-                                    if($row['figuras']=='si'){
-                                        $q_fases = "SELECT c.nombre as cat, f.nombre as fig, f.numero, f.grado_dificultad as gd FROM fases fs, categorias c, figuras f WHERE fs.id_categoria = c.id and fs.id_figura = f.id and fs.id_competicion = ".$row['id']." ORDER BY fs.orden";
-                                    } else {
-                                        $q_fases = "SELECT c.nombre as cat, m.nombre as modali, m.numero_participantes as np, m.numero_reservas as nr FROM fases fs, categorias c, modalidades m WHERE fs.id_categoria = c.id and fs.id_modalidad = m.id and fs.id_competicion = ".$row['id']." ORDER BY fs.orden";
-                                    }
+                                    $q_fases = "SELECT 
+                                                    fs.id,
+                                                    fs.orden,
+                                                    fs.id_figura,
+                                                    fs.id_modalidad,
+                                                    c.nombre as cat,
+                                                    f.nombre as fig,
+                                                    f.numero as fig_num,
+                                                    f.grado_dificultad as gd,
+                                                    m.nombre as modali,
+                                                    m.numero_participantes as np,
+                                                    m.numero_reservas as nr
+                                                FROM fases fs
+                                                LEFT JOIN categorias c ON fs.id_categoria = c.id
+                                                LEFT JOIN figuras f ON fs.id_figura = f.id
+                                                LEFT JOIN modalidades m ON fs.id_modalidad = m.id
+                                                WHERE fs.id_competicion = " . (int)$row['id'] . "
+                                                ORDER BY fs.orden ASC";
                                     $res_fases = mysqli_query($connection, $q_fases);
                                     if(mysqli_num_rows($res_fases) > 0){
                                         while($f = mysqli_fetch_assoc($res_fases)):
                                     ?>
                                         <tr class="text-sm md:text-base font-bold text-slate-600 hover:bg-white transition-colors">
-                                            <td class="px-8 py-6 font-black text-slate-700 italic uppercase tracking-tighter"><?php echo $f['cat']; ?></td>
-                                            <td class="px-6 py-6"><?php echo ($row['figuras'] == 'si') ? '<span class="px-3 py-1 bg-slate-100 rounded-lg text-slate-400 mr-3 font-black">#'.$f['numero'].'</span> '.$f['fig'] : $f['modali']; ?></td>
+                                            <td class="px-8 py-6 font-black text-slate-700 italic uppercase tracking-tighter">
+                                                <?php echo htmlspecialchars($f['cat'] ?? 'Sin Categoría'); ?>
+                                            </td>
+                                            <td class="px-6 py-6">
+                                                <?php if(!empty($f['id_figura']) && !empty($f['fig'])): ?>
+                                                    <span class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg mr-3 font-black text-xs">#<?php echo $f['fig_num']; ?></span>
+                                                    <span class="text-slate-800 font-bold"><?php echo $f['fig']; ?></span>
+                                                <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
+                                                    <span class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg mr-3 font-black text-xs uppercase"><i class="fas fa-water mr-1"></i> Rutina</span>
+                                                    <span class="text-slate-800 font-bold"><?php echo $f['modali']; ?></span>
+                                                <?php else: ?>
+                                                    <span class="text-slate-400 italic">No asignada</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td class="px-6 py-6 text-center">
-                                                <span class="px-5 py-2 bg-blue-50 text-blue-600 rounded-full font-black text-xs shadow-sm border border-blue-100">
-                                                    <?php echo ($row['figuras'] == 'si') ? $f['gd'] : $f['np'].' + '.$f['nr'].'R'; ?>
-                                                </span>
+                                                <?php if(!empty($f['id_figura'])): ?>
+                                                    <span class="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full font-black text-xs shadow-sm border border-emerald-100">
+                                                        GD <?php echo $f['gd']; ?>
+                                                    </span>
+                                                <?php elseif(!empty($f['id_modalidad'])): ?>
+                                                    <span class="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-black text-xs shadow-sm border border-blue-100">
+                                                        <?php echo $f['np'].' + '.$f['nr'].'R'; ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="text-slate-400">-</span>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endwhile; } else { ?>
