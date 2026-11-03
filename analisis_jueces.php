@@ -110,103 +110,241 @@ $consenso_color = ($consenso_score >= 8) ? 'text-emerald-500' : (($consenso_scor
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
 
         <?php include('includes/alertas_v4.php'); ?>
 
-        <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <!-- Header de Sección -->
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <a href="ranking_jueces.php" class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-2 hover:gap-3 transition-all no-underline"><i class="fas fa-arrow-left"></i> Volver al Ranking Global</a>
-                <h1 class="text-5xl font-black text-slate-800 tracking-tighter mb-2 italic text-primary">Auditoría de Jueces</h1>
-                <p class="text-lg text-slate-500 font-medium"><?php echo $comp_data['nombre']; ?> <?php if(!$has_data): ?><span class="text-xs bg-amber-100 text-amber-600 px-2 py-1 rounded-lg ml-2">PROVISIONAL</span><?php endif; ?></p>
+                <a href="ranking_jueces.php" class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-1.5 hover:gap-2 transition-all no-underline">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Volver al Ranking Global
+                </a>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-primary shadow-sm border border-slate-200">
+                        <i class="fas fa-calendar-check text-base sm:text-lg"></i>
+                    </span>
+                    Auditoría de Evento
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium flex items-center gap-2 flex-wrap">
+                    <span><?php echo $comp_data['nombre']; ?></span>
+                    <?php if(!$has_data): ?>
+                        <span class="text-[9px] bg-amber-100 text-amber-700 font-black px-2 py-0.5 rounded-md uppercase">Provisional</span>
+                    <?php endif; ?>
+                </p>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="px-4 py-2 bg-slate-800 text-white rounded-xl shadow-lg flex items-center gap-3 border border-white/10">
+
+            <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+                <!-- Badge tiempo de carga -->
+                <div class="px-3.5 py-2 bg-slate-900 text-white rounded-xl sm:rounded-2xl shadow-sm flex items-center gap-2.5 border border-slate-800">
                     <i class="fas fa-bolt text-amber-400 text-xs"></i>
                     <div class="leading-none">
                         <p class="text-[8px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Carga</p>
-                        <p class="text-xs font-black italic"><?php echo round(microtime(true) - $start_time, 3); ?> <span class="text-[9px] opacity-50">seg</span></p>
+                        <p class="text-xs font-black tabular-nums"><?php echo round(microtime(true) - $start_time, 3); ?> <span class="text-[9px] opacity-60">seg</span></p>
                     </div>
                 </div>
+
+                <!-- Botón Acción -->
                 <?php if(!$has_data): ?>
-                    <button onclick="saveAudit()" class="btn-primary-v3 flex items-center gap-2 shadow-xl"><i class="fas fa-save"></i> GRABAR AUDITORÍA</button>
+                    <button onclick="saveAudit()" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-[0.98] transition-all flex items-center gap-2">
+                        <i class="fas fa-save text-xs"></i> Grabar Auditoría
+                    </button>
                 <?php else: ?>
-                    <button onclick="saveAudit()" class="btn-outline-v3 flex items-center gap-2 text-slate-400 hover:text-white transition-all"><i class="fas fa-sync"></i> RECALCULAR</button>
+                    <button onclick="saveAudit()" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-700 border border-slate-200 font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-sm hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-2">
+                        <i class="fas fa-sync text-xs text-blue-600"></i> Recalcular
+                    </button>
                 <?php endif; ?>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-t-[8px] border-t-emerald-500">
-                <div class="flex justify-between items-start mb-4"><div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"><i class="fas fa-hands-holding-circle text-xl"></i></div><span class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Consenso Global</span></div>
-                <h3 class="text-4xl font-black <?php echo $consenso_color; ?> leading-none"><?php echo number_format($consenso_score, 1); ?><span class="text-lg text-slate-400">/10</span></h3>
-                <p class="text-xs font-bold text-slate-400 mt-2 uppercase tracking-tighter">Índice de similitud entre jueces</p>
+        <!-- KPIs del Evento -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-6 mb-6 sm:mb-10">
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-emerald-500">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest truncate">Consenso Global</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600"><i class="fas fa-hands-holding-circle text-xs"></i></div>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black <?php echo $consenso_color; ?> tabular-nums leading-none">
+                    <?php echo number_format($consenso_score, 1); ?><span class="text-sm sm:text-base text-slate-400">/10</span>
+                </h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-2 uppercase tracking-tight">Índice de similitud entre jueces</p>
             </div>
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-t-[8px] border-t-red-500">
-                <div class="flex justify-between items-start mb-4"><div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600"><i class="fas fa-hand-fist text-xl"></i></div><span class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] italic">El Juez de Hierro</span></div>
-                <h3 class="text-2xl font-black text-slate-800 leading-tight truncate"><?php echo $juez_hierro['nombre']; ?></h3>
-                <p class="text-xs font-bold text-red-500 mt-1 uppercase tracking-tighter"><?php echo $juez_hierro['pct']; ?>% de sus notas son mínimas</p>
+
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-red-500">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest truncate">El Juez de Hierro</span>
+                    <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-red-600"><i class="fas fa-hand-fist text-xs"></i></div>
+                </div>
+                <h3 class="text-base sm:text-xl font-black text-slate-800 leading-tight truncate"><?php echo $juez_hierro['nombre']; ?></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-red-500 mt-1 uppercase tracking-tight tabular-nums"><?php echo $juez_hierro['pct']; ?>% notas mínimas</p>
             </div>
-            <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-200 border-t-[8px] border-t-blue-500">
-                <div class="flex justify-between items-start mb-4"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600"><i class="fas fa-hand-holding-heart text-xl"></i></div><span class="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] italic">El Juez Generoso</span></div>
-                <h3 class="text-2xl font-black text-slate-800 leading-tight truncate"><?php echo $juez_generoso['nombre']; ?></h3>
-                <p class="text-xs font-bold text-blue-500 mt-1 uppercase tracking-tighter"><?php echo $juez_generoso['pct']; ?>% de sus notas son máximas</p>
+
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-500">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest truncate">El Juez Generoso</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600"><i class="fas fa-hand-holding-heart text-xs"></i></div>
+                </div>
+                <h3 class="text-base sm:text-xl font-black text-slate-800 leading-tight truncate"><?php echo $juez_generoso['nombre']; ?></h3>
+                <p class="text-[9px] sm:text-[10px] font-bold text-blue-500 mt-1 uppercase tracking-tight tabular-nums"><?php echo $juez_generoso['pct']; ?>% notas máximas</p>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
-                <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tighter italic flex items-center gap-3"><i class="fas fa-bullseye text-blue-600"></i> Calidad: Desviación vs Eliminaciones</h3>
-                <div class="relative h-80"><canvas id="scatterChart"></canvas></div>
+        <!-- Gráficos del Evento -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-6 sm:mb-10">
+            <div class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-sm sm:text-base font-black text-slate-800 mb-1 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fas fa-bullseye text-blue-600"></i> Calidad: Desviación vs Eliminaciones
+                </h3>
+                <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Dispersión de notas anuladas</p>
+                <div class="relative h-64 sm:h-80"><canvas id="scatterChart"></canvas></div>
             </div>
-            <div class="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
-                <h3 class="text-lg font-black text-slate-800 mb-6 uppercase tracking-tighter italic flex items-center gap-3"><i class="fas fa-chart-pie text-emerald-600"></i> Tendencia de Puntuación por Juez</h3>
-                <div class="relative h-80"><canvas id="barChart"></canvas></div>
+
+            <div class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-sm sm:text-base font-black text-slate-800 mb-1 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fas fa-chart-pie text-emerald-600"></i> Tendencia de Puntuación por Juez
+                </h3>
+                <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Distribución: Bajas / Válidas / Altas</p>
+                <div class="relative h-64 sm:h-80"><canvas id="barChart"></canvas></div>
             </div>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden mb-12">
-            <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h2 class="text-xl font-black text-slate-800 italic uppercase tracking-tighter flex items-center gap-3"><i class="fas fa-chart-bar text-blue-600"></i> Resumen de Desempeño Consolidado</h2>
+        <!-- Resumen de Desempeño Consolidado -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden mb-6 sm:mb-10">
+            <div class="px-4 sm:px-8 py-3.5 sm:py-6 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                <h2 class="text-sm sm:text-base font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-blue-600"></i> Resumen de Desempeño Consolidado
+                </h2>
+                <div class="flex items-center gap-3">
+                    <div class="relative w-full sm:w-64">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><i class="fas fa-search text-xs"></i></span>
+                        <input type="text" id="auditSearchInput" placeholder="Buscar juez..." 
+                               class="w-full pl-9 pr-3.5 py-1.5 sm:py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 outline-none focus:border-blue-500"
+                               onkeyup="filterAuditJueces()">
+                    </div>
+                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-widest tabular-nums shrink-0"><?php echo count($stats_jueces); ?> jueces</span>
+                </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+
+            <!-- Vista Móvil: Cards Fluidas (md:hidden) -->
+            <div class="md:hidden divide-y divide-slate-100" id="auditMobileContainer">
+                <?php if (empty($stats_jueces)): ?>
+                    <div class="p-8 text-center text-slate-400 text-xs font-bold uppercase tracking-widest">No hay jueces en este evento</div>
+                <?php else: ?>
+                    <?php foreach($stats_jueces as $s): 
+                        $bg_prec = ($s['precision'] >= 70) ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : (($s['precision'] >= 50) ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-red-50 text-red-600 border-red-100');
+                        $bg_desv = (abs($s['desviacion']) >= 0.3) ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100';
+                    ?>
+                    <div class="audit-mobile-card p-3.5 sm:p-4 hover:bg-slate-50/60 transition-colors"
+                         data-search="<?php echo htmlspecialchars(strtolower($s['nombre'])); ?>">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                <div class="w-8 h-8 rounded-full <?php echo $s['is_orphan'] ? 'bg-red-50 text-red-400' : 'bg-slate-100 text-slate-500'; ?> flex items-center justify-center font-bold text-xs shrink-0 border border-slate-200">
+                                    <?php echo strtoupper(substr($s['nombre'], 0, 1)); ?>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-xs sm:text-sm font-black text-slate-800 uppercase truncate"><?php echo $s['nombre']; ?></h3>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider tabular-nums"><?php echo count($s['pjs']); ?> paneles asignados</span>
+                                </div>
+                            </div>
+                            <a href="analisis_juez_detalle.php?pjs=<?php echo implode(',', $s['pjs']); ?>&comp_id=<?php echo $competicion_id; ?>" class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 bg-slate-100 hover:bg-blue-600 hover:text-white active:scale-[0.98] transition-all shrink-0">
+                                <i class="fas fa-eye text-xs"></i>
+                            </a>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2 pt-1 text-[10px]">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase border <?php echo $bg_prec; ?> tabular-nums">
+                                Prec: <?php echo $s['precision']; ?>%
+                            </span>
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black border <?php echo $bg_desv; ?> tabular-nums">
+                                Bias: ±<?php echo number_format($s['desviacion'], 3); ?>
+                            </span>
+                            <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[9px] font-bold tabular-nums">
+                                <?php echo $s['total']; ?> notas
+                            </span>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Vista Escritorio: Tabla (hidden md:block) -->
+            <div class="hidden md:block overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse" id="auditTable">
                     <thead>
-                        <tr class="bg-slate-50">
-                            <th class="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest">Juez</th>
-                            <th class="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest text-center">Total Notas</th>
-                            <th class="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest text-center">Precisión AQUA</th>
-                            <th class="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest text-center">Bias Score</th>
-                            <th class="px-8 py-5 text-[11px] font-black uppercase text-slate-400 tracking-widest text-right">Detalle</th>
+                        <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                            <th class="px-6 py-4">Juez</th>
+                            <th class="px-6 py-4 text-center">Total Notas</th>
+                            <th class="px-6 py-4 text-center">Precisión AQUA</th>
+                            <th class="px-6 py-4 text-center">Bias Score</th>
+                            <th class="px-6 py-4 text-center w-24">Detalle</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <?php foreach($stats_jueces as $s): 
-                            $bg_prec = ($s['precision'] >= 70) ? 'bg-emerald-50 text-emerald-600' : (($s['precision'] >= 50) ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600');
-                            $bg_desv = (abs($s['desviacion']) >= 0.3) ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600';
+                            $bg_prec = ($s['precision'] >= 70) ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : (($s['precision'] >= 50) ? 'bg-amber-50 text-amber-600 border-amber-100' : 'bg-red-50 text-red-600 border-red-100');
+                            $bg_desv = (abs($s['desviacion']) >= 0.3) ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100';
                         ?>
                         <tr class="hover:bg-slate-50/50 transition-colors group">
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-full <?php echo $s['is_orphan'] ? 'bg-red-50 text-red-400' : 'bg-slate-100 text-slate-400'; ?> flex items-center justify-center font-bold group-hover:bg-blue-100 group-hover:text-blue-600 transition-all shadow-sm border border-white"><?php echo strtoupper(substr($s['nombre'], 0, 1)); ?></div>
-                                    <div><span class="font-bold text-slate-700 uppercase text-xs tracking-tight block"><?php echo $s['nombre']; ?></span><span class="text-[9px] font-bold text-slate-400 uppercase italic"><?php echo count($s['pjs']); ?> paneles asignados</span></div>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-9 h-9 rounded-full <?php echo $s['is_orphan'] ? 'bg-red-50 text-red-400' : 'bg-slate-100 text-slate-500'; ?> flex items-center justify-center font-bold text-xs border border-slate-200">
+                                        <?php echo strtoupper(substr($s['nombre'], 0, 1)); ?>
+                                    </div>
+                                    <div>
+                                        <span class="font-bold text-slate-800 uppercase text-xs tracking-tight block"><?php echo $s['nombre']; ?></span>
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest tabular-nums"><?php echo count($s['pjs']); ?> paneles asignados</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-8 py-6 text-center font-black text-slate-800"><?php echo $s['total']; ?></td>
-                            <td class="px-8 py-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase italic <?php echo $bg_prec; ?>"><?php echo $s['precision']; ?>%</span></td>
-                            <td class="px-8 py-6 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-black italic <?php echo $bg_desv; ?>">±<?php echo number_format($s['desviacion'], 3); ?></span></td>
-                            <td class="px-8 py-6 text-right"><a href="analisis_juez_detalle.php?pjs=<?php echo implode(',', $s['pjs']); ?>&comp_id=<?php echo $competicion_id; ?>" class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-slate-900 text-white hover:bg-blue-600 transition-all shadow-md"><i class="fas fa-eye text-xs"></i></a></td>
+                            <td class="px-6 py-4 text-center font-black text-slate-800 tabular-nums"><?php echo $s['total']; ?></td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="px-3 py-1 rounded-xl text-xs font-black uppercase border <?php echo $bg_prec; ?> tabular-nums"><?php echo $s['precision']; ?>%</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="px-3 py-1 rounded-xl text-xs font-black border <?php echo $bg_desv; ?> tabular-nums">±<?php echo number_format($s['desviacion'], 3); ?></span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <a href="analisis_juez_detalle.php?pjs=<?php echo implode(',', $s['pjs']); ?>&comp_id=<?php echo $competicion_id; ?>" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm">
+                                    <i class="fas fa-eye text-xs"></i>
+                                </a>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
+                        <?php if(count($stats_jueces) == 0): ?>
+                            <tr><td colspan="5" class="p-12 text-center text-slate-400 font-bold italic">No se encontraron puntuaciones para esta competición.</td></tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
+
     </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function filterAuditJueces() {
+    const input = document.getElementById('auditSearchInput');
+    const filter = input.value.toLowerCase().trim();
+    
+    // Filtrar tabla escritorio
+    const table = document.getElementById('auditTable');
+    if (table) {
+        const tr = table.getElementsByTagName('tr');
+        for (let i = 1; i < tr.length; i++) {
+            let textContent = tr[i].textContent.toLowerCase();
+            tr[i].style.display = textContent.indexOf(filter) > -1 ? "" : "none";
+        }
+    }
+    
+    // Filtrar cards móvil
+    const mobileCards = document.querySelectorAll('.audit-mobile-card');
+    mobileCards.forEach(card => {
+        const searchAttr = card.getAttribute('data-search') || card.textContent.toLowerCase();
+        card.style.display = searchAttr.indexOf(filter) > -1 ? "" : "none";
+    });
+}
+
 function saveAudit() {
     Swal.fire({
         title: 'Procesando Auditoría',
@@ -233,8 +371,46 @@ document.addEventListener("DOMContentLoaded", function() {
     const altas = <?php echo json_encode($chart_altas); ?>;
     const validas = <?php echo json_encode($chart_validas); ?>;
 
-    new Chart(document.getElementById('scatterChart'), { type: 'scatter', data: { datasets: [{ label: 'Jueces', data: labels.map((label, index) => ({ x: Math.abs(desv[index]), y: pct[index], label: label })), backgroundColor: '#3b82f6' }] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Bias Score (Absoluto)' } }, y: { title: { display: true, text: '% Notas Eliminadas' }, max: 100 } } } });
-    new Chart(document.getElementById('barChart'), { type: 'bar', data: { labels: labels, datasets: [{ label: 'Bajas', data: bajas, backgroundColor: '#ef4444' }, { label: 'Válidas', data: validas, backgroundColor: '#cbd5e1' }, { label: 'Altas', data: altas, backgroundColor: '#10b981' }] }, options: { responsive: true, maintainAspectRatio: false, indexAxis: 'y', scales: { x: { stacked: true, max: 100 }, y: { stacked: true } } } });
+    new Chart(document.getElementById('scatterChart'), { 
+        type: 'scatter', 
+        data: { 
+            datasets: [{ 
+                label: 'Jueces', 
+                data: labels.map((label, index) => ({ x: Math.abs(desv[index]), y: pct[index], label: label })), 
+                backgroundColor: '#3b82f6' 
+            }] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            scales: { 
+                x: { title: { display: true, text: 'Bias Score (Absoluto)' } }, 
+                y: { title: { display: true, text: '% Notas Eliminadas' }, max: 100 } 
+            } 
+        } 
+    });
+
+    new Chart(document.getElementById('barChart'), { 
+        type: 'bar', 
+        data: { 
+            labels: labels, 
+            datasets: [
+                { label: 'Bajas', data: bajas, backgroundColor: '#ef4444' }, 
+                { label: 'Válidas', data: validas, backgroundColor: '#cbd5e1' }, 
+                { label: 'Altas', data: altas, backgroundColor: '#10b981' }
+            ] 
+        }, 
+        options: { 
+            responsive: true, 
+            maintainAspectRatio: false, 
+            indexAxis: 'y', 
+            scales: { 
+                x: { stacked: true, max: 100 }, 
+                y: { stacked: true } 
+            } 
+        } 
+    });
 });
 </script>
+
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>

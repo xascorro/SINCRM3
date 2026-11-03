@@ -135,84 +135,97 @@ $chart_labels = array_reverse(array_column($history, 'comp_nombre'));
 $chart_positions = array_reverse(array_column($history, 'posicion_evento'));
 
 $severity_label = "Equilibrado";
-$severity_class = "text-slate-500 bg-slate-100";
-if ($macro['bias_medio'] <= -0.3) { $severity_label = "Severo"; $severity_class = "text-red-600 bg-red-100"; }
-elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_class = "text-emerald-600 bg-emerald-100"; }
+$severity_class = "text-slate-600 bg-slate-100 border-slate-200";
+if ($macro['bias_medio'] <= -0.3) { $severity_label = "Severo"; $severity_class = "text-red-600 bg-red-50 border-red-100"; }
+elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_class = "text-emerald-600 bg-emerald-50 border-emerald-100"; }
 ?>
 
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
-        <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <!-- Header de Sección -->
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
             <div>
-                <a href="ranking_jueces.php" class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-2 hover:gap-3 transition-all no-underline"><i class="fas fa-arrow-left"></i> Volver al Ranking</a>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 italic uppercase"><?php echo $macro['nombre']; ?></h1>
-                <div class="flex items-center gap-3">
-                    <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase italic <?php echo $severity_class; ?>">Juez <?php echo $severity_label; ?></span>
-                    <span class="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[10px] font-black rounded-full uppercase italic">Temporada Actual</span>
+                <a href="ranking_jueces.php" class="text-blue-600 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-1.5 hover:gap-2 transition-all no-underline">
+                    <i class="fas fa-arrow-left text-[10px]"></i> Volver al Ranking
+                </a>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-primary shadow-sm border border-slate-200">
+                        <i class="fas fa-id-card text-base sm:text-lg"></i>
+                    </span>
+                    <?php echo htmlspecialchars($macro['nombre']); ?>
+                </h1>
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md text-[9px] font-black uppercase border <?php echo $severity_class; ?>">
+                        Juez <?php echo $severity_label; ?>
+                    </span>
+                    <span class="px-2.5 py-0.5 bg-white border border-slate-200 text-slate-500 text-[9px] font-black rounded-md uppercase">
+                        Temporada Actual
+                    </span>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 mb-8 sm:mb-12">
             
             <!-- CARTA DE ROL (Izquierda) -->
             <div class="lg:col-span-4 relative perspective-1000 group">
-                <div class="w-full h-full bg-white rounded-[2.5rem] p-2 shadow-xl border border-slate-200 relative overflow-hidden transition-transform duration-500 hover:scale-[1.01] hover:-translate-y-1">
+                <div class="w-full h-full bg-white rounded-2xl sm:rounded-3xl p-2 shadow-xl border border-slate-200 relative overflow-hidden transition-all duration-300 hover:shadow-2xl">
                     <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-white/60 via-transparent to-transparent pointer-events-none z-20"></div>
                     <div class="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/5 rounded-full blur-3xl pointer-events-none"></div>
                     <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
                     
-                    <div class="bg-white rounded-[2rem] p-6 relative z-10 border border-slate-100 flex flex-col items-center text-center h-full shadow-inner">
+                    <div class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 relative z-10 border border-slate-100 flex flex-col items-center text-center h-full shadow-inner">
                         
-                        <div class="absolute top-6 left-6 text-blue-500">
-                            <i class="fas fa-star text-xl drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"></i>
+                        <div class="absolute top-4 left-4 text-blue-500">
+                            <i class="fas fa-star text-base sm:text-lg drop-shadow-[0_0_8px_rgba(59,130,246,0.3)]"></i>
                         </div>
-                        <div class="absolute top-6 right-6 text-slate-200 font-black text-xl italic opacity-50 uppercase">
+                        <div class="absolute top-4 right-4 text-slate-300 font-black text-lg italic uppercase">
                             <?php echo $user_data ? substr($user_data['rol_nombre'], 0, 2) : 'JZ'; ?>
                         </div>
 
-                        <div class="relative mb-6 mt-4 group/photo">
-                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-400 to-emerald-400 rounded-[2rem] rotate-3 opacity-20 transition-transform"></div>
-                            <div class="relative w-36 h-36 rounded-[2rem] bg-slate-50 border-4 border-white overflow-hidden shadow-lg flex items-center justify-center">
+                        <div class="relative mb-4 mt-2">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-blue-400 to-emerald-400 rounded-2xl sm:rounded-3xl rotate-3 opacity-20"></div>
+                            <div class="relative w-28 h-28 sm:w-32 sm:h-32 rounded-2xl sm:rounded-3xl bg-slate-50 border-4 border-white overflow-hidden shadow-md flex items-center justify-center">
                                 <?php if (!empty($user_data['foto']) && file_exists($user_data['foto'])): ?>
                                     <img src="<?php echo $user_data['foto']; ?>" class="w-full h-full object-cover">
                                 <?php else: ?>
-                                    <div class="w-full h-full bg-slate-50 flex items-center justify-center text-5xl text-slate-200 font-black">
+                                    <div class="w-full h-full bg-slate-50 flex items-center justify-center text-4xl text-slate-300 font-black">
                                         <?php echo strtoupper(substr($macro['nombre'], 0, 1)); ?>
                                     </div>
                                 <?php endif; ?>
                             </div>
                         </div>
 
-                        <h2 class="text-xl font-black text-slate-800 uppercase tracking-tighter leading-none mb-1">
+                        <h2 class="text-base sm:text-lg font-black text-slate-800 uppercase tracking-tight leading-tight mb-1">
                             <?php echo htmlspecialchars($macro['nombre']); ?>
                         </h2>
-                        <p class="text-[9px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 uppercase tracking-[0.2em] mb-6 inline-block">
+                        <p class="text-[9px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 uppercase tracking-wider mb-4 inline-block">
                             <?php 
                             if ($juez_data && !empty($juez_data['licencia'])) {
                                 echo "Lic: " . $juez_data['licencia'];
                             } elseif ($user_data) {
                                 echo $user_data['rol_nombre'];
                             } else {
-                                echo "JUEZ OFICIAL";
+                                echo "Juez Oficial";
                             }
                             ?>
                         </p>
 
-                        <div class="w-full h-44 bg-slate-50/50 rounded-3xl p-2 mb-4 border border-slate-100 shadow-inner">
+                        <div class="w-full h-40 sm:h-44 bg-slate-50/50 rounded-2xl p-2 mb-4 border border-slate-100 shadow-inner">
                             <canvas id="radarChart"></canvas>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3 w-full mt-auto">
-                            <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm text-left">
-                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Nivel Técnico</p>
-                                <p class="text-lg font-black text-slate-700"><?php echo number_format($macro['precision_media'], 1); ?>%</p>
+                        <div class="grid grid-cols-2 gap-2.5 w-full mt-auto">
+                            <div class="bg-white rounded-xl p-3 border border-slate-100 shadow-sm text-left">
+                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-0.5">Nivel Técnico</p>
+                                <p class="text-base sm:text-lg font-black text-slate-700 tabular-nums"><?php echo number_format($macro['precision_media'], 1); ?>%</p>
                             </div>
-                            <div class="bg-white rounded-2xl p-3 border border-slate-100 shadow-sm text-left">
-                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-1">Estabilidad</p>
-                                <p class="text-lg font-black text-slate-700">
+                            <div class="bg-white rounded-xl p-3 border border-slate-100 shadow-sm text-left">
+                                <p class="text-[8px] font-black uppercase text-slate-400 tracking-widest mb-0.5">Estabilidad</p>
+                                <p class="text-base sm:text-lg font-black text-slate-700 tabular-nums">
                                     <?php 
                                     $inconsistencias = $macro['total_bajas'] + $macro['total_altas'];
                                     $estabilidad = max(0, 100 - (($inconsistencias / max(1, $macro['total_notas'])) * 100));
@@ -226,51 +239,51 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
             </div>
 
             <!-- PARTICIPACIONES Y MACRO STATS (Derecha) -->
-            <div class="lg:col-span-8 flex flex-col gap-6">
+            <div class="lg:col-span-8 flex flex-col gap-4 sm:gap-6">
                 <!-- Macro Stats Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-200">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Precisión Media</p>
-                        <h3 class="text-2xl font-black text-emerald-500"><?php echo number_format($macro['precision_media'], 1); ?>%</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">Precisión Media</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-emerald-600 tabular-nums"><?php echo number_format($macro['precision_media'], 1); ?>%</h3>
                     </div>
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-200">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Bias Score</p>
-                        <h3 class="text-2xl font-black <?php echo (abs($macro['bias_medio']) < 0.3) ? 'text-blue-500' : 'text-red-500'; ?>">±<?php echo number_format($macro['bias_medio'], 3); ?></h3>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">Bias Score</p>
+                        <h3 class="text-xl sm:text-2xl font-black <?php echo (abs($macro['bias_medio']) < 0.3) ? 'text-blue-600' : 'text-red-500'; ?> tabular-nums">±<?php echo number_format($macro['bias_medio'], 3); ?></h3>
                     </div>
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-200">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Eventos</p>
-                        <h3 class="text-2xl font-black text-slate-800"><?php echo $macro['total_eventos']; ?></h3>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">Eventos</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-slate-800 tabular-nums"><?php echo $macro['total_eventos']; ?></h3>
                     </div>
-                    <div class="bg-white p-5 rounded-[2rem] shadow-sm border border-slate-200">
-                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Inconsistencias</p>
-                        <h3 class="text-2xl font-black text-red-400"><?php echo $macro['total_bajas'] + $macro['total_altas']; ?></h3>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1 truncate">Inconsistencias</p>
+                        <h3 class="text-xl sm:text-2xl font-black text-red-500 tabular-nums"><?php echo $macro['total_bajas'] + $macro['total_altas']; ?></h3>
                     </div>
                 </div>
 
                 <!-- Historial de Participaciones (Paneles) -->
-                <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200 flex-1">
+                <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200 flex-1">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest italic flex items-center gap-2">
+                        <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                             <i class="fas fa-clipboard-list text-blue-600"></i> Participación Técnica
                         </h3>
-                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full"><?php echo $total_paneles; ?> Paneles</span>
+                        <span class="px-2.5 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black rounded-md tabular-nums"><?php echo $total_paneles; ?> Paneles</span>
                     </div>
                     
                     <?php if(empty($puestos_stats)): ?>
-                        <div class="p-12 bg-slate-50 rounded-3xl text-center border border-dashed border-slate-200">
-                            <i class="fas fa-user-slash text-slate-300 text-3xl mb-4"></i>
+                        <div class="p-8 bg-slate-50 rounded-2xl text-center border border-dashed border-slate-200">
+                            <i class="fas fa-user-slash text-slate-300 text-2xl mb-2"></i>
                             <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">Sin registros de participación detallada</p>
                         </div>
                     <?php else: ?>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
                             <?php foreach($puestos_stats as $ps): 
                                 $pct = ($total_paneles > 0) ? round(($ps['cantidad'] / $total_paneles) * 100) : 0;
                             ?>
-                                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col justify-between group-hover:bg-white transition-all">
-                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-tight mb-2"><?php echo htmlspecialchars($ps['puesto']); ?></span>
+                                <div class="bg-slate-50 p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100 flex flex-col justify-between">
+                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-tight mb-2 truncate"><?php echo htmlspecialchars($ps['puesto']); ?></span>
                                     <div class="flex items-end justify-between mt-auto">
-                                        <span class="text-2xl font-black text-slate-800 leading-none"><?php echo $ps['cantidad']; ?></span>
-                                        <span class="text-[10px] font-bold text-slate-400"><?php echo $pct; ?>%</span>
+                                        <span class="text-xl sm:text-2xl font-black text-slate-800 leading-none tabular-nums"><?php echo $ps['cantidad']; ?></span>
+                                        <span class="text-[10px] font-bold text-slate-400 tabular-nums"><?php echo $pct; ?>%</span>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
@@ -281,55 +294,55 @@ elseif ($macro['bias_medio'] >= 0.3) { $severity_label = "Generoso"; $severity_c
 
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mb-8 sm:mb-12">
             <!-- Gráfico de Evolución de Puesto -->
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200">
-                <h3 class="text-lg font-black text-slate-800 mb-2 uppercase tracking-tighter italic flex items-center gap-3">
+            <div class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200">
+                <h3 class="text-sm sm:text-base font-black text-slate-800 mb-1 uppercase tracking-tight flex items-center gap-2">
                     <i class="fas fa-chart-line text-blue-600"></i> Trayectoria en el Ranking
                 </h3>
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">Evolución de la posición técnica por evento (Menor es mejor)</p>
+                <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Evolución de la posición técnica por evento (Menor es mejor)</p>
                 <div class="relative h-64">
                     <canvas id="rankChart"></canvas>
                 </div>
             </div>
 
             <!-- Tabla de Historial -->
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-50 bg-slate-50/50">
-                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest italic flex items-center gap-2">
+            <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50">
+                    <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                         <i class="fas fa-history text-blue-600"></i> Historial de Auditorías
                     </h3>
                 </div>
-                <div class="overflow-x-auto max-h-[350px] overflow-y-auto no-scrollbar">
+                <div class="overflow-x-auto max-h-[300px] overflow-y-auto no-scrollbar flex-1">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-slate-50 sticky top-0 z-10 shadow-sm">
-                                <th class="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Competición</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Precisión</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">Puesto</th>
-                                <th class="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-widest text-right">Acción</th>
+                            <tr class="bg-slate-50 sticky top-0 z-10 shadow-sm text-slate-400 text-[9px] font-black uppercase tracking-wider">
+                                <th class="px-5 py-3">Competición</th>
+                                <th class="px-4 py-3 text-center">Precisión</th>
+                                <th class="px-4 py-3 text-center">Puesto</th>
+                                <th class="px-5 py-3 text-right">Acción</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50">
+                        <tbody class="divide-y divide-slate-100">
                             <?php if(empty($history)): ?>
                                 <tr>
-                                    <td colspan="4" class="px-6 py-12 text-center text-slate-400 italic text-xs">No hay datos de auditoría de puntuación registrados.</td>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic text-xs">No hay datos de auditoría de puntuación registrados.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach($history as $h): 
-                                    $bg_h = ($h['precision_aqua'] >= 70) ? 'text-emerald-500' : ($h['precision_aqua'] >= 50 ? 'text-amber-500' : 'text-red-500');
+                                    $bg_h = ($h['precision_aqua'] >= 70) ? 'text-emerald-600' : ($h['precision_aqua'] >= 50 ? 'text-amber-600' : 'text-red-500');
                                 ?>
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-6 py-4 font-bold text-slate-700 text-xs">
+                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                    <td class="px-5 py-3 font-bold text-slate-700 text-xs">
                                         <?php echo $h['comp_nombre']; ?>
-                                        <p class="text-[8px] text-slate-400 uppercase"><?php echo dateAFecha($h['fecha']); ?></p>
+                                        <p class="text-[8px] text-slate-400 uppercase tabular-nums"><?php echo dateAFecha($h['fecha']); ?></p>
                                     </td>
-                                    <td class="px-6 py-4 text-center font-black <?php echo $bg_h; ?> text-xs"><?php echo number_format($h['precision_aqua'], 1); ?>%</td>
-                                    <td class="px-6 py-4 text-center">
-                                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-black">#<?php echo $h['posicion_evento']; ?></span>
+                                    <td class="px-4 py-3 text-center font-black <?php echo $bg_h; ?> text-xs tabular-nums"><?php echo number_format($h['precision_aqua'], 1); ?>%</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[10px] font-black tabular-nums">#<?php echo $h['posicion_evento']; ?></span>
                                     </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <a href="analisis_juez_detalle.php?pjs=<?php echo $h['pjs_asociados']; ?>&comp_id=<?php echo $h['id_competicion']; ?>" class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center hover:bg-blue-600 transition-all shadow-sm mx-auto ml-auto">
+                                    <td class="px-5 py-3 text-right">
+                                        <a href="analisis_juez_detalle.php?pjs=<?php echo $h['pjs_asociados']; ?>&comp_id=<?php echo $h['id_competicion']; ?>" class="w-7 h-7 rounded-lg bg-slate-900 text-white inline-flex items-center justify-center hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm">
                                             <i class="fas fa-eye text-[10px]"></i>
                                         </a>
                                     </td>
@@ -406,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     pointBackgroundColor: '#fff',
                     pointBorderColor: '#3b82f6',
                     pointBorderWidth: 2,
-                    pointRadius: 6,
+                    pointRadius: 5,
                     fill: true,
                     backgroundColor: 'rgba(59, 130, 246, 0.05)',
                     tension: 0.3
@@ -429,7 +442,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     } else {
-        // Mostrar mensaje si no hay datos para el gráfico
         const ctx = document.getElementById('rankChart').getContext('2d');
         ctx.font = "12px Lexend";
         ctx.fillStyle = "#94a3b8";
