@@ -20,12 +20,47 @@ include('./lib/my_functions.php');
 //session_start();
 //Añadir rutina
 if(isset($_POST['save_btn'])){
-	$id_fase = $_POST['id_fase'];
-	$id_club = $_POST['club'];
+	$id_fase = (int)$_POST['id_fase'];
+	$id_club = (int)$_POST['club'];
 	if(isset($_POST['id_competicion']))
-		  $id_competicion = $_POST['id_competicion'];
+		  $id_competicion = (int)$_POST['id_competicion'];
 	else
-		  $id_competicion = $_SESSION['id_competicion_activa'];
+		  $id_competicion = (int)$_SESSION['id_competicion_activa'];
+
+    // Control de Cupos Federativos FNRM / AQUA
+    $q_fase_info = "SELECT f.id_modalidad, f.id_competicion, m.nombre as mod_nom, c.figuras as comp_tipo 
+                    FROM fases f 
+                    JOIN modalidades m ON f.id_modalidad = m.id 
+                    JOIN competiciones c ON f.id_competicion = c.id 
+                    WHERE f.id = '$id_fase'";
+    $fase_info = mysqli_fetch_assoc(mysqli_query($connection, $q_fase_info));
+
+    if ($fase_info) {
+        $q_club_routines = "SELECT r.id FROM rutinas r WHERE r.id_fase = '$id_fase' AND r.id_club = '$id_club'";
+        $res_cr = mysqli_query($connection, $q_club_routines);
+        $num_club_routines = mysqli_num_rows($res_cr);
+        
+        // Comprobación de cupo de 2 rutinas por club y modalidad técnica
+        if ($num_club_routines >= 2) {
+            $_SESSION['estado'] = "Cupo completo: Cada club solo puede inscribir un máximo de 2 rutinas en esta modalidad (" . htmlspecialchars($fase_info['mod_nom']) . ").";
+            header('Location: rutinas.php');
+            exit();
+        }
+        
+        // En Equipos: si se inscribe el 2º equipo, verificar que el 1er equipo tenga sus atletas
+        if ($num_club_routines == 1 && stripos($fase_info['mod_nom'], 'Equipo') !== false) {
+            $first_routine = mysqli_fetch_assoc($res_cr);
+            $first_id = (int)$first_routine['id'];
+            $q_parts = "SELECT COUNT(*) as tot FROM rutinas_participantes WHERE id_rutina = '$first_id' AND reserva = 'no'";
+            $tot_parts = mysqli_fetch_assoc(mysqli_query($connection, $q_parts))['tot'] ?? 0;
+            if ($tot_parts < 4) {
+                $_SESSION['estado'] = "Para inscribir un segundo Equipo Técnico, el primer equipo debe estar completado previamente con sus nadadoras.";
+                header('Location: rutinas.php');
+                exit();
+            }
+        }
+    }
+
 	$query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fase."','".$id_club."','".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){

@@ -32,9 +32,11 @@ if(isset($_POST['update_btn'])){
 	
 	$no_federado = isset($_POST['edit_no_federado']) ? 'si' : 'no';	
 	
-    // Lógica Excluyente: Figuras vs Rutinas
+    // Lógica de Modalidad de Competición (Figuras / Rutinas / Mixta)
     $figuras = 'no'; // Por defecto Rutinas
-    if (isset($_POST['edit_figuras'])) {
+    if (isset($_POST['tipo_competicion']) && in_array($_POST['tipo_competicion'], ['si', 'no', 'mixta'])) {
+        $figuras = $_POST['tipo_competicion'];
+    } elseif (isset($_POST['edit_figuras'])) {
         $figuras = 'si';
     } elseif (isset($_POST['edit_rutinas'])) {
         $figuras = 'no';

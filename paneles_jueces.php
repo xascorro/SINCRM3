@@ -13,11 +13,13 @@ $id_competicion = $_SESSION['id_competicion_activa'];
 
 // Obtener todas las fases de esta competición para el modal de clonar
 $todas_las_fases = [];
-if($_SESSION['figuras'] == 'si'){
-    $q_fases_all = "SELECT fs.id, c.nombre as cat, f.nombre as fig, f.numero FROM fases fs, categorias c, figuras f WHERE fs.id_categoria = c.id and fs.id_figura = f.id and fs.id_competicion = $id_competicion ORDER BY fs.orden";
-} else {
-    $q_fases_all = "SELECT fs.id, c.nombre as cat, m.nombre as modali FROM fases fs, categorias c, modalidades m WHERE fs.id_categoria = c.id and fs.id_modalidad = m.id and fs.id_competicion = $id_competicion ORDER BY fs.orden";
-}
+$q_fases_all = "SELECT fs.id, fs.id_figura, c.nombre as cat, f.nombre as fig, f.numero, m.nombre as modali 
+                FROM fases fs 
+                JOIN categorias c ON fs.id_categoria = c.id 
+                LEFT JOIN figuras f ON fs.id_figura = f.id 
+                LEFT JOIN modalidades m ON fs.id_modalidad = m.id 
+                WHERE fs.id_competicion = $id_competicion 
+                ORDER BY fs.orden";
 $res_fases_all = mysqli_query($connection, $q_fases_all);
 while($f = mysqli_fetch_assoc($res_fases_all)) {
     $todas_las_fases[] = $f;
@@ -356,25 +358,24 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
             </div>
 
             <?php
-            if($_SESSION['figuras'] == 'si'){
-                $query = "SELECT fases.id as id, id_categoria, categorias.nombre as nombre_categoria, edad_minima, edad_maxima, id_figura, figuras.nombre as nombre_figura, numero, fases.orden, fases.obsoleto 
-                          FROM fases, categorias, figuras 
-                          WHERE fases.id_categoria = categorias.id and fases.id_figura = figuras.id and fases.id_competicion = ".$id_competicion." 
-                          ORDER BY fases.orden, fases.id";
-            } else {
-                $query = "SELECT fases.id as id, fases.elementos_coach_card, id_categoria, categorias.nombre as nombre_categoria, id_modalidad, modalidades.nombre as nombre, fases.orden, fases.obsoleto 
-                          FROM fases, categorias, modalidades 
-                          WHERE fases.id_categoria = categorias.id and fases.id_modalidad = modalidades.id and fases.id_competicion = ".$id_competicion." 
-                          ORDER BY orden, fases.id";
-            }
+            $query = "SELECT fases.id as id, fases.elementos_coach_card, fases.id_categoria, categorias.nombre as nombre_categoria, 
+                             fases.id_figura, figuras.nombre as nombre_figura, figuras.numero, 
+                             fases.id_modalidad, modalidades.nombre as nombre, fases.orden, fases.obsoleto 
+                      FROM fases 
+                      JOIN categorias ON fases.id_categoria = categorias.id 
+                      LEFT JOIN figuras ON fases.id_figura = figuras.id 
+                      LEFT JOIN modalidades ON fases.id_modalidad = modalidades.id 
+                      WHERE fases.id_competicion = ".$id_competicion." 
+                      ORDER BY fases.orden, fases.id";
             $query_run = mysqli_query($connection,$query);
 
             if(mysqli_num_rows($query_run) > 0):
                 while ($row = mysqli_fetch_assoc($query_run)):
-                    $nombre_fase = ($_SESSION['figuras'] == 'si') ? $row['nombre_figura'] : $row['nombre'];
+                    $is_phase_fig = (!empty($row['id_figura']) && $row['id_figura'] > 0);
+                    $nombre_fase = $is_phase_fig ? $row['nombre_figura'] : $row['nombre'];
                     $categoria_fase = $row['nombre_categoria'];
                     $id_fase = $row['id'];
-                    $fase_label_origin = $categoria_fase . " - " . (($_SESSION['figuras'] == 'si') ? "#".$row['numero']." " : "") . $nombre_fase;
+                    $fase_label_origin = $categoria_fase . " - " . ($is_phase_fig ? "#".$row['numero']." " : "") . $nombre_fase;
             ?>
             <div class="animate-fade-in group">
                 <!-- Header de Fase Minimalista -->
@@ -558,7 +559,8 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
                 
                 <div class="max-h-60 overflow-y-auto pr-2 space-y-2 mb-8 custom-scrollbar">
                     <?php foreach($todas_las_fases as $fase_dest): 
-                        $fase_label = ($_SESSION['figuras'] == 'si') ? "#".$fase_dest['numero']." ".$fase_dest['fig'] : $fase_dest['modali'];
+                        $is_dest_fig = (!empty($fase_dest['id_figura']) && $fase_dest['id_figura'] > 0);
+                        $fase_label = $is_dest_fig ? "#".$fase_dest['numero']." ".$fase_dest['fig'] : $fase_dest['modali'];
                     ?>
                         <label class="flex items-center gap-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-100 hover:border-blue-400 hover:bg-white transition-all cursor-pointer group phase-checkbox-item shadow-sm" data-id="<?php echo $fase_dest['id']; ?>">
                             <input type="checkbox" name="target_fases[]" value="<?php echo $fase_dest['id']; ?>" class="target-fase-cb w-5 h-5 rounded-lg border-slate-300 text-blue-600 focus:ring-blue-500 transition-all cursor-pointer" onchange="checkSelectAllStatus()">

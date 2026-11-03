@@ -99,20 +99,32 @@ function get_gallery_images($prefix) {
                                 </div>
                             </div>
                             
-                            <!-- Selectores Excluyentes: Figuras vs Rutinas -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span class="text-sm font-bold text-slate-700 italic">Competición de Figuras / Niveles</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="check_figuras" name="edit_figuras" value="si" <?php echo ($row['figuras'] == 'si') ? 'checked' : ''; ?> onchange="toggleExcluyente('figuras')" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
-                                </label>
-                            </div>
-                            <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                                <span class="text-sm font-bold text-slate-700 italic">Competición de Rutinas</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="check_rutinas" name="edit_rutinas" value="si" <?php echo ($row['figuras'] == 'no') ? 'checked' : ''; ?> onchange="toggleExcluyente('rutinas')" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-500"></div>
-                                </label>
+                            <!-- Selector de Tipo de Competición: Figuras vs Rutinas vs Mixta -->
+                            <div class="space-y-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Modalidad de Competición</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    <label class="cursor-pointer border p-3.5 rounded-xl flex items-center gap-3 bg-white transition-all hover:border-blue-300 has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50/50 has-[:checked]:ring-2 has-[:checked]:ring-blue-100 shadow-sm">
+                                        <input type="radio" name="tipo_competicion" value="si" <?php echo ($row['figuras'] == 'si') ? 'checked' : ''; ?> class="w-4 h-4 text-blue-600 focus:ring-blue-500">
+                                        <div>
+                                            <span class="block text-xs font-black text-slate-800">Solo Figuras</span>
+                                            <span class="block text-[9px] font-semibold text-slate-400">Figuras individuales</span>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer border p-3.5 rounded-xl flex items-center gap-3 bg-white transition-all hover:border-purple-300 has-[:checked]:border-purple-500 has-[:checked]:bg-purple-50/50 has-[:checked]:ring-2 has-[:checked]:ring-purple-100 shadow-sm">
+                                        <input type="radio" name="tipo_competicion" value="no" <?php echo ($row['figuras'] == 'no' || empty($row['figuras'])) ? 'checked' : ''; ?> class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                                        <div>
+                                            <span class="block text-xs font-black text-slate-800">Solo Rutinas</span>
+                                            <span class="block text-[9px] font-semibold text-slate-400">Rutinas completas</span>
+                                        </div>
+                                    </label>
+                                    <label class="cursor-pointer border p-3.5 rounded-xl flex items-center gap-3 bg-white transition-all hover:border-emerald-300 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50 has-[:checked]:ring-2 has-[:checked]:ring-emerald-100 shadow-sm">
+                                        <input type="radio" name="tipo_competicion" value="mixta" <?php echo ($row['figuras'] == 'mixta') ? 'checked' : ''; ?> class="w-4 h-4 text-emerald-600 focus:ring-emerald-500">
+                                        <div>
+                                            <span class="block text-xs font-black text-slate-800">Mixta / Combinada</span>
+                                            <span class="block text-[9px] font-semibold text-slate-400">Figuras + Rutinas Téc.</span>
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                             <!-- Selector Independiente: Escolar -->
                             <div class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">

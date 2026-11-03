@@ -10,7 +10,7 @@ $fase = mysqli_fetch_assoc(mysqli_query($connection, $query));
 $id_fase = $fase['id'];
 $isOldSystem = ($fase['obsoleto'] == 'si');
 
-$q_rutina = "SELECT r.id, r.orden, r.nombre as nombre_rutina, r.id_club, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card, m.id as id_modalidad, r.dd_total, r.nota_final 
+$q_rutina = "SELECT r.id, r.orden, r.nombre as nombre_rutina, r.id_club, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, m.numero_participantes, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card, m.id as id_modalidad, r.dd_total, r.nota_final 
              FROM rutinas r 
              JOIN fases f ON r.id_fase = f.id 
              JOIN modalidades m ON f.id_modalidad = m.id 
@@ -207,7 +207,7 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                 </div>
 
                 <!-- ERRORES DE SINCRONIZACIÓN -->
-                <?php if ($rutina['id_modalidad'] != 1 && $rutina['id_modalidad'] != 5): ?>
+                <?php if ((isset($rutina['numero_participantes']) && $rutina['numero_participantes'] > 1) || (!isset($rutina['numero_participantes']) && !in_array($rutina['id_modalidad'], [1, 5, 12, 13]))): ?>
                 <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 mb-8 overflow-hidden">
                     <div class="px-8 py-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
                         <h2 class="text-lg font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">

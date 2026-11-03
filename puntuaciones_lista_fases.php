@@ -4,7 +4,9 @@ include('includes/header.php');
 include('includes/navbar.php');
 
 $id_comp = $_SESSION['id_competicion_usuario'];
-$is_figuras = ($_SESSION['competicion_figuras_usuario'] == 'si');
+$comp_figuras = $_SESSION['competicion_figuras_usuario'] ?? 'no';
+$is_mixta = ($comp_figuras == 'mixta');
+$is_figuras = ($comp_figuras == 'si');
 
 // Preferencia de vista (Cookie)
 $vista_actual = $_COOKIE['pref_vista_fases'] ?? 'cards';
@@ -21,7 +23,12 @@ $puntuadas = $f_stats['puntuadas'] ?: 0;
 $pct_progreso = ($total_fases > 0) ? round(($puntuadas / $total_fases) * 100) : 0;
 
 // 1.2 Carga de Trabajo
-if($is_figuras) {
+if($is_mixta) {
+    $q_ins = "SELECT (
+                (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_comp')) + 
+                (SELECT COUNT(*) FROM rutinas WHERE id_competicion = '$id_comp')
+              ) as total";
+} elseif($is_figuras) {
     $q_ins = "SELECT COUNT(*) as total FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_comp')";
 } else {
     $q_ins = "SELECT COUNT(*) as total FROM rutinas WHERE id_competicion = '$id_comp'";
@@ -115,7 +122,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
         <!-- LISTADO DE FASES (EL GUION) -->
         <div id="view-container-cards" class="<?php echo $vista_actual == 'cards' ? '' : 'hidden'; ?>">
         <?php
-        if($is_figuras) {
+        if($is_figuras || $is_mixta) {
             // 1. Obtener las categorías únicas presentes en las fases de esta competición
             $q_cats = "SELECT DISTINCT c.id, c.nombre FROM fases f JOIN categorias c ON f.id_categoria = c.id WHERE f.id_competicion = '$id_comp' ORDER BY c.orden, c.id";
             $res_cats = mysqli_query($connection, $q_cats);
@@ -136,20 +143,35 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <?php
-                        $query = "SELECT f.*, c.nombre as cat_nom, fig.nombre as fig_nom, fig.numero as fig_num, fig.grado_dificultad as fig_gd 
+                        $query = "SELECT f.*, c.nombre as cat_nom, 
+                                  fig.nombre as fig_nom, fig.numero as fig_num, fig.grado_dificultad as fig_gd,
+                                  m.nombre as mod_nom 
                                   FROM fases f 
                                   JOIN categorias c ON f.id_categoria = c.id 
-                                  JOIN figuras fig ON f.id_figura = fig.id 
+                                  LEFT JOIN figuras fig ON f.id_figura = fig.id 
+                                  LEFT JOIN modalidades m ON f.id_modalidad = m.id 
                                   WHERE f.id_competicion = '$id_comp' AND f.id_categoria = '$id_cat'
                                   ORDER BY f.orden, f.id";
                         $res = mysqli_query($connection, $query);
                         while ($row = mysqli_fetch_assoc($res)):
                             $is_puntuada = ($row['puntuada'] == 'si');
+                            $is_phase_fig = (!empty($row['id_figura']) && $row['id_figura'] > 0);
                             $has_cc = ($row['elementos_coach_card'] > 0);
                             $isOldSystem = ($row['obsoleto'] == 'si');
-                            $color_status = $is_puntuada ? 'emerald' : 'blue';
-                            $target_page = $has_cc ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
+                            $color_status = $is_puntuada ? 'emerald' : ($is_phase_fig ? 'blue' : 'purple');
                             $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
+
+                            if ($is_phase_fig) {
+                                $target_page = $has_cc ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
+                                $item_title = $row['fig_nom'];
+                                $item_sub = "Fig. " . $row['fig_num'] . " · GD " . $row['fig_gd'];
+                                $badge_sub = '<span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black rounded uppercase">Figura</span>';
+                            } else {
+                                $target_page = "puntuaciones_lista_rutinas.php";
+                                $item_title = $row['mod_nom'];
+                                $item_sub = "Rutina Técnica";
+                                $badge_sub = '<span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-[8px] font-black rounded uppercase">Rutina</span>';
+                            }
                         ?>
                         <div class="bg-white rounded-[2rem] p-7 shadow-sm border border-slate-200 border-t-[6px] border-t-<?php echo $color_status; ?>-500 relative flex flex-col group hover:shadow-xl transition-all">
                             <!-- Badge Superior -->
@@ -158,18 +180,21 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                     <span class="text-[9px] font-black text-slate-300 uppercase leading-none mb-1">Orden</span>
                                     <span class="text-lg font-black text-slate-700 leading-none"><?php echo $row['orden']; ?></span>
                                 </div>
-                                <?php if($is_puntuada): ?>
-                                    <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-md border border-emerald-100 uppercase tracking-widest shadow-sm">Cerrada</span>
-                                <?php else: ?>
-                                    <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-md border border-blue-100 uppercase tracking-widest shadow-sm animate-pulse">Abierta</span>
-                                <?php endif; ?>
+                                <div class="flex items-center gap-1.5">
+                                    <?php echo $badge_sub; ?>
+                                    <?php if($is_puntuada): ?>
+                                        <span class="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-md border border-emerald-100 uppercase tracking-widest shadow-sm">Cerrada</span>
+                                    <?php else: ?>
+                                        <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-md border border-blue-100 uppercase tracking-widest shadow-sm animate-pulse">Abierta</span>
+                                    <?php endif; ?>
+                                </div>
                             </div>
 
-                            <h2 class="text-lg font-black text-slate-800 tracking-tight leading-tight mb-2 truncate" title="<?php echo $row['fig_nom']; ?>">
-                                <?php echo $row['fig_nom']; ?>
+                            <h2 class="text-lg font-black text-slate-800 tracking-tight leading-tight mb-2 truncate" title="<?php echo $item_title; ?>">
+                                <?php echo $item_title; ?>
                             </h2>
                             <div class="flex items-center gap-2 mb-8">
-                                <span class="text-xs font-black text-blue-600 uppercase">Fig. <?php echo $row['fig_num']; ?> · GD <?php echo $row['fig_gd']; ?></span>
+                                <span class="text-xs font-black text-<?php echo $is_phase_fig ? 'blue' : 'purple'; ?>-600 uppercase"><?php echo $item_sub; ?></span>
                             </div>
 
                             <!-- Botones de Acción -->
@@ -286,8 +311,8 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                         <tbody class="divide-y divide-slate-50">
                             <?php
                             $query = "SELECT f.*, c.nombre as cat_nom, 
-                                      (CASE WHEN '$is_figuras' = 'si' THEN (SELECT nombre FROM figuras WHERE id = f.id_figura) ELSE (SELECT nombre FROM modalidades WHERE id = f.id_modalidad) END) as item_nom,
-                                      (CASE WHEN '$is_figuras' = 'si' THEN (SELECT numero FROM figuras WHERE id = f.id_figura) ELSE NULL END) as item_num
+                                      (CASE WHEN f.id_figura > 0 THEN (SELECT nombre FROM figuras WHERE id = f.id_figura) ELSE (SELECT nombre FROM modalidades WHERE id = f.id_modalidad) END) as item_nom,
+                                      (CASE WHEN f.id_figura > 0 THEN (SELECT numero FROM figuras WHERE id = f.id_figura) ELSE NULL END) as item_num
                                       FROM fases f 
                                       JOIN categorias c ON f.id_categoria = c.id 
                                       WHERE f.id_competicion = '$id_comp' 
@@ -295,11 +320,12 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                             $res = mysqli_query($connection, $query);
                             while ($row = mysqli_fetch_assoc($res)):
                                 $is_puntuada = ($row['puntuada'] == 'si');
+                                $is_phase_fig = (!empty($row['id_figura']) && $row['id_figura'] > 0);
                                 $isOldSystem = ($row['obsoleto'] == 'si');
-                                $color_status = $is_puntuada ? 'emerald' : 'blue';
+                                $color_status = $is_puntuada ? 'emerald' : ($is_phase_fig ? 'blue' : 'purple');
                                 $icon_puntuar = $isOldSystem ? 'fa-calculator' : 'fa-square-root-variable';
                                 
-                                if($is_figuras) {
+                                if($is_phase_fig) {
                                     $target_page = ($row['elementos_coach_card'] > 0) ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
                                     $label = "Figura " . $row['item_num'] . " - " . $row['item_nom'];
                                 } else {

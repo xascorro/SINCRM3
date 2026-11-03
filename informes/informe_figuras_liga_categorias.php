@@ -190,52 +190,45 @@ $pdf->SetFont('helvetica', 'B', 14);
     $id_jornada_liga = $jornada_liga['id'];
     
     // Consultamos si existe el registro para esta nadadora y jornada
-    $query_puntos = "select puntos from resultados_figuras_categorias where id_nadadora = '".$nadadora['id_nadadora']."' and id_competicion = '".$id_jornada_liga."'";
+    $query_puntos = "select coalesce(nota_final_calculada, puntos, 0) as nota_real from resultados_figuras_categorias where id_nadadora = '".$nadadora['id_nadadora']."' and id_competicion = '".$id_jornada_liga."'";
     $res_puntos = mysqli_query($connection, $query_puntos);
     
     if(mysqli_num_rows($res_puntos) > 0) {
-        // Existe el registro: sacamos los puntos reales (pueden ser 0)
-        $puntos_num = mysqli_result($res_puntos, 0);
-        $puntos_display = $puntos_num;
+        $puntos_num = (float)mysqli_result($res_puntos, 0);
+        $puntos_display = ($puntos_num > 0) ? number_format($puntos_num, 4) : '0.0000';
     } else {
-        // No existe el registro: no asistió
-        $puntos_num = 0;
+        $puntos_num = 0.0000;
         $puntos_display = "NP";
     }
 
     // Si la jornada es futura, forzamos a 0 o guion para no confundir
     if($id_jornada_liga > $GLOBALS['id_competicion_activa']) {
-        $puntos_num = 0;
-        $puntos_display = "0"; 
+        $puntos_num = 0.0000;
+        $puntos_display = "-"; 
     }
 
-    // Guardamos el color y el valor visual (NP o número)
+    // Guardamos el color y el valor visual (NP o número formateado)
     $clasificacion_nadadoras[$i]['c'.$id_jornada_liga] = $jornada_liga['color'];
     $clasificacion_nadadoras[$i][$id_jornada_liga] = $puntos_display;
     
     // Para las cuentas usamos siempre el valor numérico
-    $puntos_totales = $puntos_totales + $puntos_num;
+    $puntos_totales = (float)$puntos_totales + (float)$puntos_num;
 }
       if(isset($_GET['resta_peor_puntuacion'])){
-        $query = "select coalesce(min(puntos),0) from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
-  			$puntos_minimos = @mysqli_result(mysqli_query($connection,$query),0);
+        $query = "select coalesce(min(nota_final_calculada), min(puntos), 0) from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
+  			$puntos_minimos = (float)@mysqli_result(mysqli_query($connection,$query),0);
       }else{
-        $puntos_minimos = 0;
+        $puntos_minimos = 0.0000;
       }
       $query = "select count(puntos) from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '$clave_liga') and id_nadadora = '".$nadadora['id_nadadora']."'";
 			$participacion_nadadora = @mysqli_result(mysqli_query($connection,$query),0);
-			//echo 'puntos-minimos'.$puntos_minimos.'participacion'.$participacion_nadadora.'jornadas'.$numero_jornadas_liga.'<br>';
 			if($participacion_nadadora < $numero_jornadas_liga )
-				$puntos_minimos = 0;
-			//$query = "select coalesce(sum(nota_final_calculada),0) - coalesce(min(nota_final_calculada),0) from resultados_figuras_categorias where id_competicion in (select id from competiciones where clave_liga like '%$clave_liga%') and id_nadadora = '".$nadadora['id_nadadora']."'";
-			//$nota_totalisima = mysqli_result(mysqli_query($connection,$query),0);
-			//$clasificacion_nadadoras[$i]['notas_totales'] = $nota_totalisima;
+				$puntos_minimos = 0.0000;
 			$clasificacion_nadadoras[$i]['c_puntos_totales'] = $total_color ;
-			$clasificacion_nadadoras[$i]['puntos_totales'] = $puntos_totales;
-			$clasificacion_nadadoras[$i]['puntos_clasificacion'] = $puntos_totales-$puntos_minimos;
-			// if($clasificacion_nadadoras[$i]['puntos_totales'] == 0)
-			// 	unset($clasificacion_nadadoras[$i]);
-			//$html .= "<td>$puntos_totales</td></tr>";
+			$clasificacion_nadadoras[$i]['puntos_totales'] = (float)$puntos_totales;
+			$puntos_final_calc = (float)$puntos_totales - (float)$puntos_minimos;
+			$clasificacion_nadadoras[$i]['puntos_clasificacion'] = $puntos_final_calc;
+			$clasificacion_nadadoras[$i]['total_format'] = number_format($puntos_final_calc, 4);
 		  $i++;
 		  }
 		  @usort($clasificacion_nadadoras,"cmpPuntosDesc");
@@ -284,7 +277,7 @@ foreach($clasificacion_nadadoras as $clasificacion_nadadora){
 
             unset($clasificacion_nadadora["puntos_totales"]);
             
-            if($puntos_liga_final != $puntos_anterior){
+            if(abs((float)$puntos_liga_final - (float)$puntos_anterior) > 0.0001){
                 $posicion++;
                 $bgcolor = $bgcolor1;
                 $bgcolor1 = $bgcolor2;
@@ -303,7 +296,7 @@ foreach($clasificacion_nadadoras as $clasificacion_nadadora){
                     $estilo_descarte = '';
                     // Si el valor coincide con la nota restada, le ponemos un estilo visual
                     // Comprobamos que la clave sea numérica (una jornada ID)
-                    if(is_numeric($clave) && $valor == $nota_a_descartar && !$ya_descartado && $nota_a_descartar >= 0){
+                    if(is_numeric($clave) && is_numeric($valor) && is_numeric($nota_a_descartar) && abs((float)$valor - (float)$nota_a_descartar) < 0.0001 && !$ya_descartado && $nota_a_descartar > 0){
                         $estilo_descarte = 'color:#999; text-decoration:line-through; font-weight:bold;';
                         $ya_descartado = true; // Solo tachamos la primera que coincida
                     }
@@ -319,10 +312,11 @@ foreach($clasificacion_nadadoras as $clasificacion_nadadora){
 		   unset($clasificacion_nadadoras);
 		   	$html .= '</table>';
 	$pdf->writeHTML($html, true, false, false, false, '');
-    /*	explicar metodo puntuacion, 4 jornadas con desempate */
-	$html = '<p style="font-size:10px;">En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (1ª 19 puntos, 2ª 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada y restando los puntos de la jornada con peor puntuación. En caso de empate la posición la decidirá la jornada eliminada con peor puntuación. Si ocurriera un empate en la puntuación final se sumaran las notas finales calculadas dadas por los jueces en cada jornada de liga exceptuando la peor nota final calculada.</p>';
-    /* explicar método de puntuación, 3 jornadas, sin restar notas ni desempate */
-	//$html = "En cada jornada de liga se repartirán 19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 y 0 puntos en función de la clasificación de dicha jornada (Primer puesto 19 puntos, segundo puesto 16 puntos y así sucesivamente).<br>La puntuación final de cada nadadora en la liga se obtendrá sumando los puntos obtenidos en cada jornada. No se contempla el desempate.";
+    /* Explicación normativa FNRM Punto 9 */
+	$html = '<p style="font-size:9px; line-height:1.4;"><strong>Normativa de Clasificación (FNRM - Punto 9):</strong><br>
+9.1 El resultado se obtiene del 100% de la puntuación oficial de las figuras y rutinas técnicas en cada jornada.<br>
+9.2 Los resultados de cada nadadora se obtienen de la suma de las figuras y rutinas de las 3 mejores jornadas de las 4 disputadas (descartando la peor jornada, marcada con tachado).<br>
+9.4 No se contempla el desempate en caso de puntuaciones idénticas (posiciones compartidas <em>ex aequo</em>).</p>';
 	$pdf->SetFont('helvetica', 10);
     $pdf->writeHTML($html, true, false, false, false, '');
 
@@ -335,18 +329,12 @@ foreach($clasificacion_nadadoras as $clasificacion_nadadora){
 //Función para ordenar clasificacion descendentemente
 function cmpPuntosDesc($jugador1, $jugador2)
 {
-     //Si son iguales se devuelve 0
-     if($jugador1["puntos_clasificacion"]==$jugador2["puntos_clasificacion"]){
-   	    if($jugador1["puntos_totales"]==$jugador2["puntos_totales"])
-	         return 0;
-   	     if($jugador1["puntos_totales"]<$jugador2["puntos_totales"])
-	         return 1;
-	     return -1;
+     $diff = (float)$jugador2["puntos_clasificacion"] - (float)$jugador1["puntos_clasificacion"];
+     if(abs($diff) < 0.0001){
+         // 9.4 No se contempla el desempate (ex aequo)
+         return 0;
      }
-     //Si jugador1 > 2 se devuelve 1 y por lo contrario -1
-     if($jugador1["puntos_clasificacion"]<$jugador2["puntos_clasificacion"])
-          return 1;
-     return -1;
+     return ($diff > 0) ? 1 : -1;
 }
 // -----------------------------------------------------------------------------
 

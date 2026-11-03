@@ -101,15 +101,15 @@ $v3_colors = [
             <?php
             $q_cat = "SELECT DISTINCT f.id_categoria, c.nombre 
                       FROM fases f, categorias c 
-                      WHERE f.id_categoria = c.id AND f.id_competicion = '$id_comp'
+                      WHERE f.id_categoria = c.id AND f.id_competicion = '$id_comp' AND f.id_figura > 0
                       ORDER BY c.edad_minima ASC";
             $res_cats = mysqli_query($connection, $q_cat);
             
             while ($row_cat = mysqli_fetch_assoc($res_cats)):
                 $id_cat = $row_cat['id_categoria'];
                 
-                // Mapeo Dinámico de Fases
-                $q_map = "SELECT id FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp' ORDER BY orden ASC";
+                // Mapeo Dinámico de Fases de Figuras
+                $q_map = "SELECT id FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp' AND id_figura > 0 ORDER BY orden ASC";
                 $res_map = mysqli_query($connection, $q_map);
                 $map_fases = [];
                 $pos = 1;

@@ -50,47 +50,61 @@ while($fase_figuras = mysqli_fetch_array($fases)){
 	}
 }
 
-//ordeno y reparto puntos
+// Inserción de resultados para fases de rutinas técnicas (Junior / Absoluta) en competiciones mixtas
+$q_fases_rut = "SELECT f.id, f.id_categoria FROM fases f WHERE f.id_competicion = '$id_competicion' AND (f.id_figura IS NULL OR f.id_figura = 0) AND f.id_modalidad > 0 AND f.id_modalidad != 8";
+$res_fases_rut = mysqli_query($connection, $q_fases_rut);
+if($res_fases_rut && mysqli_num_rows($res_fases_rut) > 0) {
+    while($fr = mysqli_fetch_assoc($res_fases_rut)) {
+        $id_fase_rut = $fr['id'];
+        $id_cat_rut = $fr['id_categoria'];
+        
+        $q_insert_rut_results = "INSERT INTO resultados_figuras_categorias (id_nadadora, id_categoria, año, gd_acumulado, puntos_penalizacion, nota_final, nota_final_calculada, baja, preswimmer, id_competicion)
+            SELECT rp.id_nadadora, '$id_cat_rut', n.año_nacimiento, r.dd_total, 0, r.nota_final, r.nota_final, r.baja, r.preswimmer, '$id_competicion'
+            FROM rutinas r
+            JOIN rutinas_participantes rp ON rp.id_rutina = r.id AND rp.reserva = 'no'
+            JOIN nadadoras n ON rp.id_nadadora = n.id
+            WHERE r.id_fase = '$id_fase_rut' AND r.id_competicion = '$id_competicion'";
+        mysqli_query($connection, $q_insert_rut_results);
+    }
+}
 
-$puntos = array("0", "19", "16", "14", "13","12", "11", "10", "9", "8","7", "6", "5", "4", "3","2", "1", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0",);
-
+// Ordenación y asignación de notas oficiales (Regla 9 FNRM: 100% nota real)
 $query = "select id_categoria from resultados_figuras_categorias where id_competicion='$id_competicion' group by id_categoria order by id_categoria";
 $categorias = mysqli_query($connection,$query);
 while($categoria = mysqli_fetch_array($categorias)){
-$posicion = 1;
-$empatados = 0;
-$empate = false;
-$nota_ganador;
-	$query = "select * from resultados_figuras_categorias where id_categoria='".$categoria['id_categoria']."' and id_competicion='$id_competicion' order by nota_final_calculada desc";
-	$resultados_nadadoras = mysqli_query($connection,$query);
-	while($resultado_nadadora = mysqli_fetch_array($resultados_nadadoras)){
-		if($posicion == 1)
-			$nota_ganador = $resultado_nadadora['nota_final_calculada'];
-	$result = mysqli_query($connection,"select nota_final_calculada from resultados_figuras_categorias where id_categoria='".$categoria['id_categoria']."' and id_competicion='$id_competicion' and nota_final_calculada = ".$resultado_nadadora['nota_final_calculada']."");
-	if(mysqli_num_rows($result) == '1'){
-		echo "<br>Posicion $posicion -> ".$resultado_nadadora['id_nadadora'];
-		$empate = false;
-	}else{
-		if($empate)
-			$posicion--;
-		$empate=true;
-		echo "<br><b>Empate posicion $posicion -> ".$resultado_nadadora['id_nadadora']." - empatados - ".$empatados."</b>";
-	}
-   	if($resultado_nadadora['baja'] != 'no' and $resultado_nadadora['preswimmer'] != 'no' and $posicion <= '16'){
-    	$puntos_nadadora = $puntos[$posicion];
-	}else{
-		$puntos_nadadora = "0";
-	}
-            	$puntos_nadadora = $puntos[$posicion];
+    $posicion = 1;
+    $empate = false;
+    $nota_ganador = 0;
+    $nota_anterior = -1;
+    
+    $query = "select * from resultados_figuras_categorias where id_categoria='".$categoria['id_categoria']."' and id_competicion='$id_competicion' order by nota_final_calculada desc";
+    $resultados_nadadoras = mysqli_query($connection,$query);
+    $idx = 0;
+    
+    while($resultado_nadadora = mysqli_fetch_array($resultados_nadadoras)){
+        if($idx == 0){
+            $nota_ganador = (float)$resultado_nadadora['nota_final_calculada'];
+        }
+        
+        $nota_actual = (float)$resultado_nadadora['nota_final_calculada'];
+        if($idx > 0 && abs($nota_actual - $nota_anterior) < 0.0001){
+            // Empate exacto: mantiene posición (ex aequo)
+        } else {
+            $posicion = $idx + 1;
+        }
+        $nota_anterior = $nota_actual;
+        
+        // Puntos al 100% de la nota real directa
+        $puntos_nadadora = ($resultado_nadadora['baja'] == 'si' || $resultado_nadadora['preswimmer'] == 'si') ? 0.0000 : $nota_actual;
+        $diferencia = max(0, $nota_ganador - $nota_actual);
 
-	$query = "update resultados_figuras_categorias set posicion='".($posicion-$empatados)."', diferencia='".($nota_ganador - $resultado_nadadora['nota_final_calculada'])."', puntos='$puntos_nadadora' where id = ".$resultado_nadadora['id'];
-	echo "<br>".$query;
-	$posicion++;
-	mysqli_query($connection,$query);
-	}
+        $query_up = "UPDATE resultados_figuras_categorias SET posicion='$posicion', diferencia='$diferencia', puntos='$puntos_nadadora' WHERE id = ".$resultado_nadadora['id'];
+        mysqli_query($connection, $query_up);
+        $idx++;
+    }
 }
+
 $query = "update resultados_figuras_categorias set puntos='0' where (baja='si' or preswimmer='si') and id_competicion='$id_competicion'";
-echo "<br>".$query;
 mysqli_query($connection,$query);
 
 

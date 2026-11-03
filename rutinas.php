@@ -423,7 +423,8 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                     <p id="playerRoutine" class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1"></p>
                     <h4 id="playerClub" class="text-lg font-black text-slate-800 mb-4"></h4>
                     <audio id="audioElement" controls class="w-full h-12"></audio>
-                    <p id="fileName" class="text-[10px] font-bold text-indigo-400 mt-4 italic break-all"></p>
+                    <div id="musicDurationNotice" class="hidden mt-3 text-left"></div>
+                    <p id="fileName" class="text-[10px] font-bold text-indigo-400 mt-3 italic break-all"></p>
                 </div>
             </div>
 
@@ -507,11 +508,46 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         const noMusic = document.getElementById('noMusicAlert');
         const fileName = document.getElementById('fileName');
 
+        const warnBox = document.getElementById('musicDurationNotice');
+        if(warnBox) {
+            warnBox.classList.add('hidden');
+            warnBox.innerHTML = '';
+        }
+
         if(fileUrl && fileUrl !== '') {
             audio.src = fileUrl + '?v=' + new Date().getTime();
             playerSec.classList.remove('hidden');
             noMusic.classList.add('hidden');
             fileName.textContent = 'Archivo: ' + (originalName || 'sin nombre');
+
+            audio.onloadedmetadata = function() {
+                const durSec = Math.round(audio.duration);
+                const m = Math.floor(durSec / 60);
+                const s = durSec % 60;
+                const durStr = m + ':' + (s < 10 ? '0' : '') + s;
+                
+                let targetStr = '';
+                let targetSec = 0;
+                const rLower = routine.toLowerCase();
+                if (rLower.includes('solo')) {
+                    targetStr = '2:00 min';
+                    targetSec = 120;
+                } else if (rLower.includes('dúo') || rLower.includes('duo')) {
+                    targetStr = '2:20 min';
+                    targetSec = 140;
+                }
+
+                if (warnBox && targetSec > 0) {
+                    const diff = Math.abs(durSec - targetSec);
+                    if (diff > 5) {
+                        warnBox.innerHTML = '<div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-800 text-[10px] font-bold flex items-center gap-2"><i class="fas fa-triangle-exclamation text-amber-500"></i> Duración audio: ' + durStr + ' (Oficial FNRM: ' + targetStr + ' &plusmn;5s) - Advertencia no bloqueante</div>';
+                        warnBox.classList.remove('hidden');
+                    } else {
+                        warnBox.innerHTML = '<div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-800 text-[10px] font-bold flex items-center gap-2"><i class="fas fa-check-circle text-emerald-500"></i> Duración audio: ' + durStr + ' (Cumple tiempo reglamentario: ' + targetStr + ')</div>';
+                        warnBox.classList.remove('hidden');
+                    }
+                }
+            };
         } else {
             audio.src = '';
             playerSec.classList.add('hidden');

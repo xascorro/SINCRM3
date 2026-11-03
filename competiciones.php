@@ -170,10 +170,11 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                     <?php if($es_pase_nivel): ?>
                         <span class="px-4 py-1.5 bg-amber-500 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-amber-500/20 italic">Pase de Nivel</span> 
                     <?php else: ?>
-                        <?php if($row['figuras'] == 'si'): ?> 
+                        <?php if($row['figuras'] == 'mixta'): ?>
+                            <span class="px-4 py-1.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-purple-500/20 italic">Mixta (Figuras + Rutinas)</span>
+                        <?php elseif($row['figuras'] == 'si'): ?> 
                             <span class="px-4 py-1.5 bg-blue-500 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-blue-500/20 italic">Figuras</span> 
-                        <?php endif; ?>
-                        <?php if($row['niveles'] == 'si'): ?> 
+                        <?php elseif($row['figuras'] == 'no' || $row['niveles'] == 'si'): ?> 
                             <span class="px-4 py-1.5 bg-purple-500 text-white text-[9px] font-black rounded-xl uppercase tracking-widest shadow-lg shadow-purple-500/20 italic">Rutinas</span> 
                         <?php endif; ?>
                     <?php endif; ?>

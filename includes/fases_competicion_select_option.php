@@ -1,5 +1,12 @@
 <?php
-$query_fase_comp = "SELECT fases.id as id, modalidades.nombre as modalidad, categorias.nombre as categoria FROM fases, categorias, modalidades WHERE fases.id_modalidad = modalidades.id and fases.id_categoria = categorias.id and fases.id IN (SELECT id FROM fases WHERE id_competicion = ".$_SESSION['id_competicion_activa'].")";
+$query_fase_comp = "SELECT fases.id as id, modalidades.nombre as modalidad, categorias.nombre as categoria 
+                     FROM fases, categorias, modalidades 
+                     WHERE fases.id_modalidad = modalidades.id 
+                       AND fases.id_categoria = categorias.id 
+                       AND fases.id_modalidad != 8 
+                       AND (fases.id_figura IS NULL OR fases.id_figura = 0)
+                       AND fases.id_competicion = ".$_SESSION['id_competicion_activa']."
+                     ORDER BY fases.orden ASC";
 $query_run_fase_comp = mysqli_query($connection, $query_fase_comp);
 $select = "<label for='fases'>Fases</label>";
 $select .= "<select name='fase' id='fase' class='form-control'>";

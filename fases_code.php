@@ -8,8 +8,17 @@ if(isset($_POST['save_btn'])){
     $orden = mysqli_real_escape_string($connection, $_POST['orden']);
     
     // Detectar si es figura o modalidad
-    $id_figura = isset($_POST['id_figura']) ? mysqli_real_escape_string($connection, $_POST['id_figura']) : 'NULL';
-    $id_modalidad = isset($_POST['id_modalidad']) ? mysqli_real_escape_string($connection, $_POST['id_modalidad']) : 'NULL';
+    $tipo_fase = $_POST['tipo_fase'] ?? '';
+    if ($tipo_fase === 'figura') {
+        $id_figura = !empty($_POST['id_figura']) ? "'".mysqli_real_escape_string($connection, $_POST['id_figura'])."'" : "NULL";
+        $id_modalidad = "'8'"; // ID 8 corresponde a Figuras en la tabla modalidades
+    } elseif ($tipo_fase === 'rutina') {
+        $id_figura = "NULL";
+        $id_modalidad = !empty($_POST['id_modalidad']) ? "'".mysqli_real_escape_string($connection, $_POST['id_modalidad'])."'" : "NULL";
+    } else {
+        $id_figura = !empty($_POST['id_figura']) ? "'".mysqli_real_escape_string($connection, $_POST['id_figura'])."'" : "NULL";
+        $id_modalidad = !empty($_POST['id_modalidad']) ? "'".mysqli_real_escape_string($connection, $_POST['id_modalidad'])."'" : "NULL";
+    }
 
     $query = "INSERT INTO fases (id_competicion, id_categoria, id_figura, id_modalidad, orden) 
               VALUES ('$id_competicion', '$id_categoria', $id_figura, $id_modalidad, '$orden')";

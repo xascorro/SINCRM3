@@ -9,12 +9,15 @@ if($figuras == 'si'){
               WHERE fs.id_competicion = $id_competicion 
               GROUP BY fs.id_categoria 
               ORDER BY c.orden ASC";
-}else{
+} else {
 	$query_fase = "SELECT fs.id, fs.id_categoria, m.nombre as nombre_modalidad, c.nombre as nombre_categoria 
               FROM fases fs 
               JOIN modalidades m ON fs.id_modalidad = m.id 
               JOIN categorias c ON fs.id_categoria = c.id 
-              WHERE fs.id_competicion = $id_competicion";
+              WHERE fs.id_competicion = $id_competicion 
+                AND fs.id_modalidad != 8 
+                AND (fs.id_figura IS NULL OR fs.id_figura = 0)
+              ORDER BY fs.orden ASC, c.orden ASC";
 }
 $query_run_fase = mysqli_query($connection, $query_fase);
 $select = "<label for='id_fase'>Fase</label>";

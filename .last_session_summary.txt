@@ -1,11 +1,26 @@
-# Resumen de Sesión - Corrección Selector de Figura en Fases
+# Resumen de Sesión - SINCRM v4
+Fecha: 2026-11-03
 
-- **Problema**: El desplegable de figuras se abría hacia arriba debido a falta de espacio vertical inferior en la vista inicial sin scroll. Al abrirse hacia arriba con 91 opciones, la lista chocaba con la cabecera fija/sticky superior (`topbar` con `z-40` y fondo blanco) y con el borde superior de la ventana, tapando las opciones superiores.
-- **Solución Implementada**:
-  - `fases.php`:
-    - Añadido scroll suave automático al pulsar "Añadir Fase" (`block: 'start'` con `scroll-mt-28`), posicionando el panel inmediatamente debajo del topbar y garantizando el 100% de espacio hacia abajo para que el `<select>` se abra **siempre hacia abajo**.
-    - Evento `focus` en el select para auto-centrar si el usuario interactúa estando muy pegado al fondo.
-    - Buscador / filtro dinámico en tiempo real (`#figuraFilter`): permite buscar por número o nombre (ej: "301", "barracuda"), reduciendo las 91 opciones a 1 o 2 instantáneamente.
-  - `fases_edit.php`: Mismo filtro rápido y comportamiento de foco suave.
-  - `includes/header.php`: Estilos forzados para los `<option>` en selectores v3.
-  - Sincronizado en producción (`sincrm.pedrodiaz.eu`) y en el entorno beta (`beta.pedrodiaz.eu`).
+## 1. Implementación de Competiciones Mixtas y Rutinas Técnicas Junior/Absoluta (Normativa FNRM / AQUA)
+- **Base de Datos**:
+  - Ampliada columna `competiciones.figuras` a `VARCHAR(10)` para admitir 'mixta'.
+  - Modificada columna `resultados_figuras_categorias.puntos` a `DECIMAL(10,4)` para notas reales exactas.
+  - Creadas modalidades oficiales: `Solo Técnico Fem` (12), `Solo Técnico Masc` (13), `Dúo Mixto Técnico` (14), y activado `coach_card = 'si'` para rutinas técnicas.
+- **Configuración de Competiciones (`competiciones_edit.php`, `competiciones_code.php`, `competiciones.php`)**:
+  - Selector segmentado con 3 opciones: 'Solo Figuras', 'Solo Rutinas' y 'Mixta / Combinada'.
+  - Badge visual dinámico para competiciones mixtas.
+- **Navegación (`includes/navbar.php` y `navbar.php`)**:
+  - En competiciones mixtas, administradores y clubes disponen de accesos directos independientes a 'Inscripciones Figuras' y 'Rutinas Técnicas'.
+- **Gestión de Fases (`fases.php`, `fases_code.php`, `fases_edit.php`, `includes/fases_select_option.php`)**:
+  - Selector inteligente en el alta de fases: conmuta automáticamente entre Figuras (Alevín/Infantil) y Rutinas Técnicas (Junior/Absoluta).
+  - Listado en tarjetas y vista verificación adaptadas para renderizar figuras y rutinas con sus respectivos badges y contadores.
+- **Inscripciones y Cupos Federativos (`rutinas_code.php`, `rutinas.php`)**:
+  - Validación de cupo federativo: máximo 2 rutinas por club y modalidad técnica.
+  - Validación para 2º equipo técnico (requiere que el 1er equipo esté completado).
+  - Aviso no bloqueante de duración oficial de audio (Solo: 2:00 min, Dúo: 2:20 min).
+- **Puntuaciones y Clasificación de Liga (`puntuaciones_lista_fases.php`, `puntuaciones_rutina.php`, `puntuaciones_fases_figuras_puntuar_categorias.php`, `informes/informe_figuras_liga.php`, `informe_figuras_liga_categorias.php`)**:
+  - Enrutamiento por fase a evaluación de figuras o motor oficial AQUA completo (Elementos, TC con Base Marks, Sincronización, AI y penalizaciones).
+  - Regla 9 FNRM: clasificación al 100% de la nota real directa (eliminado baremo antiguo 19, 16, 15...).
+  - Acumulado de las 3 mejores jornadas sobre 4 con descarte automático de la peor nota.
+  - Empates mantenidos ex aequo sin desempates forzados.
+- Sincronizados todos los archivos con `/var/www/html/beta`.

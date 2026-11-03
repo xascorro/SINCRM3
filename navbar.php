@@ -74,7 +74,20 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '1'){
                     <i class="fas fa-scale-balanced w-4 text-center"></i> Paneles
                 </a>
                 
-                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'no'): ?>
+                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
+                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
+                    </a>
+                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas Téc.
+                    </a>
+                    <a href="sorteo_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'sorteo_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteo Figuras
+                    </a>
+                    <a href="sorteo_rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'sorteo_rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-shuffle w-4 text-center"></i> Sorteo Rutinas
+                    </a>
+                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'no'): ?>
                     <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                         <i class="fas fa-users-line w-4 text-center"></i> Rutinas
                     </a>

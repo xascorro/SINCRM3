@@ -198,19 +198,19 @@ $cc_abierta = ($hoy < $f_cc || $_SESSION['id_rol'] == 1);
         <!-- LISTADOS -->
         <div class="space-y-16">
             <?php
-            $q_cat = "SELECT DISTINCT f.id_categoria, c.nombre, c.edad_minima, c.edad_maxima FROM fases f, categorias c WHERE f.id_categoria = c.id AND f.id_competicion = '$id_comp' ORDER BY c.edad_minima ASC";
+            $q_cat = "SELECT DISTINCT f.id_categoria, c.nombre, c.edad_minima, c.edad_maxima FROM fases f, categorias c WHERE f.id_categoria = c.id AND f.id_competicion = '$id_comp' AND f.id_figura > 0 ORDER BY c.edad_minima ASC";
             $res_cats = mysqli_query($connection, $q_cat);
             while ($row_cat = mysqli_fetch_assoc($res_cats)):
                 $id_cat = $row_cat['id_categoria'];
                 $color_cat = $cat_color_map[$id_cat] ?? 'slate';
-                $q_has_cc = "SELECT SUM(elementos_coach_card) as total_cc FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp'";
+                $q_has_cc = "SELECT SUM(elementos_coach_card) as total_cc FROM fases WHERE id_categoria = '$id_cat' AND id_competicion = '$id_comp' AND id_figura > 0";
                 $has_cc = (mysqli_fetch_assoc(mysqli_query($connection, $q_has_cc))['total_cc'] > 0);
 
                 // Calculamos la fase de referencia y el listado de figuras
                 $q_fases_cat = "SELECT fs.id, fs.id_figura, fig.nombre as fig_nom, fig.numero as fig_num
                                 FROM fases fs 
                                 LEFT JOIN figuras fig ON fs.id_figura = fig.id
-                                WHERE fs.id_competicion = '$id_comp' AND fs.id_categoria = '$id_cat' 
+                                WHERE fs.id_competicion = '$id_comp' AND fs.id_categoria = '$id_cat' AND fs.id_figura > 0
                                 ORDER BY fs.orden ASC";
                 $res_fases_cat = mysqli_query($connection, $q_fases_cat);
                 $nombres_figuras = [];

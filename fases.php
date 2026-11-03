@@ -3,14 +3,25 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 
-$is_figuras = ($_SESSION['competicion_figuras_usuario'] == 'si');
+$comp_figuras = $_SESSION['competicion_figuras_usuario'] ?? 'no';
+$is_mixta = ($comp_figuras == 'mixta');
+$is_figuras = ($comp_figuras == 'si');
 $id_comp = $_SESSION['id_competicion_usuario'];
 
 // 1. Cálculos de KPIs para Fases
 $q_f = "SELECT COUNT(*) as total, SUM(CASE WHEN puntuada = 'si' THEN 1 ELSE 0 END) as puntuadas FROM fases WHERE id_competicion = '$id_comp'";
 $stats_f = mysqli_fetch_assoc(mysqli_query($connection, $q_f));
 
-if($is_figuras) {
+if($is_mixta) {
+    $q_p = "SELECT 
+                (SELECT COUNT(DISTINCT id_nadadora) FROM (
+                    SELECT id_nadadora FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_comp')
+                    UNION
+                    SELECT rp.id_nadadora FROM rutinas_participantes rp JOIN rutinas r ON rp.id_rutina = r.id WHERE r.id_competicion = '$id_comp'
+                ) as u) as unicas,
+                ((SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_comp')) + 
+                 (SELECT COUNT(*) FROM rutinas WHERE id_competicion = '$id_comp')) as total_ins";
+} elseif($is_figuras) {
     $q_p = "SELECT COUNT(DISTINCT id_nadadora) as unicas, COUNT(*) as total_ins FROM inscripciones_figuras WHERE id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_comp')";
 } else {
     $q_p = "SELECT COUNT(DISTINCT rp.id_nadadora) as unicas, COUNT(*) as total_ins FROM rutinas_participantes rp JOIN rutinas r ON rp.id_rutina = r.id WHERE r.id_competicion = '$id_comp'";
@@ -67,12 +78,49 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         ob_start(); include('includes/categoria_select_option.php');
                         $cat_html = ob_get_clean();
                         $cat_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $cat_html);
-                        $cat_html = preg_replace('/<select[^>]*>/i', '<select name="id_categoria" id="categoria" class="v3-select-fix">', $cat_html);
+                        $cat_html = preg_replace('/<select[^>]*>/i', '<select name="id_categoria" id="categoria" onchange="onCategoriaChange(this)" class="v3-select-fix">', $cat_html);
                         echo $cat_html;
                         ?>
                     </div>
                     <div class="md:col-span-4 space-y-2">
-                        <?php if($is_figuras): ?>
+                        <?php if($is_mixta): ?>
+                            <!-- Selector dinámico en competición Mixta -->
+                            <div class="flex items-center justify-between px-1 mb-1">
+                                <label class="text-[10px] font-black uppercase text-slate-400">Tipo de Fase</label>
+                                <div class="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-0.5 text-[9px] font-bold">
+                                    <button type="button" id="btn_tipo_figura" onclick="setTipoFase('figura')" class="px-2.5 py-1 rounded-lg bg-blue-600 text-white shadow-sm transition-all">Figura</button>
+                                    <button type="button" id="btn_tipo_rutina" onclick="setTipoFase('rutina')" class="px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800 transition-all">Rutina Téc.</button>
+                                </div>
+                            </div>
+                            <input type="hidden" name="tipo_fase" id="tipo_fase" value="figura">
+                            
+                            <div id="wrapper_figura" class="space-y-1">
+                                <div class="flex items-center justify-between px-1">
+                                    <span class="text-[10px] font-black uppercase text-slate-400">Figura</span>
+                                    <span id="figuraCount" class="text-[9px] font-bold text-blue-500">Filtrar búsqueda</span>
+                                </div>
+                                <input type="text" id="figuraFilter" placeholder="🔍 Escribe número o nombre (ej: 301, barracuda)..." 
+                                    class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-50 border border-slate-200 text-slate-700 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all font-medium mb-1">
+                                <?php 
+                                ob_start(); include('includes/figura_select_option.php');
+                                $fig_html = ob_get_clean();
+                                $fig_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $fig_html);
+                                $fig_html = preg_replace('/<select[^>]*>/i', '<select name="id_figura" id="figura" class="v3-select-fix">', $fig_html);
+                                echo $fig_html;
+                                ?>
+                            </div>
+
+                            <div id="wrapper_rutina" class="space-y-1 hidden">
+                                <label class="text-[10px] font-black uppercase text-slate-400 px-1">Modalidad Técnica</label>
+                                <?php 
+                                ob_start(); include('includes/modalidad_select_option.php');
+                                $mod_html = ob_get_clean();
+                                $mod_html = preg_replace('/<label.*?>.*?<\/label>/i', '', $mod_html);
+                                $mod_html = preg_replace('/<select[^>]*>/i', '<select name="id_modalidad" id="modalidad" class="v3-select-fix" disabled>', $mod_html);
+                                echo $mod_html;
+                                ?>
+                            </div>
+                        <?php elseif($is_figuras): ?>
                             <div class="flex items-center justify-between px-1">
                                 <label class="text-[10px] font-black uppercase text-slate-400">Figura</label>
                                 <span id="figuraCount" class="text-[9px] font-bold text-blue-500">Filtrar búsqueda</span>
@@ -128,27 +176,24 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
         <!-- VISTA 1: TARJETAS -->
         <div id="cardsView" class="space-y-6">
             <?php
-            if($is_figuras) {
-                $query = "SELECT f.*, c.nombre as cat_nombre, fig.nombre as fig_nombre, fig.numero as fig_num, fig.grado_dificultad as fig_gd,
-                          (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase = f.id) as num_items 
-                          FROM fases f 
-                          JOIN categorias c ON f.id_categoria = c.id 
-                          JOIN figuras fig ON f.id_figura = fig.id 
-                          WHERE f.id_competicion = '$id_comp' 
-                          ORDER BY f.orden ASC";
-            } else {
-                $query = "SELECT f.*, c.nombre as cat_nombre, m.nombre as mod_nombre, 
-                          (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id) as num_items 
-                          FROM fases f 
-                          JOIN categorias c ON f.id_categoria = c.id 
-                          JOIN modalidades m ON f.id_modalidad = m.id 
-                          WHERE f.id_competicion = '$id_comp' 
-                          ORDER BY f.orden ASC";
-            }
+            $query = "SELECT f.*, c.nombre as cat_nombre, 
+                      fig.nombre as fig_nombre, fig.numero as fig_num, fig.grado_dificultad as fig_gd,
+                      m.nombre as mod_nombre,
+                      (CASE 
+                         WHEN f.id_figura > 0 THEN (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase = f.id)
+                         ELSE (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id)
+                       END) as num_items 
+                      FROM fases f 
+                      JOIN categorias c ON f.id_categoria = c.id 
+                      LEFT JOIN figuras fig ON f.id_figura = fig.id 
+                      LEFT JOIN modalidades m ON f.id_modalidad = m.id 
+                      WHERE f.id_competicion = '$id_comp' 
+                      ORDER BY f.orden ASC";
             $res = mysqli_query($connection, $query);
             while ($row = mysqli_fetch_assoc($res)):
                 $isEmpty = ($row['num_items'] == 0);
                 $isOldSystem = ($row['obsoleto'] == 'si');
+                $is_phase_figura = (!empty($row['id_figura']) && $row['id_figura'] > 0);
                 
                 // Definición de estilos dinámicos
                 if ($isEmpty) {
@@ -177,6 +222,12 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     <div class="mb-2 flex flex-wrap items-center gap-2">
                         <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200 uppercase tracking-widest"><?php echo $row['cat_nombre']; ?></span>
                         
+                        <?php if($is_phase_figura): ?>
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-widest"><i class="fas fa-person-swimming mr-1"></i> Figura</span>
+                        <?php else: ?>
+                            <span class="px-2.5 py-1 bg-purple-50 text-purple-600 text-[9px] font-black rounded-lg border border-purple-100 uppercase tracking-widest"><i class="fas fa-music mr-1"></i> Rutina Técnica</span>
+                        <?php endif; ?>
+
                         <!-- Badges de Sistema -->
                         <?php if($isOldSystem): ?>
                             <span class="px-3 py-1 bg-slate-200 text-slate-600 text-[9px] font-black rounded-lg uppercase tracking-widest flex items-center gap-1 border border-slate-300">
@@ -194,10 +245,10 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     </div>
                     <div class="flex items-center gap-3 mb-1">
                         <h3 class="text-xl font-black <?php echo $isOldSystem ? 'text-slate-500' : 'text-slate-800'; ?> tracking-tight">
-                            <?php echo $is_figuras ? "Figura ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
+                            <?php echo $is_phase_figura ? "Figura ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
                         </h3>
                     </div>
-                    <?php if($is_figuras): ?>
+                    <?php if($is_phase_figura): ?>
                         <div class="flex items-center gap-4">
                             <p class="text-xs font-medium text-slate-400 uppercase tracking-tighter italic"><i class="fas fa-chart-line text-blue-500 mr-1"></i> G.D: <span class="text-blue-600 font-black"><?php echo $row['fig_gd']; ?></span></p>
                             <p class="text-xs font-medium <?php echo $isEmpty ? 'text-amber-600' : 'text-slate-400'; ?> uppercase tracking-tighter italic"><i class="fas fa-users text-blue-400 mr-1"></i> <?php echo $row['num_items']; ?> inscritas.</p>
@@ -242,13 +293,23 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     </thead>
                     <tbody class="divide-y divide-slate-50">
                         <?php
-                        if($is_figuras) {
-                            $q_f_list = "SELECT f.*, fig.nombre as f_nom, fig.numero as f_num, fig.grado_dificultad as f_gd, (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase = f.id) as num_ins FROM fases f JOIN figuras fig ON f.id_figura = fig.id WHERE f.id_competicion = '$id_comp' AND f.id_categoria = '$id_cat_row' ORDER BY f.orden ASC";
-                        } else {
-                            $q_f_list = "SELECT f.*, m.nombre as m_nom, f.puntuada, (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id) as num_ins FROM fases f JOIN modalidades m ON f.id_modalidad = m.id WHERE f.id_competicion = '$id_comp' AND f.id_categoria = '$id_cat_row' ORDER BY f.orden ASC";
-                        }
+                        $q_f_list = "SELECT f.*, 
+                                     fig.nombre as f_nom, fig.numero as f_num, fig.grado_dificultad as f_gd, 
+                                     m.nombre as m_nom,
+                                     (CASE 
+                                        WHEN f.id_figura > 0 THEN (SELECT COUNT(*) FROM inscripciones_figuras WHERE id_fase = f.id)
+                                        ELSE (SELECT COUNT(*) FROM rutinas WHERE id_fase = f.id)
+                                      END) as num_ins
+                                     FROM fases f 
+                                     LEFT JOIN figuras fig ON f.id_figura = fig.id 
+                                     LEFT JOIN modalidades m ON f.id_modalidad = m.id 
+                                     WHERE f.id_competicion = '$id_comp' AND f.id_categoria = '$id_cat_row' 
+                                     ORDER BY f.orden ASC";
                         $res_f_list = mysqli_query($connection, $q_f_list);
                         while($fl = mysqli_fetch_assoc($res_f_list)):
+                            $is_fl_fig = (!empty($fl['id_figura']) && $fl['id_figura'] > 0);
+                            $fl_nom = $is_fl_fig ? ($fl['f_num'].' - '.$fl['f_nom']) : ($fl['m_nom'] ?? 'Rutina');
+                            $fl_gd = $is_fl_fig ? $fl['f_gd'] : '-';
                         ?>
                         <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-4 md:p-0">
                             <!-- Mobile: Línea 1 (Orden + Nombre) | Desktop: Col Orden -->
@@ -257,14 +318,14 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                                 <span class="hidden md:inline">#<?php echo $fl['orden']; ?></span>
                                 <!-- Nombre integrado en móvil -->
                                 <span class="md:hidden text-xs font-black text-slate-800 uppercase italic tracking-tighter ml-2 leading-none">
-                                    <?php echo $is_figuras ? $fl['f_num'].' - '.$fl['f_nom'] : $fl['m_nom']; ?>
+                                    <?php echo $fl_nom; ?>
                                 </span>
                             </td>
 
                             <!-- Desktop Only: Nombre -->
                             <td class="hidden md:table-cell px-4 py-2">
                                 <p class="text-xs font-black text-slate-800 italic uppercase tracking-tighter">
-                                    <?php echo $is_figuras ? $fl['f_num'].' - '.$fl['f_nom'] : $fl['m_nom']; ?>
+                                    <?php echo $fl_nom; ?>
                                 </p>
                             </td>
 
@@ -272,7 +333,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                             <td class="px-0 md:px-4 py-0 md:py-2 md:text-center">
                                 <div class="flex items-center gap-3">
                                     <span class="text-[10px] font-black text-blue-600 bg-blue-50 md:bg-transparent px-2 py-0.5 md:px-0 rounded-md border border-blue-100 md:border-0">
-                                        <span class="md:hidden opacity-50 mr-1">GD:</span><?php echo $is_figuras ? $fl['f_gd'] : '-'; ?>
+                                        <span class="md:hidden opacity-50 mr-1">GD:</span><?php echo $fl_gd; ?>
                                     </span>
                                     <span class="md:hidden w-1 h-1 rounded-full bg-slate-200"></span>
                                     <span class="md:hidden px-2 py-0.5 bg-slate-100 text-slate-700 text-[10px] font-black rounded-md border border-slate-200">
@@ -374,6 +435,53 @@ function toggleView() {
         kpi.classList.add('hidden');
         btnText.innerText = 'Vista Gestión';
         btnIcon.className = 'fas fa-grip-vertical';
+    }
+}
+
+function setTipoFase(tipo) {
+    const inputTipo = document.getElementById('tipo_fase');
+    const wrapFig = document.getElementById('wrapper_figura');
+    const wrapMod = document.getElementById('wrapper_rutina');
+    const btnFig = document.getElementById('btn_tipo_figura');
+    const btnRut = document.getElementById('btn_tipo_rutina');
+    const selFig = document.getElementById('figura');
+    const selMod = document.getElementById('modalidad');
+
+    if (!inputTipo || !wrapFig || !wrapMod) return;
+
+    inputTipo.value = tipo;
+
+    if (tipo === 'figura') {
+        wrapFig.classList.remove('hidden');
+        wrapMod.classList.add('hidden');
+        if (selFig) selFig.disabled = false;
+        if (selMod) selMod.disabled = true;
+
+        if (btnFig && btnRut) {
+            btnFig.className = 'px-2.5 py-1 rounded-lg bg-blue-600 text-white shadow-sm transition-all';
+            btnRut.className = 'px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800 transition-all';
+        }
+    } else {
+        wrapFig.classList.add('hidden');
+        wrapMod.classList.remove('hidden');
+        if (selFig) selFig.disabled = true;
+        if (selMod) selMod.disabled = false;
+
+        if (btnFig && btnRut) {
+            btnRut.className = 'px-2.5 py-1 rounded-lg bg-blue-600 text-white shadow-sm transition-all';
+            btnFig.className = 'px-2.5 py-1 rounded-lg text-slate-500 hover:text-slate-800 transition-all';
+        }
+    }
+}
+
+function onCategoriaChange(sel) {
+    if (!sel) return;
+    const optText = (sel.options[sel.selectedIndex]?.text || '').toLowerCase();
+    // Si la categoría es Junior o Absoluta, sugerir automáticamente Rutina Técnica
+    if (optText.includes('junior') || optText.includes('absolut')) {
+        setTipoFase('rutina');
+    } else {
+        setTipoFase('figura');
     }
 }
 </script>

@@ -89,6 +89,7 @@ include('includes/navbar.php');
             $query = "SELECT DISTINCT f.id as id_fase, f.id_categoria, c.nombre as categoria, m.nombre as modalidad 
                       FROM fases f, categorias c, modalidades m 
                       WHERE f.id_modalidad=m.id AND f.id_categoria = c.id AND f.id_competicion = ".$_SESSION['id_competicion_activa']." 
+                        AND m.id != 8 AND (f.id_figura IS NULL OR f.id_figura = 0)
                       ORDER BY f.orden";
             $query_fases = mysqli_query($connection, $query);
             while ($row_fases = mysqli_fetch_assoc($query_fases)):

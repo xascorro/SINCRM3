@@ -79,7 +79,20 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                     <i class="fas fa-scale-balanced w-4 text-center"></i> Paneles
                 </a>
                 
-                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'no'): ?>
+                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
+                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
+                    </a>
+                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas Téc.
+                    </a>
+                    <a href="sorteo_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'sorteo_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteo Figuras
+                    </a>
+                    <a href="sorteo_rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'sorteo_rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                        <i class="fas fa-shuffle w-4 text-center"></i> Sorteo Rutinas
+                    </a>
+                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'no'): ?>
                     <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                         <i class="fas fa-users-line w-4 text-center"></i> Rutinas
                     </a>
@@ -290,7 +303,14 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_club_comp) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp-club"></i>
             </button>
             <div id="sub-comp-club" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text pl-10 mt-1 space-y-1">
-                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'si'): ?>
+                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
+                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
+                        <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
+                    </a>
+                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
+                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas Técnicas
+                    </a>
+                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'si'): ?>
                     <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
                         <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
                     </a>
