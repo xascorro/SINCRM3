@@ -98,6 +98,17 @@ Fecha: 2026-11-03
   - **Desktop (`hidden md:block`)**: Tabla completa con columnas ordenadas.
   - **Buscador integrado**: Filtra instantáneamente tanto las tarjetas móviles como las filas de la tabla de escritorio.
 
-## 8. Sincronización y Git
+## 8. Rediseño y Optimización Mobile UI/UX en Sorteo de Rutinas (`sorteo_rutinas.php`)
+- **Header y Acciones**:
+  - Título elástico, contenedor fluido (`px-3 py-4 sm:p-6 md:p-10`) y botones "Nuevo Sorteo", "Anular Todo" y "PDF Oficial" accesibles en móvil con micro-escalado `active:scale-[0.98]`.
+- **Paneles Colapsables**:
+  - Formulario de sorteo por fase y alerta de confirmación de anulación adaptados a pantallas táctiles.
+- **Sticky Header de Fases y Carriles**:
+  - Barra de fase con blur translúcido, badge de inicial de modalidad, título truncado dinámico y pill de conteo de rutinas con `tabular-nums`.
+- **Tarjetas de Rutina Dual-View**:
+  - **Móvil (`md:hidden`)**: Badge de orden de salida compacto (`w-11 h-11`), badge de club con fondo suave, ID interna y nombres de participantes apilados con tipografía nítida sin deformar la pantalla.
+  - **Desktop (`hidden md:flex`)**: Estructura de carril con orden amplio, club con divisor vertical, participantes y opacidad dinámica en hover.
+
+## 9. Sincronización y Git
 - Todos los cambios verificados con `php -l` (cero errores de sintaxis).
 - Sincronizados a `/var/www/html/beta/` con permisos `chmod 664`.

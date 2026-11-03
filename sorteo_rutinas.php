@@ -10,36 +10,36 @@ include('includes/navbar.php');
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido de la Página -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <!-- Header de Sección -->
-        <div class="page-header-v3">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="section-title-v3 italic">
-                    <span class="w-12 h-12 rounded-2xl oceanic-gradient flex items-center justify-center text-white shadow-lg"><i class="fa-solid fa-wand-magic-sparkles text-xl"></i></span>
-                    Orden de Salida <span class="text-slate-300 font-light mx-2">/</span> Rutinas
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3 italic">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fa-solid fa-wand-magic-sparkles text-base sm:text-lg"></i></span>
+                    Orden de Salida <span class="text-slate-300 font-light mx-1 sm:mx-2">/</span> Rutinas
                 </h1>
-                <p class="section-subtitle-v3">Generación aleatoria y gestión de turnos de actuación.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Generación aleatoria y gestión de turnos de actuación.</p>
             </div>
-            <div class="flex flex-wrap gap-3">
-                <button onclick="toggleAddSorteoPanel()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <button onclick="toggleAddSorteoPanel()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center gap-2">
                     <i class="fas fa-random text-xs"></i> Nuevo Sorteo
                 </button>
-                <button onclick="toggleAnularPanel()" class="px-5 py-3 bg-white border border-red-100 text-red-500 font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-red-50 transition-all flex items-center gap-2 shadow-sm">
+                <button onclick="toggleAnularPanel()" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-red-200 text-red-500 font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-red-50 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm">
                     <i class="fas fa-trash-can text-xs"></i> Anular Todo
                 </button>
-                <a href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?=$_SESSION['id_competicion_activa']?>&titulo=Orden de salida" target="_blank" class="px-5 py-3 bg-emerald-600 text-white font-bold text-xs uppercase tracking-widest rounded-2xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg shadow-emerald-500/10">
-                    <i class="fas fa-download text-xs"></i> Descargar PDF
+                <a href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?=$_SESSION['id_competicion_activa']?>&titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
+                    <i class="fas fa-download text-xs"></i> PDF Oficial
                 </a>
             </div>
         </div>
 
         <!-- Panel Nuevo Sorteo (Colapsable) -->
-        <div id="addSorteoPanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-white rounded-[2.5rem] p-8 shadow-xl border border-blue-100 relative overflow-hidden">
+        <div id="addSorteoPanel" class="hidden mb-6 sm:mb-10 animate-fade-in-down">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl border border-blue-100 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3"><i class="fas fa-dice text-blue-600"></i> Configurar Sorteo por Fase</h2>
-                <form id="sortearForm" action="sorteo_rutinas_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3"><i class="fas fa-dice text-blue-600"></i> Configurar Sorteo por Fase</h2>
+                <form id="sortearForm" action="sorteo_rutinas_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
                     <div class="md:col-span-8 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Seleccionar Fase de Competición</label>
                         <?php 
@@ -54,7 +54,7 @@ include('includes/navbar.php');
                     </div>
                     <div class="md:col-span-4 flex items-end">
                         <input type="hidden" name="save_btn" value="1">
-                        <button id="sortearBtn" type="submit" class="w-full py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all flex items-center justify-center gap-3 group">
+                        <button id="sortearBtn" type="submit" class="w-full py-3.5 sm:py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2.5 group">
                             <i class="fa-solid fa-wand-sparkles group-hover:rotate-12 transition-transform"></i> Ejecutar Sorteo Mágico
                         </button>
                     </div>
@@ -63,18 +63,18 @@ include('includes/navbar.php');
         </div>
 
         <!-- Panel Anular (Colapsable) -->
-        <div id="anularPanel" class="hidden mb-10 animate-fade-in-down">
-            <div class="bg-red-50 rounded-[2.5rem] p-8 border border-red-100 flex flex-col md:flex-row items-center justify-between gap-8">
-                <div class="flex items-center gap-6">
-                    <div class="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-sm border border-red-100"><i class="fas fa-triangle-exclamation text-2xl"></i></div>
+        <div id="anularPanel" class="hidden mb-6 sm:mb-10 animate-fade-in-down">
+            <div class="bg-red-50 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 border border-red-100 flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-8">
+                <div class="flex items-center gap-4 sm:gap-6 w-full md:w-auto">
+                    <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-white flex items-center justify-center text-red-500 shadow-sm border border-red-100 flex-shrink-0"><i class="fas fa-triangle-exclamation text-lg sm:text-2xl"></i></div>
                     <div>
                         <h3 class="text-lg font-black text-red-800 leading-tight">¿Anular todos los sorteos?</h3>
                         <p class="text-sm text-red-600 font-medium">Esta acción eliminará el orden de salida de TODAS las fases. No se puede deshacer.</p>
                     </div>
                 </div>
-                <form action="sorteo_rutinas_code.php" method="POST" class="flex gap-4">
-                    <button type="button" onclick="toggleAnularPanel()" class="px-6 py-3 text-xs font-black uppercase text-slate-400 hover:text-slate-600">Cancelar</button>
-                    <button type="submit" name="delete_btn" class="px-8 py-3 bg-red-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-red-500/20 hover:bg-red-700 transition-all">Sí, Eliminar Sorteos</button>
+                <form action="sorteo_rutinas_code.php" method="POST" class="w-full md:w-auto flex items-center justify-end gap-3 sm:gap-4">
+                    <button type="button" onclick="toggleAnularPanel()" class="px-4 py-2.5 text-xs font-black uppercase text-slate-400 hover:text-slate-600">Cancelar</button>
+                    <button type="submit" name="delete_btn" class="px-6 sm:px-8 py-3 bg-red-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md active:scale-[0.98] transition-all">Confirmar Borrado</button>
                 </form>
             </div>
         </div>
@@ -84,7 +84,7 @@ include('includes/navbar.php');
 
 
         <!-- LISTADO POR CARRILES -->
-        <div class="space-y-16">
+        <div class="space-y-10 sm:space-y-16">
             <?php
             $query = "SELECT DISTINCT f.id as id_fase, f.id_categoria, c.nombre as categoria, m.nombre as modalidad 
                       FROM fases f, categorias c, modalidades m 
@@ -96,25 +96,25 @@ include('includes/navbar.php');
             ?>
             <div class="relative">
                 <!-- Título de Fase (Sticky Header) -->
-                <div class="sticky top-20 z-30 bg-surface/80 backdrop-blur-md py-4 mb-6 border-b border-slate-200 flex items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-xs shadow-md">
+                <div class="sticky top-16 sm:top-20 z-20 bg-surface/90 backdrop-blur-md py-3 sm:py-4 mb-4 sm:mb-6 border-b border-slate-200/80 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 sm:gap-4 min-w-0">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-800 flex items-center justify-center text-white font-black text-[11px] sm:text-xs shadow-xs flex-shrink-0">
                             <?php echo strtoupper(substr($row_fases['modalidad'],0,1)); ?>
                         </div>
-                        <h2 class="text-2xl font-black text-slate-800 tracking-tight">
-                            <?php echo $row_fases['modalidad'];?> <span class="text-blue-600 ml-2 font-medium"><?php echo $row_fases['categoria'];?></span>
+                        <h2 class="text-base sm:text-2xl font-black text-slate-800 tracking-tight truncate">
+                            <?php echo $row_fases['modalidad'];?> <span class="text-blue-600 ml-1.5 sm:ml-2 font-medium"><?php echo $row_fases['categoria'];?></span>
                         </h2>
                     </div>
                     <?php
                     $q_count = "SELECT COUNT(*) as total FROM rutinas WHERE id_fase = ".$row_fases['id_fase'];
                     $num_r = mysqli_fetch_assoc(mysqli_query($connection, $q_count))['total'];
                     ?>
-                    <span class="px-4 py-1.5 bg-white text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-slate-200 shadow-sm"><?php echo $num_r; ?> Rutinas</span>
+                    <span class="px-3 sm:px-4 py-1 sm:py-1.5 bg-white text-slate-500 text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-full border border-slate-200 shadow-xs flex-shrink-0 tabular-nums"><?php echo $num_r; ?> Rutinas</span>
                 </div>
 
                 <!-- Carril de Salida -->
-                <div class="grid grid-cols-1 gap-3 relative">
-                    <!-- Línea de Conexión Visual -->
+                <div class="grid grid-cols-1 gap-2.5 sm:gap-3 relative">
+                    <!-- Línea de Conexión Visual (Desktop) -->
                     <div class="absolute left-10 top-0 bottom-0 w-px bg-slate-200 hidden md:block"></div>
 
                     <?php
@@ -149,33 +149,57 @@ include('includes/navbar.php');
                                 $bg_color = "bg-emerald-50/30";
                             }
                     ?>
-                    <div class="<?php echo $bg_color; ?> rounded-2xl p-5 md:p-6 shadow-sm border border-slate-100 border-l-[8px] <?php echo $accent_color; ?> flex flex-col md:flex-row items-center gap-6 group hover:shadow-lg transition-all relative z-10 ml-0 md:ml-4">
-                        <!-- Dorsal / Orden -->
-                        <div class="flex-shrink-0 w-24 text-center">
-                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Orden</p>
-                            <span class="text-xl font-black text-slate-800"><?php echo $orden_label; ?></span>
+                    <!-- Tarjeta de Salida: Vista Móvil + Desktop integradas -->
+                    <div class="<?php echo $bg_color; ?> rounded-xl sm:rounded-2xl p-3 sm:p-5 md:p-6 shadow-xs sm:shadow-sm border border-slate-100/90 border-l-4 sm:border-l-[8px] <?php echo $accent_color; ?> group hover:shadow-md transition-all relative z-10 ml-0 md:ml-4">
+                        
+                        <!-- Vista Móvil (< md) -->
+                        <div class="md:hidden flex items-start gap-3">
+                            <!-- Dorsal Móvil -->
+                            <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col items-center justify-center shadow-xs">
+                                <span class="text-[8px] font-black uppercase text-slate-400 leading-none">Ord</span>
+                                <span class="text-sm font-black text-slate-800 leading-none mt-0.5 tabular-nums"><?php echo $orden_label; ?></span>
+                            </div>
+                            
+                            <!-- Contenido Móvil -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2 mb-1">
+                                    <span class="text-[9px] font-black text-blue-700 uppercase bg-blue-50 px-2 py-0.5 rounded border border-blue-100/60 truncate"><?php echo $row['nombre_club']; ?></span>
+                                    <span class="text-[9px] font-bold text-slate-300 tabular-nums">#<?php echo $row['id_rutina']; ?></span>
+                                </div>
+                                <p class="text-xs font-bold text-slate-700 leading-snug"><?php echo $nombres; ?></p>
+                            </div>
                         </div>
 
-                        <!-- Club -->
-                        <div class="flex-shrink-0 w-32 border-x border-slate-100 px-4 text-center">
-                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Entidad</p>
-                            <span class="text-xs font-black text-blue-600 uppercase tracking-widest"><?php echo $row['nombre_club']; ?></span>
+                        <!-- Vista Desktop (>= md) -->
+                        <div class="hidden md:flex items-center gap-6">
+                            <!-- Dorsal / Orden -->
+                            <div class="flex-shrink-0 w-20 text-center">
+                                <p class="text-[9px] font-black uppercase text-slate-400 mb-0.5">Orden</p>
+                                <span class="text-xl font-black text-slate-800 tabular-nums"><?php echo $orden_label; ?></span>
+                            </div>
+
+                            <!-- Club -->
+                            <div class="flex-shrink-0 w-32 border-x border-slate-100 px-4 text-center">
+                                <p class="text-[9px] font-black uppercase text-slate-400 mb-0.5">Entidad</p>
+                                <span class="text-xs font-black text-blue-600 uppercase tracking-wider"><?php echo $row['nombre_club']; ?></span>
+                            </div>
+
+                            <!-- Nadadoras -->
+                            <div class="flex-1 text-left">
+                                <p class="text-[9px] font-black uppercase text-slate-400 mb-0.5">Participantes</p>
+                                <p class="text-sm font-bold text-slate-600 italic leading-snug"><?php echo $nombres; ?></p>
+                            </div>
+
+                            <!-- ID Interno -->
+                            <div class="flex-shrink-0 text-right opacity-30 group-hover:opacity-100 transition-opacity">
+                                <span class="text-[10px] font-black text-slate-300 tabular-nums">ID #<?php echo $row['id_rutina']; ?></span>
+                            </div>
                         </div>
 
-                        <!-- Nadadoras -->
-                        <div class="flex-1 text-center md:text-left">
-                            <p class="text-[9px] font-black uppercase text-slate-400 mb-1">Participantes</p>
-                            <p class="text-sm font-bold text-slate-600 italic leading-snug"><?php echo $nombres; ?></p>
-                        </div>
-
-                        <!-- ID Interno -->
-                        <div class="flex-shrink-0 text-right opacity-20 group-hover:opacity-100 transition-opacity">
-                            <span class="text-[10px] font-black text-slate-300">ID #<?php echo $row['id_rutina']; ?></span>
-                        </div>
                     </div>
                     <?php endwhile; else: ?>
-                        <div class="p-10 bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200 text-center">
-                            <p class="text-slate-400 italic text-sm font-medium">Pendiente de sorteo</p>
+                        <div class="p-6 sm:p-10 bg-slate-50/50 rounded-2xl sm:rounded-[2.5rem] border-2 border-dashed border-slate-200 text-center">
+                            <p class="text-slate-400 italic text-xs sm:text-sm font-medium">Pendiente de sorteo</p>
                         </div>
                     <?php endif; ?>
                 </div>
