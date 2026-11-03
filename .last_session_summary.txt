@@ -1,14 +1,15 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:13
+Fecha: 2026-11-03 23:24
 =========================================================
 
-1. CORRECCIÓN VISUAL DEL SIDEBAR (Colapso y desbordamiento):
-   - Diagnóstico: En la imagen enviada por Telegram se apreciaba que al hacer clic en un elemento (ej: Fases) y recargar con el sidebar colapsado (lg:w-20), los submenús activos se expandían verticalmente desbordando los iconos hacia la derecha por falta de la clase `hidden` y ausencia de regla forzada `display: none !important;`.
-   - Solución aplicada:
-     * En `includes/header.php`: añadido selector estricto:
-       `#sidebar.lg\:w-20 .sidebar-text, #sidebar.lg\:w-20 [id^="sub-"] { display: none !important; }`
-     * En `includes/navbar.php`: añadida clase `hidden` a todos los contenedores de submenú (`#sub-datos`, `#sub-comp`, `#sub-bias`, `#sub-users`, `#sub-maint`, `#sub-comp-club`) para que en modo colapsado nunca se muestren ni desborden sus iconos.
+1. SIDEBAR - COMPORTAMIENTO INTELIGENTE DE SUBMENÚS (Activo vs Inactivos):
+   - Elemento Padre Activo:
+     * Si el sidebar está cerrado y se pincha por primera vez en el elemento padre activo (ej: Competición/Gestión Activa en fases.php), el sidebar se despliega y el submenú activo se mantiene abierto mostrando sus opciones sin cerrarse.
+   - Elementos Inactivos (Comportamiento Acordeón):
+     * El submenú activo solo se cierra si se pincha sobre un elemento inactivo, desplegando este último y cerrando cualquier otro abierto.
+   - Sincronización al Cerrar/Compactar:
+     * Al compactar el sidebar (o hacer clic fuera), el estado base se restaura limpiamente para que la sección activa sea siempre la predeterminada al reabrir.
 
 2. SECCIONES MODERNIZADAS PREVIAMENTE:
    - https://sincrm.pedrodiaz.eu/index.php (Dashboard Principal con filtro de inscripciones y KPI)
@@ -19,9 +20,7 @@ Fecha: 2026-11-03 23:13
    - https://sincrm.pedrodiaz.eu/mi_auditoria.php (Portal de Juez / Autocontrol)
 
 3. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/includes/header.php
    - /var/www/html/sincrm/includes/navbar.php
-   - /var/www/html/beta/includes/header.php
    - /var/www/html/beta/includes/navbar.php
    - /var/www/html/sincrm/.last_session_summary.txt
 

@@ -37,7 +37,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Datos Maestros</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_datos) ? 'rotate-90' : ''; ?>" id="arrow-sub-datos"></i>
             </button>
-            <div id="sub-datos" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-datos" data-active="<?php echo in_array($current_page, $group_datos) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="competiciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'competiciones.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-trophy w-4 text-center"></i> Competiciones
                 </a>
@@ -71,7 +71,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_operativa) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp"></i>
             </button>
-            <div id="sub-comp" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-comp" data-active="<?php echo in_array($current_page, $group_operativa) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-list-check w-4 text-center"></i> Fases
                 </a>
@@ -123,7 +123,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
                 </a>
@@ -154,7 +154,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                     <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Usuarios</span>
                     <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_users) ? 'rotate-90' : ''; ?>" id="arrow-sub-users"></i>
                 </button>
-                <div id="sub-users" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+                <div id="sub-users" data-active="<?php echo in_array($current_page, $group_users) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                     <a href="usuarios.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'usuarios.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
                         <i class="fas fa-users-gear w-4 text-center"></i> Directorio
                     </a>
@@ -177,7 +177,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Mantenimiento</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_mantenimiento) ? 'rotate-90' : ''; ?>" id="arrow-sub-maint"></i>
             </button>
-            <div id="sub-maint" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-maint" data-active="<?php echo in_array($current_page, $group_mantenimiento) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="estado_sistema.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'estado_sistema.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap">
                     <i class="fas fa-chart-line w-4 text-center"></i> Estado
                 </a>
@@ -233,7 +233,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
                 </a>
@@ -302,7 +302,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_club_comp) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp-club"></i>
             </button>
-            <div id="sub-comp-club" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
+            <div id="sub-comp-club" data-active="<?php echo in_array($current_page, $group_club_comp) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
                 <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
                     <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
                         <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
@@ -348,75 +348,140 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
 </style>
 
 <script>
-    function toggleV3Submenu(id) {
-        const sidebar = document.getElementById('sidebar');
-        if (sidebar && window.innerWidth >= 1024 && sidebar.classList.contains('lg:w-20')) {
-            toggleV3Sidebar();
-            setTimeout(() => actualToggle(id), 100);
-        } else {
-            actualToggle(id);
-        }
-    }
-
-    function actualToggle(id) {
-        const submenu = document.getElementById(id);
-        const arrow = document.getElementById('arrow-' + id);
-        if (submenu) {
-            if (submenu.classList.contains('submenu-closed')) {
-                submenu.classList.replace('submenu-closed', 'submenu-open');
-                if(arrow) arrow.classList.add('rotate-90');
-            } else {
-                submenu.classList.replace('submenu-open', 'submenu-closed');
-                if(arrow) arrow.classList.remove('rotate-90');
-            }
-        }
-    }
-
-    function toggleV3Sidebar() {
+    function openV3Sidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
         const icon = document.getElementById('v3-toggle-icon');
         const texts = document.querySelectorAll('.sidebar-text');
-        
         if (!sidebar) return;
 
         if (window.innerWidth < 1024) {
-            // LÓGICA MÓVIL
-            const isHidden = sidebar.classList.contains('-translate-x-full');
-            if (isHidden) {
-                sidebar.classList.remove('-translate-x-full');
-                texts.forEach(t => t.classList.remove('hidden')); 
+            sidebar.classList.remove('-translate-x-full');
+            texts.forEach(t => t.classList.remove('hidden')); 
+            if (overlay) {
                 overlay.classList.remove('hidden');
                 setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                sidebar.classList.add('-translate-x-full');
+            }
+        } else {
+            sidebar.classList.replace('lg:w-20', 'lg:w-72');
+            if (icon) icon.classList.replace('fa-angles-right', 'fa-angles-left');
+            texts.forEach(t => t.classList.remove('hidden'));
+            if (overlay) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            }
+        }
+    }
+
+    function closeV3Sidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const icon = document.getElementById('v3-toggle-icon');
+        const texts = document.querySelectorAll('.sidebar-text');
+        if (!sidebar) return;
+
+        if (window.innerWidth < 1024) {
+            sidebar.classList.add('-translate-x-full');
+            if (overlay) {
                 overlay.classList.remove('opacity-100');
                 setTimeout(() => overlay.classList.add('hidden'), 500);
             }
         } else {
-            // LÓGICA ESCRITORIO
-            if (sidebar.classList.contains('lg:w-20')) {
-                // Abrir
-                sidebar.classList.replace('lg:w-20', 'lg:w-72');
-                if(icon) icon.classList.replace('fa-angles-right', 'fa-angles-left');
-                texts.forEach(t => t.classList.remove('hidden'));
-                overlay.classList.remove('hidden');
-                setTimeout(() => overlay.classList.add('opacity-100'), 10);
-            } else {
-                // Cerrar
-                sidebar.classList.replace('lg:w-72', 'lg:w-20');
-                if(icon) icon.classList.replace('fa-angles-left', 'fa-angles-right');
-                texts.forEach(t => t.classList.add('hidden'));
+            sidebar.classList.replace('lg:w-72', 'lg:w-20');
+            if (icon) icon.classList.replace('fa-angles-left', 'fa-angles-right');
+            texts.forEach(t => t.classList.add('hidden'));
+            if (overlay) {
                 overlay.classList.remove('opacity-100');
                 setTimeout(() => overlay.classList.add('hidden'), 500);
-                
-                document.querySelectorAll('.submenu-open').forEach(el => {
-                    el.classList.replace('submenu-open', 'submenu-closed');
-                    const a = document.getElementById('arrow-' + el.id);
-                    if(a) a.classList.remove('rotate-90');
-                });
             }
         }
+
+        // Al compactar/cerrar el sidebar, restaurar submenús al estado base: el activo abierto y los inactivos cerrados
+        resetSubmenusToActive();
+    }
+
+    function resetSubmenusToActive() {
+        document.querySelectorAll('[id^="sub-"]').forEach(sm => {
+            const arrow = document.getElementById('arrow-' + sm.id);
+            const isActive = sm.getAttribute('data-active') === 'true';
+            if (isActive) {
+                sm.classList.replace('submenu-closed', 'submenu-open');
+                if (arrow) arrow.classList.add('rotate-90');
+            } else {
+                sm.classList.replace('submenu-open', 'submenu-closed');
+                if (arrow) arrow.classList.remove('rotate-90');
+            }
+        });
+    }
+
+    function toggleV3Sidebar() {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+
+        const isClosed = (window.innerWidth < 1024)
+            ? sidebar.classList.contains('-translate-x-full')
+            : sidebar.classList.contains('lg:w-20');
+
+        if (isClosed) {
+            openV3Sidebar();
+        } else {
+            closeV3Sidebar();
+        }
+    }
+
+    function toggleV3Submenu(id) {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar) return;
+
+        const isClosed = (window.innerWidth < 1024)
+            ? sidebar.classList.contains('-translate-x-full')
+            : sidebar.classList.contains('lg:w-20');
+
+        const targetSubmenu = document.getElementById(id);
+        if (!targetSubmenu) return;
+
+        const isTargetActive = targetSubmenu.getAttribute('data-active') === 'true';
+
+        // 1. Si el sidebar está cerrado, abrirlo primero
+        if (isClosed) {
+            openV3Sidebar();
+        }
+
+        // 2. Si se pincha sobre el elemento padre ACTIVO:
+        // Debe quedarse SIEMPRE abierto (no cerrarse). Los demás cerrados.
+        if (isTargetActive) {
+            document.querySelectorAll('[id^="sub-"]').forEach(sm => {
+                const arrow = document.getElementById('arrow-' + sm.id);
+                if (sm.id === id) {
+                    sm.classList.replace('submenu-closed', 'submenu-open');
+                    if (arrow) arrow.classList.add('rotate-90');
+                } else {
+                    sm.classList.replace('submenu-open', 'submenu-closed');
+                    if (arrow) arrow.classList.remove('rotate-90');
+                }
+            });
+            return;
+        }
+
+        // 3. Si se pincha sobre un elemento INACTIVO:
+        // Solo se cierra el activo y se abre este inactivo. Si ya estaba abierto, se alterna.
+        const wasClosed = targetSubmenu.classList.contains('submenu-closed');
+
+        document.querySelectorAll('[id^="sub-"]').forEach(sm => {
+            const arrow = document.getElementById('arrow-' + sm.id);
+            if (sm.id === id) {
+                if (wasClosed) {
+                    sm.classList.replace('submenu-closed', 'submenu-open');
+                    if (arrow) arrow.classList.add('rotate-90');
+                } else {
+                    sm.classList.replace('submenu-open', 'submenu-closed');
+                    if (arrow) arrow.classList.remove('rotate-90');
+                }
+            } else {
+                sm.classList.replace('submenu-open', 'submenu-closed');
+                if (arrow) arrow.classList.remove('rotate-90');
+            }
+        });
     }
 
     document.addEventListener('click', function(event) {
@@ -424,7 +489,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
         if (!sidebar) return;
         if (window.innerWidth >= 1024 && sidebar.classList.contains('lg:w-72')) {
             if (!sidebar.contains(event.target)) {
-                toggleV3Sidebar();
+                closeV3Sidebar();
             }
         }
     });
