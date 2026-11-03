@@ -25,10 +25,22 @@ Fecha: 2026-11-03
   - Trazado visual con tachado (`line-through`) de la jornada descartada (incluso si fue NP / 0.0000).
   - Acceso directo al Ranking de Liga en `informes_competicion.php` cuando la competición activa pertenece a una liga.
   - Empates mantenidos ex aequo sin desempates forzados.
-- **Dashboard Principal (`index.php`)**:
-  - Corregida la consulta y renderizado de fases en el Dashboard para competiciones mixtas (`figuras = 'mixta'`). Ahora muestra correctamente todas las figuras (Alevín e Infantil con número y GD) y las rutinas técnicas (Junior con participantes).
-  - Adaptados los botones de inscripción para competiciones mixtas con acceso dual ("Figuras Alev/Inf" y "Rutinas Jun/Abs").
 - **Nueva Competición y Figura Registradas**:
   - Figura `301h` (`Barracuda 301h`, GD `2.4`).
   - Competición `Control Técnico de Figuras` (`CT-FIG`, Temporada 2026-2027) con fase Alevín II.
-- Sincronizados todos los archivos en producción (`sincrm_prod_db` / `sincrm.pedrodiaz.eu`) y en el entorno beta (`beta.pedrodiaz.eu`).
+
+## 2. Rediseño y Optimización Mobile UI/UX en Dashboard (`index.php`)
+- **Contenedores y Escala Elástica**:
+  - Sustituidos paddings rígidos (`p-6` / `p-8` / `p-12`) por escala fluida (`px-3 py-4 sm:p-6 md:p-10`).
+  - Bordes redondeados responsivos (`rounded-2xl sm:rounded-[2.5rem]` / `sm:rounded-[3rem]`) evitando deformaciones y pérdida de espacio en pantallas móviles estrechas (360px - 430px).
+- **Eliminación de Textos Cortados en Fases (Vista Dual Responsiva)**:
+  - **Móvil (`block sm:hidden`)**: Tarjetas de fase compactas e intuitivas con chip de categoría, badge `#301h`, nombre íntegro sin recortes y badge GD / participantes flotante.
+  - **Tablet/Desktop (`hidden sm:block`)**: Tabla detallada con `overflow-x-auto` y paddings armonizados (`px-6 py-4`).
+- **Hero Card de Competición**:
+  - Bloque de fecha compacto (`w-16 h-18 sm:w-24 sm:h-24`) con soporte `tabular-nums`.
+  - Título escalable (`text-xl sm:text-3xl md:text-4xl`) y etiquetas de mapa / piscina elásticas con microinteracción táctil (`active:scale-[0.98]`).
+  - Botones de inscripción adaptables a ancho completo en móvil (`w-full sm:w-auto`).
+- **Eventos en Calendario e Historial**:
+  - Filas y badges de fecha optimizados para smartphones con espaciados proporcionales y tipografía limpia.
+- **Sincronización**:
+  - Actualizado en producción (`/var/www/html/sincrm/index.php`) y en Beta (`/var/www/html/beta/index.php`).

@@ -17,7 +17,7 @@ $meses_es = [
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido del Dashboard -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
         
         <?php include('includes/alertas_v4.php'); ?>
 
@@ -28,37 +28,22 @@ $meses_es = [
         ?>
 
         <!-- Page Heading -->
-        <div class="mb-12">
+        <div class="mb-6 sm:mb-10">
             <a href="index.php" class="no-underline group/dash inline-block">
-                <h1 class="text-5xl font-black text-slate-800 tracking-tighter mb-2 italic text-primary group-hover/dash:text-blue-600 transition-colors">Dashboard</h1>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 italic text-primary group-hover/dash:text-blue-600 transition-colors">Dashboard</h1>
             </a>
-            <p class="text-lg text-slate-500 font-medium">Panel central de gestión SINCRM</p>
+            <p class="text-sm sm:text-base text-slate-500 font-medium">Panel central de gestión SINCRM</p>
         </div>
 
         <!-- FILA 1: Tarjetas Informativas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-12">
             
-            <!-- Mi Perfil (COMENTADO POR SI SE REQUIERE VOLVER A ÉL) -->
-            <?php /*
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-amber-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-user-circle text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Perfil</span>
-                </div>
-                <div class="space-y-1">
-                    <h3 class="text-2xl font-black text-slate-800 truncate"><?php echo @$usuario['username']?></h3>
-                    <p class="text-sm font-bold text-slate-400 flex items-center gap-2 italic"><i class="fa-regular fa-envelope text-xs opacity-50"></i> <?php echo @$usuario['email']?></p>
-                    <p class="text-sm font-bold text-slate-400 flex items-center gap-2 italic"><i class="fa-solid fa-phone text-xs opacity-50"></i> <?php echo @$usuario['telefono']?></p>
-                </div>
-            </div>
-            */ ?>
-
             <!-- Mi Club -->
             <?php if($_SESSION['id_rol'] == 5): ?>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-red-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-red-50 flex items-center justify-center text-red-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-flag text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Club</span>
+            <div class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-red-500 group hover:shadow-xl transition-all">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-red-50 flex items-center justify-center text-red-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-flag text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Club</span>
                 </div>
                 <?php
                 $query = "SELECT * FROM clubes where id=".$_SESSION['club']."";
@@ -66,17 +51,17 @@ $meses_es = [
                 $club = mysqli_fetch_array($query_run);
                 ?>
                 <div class="space-y-1">
-                    <h3 class="text-2xl font-black text-slate-800 truncate"><?php echo $club['nombre']?></h3>
-                    <p class="text-sm font-bold text-slate-400 italic uppercase tracking-tighter">Nombre corto: <?php echo $club['nombre_corto']?> | RFEN: <?php echo $club['codigo']?></p>
+                    <h3 class="text-xl sm:text-2xl font-black text-slate-800 truncate"><?php echo $club['nombre']?></h3>
+                    <p class="text-xs sm:text-sm font-bold text-slate-400 italic uppercase tracking-tighter">Nombre corto: <?php echo $club['nombre_corto']?> | RFEN: <?php echo $club['codigo']?></p>
                 </div>
             </div>
             <?php endif; ?>
 
             <!-- Mi Equipo -->
-            <a href="mi_equipo.php" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-emerald-500 group hover:shadow-xl transition-all no-underline block">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-users-gear text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Equipo</span>
+            <a href="mi_equipo.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-emerald-500 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-users-gear text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Equipo</span>
                 </div>
                 <?php
                 if($_SESSION['id_rol'] == 5) {
@@ -90,11 +75,11 @@ $meses_es = [
                 $shown = 0;
                 $show_limit = 3;
                 ?>
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-4xl font-black text-slate-800 leading-none"><?php echo $total_miembros; ?> <span class="text-sm text-slate-400 uppercase tracking-widest italic">Censo</span></h3>
+                <div class="flex items-center justify-between mb-3 sm:mb-4">
+                    <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none tabular-nums"><?php echo $total_miembros; ?> <span class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest italic font-bold">Censo</span></h3>
                     
                     <!-- Avatar Stack con Tooltip Rediseñado -->
-                    <div class="flex -space-x-4 relative group/stack">
+                    <div class="flex -space-x-3 sm:-space-x-4 relative group/stack">
                         <?php 
                         mysqli_data_seek($res_equipo, 0);
                         while($m = mysqli_fetch_assoc($res_equipo)):
@@ -102,7 +87,7 @@ $meses_es = [
                             if($shown < $show_limit):
                                 $inicial = strtoupper(substr($m['username'], 0, 1));
                         ?>
-                            <div class="w-10 h-10 rounded-full border-2 border-white flex items-center justify-center text-xs font-black shadow-md oceanic-gradient text-white">
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-white flex items-center justify-center text-[10px] sm:text-xs font-black shadow-md oceanic-gradient text-white">
                                 <?php echo $inicial; ?>
                             </div>
                         <?php 
@@ -127,9 +112,9 @@ $meses_es = [
                         <?php endif; ?>
                     </div>
                 </div>
-                <div class="mt-4 pt-4 border-t border-slate-100">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Compartes equipo con:</p>
-                    <p class="text-sm font-bold text-slate-600 italic leading-snug">
+                <div class="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-slate-100">
+                    <p class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 sm:mb-2">Compartes equipo con:</p>
+                    <p class="text-xs sm:text-sm font-bold text-slate-600 italic leading-snug">
                         <?php 
                         if(empty($otros_nombres)) echo "Gestión individual";
                         else {
@@ -143,10 +128,10 @@ $meses_es = [
 
             <!-- Nadadoras (OCULTO PARA JUECES) -->
             <?php if($_SESSION['id_rol'] != 4): ?>
-            <a href="nadadoras.php" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-blue-600 group hover:shadow-xl transition-all no-underline block">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-swimmer text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Censo Técnico</span>
+            <a href="nadadoras.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-blue-600 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-swimmer text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Censo Técnico</span>
                 </div>
                 <?php
                 if($_SESSION['id_rol'] == 5) { $condicion_club = ' and club='.$_SESSION['club'].' '; } else { $condicion_club = ''; }
@@ -157,28 +142,28 @@ $meses_es = [
                 $query_run = mysqli_query($connection,$query);
                 $numero_nadadoras_baja = mysqli_num_rows($query_run);
                 ?>
-                <h3 class="text-4xl font-black text-slate-800 leading-none mb-2"><?php echo $numero_nadadoras_activas?> <span class="text-sm text-slate-400 uppercase tracking-widest italic">Nadadoras Activas</span></h3>
+                <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none mb-2 tabular-nums"><?php echo $numero_nadadoras_activas?> <span class="text-xs sm:text-sm text-slate-400 uppercase tracking-widest italic font-bold">Nadadoras Activas</span></h3>
                 <p class="text-xs font-bold text-orange-500 uppercase italic tracking-tighter"><?php echo $numero_nadadoras_baja?> nadadoras en historial</p>
             </a>
             <?php endif; ?>
 
             <!-- BIAS Analizer (SÓLO PARA JUECES EN DASHBOARD) -->
             <?php if($_SESSION['id_rol'] == 4): ?>
-            <a href="mi_auditoria.php" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-blue-600 group hover:shadow-xl transition-all no-underline block">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-magnifying-glass-chart text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Auditoría</span>
+            <a href="mi_auditoria.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-blue-600 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-magnifying-glass-chart text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Mi Auditoría</span>
                 </div>
-                <h3 class="text-4xl font-black text-slate-800 leading-none mb-2 italic">AQUA BIAS</h3>
+                <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none mb-2 italic">AQUA BIAS</h3>
                 <p class="text-xs font-bold text-blue-500 uppercase italic tracking-tighter">Consulta tu rendimiento técnico oficial</p>
             </a>
 
-            <a href="ranking_jueces.php" class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[10px] border-t-amber-500 group hover:shadow-xl transition-all no-underline block">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-ranking-star text-2xl"></i></div>
-                    <span class="text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Global</span>
+            <a href="ranking_jueces.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-amber-500 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
+                <div class="flex justify-between items-start mb-4 sm:mb-6">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-ranking-star text-xl sm:text-2xl"></i></div>
+                    <span class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 tracking-[0.2em] italic">Global</span>
                 </div>
-                <h3 class="text-4xl font-black text-slate-800 leading-none mb-2 italic">RANKING</h3>
+                <h3 class="text-2xl sm:text-4xl font-black text-slate-800 leading-none mb-2 italic">RANKING</h3>
                 <p class="text-xs font-bold text-amber-500 uppercase italic tracking-tighter">Comparativa anónima de calidad técnica</p>
             </a>
             <?php endif; ?>
@@ -198,17 +183,17 @@ $meses_es = [
         // Si la sección completa está silenciada, no mostramos nada
         if(!in_array('GLOBAL_TASKS', $silenciados)):
         ?>
-        <div class="mb-12" id="tareas-pendientes-section">
-            <div class="flex items-center justify-between border-l-[8px] border-amber-500 pl-6 py-2 mb-8">
-                <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter italic flex items-center gap-3">
+        <div class="mb-8 sm:mb-12" id="tareas-pendientes-section">
+            <div class="flex items-center justify-between border-l-[6px] sm:border-l-[8px] border-amber-500 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic flex items-center gap-2 sm:gap-3">
                     Tareas Pendientes y Avisos
-                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-amber-100 text-amber-600 text-sm animate-bounce"><i class="fas fa-bell"></i></span>
+                    <span class="inline-flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-amber-100 text-amber-600 text-xs sm:text-sm animate-bounce"><i class="fas fa-bell"></i></span>
                 </h2>
                 
                 <!-- Botón Silenciar Todo -->
                 <div class="relative inline-block text-left">
-                    <button onclick="toggleSilencioMenu('GLOBAL_TASKS')" class="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest italic">
-                        <i class="fas fa-clock"></i> Silenciar Todo
+                    <button onclick="toggleSilencioMenu('GLOBAL_TASKS')" class="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition-all text-[9px] sm:text-[10px] font-black uppercase tracking-widest italic active:scale-[0.98]">
+                        <i class="fas fa-clock"></i> <span class="hidden sm:inline">Silenciar</span> Todo
                     </button>
                     <div id="menu-GLOBAL_TASKS" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-white shadow-2xl border border-slate-100 z-[100] p-2 overflow-hidden animate-fade-in-down">
                         <p class="text-[9px] font-black uppercase text-slate-400 px-3 py-2 border-b border-slate-50 mb-1 italic text-center">Pausar Todo el Panel</p>
@@ -222,14 +207,14 @@ $meses_es = [
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 
                 <?php
                 // Función auxiliar para renderizar el botón de silenciar
                 function renderSilenciar($tipo) {
                     return '
                     <div class="relative inline-block text-left ml-2" onclick="event.preventDefault(); event.stopPropagation();">
-                        <button type="button" onclick="toggleSilencioMenu(\''.$tipo.'\')" class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all">
+                        <button type="button" onclick="toggleSilencioMenu(\''.$tipo.'\')" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-all active:scale-[0.95]">
                             <i class="fas fa-clock text-xs"></i>
                         </button>
                         <div id="menu-'.$tipo.'" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-white shadow-2xl border border-slate-100 z-[100] p-2 overflow-hidden animate-fade-in-down">
@@ -256,16 +241,16 @@ $meses_es = [
                     if($pend_users > 0):
                 ?>
                 <div class="relative group">
-                    <a href="usuarios.php" class="block bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-purple-500 shadow-sm hover:shadow-md transition-all no-underline">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-all"><i class="fas fa-user-clock text-xl"></i></div>
+                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-purple-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:scale-110 transition-all"><i class="fas fa-user-clock text-lg sm:text-xl"></i></div>
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Desde <?php echo date("d-m", strtotime($pend_data['mas_antiguo'])); ?></span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Registros Pendientes</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">Hay <span class="text-purple-600 font-black"><?php echo $pend_users; ?></span> usuarios esperando aprobación o configuración de rol.</p>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Registros Pendientes</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-purple-600 font-black"><?php echo $pend_users; ?></span> usuarios esperando aprobación o configuración de rol.</p>
                     </a>
                 </div>
                 <?php endif; endif; ?>
@@ -281,16 +266,16 @@ $meses_es = [
                     if($no_vinc_users > 0):
                 ?>
                 <div class="relative group">
-                    <a href="usuarios.php" class="block bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-amber-400 shadow-sm hover:shadow-md transition-all no-underline">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all"><i class="fas fa-link-slash text-xl"></i></div>
+                    <a href="usuarios.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-amber-400 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-500 group-hover:scale-110 transition-all"><i class="fas fa-link-slash text-lg sm:text-xl"></i></div>
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Acción Requerida</span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Vinculación de Jueces</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">Hay <span class="text-amber-600 font-black"><?php echo $no_vinc_users; ?></span> usuarios con rol Juez sin perfil oficial vinculado.</p>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Vinculación de Jueces</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">Hay <span class="text-amber-600 font-black"><?php echo $no_vinc_users; ?></span> usuarios con rol Juez sin perfil oficial vinculado.</p>
                     </a>
                 </div>
                 <?php endif; endif; ?>
@@ -304,16 +289,16 @@ $meses_es = [
                     if(!in_array($tipo, $silenciados)):
                 ?>
                 <div class="relative group">
-                    <a href="analisis_jueces.php?comp_id=<?php echo $b['id']; ?>" class="block bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-red-500 shadow-sm hover:shadow-md transition-all no-underline">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-all"><i class="fas fa-magnifying-glass-chart text-xl"></i></div>
+                    <a href="analisis_jueces.php?comp_id=<?php echo $b['id']; ?>" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-red-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 group-hover:scale-110 transition-all"><i class="fas fa-magnifying-glass-chart text-lg sm:text-xl"></i></div>
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Finalizó <?php echo date("d-m", strtotime($b['fecha'])); ?></span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Falta Análisis BIAS</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">La competición <span class="text-red-600 font-black"><?php echo $b['nombre']; ?></span> ha finalizado y no tiene auditoría grabada.</p>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Falta Análisis BIAS</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">La competición <span class="text-red-600 font-black"><?php echo $b['nombre']; ?></span> ha finalizado y no tiene auditoría grabada.</p>
                     </a>
                 </div>
                 <?php endif; endwhile; ?>
@@ -328,16 +313,16 @@ $meses_es = [
                         $fecha_fin_insc = date("Y-m-d", strtotime("-".($i['dias_fin_inscripcion'] - 1)." days", strtotime($i['fecha'])));
                 ?>
                 <div class="relative group">
-                    <div class="bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-blue-500 shadow-sm hover:shadow-md transition-all group">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-all"><i class="fas fa-file-export text-xl"></i></div>
+                    <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-blue-500 shadow-sm hover:shadow-md transition-all group">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-all"><i class="fas fa-file-export text-lg sm:text-xl"></i></div>
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest">Plazo: <?php echo date("d-m", strtotime($fecha_fin_insc)); ?></span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Enviar Preinscripciones</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> termina hoy. Es necesario enviar la documentación oficial.</p>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Enviar Preinscripciones</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El plazo para <span class="text-blue-600 font-black"><?php echo $i['nombre']; ?></span> termina hoy. Es necesario enviar la documentación oficial.</p>
                     </div>
                 </div>
                 <?php endif; endwhile; ?>
@@ -352,16 +337,16 @@ $meses_es = [
                         $fecha_sorteo_task = date("Y-m-d", strtotime("-".$s['dias_sorteo']." days", strtotime($s['fecha'])));
                 ?>
                 <div class="relative group">
-                    <a href="fases.php" class="block bg-white p-6 rounded-[2rem] border border-slate-200 border-l-[8px] border-l-emerald-500 shadow-sm hover:shadow-md transition-all no-underline">
-                        <div class="flex justify-between items-start mb-4">
-                            <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-all"><i class="fas fa-dice text-xl"></i></div>
+                    <a href="fases.php" class="block bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2rem] border border-slate-200 border-l-[6px] sm:border-l-[8px] border-l-emerald-500 shadow-sm hover:shadow-md active:scale-[0.99] transition-all no-underline">
+                        <div class="flex justify-between items-start mb-3 sm:mb-4">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-all"><i class="fas fa-dice text-lg sm:text-xl"></i></div>
                             <div class="flex flex-col items-end">
                                 <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest"><?php echo date("d-m", strtotime($fecha_sorteo_task)); ?></span>
                                 <?php echo renderSilenciar($tipo); ?>
                             </div>
                         </div>
-                        <h4 class="text-xl font-black text-slate-800 leading-tight mb-2">Preparar Sorteo</h4>
-                        <p class="text-sm font-bold text-slate-500 italic">El sorteo de <span class="text-emerald-600 font-black"><?php echo $s['nombre']; ?></span> es inminente. Verifica las fases y el orden.</p>
+                        <h4 class="text-lg sm:text-xl font-black text-slate-800 leading-tight mb-1 sm:mb-2">Preparar Sorteo</h4>
+                        <p class="text-xs sm:text-sm font-bold text-slate-500 italic">El sorteo de <span class="text-emerald-600 font-black"><?php echo $s['nombre']; ?></span> es inminente. Verifica las fases y el orden.</p>
                     </a>
                 </div>
                 <?php endif; endwhile; ?>
@@ -373,9 +358,9 @@ $meses_es = [
 
 
         <!-- SECCIÓN: PRÓXIMAS COMPETICIONES -->
-        <div class="space-y-12 mb-20">
-            <div class="flex items-center gap-4 border-l-[8px] border-blue-600 pl-6 py-2">
-                <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
+        <div class="space-y-8 sm:space-y-12 mb-12 sm:mb-20">
+            <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-blue-600 pl-4 sm:pl-6 py-1.5 sm:py-2">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
                     Próximas Competiciones
                 </h2>
             </div>
@@ -387,26 +372,26 @@ $meses_es = [
                 while ($row = mysqli_fetch_assoc($query_run)):
                     $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
             ?>
-                <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border-x border-b border-slate-200 border-t-[12px] relative overflow-hidden group transition-all hover:shadow-xl" style="border-top-color: <?php echo $color; ?> !important;">
-                    <div class="absolute top-0 right-0 w-80 h-80 bg-slate-50 rounded-full -mr-40 -mt-40 group-hover:scale-110 transition-transform duration-700 opacity-50"></div>
+                <div class="bg-white rounded-2xl sm:rounded-[3rem] p-4 sm:p-8 md:p-12 shadow-sm border-x border-b border-slate-200 border-t-[8px] sm:border-t-[12px] relative overflow-hidden group transition-all hover:shadow-xl" style="border-top-color: <?php echo $color; ?> !important;">
+                    <div class="absolute top-0 right-0 w-80 h-80 bg-slate-50 rounded-full -mr-40 -mt-40 group-hover:scale-110 transition-transform duration-700 opacity-50 pointer-events-none"></div>
                     
                     <div class="relative z-10">
-                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12">
-                            <div class="flex items-center gap-8">
-                                <div class="w-24 h-24 rounded-[2rem] flex flex-col items-center justify-center text-white shadow-2xl shadow-blue-500/20 shrink-0" style="background-color: <?php echo $color; ?>;">
-                                    <span class="text-xs font-black uppercase opacity-70"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
-                                    <span class="text-4xl font-black"><?php echo date('d', strtotime($row['fecha'])); ?></span>
+                        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 sm:gap-8 mb-6 sm:mb-10">
+                            <div class="flex items-start sm:items-center gap-4 sm:gap-8">
+                                <div class="w-16 h-18 sm:w-24 sm:h-24 rounded-2xl sm:rounded-[2rem] flex flex-col items-center justify-center text-white shadow-xl shadow-blue-500/20 shrink-0 p-2 tabular-nums" style="background-color: <?php echo $color; ?>;">
+                                    <span class="text-[10px] sm:text-xs font-black uppercase opacity-75"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
+                                    <span class="text-2xl sm:text-4xl font-black leading-none mt-0.5 sm:mt-1"><?php echo date('d', strtotime($row['fecha'])); ?></span>
                                 </div>
-                                <div>
-                                    <h3 class="text-3xl md:text-4xl font-black text-slate-800 tracking-tighter italic leading-tight group-hover:text-blue-600 transition-colors"><?php echo $row['nombre']; ?></h3>
-                                    <div class="flex flex-wrap items-center gap-6 mt-4">
-                                        <p class="text-base font-bold text-slate-400 flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-500"></i> <?php echo $row['lugar']; ?></p>
-                                        <a href="<?php echo $row['maps']; ?>" target="_blank" class="px-4 py-2 rounded-xl bg-slate-50 text-slate-500 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-2 border border-slate-100 shadow-sm font-black text-xs uppercase italic"><i class="fa-solid fa-map-location-dot"></i> Ver Mapa</a>
+                                <div class="min-w-0 flex-1">
+                                    <h3 class="text-xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-tighter italic leading-tight group-hover:text-blue-600 transition-colors break-words"><?php echo $row['nombre']; ?></h3>
+                                    <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-4">
+                                        <p class="text-xs sm:text-base font-bold text-slate-500 flex items-center gap-1.5"><i class="fas fa-map-marker-alt text-blue-500 text-xs"></i> <?php echo $row['lugar']; ?></p>
+                                        <a href="<?php echo $row['maps']; ?>" target="_blank" class="px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-800 hover:text-white transition-all flex items-center gap-1.5 border border-slate-100 shadow-xs font-black text-[10px] sm:text-xs uppercase italic active:scale-[0.98]"><i class="fa-solid fa-map-location-dot"></i> Ver Mapa</a>
                                     </div>
                                     <?php if(!empty($row['mensaje'])): ?>
-                                    <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-2xl text-amber-700 text-sm font-medium">
-                                        <div class="flex items-start gap-3">
-                                            <i class="fas fa-info-circle mt-1"></i>
+                                    <div class="mt-3 sm:mt-5 p-3 sm:p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl sm:rounded-r-2xl text-amber-800 text-xs sm:text-sm font-medium">
+                                        <div class="flex items-start gap-2.5">
+                                            <i class="fas fa-info-circle mt-0.5 text-amber-600 shrink-0"></i>
                                             <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
                                         </div>
                                     </div>
@@ -414,7 +399,7 @@ $meses_es = [
                                 </div>
                             </div>
 
-                            <div class="flex flex-col sm:flex-row items-center gap-6">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
                                 <?php
                                 $fecha_inicio_inscripcion = date("Y-m-d", strtotime("-".$row['dias_inicio_inscripcion']." days", strtotime($row['fecha'])));
                                 $fecha_fin_inscripcion = date("Y-m-d", strtotime("-".($row['dias_fin_inscripcion'])." days", strtotime($row['fecha'])));
@@ -428,26 +413,26 @@ $meses_es = [
 
                                 if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
                                     <div class="w-full sm:w-auto text-center">
-                                        <div class="mb-4 flex flex-col items-center gap-2">
-                                            <span class="text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-5 py-2 rounded-full border border-emerald-100 shadow-sm animate-pulse italic">Inscripciones Abiertas</span>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                        <div class="mb-3 flex flex-col items-center gap-1">
+                                            <span class="text-[11px] sm:text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 shadow-xs animate-pulse italic">Inscripciones Abiertas</span>
+                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <?php if($es_mixta_row): ?>
-                                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                                                <form action="./inscripciones_figuras.php" method="post">
+                                            <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center w-full sm:w-auto">
+                                                <form action="./inscripciones_figuras.php" method="post" class="w-full sm:w-auto">
                                                     <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                     <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                     <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-emerald-600 text-white font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 hover:scale-105 transition-all flex items-center justify-center gap-2">
-                                                        <i class="fa-solid fa-shapes text-sm"></i> Figuras (Alev/Inf)
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-5 py-3 sm:px-6 sm:py-3.5 bg-emerald-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-[1.5rem] shadow-md shadow-emerald-500/20 hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                                        <i class="fa-solid fa-shapes text-xs"></i> Figuras (Alev/Inf)
                                                     </button>
                                                 </form>
-                                                <form action="./rutinas.php" method="post">
+                                                <form action="./rutinas.php" method="post" class="w-full sm:w-auto">
                                                     <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                     <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                     <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:scale-105 transition-all flex items-center justify-center gap-2">
-                                                        <i class="fa-solid fa-water text-sm"></i> Rutinas (Jun/Abs)
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-5 py-3 sm:px-6 sm:py-3.5 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-[1.5rem] shadow-md shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                                        <i class="fa-solid fa-water text-xs"></i> Rutinas (Jun/Abs)
                                                     </button>
                                                 </form>
                                             </div>
@@ -456,38 +441,38 @@ $meses_es = [
                                                 <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                 <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                 <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-800 text-white font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-xl hover:bg-black hover:scale-105 transition-all flex items-center justify-center gap-4">
-                                                    <i class="fas fa-user-plus text-lg"></i> Gestionar Inscripciones
+                                                <button type="submit" name="inscripciones" class="w-full sm:w-auto px-6 py-3.5 sm:px-10 sm:py-4 bg-slate-800 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-lg hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                                    <i class="fas fa-user-plus text-base"></i> Gestionar Inscripciones
                                                 </button>
                                             </form>
                                         <?php endif; ?>
                                     </div>
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
-                                    <div class="px-10 py-5 bg-slate-50 text-slate-400 font-black uppercase text-sm tracking-widest rounded-[2rem] border border-slate-100 text-center italic">
+                                    <div class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-slate-50 text-slate-500 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] border border-slate-100 text-center italic">
                                         <i class="fas fa-lock mr-2 opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
                                 <?php else: ?>
                                     <div class="w-full sm:w-auto text-center">
-                                        <div class="mb-4 flex flex-col items-center gap-2">
-                                            <span class="text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-5 py-2 rounded-full border border-red-100 shadow-sm italic">Inscripciones Cerradas</span>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase italic">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                        <div class="mb-3 flex flex-col items-center gap-1">
+                                            <span class="text-[11px] sm:text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-4 py-1.5 rounded-full border border-red-100 shadow-xs italic">Inscripciones Cerradas</span>
+                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
                                         <?php if($es_mixta_row): ?>
-                                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                                                <form action="./inscripciones_figuras.php" method="post">
+                                            <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 justify-center w-full sm:w-auto">
+                                                <form action="./inscripciones_figuras.php" method="post" class="w-full sm:w-auto">
                                                     <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                     <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                     <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-sm hover:bg-slate-200 transition-all flex items-center justify-center gap-2 border border-slate-200">
-                                                        <i class="fas fa-eye text-sm text-emerald-600"></i> Figuras
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-5 py-3 sm:px-6 sm:py-3.5 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-[1.5rem] shadow-xs hover:bg-slate-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-200">
+                                                        <i class="fas fa-eye text-xs text-emerald-600"></i> Figuras
                                                     </button>
                                                 </form>
-                                                <form action="./rutinas.php" method="post">
+                                                <form action="./rutinas.php" method="post" class="w-full sm:w-auto">
                                                     <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                     <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                     <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-7 py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-widest rounded-[1.5rem] shadow-sm hover:bg-slate-200 transition-all flex items-center justify-center gap-2 border border-slate-200">
-                                                        <i class="fas fa-eye text-sm text-blue-600"></i> Rutinas Técnicas
+                                                    <button type="submit" name="inscripciones" class="w-full sm:w-auto px-5 py-3 sm:px-6 sm:py-3.5 bg-slate-100 text-slate-600 font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-[1.5rem] shadow-xs hover:bg-slate-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2 border border-slate-200">
+                                                        <i class="fas fa-eye text-xs text-blue-600"></i> Rutinas Técnicas
                                                     </button>
                                                 </form>
                                             </div>
@@ -496,13 +481,14 @@ $meses_es = [
                                                 <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                                 <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                                 <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                                <button type="submit" name="inscripciones" class="w-full px-12 py-5 bg-slate-100 text-slate-500 font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-sm hover:bg-slate-200 hover:text-slate-700 transition-all flex items-center justify-center gap-4 border border-slate-200">
-                                                    <i class="fas fa-eye text-lg"></i> Comprobar Inscripciones
+                                                <button type="submit" name="inscripciones" class="w-full sm:w-auto px-6 py-3.5 sm:px-10 sm:py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-xs hover:bg-slate-200 active:scale-[0.98] transition-all flex items-center justify-center gap-3 border border-slate-200">
+                                                    <i class="fas fa-eye text-base"></i> Comprobar Inscripciones
                                                 </button>
                                             </form>
                                         <?php endif; ?>
                                     </div>
                                 <?php endif; ?>
+
                                 <!-- Plazos Técnicos (Música y Coach Card) -->
                                 <?php 
                                     $id_c_row = $row['id'];
@@ -515,7 +501,7 @@ $meses_es = [
                                     if ($has_cc) $cols++; // Coach Card
                                 ?>
                                 <?php if($cols > 0): ?>
-                                <div class="grid <?php echo ($cols == 1) ? 'grid-cols-1' : 'grid-cols-2'; ?> gap-4 w-full sm:w-auto">
+                                <div class="grid <?php echo ($cols == 1) ? 'grid-cols-1' : 'grid-cols-2'; ?> gap-2 sm:gap-4 w-full sm:w-auto">
                                     <?php 
                                     $f_musica = date("Y-m-d", strtotime("-".$row['dias_musica']." days", strtotime($row['fecha'])));
                                     if($row['figuras'] == 'si') {
@@ -526,106 +512,154 @@ $meses_es = [
                                     ?>
                                     
                                     <?php if($row['figuras'] != 'si'): ?>
-                                    <div class="p-4 rounded-3xl border border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center text-center">
-                                        <i class="fas fa-music text-slate-300 mb-2"></i>
+                                    <div class="p-2.5 sm:p-4 rounded-xl sm:rounded-3xl border border-slate-100 bg-slate-50/70 flex flex-col items-center justify-center text-center">
+                                        <i class="fas fa-music text-slate-400 mb-1 text-xs sm:text-sm"></i>
                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Música</p>
-                                        <p class="text-xs font-black text-slate-700"><?php echo dateAFecha($f_musica); ?></p>
+                                        <p class="text-[11px] sm:text-xs font-black text-slate-700 tabular-nums"><?php echo dateAFecha($f_musica); ?></p>
                                     </div>
                                     <?php endif; ?>
 
                                     <?php if($has_cc): ?>
-                                    <div class="p-4 rounded-3xl border border-slate-100 bg-slate-50/50 flex flex-col items-center justify-center text-center">
-                                        <i class="fas fa-puzzle-piece text-slate-300 mb-2"></i>
+                                    <div class="p-2.5 sm:p-4 rounded-xl sm:rounded-3xl border border-slate-100 bg-slate-50/70 flex flex-col items-center justify-center text-center">
+                                        <i class="fas fa-puzzle-piece text-slate-400 mb-1 text-xs sm:text-sm"></i>
                                         <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Coach Card</p>
-                                        <p class="text-xs font-black text-slate-700"><?php echo dateAFecha($f_cc); ?></p>
+                                        <p class="text-[11px] sm:text-xs font-black text-slate-700 tabular-nums"><?php echo dateAFecha($f_cc); ?></p>
                                     </div>
                                     <?php endif; ?>
                                 </div>
                                 <?php endif; ?>
 
                                 <?php if(!empty($row['enlace_sorteo'])): ?>
-                                    <div class="text-center">
-                                        <p class="text-xs font-black text-slate-400 uppercase mb-3">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
-                                        <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="px-10 py-5 bg-blue-600 text-white font-black uppercase text-sm tracking-widest rounded-[2rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:scale-105 transition-all flex items-center gap-4">
-                                            <i class="fa-solid fa-video text-lg"></i> Unirse al Sorteo
+                                    <div class="text-center w-full sm:w-auto">
+                                        <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
+                                        <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-blue-600 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                            <i class="fa-solid fa-video text-base"></i> Unirse al Sorteo
                                         </a>
                                     </div>
                                 <?php endif; ?>
                             </div>
                         </div>
 
-                        <!-- Tabla Detallada de Fases -->
-                        <div class="rounded-[2rem] border border-slate-100 bg-slate-50/30 overflow-hidden mb-12 shadow-inner">
-                            <table class="w-full text-left border-collapse">
-                                <thead>
-                                    <tr class="bg-slate-100/50 text-sm font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-200/50">
-                                        <th class="px-8 py-5">Categoría</th>
-                                        <th class="px-6 py-5"><?php echo ($row['figuras'] == 'si') ? 'Figura' : (($row['figuras'] == 'mixta') ? 'Prueba (Figura / Rutina)' : 'Modalidad'); ?></th>
-                                        <th class="px-6 py-5 text-center"><?php echo ($row['figuras'] == 'si') ? 'G.D.' : (($row['figuras'] == 'mixta') ? 'Detalle Técnico' : 'Participantes'); ?></th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100">
-                                    <?php
-                                    $q_fases = "SELECT 
-                                                    fs.id,
-                                                    fs.orden,
-                                                    fs.id_figura,
-                                                    fs.id_modalidad,
-                                                    c.nombre as cat,
-                                                    f.nombre as fig,
-                                                    f.numero as fig_num,
-                                                    f.grado_dificultad as gd,
-                                                    m.nombre as modali,
-                                                    m.numero_participantes as np,
-                                                    m.numero_reservas as nr
-                                                FROM fases fs
-                                                LEFT JOIN categorias c ON fs.id_categoria = c.id
-                                                LEFT JOIN figuras f ON fs.id_figura = f.id
-                                                LEFT JOIN modalidades m ON fs.id_modalidad = m.id
-                                                WHERE fs.id_competicion = " . (int)$row['id'] . "
-                                                ORDER BY fs.orden ASC";
-                                    $res_fases = mysqli_query($connection, $q_fases);
-                                    if(mysqli_num_rows($res_fases) > 0){
-                                        while($f = mysqli_fetch_assoc($res_fases)):
-                                    ?>
-                                        <tr class="text-sm md:text-base font-bold text-slate-600 hover:bg-white transition-colors">
-                                            <td class="px-8 py-6 font-black text-slate-700 italic uppercase tracking-tighter">
+                        <!-- Fases de Competición (Responsive: Card-List en móvil, Tabla en Desktop) -->
+                        <?php
+                        $q_fases = "SELECT 
+                                        fs.id,
+                                        fs.orden,
+                                        fs.id_figura,
+                                        fs.id_modalidad,
+                                        c.nombre as cat,
+                                        f.nombre as fig,
+                                        f.numero as fig_num,
+                                        f.grado_dificultad as gd,
+                                        m.nombre as modali,
+                                        m.numero_participantes as np,
+                                        m.numero_reservas as nr
+                                    FROM fases fs
+                                    LEFT JOIN categorias c ON fs.id_categoria = c.id
+                                    LEFT JOIN figuras f ON fs.id_figura = f.id
+                                    LEFT JOIN modalidades m ON fs.id_modalidad = m.id
+                                    WHERE fs.id_competicion = " . (int)$row['id'] . "
+                                    ORDER BY fs.orden ASC";
+                        $res_fases = mysqli_query($connection, $q_fases);
+                        $fases_list = [];
+                        if($res_fases) {
+                            while($f = mysqli_fetch_assoc($res_fases)) {
+                                $fases_list[] = $f;
+                            }
+                        }
+                        ?>
+                        
+                        <div class="rounded-xl sm:rounded-[2rem] border border-slate-200/80 bg-slate-50/40 overflow-hidden mb-6 sm:mb-10 shadow-inner">
+                            <?php if(!empty($fases_list)): ?>
+                                <!-- Vista Móvil: Lista de Fases sin cortes -->
+                                <div class="block sm:hidden divide-y divide-slate-100 bg-white">
+                                    <?php foreach($fases_list as $f): ?>
+                                    <div class="p-3.5 space-y-2 hover:bg-slate-50/80 transition-colors">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="text-xs font-black text-slate-800 uppercase italic tracking-tight truncate">
                                                 <?php echo htmlspecialchars($f['cat'] ?? 'Sin Categoría'); ?>
-                                            </td>
-                                            <td class="px-6 py-6">
-                                                <?php if(!empty($f['id_figura']) && !empty($f['fig'])): ?>
-                                                    <span class="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg mr-3 font-black text-xs">#<?php echo $f['fig_num']; ?></span>
-                                                    <span class="text-slate-800 font-bold"><?php echo $f['fig']; ?></span>
-                                                <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
-                                                    <span class="px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg mr-3 font-black text-xs uppercase"><i class="fas fa-water mr-1"></i> Rutina</span>
-                                                    <span class="text-slate-800 font-bold"><?php echo $f['modali']; ?></span>
-                                                <?php else: ?>
-                                                    <span class="text-slate-400 italic">No asignada</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="px-6 py-6 text-center">
+                                            </span>
+                                            <div class="shrink-0">
                                                 <?php if(!empty($f['id_figura'])): ?>
-                                                    <span class="px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full font-black text-xs shadow-sm border border-emerald-100">
+                                                    <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full font-black text-[10px] tabular-nums shadow-xs">
                                                         GD <?php echo $f['gd']; ?>
                                                     </span>
                                                 <?php elseif(!empty($f['id_modalidad'])): ?>
-                                                    <span class="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-full font-black text-xs shadow-sm border border-blue-100">
+                                                    <span class="px-2.5 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full font-black text-[10px] tabular-nums shadow-xs">
                                                         <?php echo $f['np'].' + '.$f['nr'].'R'; ?>
                                                     </span>
                                                 <?php else: ?>
-                                                    <span class="text-slate-400">-</span>
+                                                    <span class="text-slate-400 text-xs">-</span>
                                                 <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; } else { ?>
-                                        <tr><td colspan="3" class="px-8 py-8 text-center text-sm italic text-slate-400 font-bold">Sin fases definidas para esta competición.</td></tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-start gap-2">
+                                            <?php if(!empty($f['id_figura']) && !empty($f['fig'])): ?>
+                                                <span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md font-black text-[10px] tabular-nums shrink-0 mt-0.5">#<?php echo $f['fig_num']; ?></span>
+                                                <span class="text-slate-800 font-bold text-xs leading-snug break-words"><?php echo $f['fig']; ?></span>
+                                            <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
+                                                <span class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-md font-black text-[10px] uppercase shrink-0 mt-0.5"><i class="fas fa-water mr-1"></i>Rutina</span>
+                                                <span class="text-slate-800 font-bold text-xs leading-snug break-words"><?php echo $f['modali']; ?></span>
+                                            <?php else: ?>
+                                                <span class="text-slate-400 italic text-xs">No asignada</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+
+                                <!-- Vista Tablet / Desktop: Tabla espaciosa y scrolleable -->
+                                <div class="hidden sm:block overflow-x-auto">
+                                    <table class="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr class="bg-slate-100/60 text-xs sm:text-sm font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-200/60">
+                                                <th class="px-6 py-4">Categoría</th>
+                                                <th class="px-6 py-4"><?php echo ($row['figuras'] == 'si') ? 'Figura' : (($row['figuras'] == 'mixta') ? 'Prueba (Figura / Rutina)' : 'Modalidad'); ?></th>
+                                                <th class="px-6 py-4 text-center"><?php echo ($row['figuras'] == 'si') ? 'G.D.' : (($row['figuras'] == 'mixta') ? 'Detalle Técnico' : 'Participantes'); ?></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-slate-100 bg-white/50">
+                                            <?php foreach($fases_list as $f): ?>
+                                                <tr class="text-sm font-bold text-slate-600 hover:bg-white transition-colors">
+                                                    <td class="px-6 py-4 font-black text-slate-700 italic uppercase tracking-tighter">
+                                                        <?php echo htmlspecialchars($f['cat'] ?? 'Sin Categoría'); ?>
+                                                    </td>
+                                                    <td class="px-6 py-4">
+                                                        <?php if(!empty($f['id_figura']) && !empty($f['fig'])): ?>
+                                                            <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg mr-2 font-black text-xs tabular-nums">#<?php echo $f['fig_num']; ?></span>
+                                                            <span class="text-slate-800 font-bold"><?php echo $f['fig']; ?></span>
+                                                        <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
+                                                            <span class="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg mr-2 font-black text-xs uppercase"><i class="fas fa-water mr-1"></i> Rutina</span>
+                                                            <span class="text-slate-800 font-bold"><?php echo $f['modali']; ?></span>
+                                                        <?php else: ?>
+                                                            <span class="text-slate-400 italic">No asignada</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-center">
+                                                        <?php if(!empty($f['id_figura'])): ?>
+                                                            <span class="px-3.5 py-1 bg-emerald-50 text-emerald-700 rounded-full font-black text-xs shadow-xs border border-emerald-100 tabular-nums">
+                                                                GD <?php echo $f['gd']; ?>
+                                                            </span>
+                                                        <?php elseif(!empty($f['id_modalidad'])): ?>
+                                                            <span class="px-3.5 py-1 bg-blue-50 text-blue-700 rounded-full font-black text-xs shadow-xs border border-blue-100 tabular-nums">
+                                                                <?php echo $f['np'].' + '.$f['nr'].'R'; ?>
+                                                            </span>
+                                                        <?php else: ?>
+                                                            <span class="text-slate-400">-</span>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <div class="px-6 py-8 text-center text-xs sm:text-sm italic text-slate-400 font-bold">Sin fases definidas para esta competición.</div>
+                            <?php endif; ?>
                         </div>
 
                         <!-- Documentación Adjunta -->
-                        <div class="flex flex-wrap gap-5">
+                        <div class="flex flex-wrap gap-2.5 sm:gap-4">
                             <?php
                             $docs_map = [
                                 'normativa' => ['label' => 'Normativa', 'icon' => 'fa-file-shield'],
@@ -639,8 +673,8 @@ $meses_es = [
                                 $filename = './docs/'.$row['id'].'-'.$file_id.'.pdf';
                                 if (file_exists($filename)):
                             ?>
-                                <a href="<?php echo $filename; ?>" target="_blank" class="px-6 py-3 bg-white text-slate-600 hover:bg-slate-800 hover:text-white rounded-[1.25rem] border border-slate-100 text-xs font-black uppercase tracking-tighter transition-all flex items-center gap-4 shadow-sm group/doc">
-                                    <i class="fa-solid <?php echo $meta['icon']; ?> text-xl text-slate-300 group-hover/doc:text-white transition-colors"></i> <?php echo $meta['label']; ?>
+                                <a href="<?php echo $filename; ?>" target="_blank" class="px-3.5 py-2 sm:px-5 sm:py-2.5 bg-white text-slate-600 hover:bg-slate-800 hover:text-white rounded-xl sm:rounded-[1.25rem] border border-slate-200/80 text-[11px] sm:text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2 sm:gap-3 shadow-xs active:scale-[0.98] group/doc">
+                                    <i class="fa-solid <?php echo $meta['icon']; ?> text-base sm:text-lg text-slate-400 group-hover/doc:text-white transition-colors"></i> <?php echo $meta['label']; ?>
                                 </a>
                             <?php 
                                 endif; 
@@ -650,51 +684,53 @@ $meses_es = [
                     </div>
                 </div>
             <?php endwhile; } else { ?>
-                <div class="p-20 bg-white rounded-[3rem] border border-slate-100 text-center shadow-sm">
-                    <div class="w-24 h-24 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 mx-auto mb-8"><i class="fas fa-calendar-times text-4xl"></i></div>
-                    <p class="text-slate-400 font-black italic uppercase tracking-widest text-base">No existen competiciones programadas</p>
+                <div class="p-8 sm:p-16 bg-white rounded-2xl sm:rounded-[3rem] border border-slate-100 text-center shadow-sm">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 mx-auto mb-4 sm:mb-6"><i class="fas fa-calendar-times text-2xl sm:text-3xl"></i></div>
+                    <p class="text-slate-400 font-black italic uppercase tracking-widest text-xs sm:text-sm">No existen competiciones programadas</p>
                 </div>
             <?php } ?>
         </div>
 
         <!-- SECCIÓN: EVENTOS EN CALENDARIO (COMPACTO) -->
-        <div class="mb-20">
-            <h2 class="text-3xl font-black text-slate-800 flex items-center gap-4 uppercase tracking-tighter italic mb-10">
-                <i class="fas fa-trophy text-emerald-500"></i> Eventos en Calendario
-            </h2>
-            <div class="bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border border-slate-200 border-t-[10px] border-t-emerald-500">
-                <div class="space-y-6">
+        <div class="mb-12 sm:mb-20">
+            <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-emerald-500 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic flex items-center gap-3">
+                    <i class="fas fa-trophy text-emerald-500"></i> Eventos en Calendario
+                </h2>
+            </div>
+            <div class="bg-white rounded-2xl sm:rounded-[3rem] p-4 sm:p-8 md:p-12 shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-emerald-500">
+                <div class="space-y-4 sm:space-y-6">
                     <?php
                     $query = 'select * FROM competiciones WHERE fecha >= (SELECT CURDATE() + 1) ORDER BY fecha asc';
                     $query_run = mysqli_query($connection,$query);
                     if(mysqli_num_rows($query_run) > 0){
                         while ($row = mysqli_fetch_assoc($query_run)):
                     ?>
-                        <div class="flex flex-col md:flex-row md:items-center justify-between p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg transition-all group gap-8">
-                            <div class="flex items-center gap-8">
-                                <div class="w-16 h-16 rounded-2xl oceanic-gradient flex flex-col items-center justify-center text-white shadow-lg shrink-0">
-                                    <span class="text-[11px] font-black uppercase opacity-70"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
-                                    <span class="text-xl font-black"><?php echo date('d', strtotime($row['fecha'])); ?></span>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg transition-all group gap-4 sm:gap-8">
+                            <div class="flex items-start sm:items-center gap-4 sm:gap-8">
+                                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl oceanic-gradient flex flex-col items-center justify-center text-white shadow-md shrink-0 tabular-nums">
+                                    <span class="text-[10px] sm:text-[11px] font-black uppercase opacity-75"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
+                                    <span class="text-lg sm:text-xl font-black leading-none mt-0.5"><?php echo date('d', strtotime($row['fecha'])); ?></span>
                                 </div>
-                                <div>
-                                    <h4 class="text-xl md:text-2xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors italic"><?php echo $row['nombre']; ?></h4>
-                                    <p class="text-sm font-bold text-slate-400 uppercase tracking-tighter mt-2 flex items-center gap-3"><i class="fas fa-map-marker-alt text-blue-500 text-xs"></i> <?php echo $row['lugar']; ?></p>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-base sm:text-xl md:text-2xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors italic break-words"><?php echo $row['nombre']; ?></h4>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-400 uppercase tracking-tighter mt-1 sm:mt-2 flex items-center gap-2"><i class="fas fa-map-marker-alt text-blue-500 text-xs"></i> <?php echo $row['lugar']; ?></p>
                                     <?php if(!empty($row['mensaje'])): ?>
-                                    <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
+                                    <div class="mt-2.5 sm:mt-3 p-2.5 sm:p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
                                         <div class="flex items-start gap-2">
-                                            <i class="fas fa-info-circle mt-0.5"></i>
+                                            <i class="fas fa-info-circle mt-0.5 text-amber-600 shrink-0"></i>
                                             <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
                                         </div>
                                     </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-4 self-end md:self-center">
-                                <a href="<?php echo $row['maps']; ?>" target="_blank" class="w-12 h-12 rounded-2xl bg-white border border-slate-200 text-slate-300 hover:text-blue-500 flex items-center justify-center transition-all shadow-sm"><i class="fa-solid fa-map-location-dot text-lg"></i></a>
+                            <div class="flex items-center gap-3 self-end sm:self-center">
+                                <a href="<?php echo $row['maps']; ?>" target="_blank" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-white border border-slate-200 text-slate-400 hover:text-blue-500 flex items-center justify-center transition-all shadow-xs active:scale-[0.95]"><i class="fa-solid fa-map-location-dot text-base sm:text-lg"></i></a>
                             </div>
                         </div>
                     <?php endwhile; } else { ?>
-                        <div class="text-center p-12 text-sm font-bold text-slate-400 uppercase italic">No existen eventos programados próximamente.</div>
+                        <div class="text-center p-8 sm:p-12 text-xs sm:text-sm font-bold text-slate-400 uppercase italic">No existen eventos programados próximamente.</div>
                     <?php } ?>
                 </div>
             </div>
@@ -702,52 +738,52 @@ $meses_es = [
 
         <!-- SECCIÓN: HISTORIAL (CON VIDILLA) -->
         <div>
-            <div class="flex items-center gap-4 border-l-[8px] border-slate-400 pl-6 py-2 mb-10">
-                <h2 class="text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
+            <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-slate-400 pl-4 sm:pl-6 py-1.5 sm:py-2 mb-6 sm:mb-8">
+                <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
                     Historial
                 </h2>
             </div>
             
-            <div class="bg-white rounded-[3rem] shadow-sm border border-slate-200 border-t-[12px] border-t-slate-400 overflow-hidden mb-12">
+            <div class="bg-white rounded-2xl sm:rounded-[3rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[12px] border-t-slate-400 overflow-hidden mb-8 sm:mb-12">
                 <div class="min-w-0">
                     <table class="w-full text-left border-collapse">
                         <thead class="hidden md:table-header-group">
-                            <tr class="bg-slate-50/50 text-sm font-black text-slate-400 uppercase tracking-[0.2em] italic border-b border-slate-100">
-                                <th class="px-10 py-6 w-32">Fecha</th>
-                                <th class="px-6 py-6">Evento y Localidad</th>
-                                <th class="px-6 py-6">Documentación Oficial</th>
-                                <th class="px-10 py-6 text-center w-24">Mapa</th>
+                            <tr class="bg-slate-50/50 text-xs sm:text-sm font-black text-slate-400 uppercase tracking-[0.2em] italic border-b border-slate-100">
+                                <th class="px-8 py-5 w-32">Fecha</th>
+                                <th class="px-6 py-5">Evento y Localidad</th>
+                                <th class="px-6 py-5">Documentación Oficial</th>
+                                <th class="px-8 py-5 text-center w-24">Mapa</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y-8 divide-slate-50">
+                        <tbody class="divide-y-4 sm:divide-y-8 divide-slate-50">
                             <?php
                             $query = 'select * FROM competiciones WHERE fecha < (SELECT CURDATE()) ORDER BY fecha desc LIMIT 10';
                             $query_run = mysqli_query($connection,$query);
                             while ($row = mysqli_fetch_assoc($query_run)):
                             ?>
-                            <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-8 md:p-0 border-b-2 border-slate-100">
+                            <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-4 sm:p-6 md:p-0 border-b border-slate-100 md:border-b-0">
                                 
                                 <!-- Columna 1: Fecha (Al principio) -->
-                                <td class="px-0 md:px-10 py-0 md:py-10 mb-6 md:mb-0">
-                                    <div class="flex flex-col items-center justify-center w-20 h-24 bg-slate-800 rounded-[1.5rem] shadow-lg border border-slate-700">
-                                        <span class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1"><?php echo $meses_es[date("M", strtotime($row['fecha']))]; ?></span>
-                                        <span class="text-3xl font-black text-white leading-tight"><?php echo date("d", strtotime($row['fecha'])); ?></span>
-                                        <span class="text-xs font-black text-slate-500 tracking-widest leading-none mt-2"><?php echo date("Y", strtotime($row['fecha'])); ?></span>
+                                <td class="px-0 md:px-8 py-0 md:py-8 mb-4 md:mb-0">
+                                    <div class="flex flex-col items-center justify-center w-16 h-20 sm:w-20 sm:h-24 bg-slate-800 rounded-xl sm:rounded-[1.5rem] shadow-md border border-slate-700 tabular-nums">
+                                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase leading-none mb-1"><?php echo $meses_es[date("M", strtotime($row['fecha']))]; ?></span>
+                                        <span class="text-2xl sm:text-3xl font-black text-white leading-tight"><?php echo date("d", strtotime($row['fecha'])); ?></span>
+                                        <span class="text-[10px] sm:text-xs font-black text-slate-500 tracking-widest leading-none mt-1 sm:mt-2"><?php echo date("Y", strtotime($row['fecha'])); ?></span>
                                     </div>
                                 </td>
 
                                 <!-- Columna 2: Nombre y Localidad (Con mapa antes) -->
-                                <td class="px-0 md:px-6 py-0 md:py-8 mb-6 md:mb-0">
+                                <td class="px-0 md:px-6 py-0 md:py-6 mb-4 md:mb-0">
                                     <div>
-                                        <h4 class="text-xl md:text-xl font-black text-slate-900 leading-tight italic uppercase tracking-tighter mb-2"><?php echo $row['nombre']; ?></h4>
+                                        <h4 class="text-lg sm:text-xl font-black text-slate-900 leading-tight italic uppercase tracking-tighter mb-1 sm:mb-2 break-words"><?php echo $row['nombre']; ?></h4>
                                         <div class="flex items-center gap-2">
-                                            <i class="fa-solid fa-map-location-dot text-blue-500 text-sm"></i>
-                                            <p class="text-sm font-bold text-slate-500 italic"><?php echo $row['lugar']; ?></p>
+                                            <i class="fa-solid fa-map-location-dot text-blue-500 text-xs sm:text-sm"></i>
+                                            <p class="text-xs sm:text-sm font-bold text-slate-500 italic"><?php echo $row['lugar']; ?></p>
                                         </div>
                                         <?php if(!empty($row['mensaje'])): ?>
-                                        <div class="mt-3 p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
+                                        <div class="mt-2.5 p-2.5 sm:p-3 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl text-amber-700 text-xs font-medium max-w-lg">
                                             <div class="flex items-start gap-2">
-                                                <i class="fas fa-info-circle mt-0.5"></i>
+                                                <i class="fas fa-info-circle mt-0.5 text-amber-600 shrink-0"></i>
                                                 <p><?php echo nl2br(htmlspecialchars($row['mensaje'])); ?></p>
                                             </div>
                                         </div>
@@ -756,26 +792,26 @@ $meses_es = [
                                 </td>
 
                                 <!-- Columna 3: Documentación (Colores Fijos) -->
-                                <td class="px-0 md:px-6 py-0 md:py-8 mb-8 md:mb-0">
-                                    <div class="flex gap-6 flex-wrap">
+                                <td class="px-0 md:px-6 py-0 md:py-6 mb-4 md:mb-0">
+                                    <div class="flex gap-4 sm:gap-6 flex-wrap items-center">
                                         <?php if(file_exists('./docs/'.$row['id'].'-normativa.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-normativa.pdf" target="_blank" title="Normativa" class="text-indigo-500 hover:scale-110 transition-transform"><i class="fas fa-file-shield text-3xl"></i></a>
+                                            <a href="./docs/<?php echo $row['id']; ?>-normativa.pdf" target="_blank" title="Normativa" class="text-indigo-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-file-shield text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
                                         <?php if(file_exists('./docs/'.$row['id'].'-inscripciones.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-inscripciones.pdf" target="_blank" title="Listado Inscripciones" class="text-blue-500 hover:scale-110 transition-transform"><i class="fas fa-file-pen text-3xl"></i></a>
+                                            <a href="./docs/<?php echo $row['id']; ?>-inscripciones.pdf" target="_blank" title="Listado Inscripciones" class="text-blue-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-file-pen text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
                                         <?php if(file_exists('./docs/'.$row['id'].'-orden.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-orden.pdf" target="_blank" title="Orden de Salida" class="text-slate-600 hover:scale-110 transition-transform"><i class="fas fa-list-ol text-3xl"></i></a>
+                                            <a href="./docs/<?php echo $row['id']; ?>-orden.pdf" target="_blank" title="Orden de Salida" class="text-slate-600 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-list-ol text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
                                         <?php if(file_exists('./docs/'.$row['id'].'-resultados.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-resultados.pdf" target="_blank" title="Resultados Finales" class="text-amber-500 hover:scale-110 transition-transform"><i class="fas fa-trophy text-3xl"></i></a>
+                                            <a href="./docs/<?php echo $row['id']; ?>-resultados.pdf" target="_blank" title="Resultados Finales" class="text-amber-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-trophy text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
                                     </div>
                                 </td>
 
                                 <!-- Columna 4: Ubicación (Desktop) -->
-                                <td class="hidden md:table-cell px-10 py-8 text-center">
-                                    <a href="<?php echo $row['maps']; ?>" target="_blank" class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center border border-blue-100 shadow-sm mx-auto"><i class="fa-solid fa-map-location-dot text-lg"></i></a>
+                                <td class="hidden md:table-cell px-8 py-6 text-center">
+                                    <a href="<?php echo $row['maps']; ?>" target="_blank" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center border border-blue-100 shadow-xs mx-auto active:scale-[0.95]"><i class="fa-solid fa-map-location-dot text-base sm:text-lg"></i></a>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
