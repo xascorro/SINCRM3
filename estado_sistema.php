@@ -10,20 +10,20 @@ include('includes/navbar.php');
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido de la Página -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header de Sección -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-chart-line text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-chart-line text-base sm:text-lg"></i></span>
                     Estado del Sistema
                 </h1>
-                <p class="text-slate-500 font-medium">Monitorización en tiempo real y diagnóstico de salud del servidor.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Monitorización en tiempo real y diagnóstico de salud del servidor.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="configuracion_sistema.php" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2 shadow-blue-500/20">
-                    <i class="fas fa-sliders"></i> Configuración
+            <div class="flex gap-2 sm:gap-3">
+                <a href="configuracion_sistema.php" class="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-blue-500/20">
+                    <i class="fas fa-sliders text-xs"></i> Configuración
                 </a>
             </div>
         </div>
@@ -32,39 +32,39 @@ include('includes/navbar.php');
         <?php include('includes/alertas_v4.php'); ?>
 
         <!-- FILA 1: KPIs TÉCNICOS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-10">
             <!-- Servidor (Red y Conectividad) -->
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[6px] border-t-purple-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 transition-all"><i class="fas fa-network-wired"></i></div>
-                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Conectividad</span>
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-purple-500 group hover:shadow-xl transition-all">
+                <div class="flex justify-between items-start mb-3 sm:mb-4">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 transition-all"><i class="fas fa-network-wired text-sm sm:text-base"></i></div>
+                    <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Conectividad</span>
                 </div>
                 <?php
                 $ip_privada = @explode(' ', @shell_exec("hostname -I"))[0] ?? '127.0.0.1';
                 $ip_publica = @file_get_contents('https://api.ipify.org') ?? 'No disponible';
                 ?>
-                <h3 class="text-sm font-black text-slate-800 truncate mb-3"><?php echo $_SERVER['SERVER_NAME']; ?></h3>
-                <div class="space-y-2">
+                <h3 class="text-xs sm:text-sm font-black text-slate-800 truncate mb-2 sm:mb-3"><?php echo $_SERVER['SERVER_NAME']; ?></h3>
+                <div class="space-y-1.5 sm:space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">IP Pública</span>
-                        <span class="text-[10px] font-black text-slate-600"><?php echo $ip_publica; ?></span>
+                        <span class="text-[10px] font-black text-slate-600 tabular-nums"><?php echo $ip_publica; ?></span>
                     </div>
                     <div class="flex items-center justify-between border-t border-slate-50 pt-1">
                         <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">IP Privada</span>
-                        <span class="text-[10px] font-black text-slate-600"><?php echo $ip_privada; ?></span>
+                        <span class="text-[10px] font-black text-slate-600 tabular-nums"><?php echo $ip_privada; ?></span>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[9px] font-black text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg uppercase">Online</span>
-                        <span class="text-[10px] font-bold text-slate-400 italic">Status: <span class="text-emerald-600">Stable</span></span>
+                    <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[8px] sm:text-[9px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 sm:py-1 rounded-lg uppercase">Online</span>
+                        <span class="text-[9px] sm:text-[10px] font-bold text-slate-400 italic">Status: <span class="text-emerald-600">Stable</span></span>
                     </div>
                 </div>
             </div>
 
             <!-- Hardware (CPU, RAM, Disco y Uptime) -->
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[6px] border-t-sky-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600 transition-all"><i class="fas fa-microchip"></i></div>
-                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Hardware / Salud</span>
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-sky-500 group hover:shadow-xl transition-all">
+                <div class="flex justify-between items-start mb-3 sm:mb-4">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600 transition-all"><i class="fas fa-microchip text-sm sm:text-base"></i></div>
+                    <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Hardware / Salud</span>
                 </div>
                 <?php
                 $cpu_info = @shell_exec("grep 'model name' /proc/cpuinfo | head -1 | cut -d ':' -f 2") ?? 'CPU Desconocida';
@@ -78,7 +78,7 @@ include('includes/navbar.php');
                 $uptime = @shell_exec("uptime -p") ?? 'N/D';
                 $uptime = str_replace('up ', '', $uptime);
                 ?>
-                <div class="space-y-4">
+                <div class="space-y-3 sm:space-y-4">
                     <div class="flex items-center justify-between">
                         <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">CPU</span>
                         <span class="text-[10px] font-black text-slate-600 truncate max-w-[120px] italic"><?php echo trim($cpu_info); ?></span>
@@ -86,32 +86,32 @@ include('includes/navbar.php');
                     <div class="space-y-1">
                         <div class="flex justify-between items-end">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">RAM (<?php echo $mem_gb_total; ?>GB)</span>
-                            <span class="text-[10px] font-black text-sky-600"><?php echo $mem_perc; ?>%</span>
+                            <span class="text-[10px] font-black text-sky-600 tabular-nums"><?php echo $mem_perc; ?>%</span>
                         </div>
                         <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-sky-500 rounded-full transition-all" style="width: <?php echo $mem_perc; ?>%"></div></div>
                     </div>
                     <div class="space-y-1">
                         <div class="flex justify-between items-end">
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Disco</span>
-                            <span class="text-[10px] font-black text-indigo-600"><?php echo $percent_used; ?>%</span>
+                            <span class="text-[10px] font-black text-indigo-600 tabular-nums"><?php echo $percent_used; ?>%</span>
                         </div>
                         <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden shadow-inner"><div class="h-full bg-indigo-500 rounded-full transition-all" style="width: <?php echo $percent_used; ?>%"></div></div>
                     </div>
-                    <div class="pt-3 border-t border-slate-50 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
+                    <div class="pt-2 sm:pt-3 border-t border-slate-50 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
                             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                             <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest italic">Uptime</span>
                         </div>
-                        <span class="text-[10px] font-black text-slate-600 italic"><?php echo trim($uptime); ?></span>
+                        <span class="text-[10px] font-black text-slate-600 italic tabular-nums"><?php echo trim($uptime); ?></span>
                     </div>
                 </div>
             </div>
 
             <!-- Software (Stack) -->
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[6px] border-t-emerald-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-all"><i class="fas fa-box-open"></i></div>
-                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Software / Stack</span>
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-emerald-500 group hover:shadow-xl transition-all">
+                <div class="flex justify-between items-start mb-3 sm:mb-4">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 transition-all"><i class="fas fa-box-open text-sm sm:text-base"></i></div>
+                    <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Software / Stack</span>
                 </div>
                 <?php
                 $so_info = @shell_exec("lsb_release -ds") ?? PHP_OS;
@@ -122,32 +122,32 @@ include('includes/navbar.php');
                     if ($db_version_q) { $row_v = mysqli_fetch_array($db_version_q); $db_version = explode('-', $row_v[0])[0]; }
                 }
                 ?>
-                <div class="space-y-3">
-                    <div class="flex flex-col gap-1">
+                <div class="space-y-2.5 sm:space-y-3">
+                    <div class="flex flex-col gap-0.5 sm:gap-1">
                         <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Sistema & Web</span>
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-black text-slate-700 truncate max-w-[100px]"><?php echo trim($so_info); ?></span>
                             <span class="text-[10px] font-bold text-indigo-500">Apache <?php echo trim($apache_ver); ?></span>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-1 border-t border-slate-50 pt-2">
+                    <div class="flex flex-col gap-0.5 sm:gap-1 border-t border-slate-50 pt-1.5 sm:pt-2">
                         <span class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Backend Stack</span>
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-black text-slate-700">MariaDB <?php echo $db_version; ?></span>
                             <span class="text-[10px] font-bold text-purple-600">PHP <?php echo phpversion(); ?></span>
                         </div>
                     </div>
-                    <div class="mt-4 flex items-center justify-center p-2 bg-emerald-50/50 rounded-xl border border-emerald-100/50">
+                    <div class="mt-3 sm:mt-4 flex items-center justify-center p-1.5 sm:p-2 bg-emerald-50/50 rounded-xl border border-emerald-100/50">
                         <span class="text-[8px] font-black text-emerald-600 uppercase tracking-[0.2em] italic">Servicios Activos</span>
                     </div>
                 </div>
             </div>
 
             <!-- Requisitos -->
-            <div class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[6px] border-t-amber-500 group hover:shadow-xl transition-all">
-                <div class="flex justify-between items-start mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all"><i class="fas fa-stethoscope"></i></div>
-                    <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Diagnóstico</span>
+            <div class="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-4 sm:border-t-[6px] border-t-amber-500 group hover:shadow-xl transition-all">
+                <div class="flex justify-between items-start mb-2.5 sm:mb-3">
+                    <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 transition-all"><i class="fas fa-stethoscope text-sm sm:text-base"></i></div>
+                    <span class="text-[8px] sm:text-[9px] font-black uppercase text-slate-400 tracking-widest italic">Diagnóstico</span>
                 </div>
                 <div class="space-y-1.5">
                     <?php
@@ -163,11 +163,11 @@ include('includes/navbar.php');
         </div>
 
         <!-- Salud de Tablas -->
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 mb-10">
-            <h2 class="text-xl font-black text-slate-800 mb-8 flex items-center gap-3 italic">
+        <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-emerald-500 mb-6 sm:mb-10">
+            <h2 class="text-base sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3 italic">
                 <i class="fas fa-database text-emerald-500"></i> Estructura y Salud de la Base de Datos
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 max-h-[500px] overflow-y-auto no-scrollbar pr-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-[400px] sm:max-h-[500px] overflow-y-auto no-scrollbar pr-1 sm:pr-2">
                 <?php
                 if ($connection) {
                     $table_res = @mysqli_query($connection, "SELECT TABLE_NAME, TABLE_ROWS, (DATA_LENGTH + INDEX_LENGTH) as size, DATA_FREE FROM information_schema.TABLES WHERE TABLE_SCHEMA = '$db_name' ORDER BY size DESC");
@@ -175,18 +175,18 @@ include('includes/navbar.php');
                         while ($t = mysqli_fetch_assoc($table_res)): 
                             $frag = $t['DATA_FREE'] ?? 0;
                         ?>
-                            <div class="flex items-center justify-between py-4 px-5 rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all">
-                                <div class="flex flex-col gap-1 min-w-0">
+                            <div class="flex items-center justify-between py-3 px-3.5 sm:py-4 sm:px-5 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all">
+                                <div class="flex flex-col gap-0.5 sm:gap-1 min-w-0">
                                     <div class="flex items-center gap-2">
-                                        <div class="w-1.5 h-1.5 rounded-full <?php echo $frag > 0 ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'; ?>"></div>
+                                        <div class="w-1.5 h-1.5 rounded-full shrink-0 <?php echo $frag > 0 ? 'bg-amber-400 animate-pulse' : 'bg-emerald-400'; ?>"></div>
                                         <span class="text-xs font-black text-slate-800 truncate"><?php echo $t['TABLE_NAME']; ?></span>
                                     </div>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase pl-3"><?php echo number_format($t['TABLE_ROWS'], 0, ',', '.'); ?> registros</span>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase pl-3.5 tabular-nums"><?php echo number_format($t['TABLE_ROWS'], 0, ',', '.'); ?> registros</span>
                                 </div>
                                 <div class="flex flex-col items-end shrink-0">
-                                    <span class="text-[10px] font-black text-slate-700"><?php echo round($t['size'] / 1024, 1); ?> KB</span>
+                                    <span class="text-[10px] font-black text-slate-700 tabular-nums"><?php echo round($t['size'] / 1024, 1); ?> KB</span>
                                     <?php if($frag > 0): ?>
-                                        <span class="text-[8px] font-black text-red-500 uppercase tracking-tighter italic">Frag: <?php echo round($frag / 1024, 1); ?> KB</span>
+                                        <span class="text-[8px] font-black text-red-500 uppercase tracking-tighter italic tabular-nums">Frag: <?php echo round($frag / 1024, 1); ?> KB</span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -198,15 +198,34 @@ include('includes/navbar.php');
         </div>
 
         <!-- Terminal Log -->
-        <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden">
-            <div class="px-8 py-5 bg-slate-800/50 border-b border-slate-700 flex items-center justify-between">
-                <div class="flex items-center gap-3">
+        <div class="bg-slate-900 rounded-2xl sm:rounded-[2.5rem] shadow-2xl border border-slate-800 overflow-hidden">
+            <div class="px-4 sm:px-8 py-3.5 sm:py-5 bg-slate-800/50 border-b border-slate-700 flex items-center justify-between">
+                <div class="flex items-center gap-2 sm:gap-3">
                     <div class="flex gap-1.5"><div class="w-2.5 h-2.5 rounded-full bg-red-500/80"></div><div class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></div><div class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></div></div>
-                    <span class="ml-4 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">terminal_output.log</span>
+                    <span class="ml-2 sm:ml-4 text-[9px] sm:text-[10px] font-black text-slate-500 uppercase tracking-widest italic">terminal_output.log</span>
                 </div>
-                <form action="db_code.php" method="POST"><button type="submit" name="clear_log" class="text-[9px] font-black uppercase text-slate-500 hover:text-red-400 transition-colors">Vaciado de Terminal</button></form>
+                <form action="db_code.php" method="POST"><button type="submit" name="clear_log" class="text-[9px] font-black uppercase text-slate-500 hover:text-red-400 transition-colors">Vaciado</button></form>
             </div>
-            <div class="p-10 font-mono text-[11px] leading-relaxed overflow-y-auto max-h-[500px] no-scrollbar text-slate-400">
+            <div class="p-4 sm:p-10 font-mono text-[10px] sm:text-[11px] leading-relaxed overflow-y-auto max-h-[400px] sm:max-h-[500px] no-scrollbar text-slate-400 overflow-x-auto">
+                <?php
+                $log_file = './log/log.txt';
+                if (file_exists($log_file)) {
+                    $lines = @file($log_file);
+                    if ($lines) {
+                        foreach (array_slice(array_reverse($lines), 0, 50) as $line) {
+                            $line = htmlspecialchars($line);
+                            $line = str_replace(['[SUCCESS]', '[ERROR]', '[WARNING]', '[INFO]', '[SECURITY]'], ['<span class="text-emerald-400 font-bold">[SUCCESS]</span>', '<span class="text-red-400 font-bold">[ERROR]</span>', '<span class="text-amber-400">[WARNING]</span>', '<span class="text-sky-400">[INFO]</span>', '<span class="text-purple-400 font-bold">[SECURITY]</span>'], $line);
+                            $line = preg_replace('/^\[(.*?)\]/', '<span class="text-slate-600">[$1]</span>', $line);
+                            echo '<div class="hover:bg-white/5 py-1 px-1.5 sm:px-2 rounded transition-colors whitespace-nowrap">' . $line . '</div>';
+                        }
+                    }
+                }
+                ?>
+            </div>
+        </div>
+
+    </div>
+</main>
                 <?php
                 $log_file = './log/log.txt';
                 if (file_exists($log_file)) {

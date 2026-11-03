@@ -1,25 +1,30 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 22:25
+Fecha: 2026-11-03 22:29
 =========================================================
 
 1. OBJETIVO DEL BLOQUE:
    Optimización exhaustiva Mobile-First (UI/UX) según directrices de diseño (Emil Kowalski + Rauno Freiberg) en:
-   - https://sincrm.pedrodiaz.eu/configuracion_sistema.php
+   - https://sincrm.pedrodiaz.eu/estado_sistema.php
+   - https://sincrm.pedrodiaz.eu/diagnostico.php
 
 2. CAMBIOS IMPLEMENTADOS:
-   - configuracion_sistema.php:
+   - estado_sistema.php:
      * Contenedor adaptativo con padding fluido (px-3 py-4 sm:p-6 md:p-10).
-     * Cabecera y botón "Ver Estado" responsivos para móviles con microinteracción táctil (active:scale-[0.98]).
-     * Panel de Conexión de BD: campos de host, db, usuario y contraseña adaptados a 1 columna en móvil y 2 en desktop, checkbox táctil y botón de confirmación apilable.
-     * Panel de Optimización de BD: tarjeta de ejecución con botón al 100% en pantallas estrechas y feedback táctil elástico.
-     * Panel de Backups: input de comentario con padding derecho proporcional al botón "Crear SQL" para evitar solapamientos, listado de copias descargables y acciones de restauración/borrado con botones de fácil toque y fechas/tiempos tabulares (tabular-nums).
-     * Panel de Runtime Config (PHP): inputs de límites numéricos (Upload, Post, Memory, Exec Time, Max Input Vars) con fuentes tabulares para estabilidad visual y botón de guardado optimizado.
-     * Panel de Debug Mode: toggle táctil centrado y adaptado para dispositivos móviles.
+     * Cabecera y botón de configuración con microinteracción táctil (active:scale-[0.98]).
+     * Cuadrícula de KPIs Técnicos (Conectividad, Hardware/Salud, Software/Stack, Diagnóstico) adaptada a 1 columna en móvil, 2 en tablet y 4 en desktop con estabilidad numérica (tabular-nums).
+     * Panel de Estructura y Salud de Base de Datos con tarjetas de tablas compactas (py-3 px-3.5 sm:py-4 sm:px-5) para visualización táctil rápida sin desbordamiento.
+     * Terminal de logs en tiempo real con scroll horizontal protegido (overflow-x-auto) y botón de vaciado ergonómico.
+   - diagnostico.php:
+     * Contenedor adaptativo con padding fluido y botón "Volver" con toque elástico.
+     * Separadores de sección (Ámbitos Deportistas, Arbitral, Operativa, Multimedia) con tipografía proporcionada y bordes hairline/acento ajustados.
+     * Tarjetas de diagnóstico técnico adaptadas a móviles con paddings proporcionales (p-4 sm:p-8), contadores en tabular-nums y botones de acción con respuesta rápida.
+     * Modales SweetAlert2 de análisis y cascada con ancho responsivo (width: window.innerWidth < 640 ? '95%' : '650px') para visualización óptima en smartphones.
 
 3. ARCHIVOS MODIFICADOS:
-   - /var/www/html/sincrm/configuracion_sistema.php
-   - Sincronizado a /var/www/html/beta/configuracion_sistema.php con permisos 664.
+   - /var/www/html/sincrm/estado_sistema.php
+   - /var/www/html/sincrm/diagnostico.php
+   - Sincronizados a /var/www/html/beta/ con permisos 664.
 
 4. ESTADO TÉCNICO:
    - Sintaxis PHP validada con `php -l` (0 errores).

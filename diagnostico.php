@@ -10,61 +10,61 @@ include('includes/navbar.php');
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido de la Página -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header de Sección -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-stethoscope text-lg"></i></span>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-stethoscope text-base sm:text-lg"></i></span>
                     Diagnóstico de Integridad
                 </h1>
-                <p class="text-slate-500 font-medium italic">Análisis exhaustivo para mantener la salud técnica de la base de datos.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium italic">Análisis exhaustivo para mantener la salud técnica de la base de datos.</p>
             </div>
-            <div class="flex gap-3">
-                <a href="mantenimiento.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm italic"><i class="fas fa-arrow-left text-xs"></i> Volver</a>
+            <div class="flex gap-2 sm:gap-3">
+                <a href="mantenimiento.php" class="w-full sm:w-auto px-4 sm:px-5 py-2 sm:py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm text-xs italic"><i class="fas fa-arrow-left text-xs"></i> Volver</a>
             </div>
         </div>
 
-        <div class="space-y-12">
+        <div class="space-y-6 sm:space-y-12">
             
             <!-- BLOQUE 1: DEPORTISTAS -->
             <div>
-                <div class="flex items-center gap-4 border-l-[8px] border-blue-500 pl-6 py-2 mb-8 uppercase tracking-widest text-blue-600 font-black italic">
+                <div class="flex items-center gap-3 sm:gap-4 border-l-4 sm:border-l-[8px] border-blue-500 pl-3.5 sm:pl-6 py-1 sm:py-2 mb-4 sm:mb-8 uppercase tracking-widest text-blue-600 text-xs sm:text-sm font-black italic">
                     Ámbito Deportistas
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                     <!-- Nadadoras Duplicadas -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-blue-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-500 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 shadow-sm border border-blue-100"><i class="fas fa-copy text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Posibles Duplicados</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Detección por coincidencia exacta de Nombre y Apellidos o Número de Licencia.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-blue-100"><i class="fas fa-copy text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Posibles Duplicados</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Detección por coincidencia exacta de Nombre y Apellidos o Número de Licencia.</p>
                         </div>
                         <?php
                         $q_dup = "SELECT COUNT(*) as total FROM (SELECT COUNT(*) FROM nadadoras GROUP BY nombre, apellidos HAVING COUNT(*) > 1) as t";
                         $dups = mysqli_fetch_assoc(mysqli_query($connection, $q_dup))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black <?php echo $dups > 0 ? 'text-red-500' : 'text-slate-400'; ?>"><?php echo $dups; ?> <span class="text-[10px] uppercase">coincidencias</span></span>
-                            <button onclick="analizar('deportistas_duplicados')" class="px-6 py-2.5 bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-blue-500/20 hover:scale-105 transition-all">Analizar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black tabular-nums <?php echo $dups > 0 ? 'text-red-500' : 'text-slate-400'; ?>"><?php echo $dups; ?> <span class="text-[10px] uppercase font-bold">coincidencias</span></span>
+                            <button onclick="analizar('deportistas_duplicados')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-blue-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all">Analizar</button>
                         </div>
                     </div>
 
                     <!-- Nadadoras sin Actividad -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-blue-400 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-400 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-6 shadow-sm border border-slate-100"><i class="fas fa-user-slash text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Sin Inscripciones</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Nadadoras registradas que nunca han participado en fases de figuras ni en rutinas.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-slate-100"><i class="fas fa-user-slash text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Sin Inscripciones</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Nadadoras registradas que nunca han participado en fases de figuras ni en rutinas.</p>
                         </div>
                         <?php
                         $q_no_act = "SELECT COUNT(*) as total FROM nadadoras WHERE id NOT IN (SELECT id_nadadora FROM inscripciones_figuras) AND id NOT IN (SELECT id_nadadora FROM rutinas_participantes)";
                         $no_act = mysqli_fetch_assoc(mysqli_query($connection, $q_no_act))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black text-slate-400"><?php echo $no_act; ?> <span class="text-[10px] uppercase">inactivas</span></span>
-                            <button onclick="analizar('deportistas_sin_inscripciones')" class="px-6 py-2.5 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">Ver Listado</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black text-slate-400 tabular-nums"><?php echo $no_act; ?> <span class="text-[10px] uppercase font-bold">inactivas</span></span>
+                            <button onclick="analizar('deportistas_sin_inscripciones')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all">Ver Listado</button>
                         </div>
                     </div>
                 </div>
@@ -72,41 +72,41 @@ include('includes/navbar.php');
 
             <!-- BLOQUE 2: JUECES -->
             <div>
-                <div class="flex items-center gap-4 border-l-[8px] border-amber-500 pl-6 py-2 mb-8 uppercase tracking-widest text-amber-600 font-black italic">
+                <div class="flex items-center gap-3 sm:gap-4 border-l-4 sm:border-l-[8px] border-amber-500 pl-3.5 sm:pl-6 py-1 sm:py-2 mb-4 sm:mb-8 uppercase tracking-widest text-amber-600 text-xs sm:text-sm font-black italic">
                     Ámbito Arbitral
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                     <!-- Jueces Duplicados -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-amber-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-amber-500 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 shadow-sm border border-amber-100"><i class="fas fa-users-viewfinder text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Jueces Duplicados</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Detección de fichas de jueces repetidas por nombre o licencia en el censo oficial.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-amber-100"><i class="fas fa-users-viewfinder text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Jueces Duplicados</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Detección de fichas de jueces repetidas por nombre o licencia en el censo oficial.</p>
                         </div>
                         <?php
                         $q_j_dup = "SELECT COUNT(*) as total FROM (SELECT COUNT(*) FROM jueces GROUP BY nombre, apellidos HAVING COUNT(*) > 1) as t";
                         $j_dups = mysqli_fetch_assoc(mysqli_query($connection, $q_j_dup))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black <?php echo $j_dups > 0 ? 'text-amber-600' : 'text-slate-400'; ?>"><?php echo $j_dups; ?> <span class="text-[10px] uppercase">posibles</span></span>
-                            <button onclick="analizar('jueces_duplicados')" class="px-6 py-2.5 bg-amber-500 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-amber-500/20 hover:scale-105 transition-all">Analizar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black tabular-nums <?php echo $j_dups > 0 ? 'text-amber-600' : 'text-slate-400'; ?>"><?php echo $j_dups; ?> <span class="text-[10px] uppercase font-bold">posibles</span></span>
+                            <button onclick="analizar('jueces_duplicados')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-amber-500 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-amber-500/20 active:scale-[0.98] transition-all">Analizar</button>
                         </div>
                     </div>
 
                     <!-- Jueces sin Cuenta de Acceso -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-amber-400 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-amber-400 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-6 shadow-sm border border-slate-100"><i class="fas fa-link-slash text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Sin Vinculación Web</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Jueces oficiales que aún no tienen una cuenta de usuario vinculada para acceder a sus datos.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-slate-100"><i class="fas fa-link-slash text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Sin Vinculación Web</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Jueces oficiales que aún no tienen una cuenta de usuario vinculada para acceder a sus datos.</p>
                         </div>
                         <?php
                         $q_j_no_link = "SELECT COUNT(*) as total FROM jueces WHERE id NOT IN (SELECT id_juez_v3 FROM usuarios WHERE id_juez_v3 IS NOT NULL) AND activo = 1";
                         $j_no_link = mysqli_fetch_assoc(mysqli_query($connection, $q_j_no_link))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black text-slate-400"><?php echo $j_no_link; ?> <span class="text-[10px] uppercase">desvinculados</span></span>
-                            <button onclick="analizar('jueces_sin_cuenta')" class="px-6 py-2.5 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">Ver Listado</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black text-slate-400 tabular-nums"><?php echo $j_no_link; ?> <span class="text-[10px] uppercase font-bold">desvinculados</span></span>
+                            <button onclick="analizar('jueces_sin_cuenta')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all">Ver Listado</button>
                         </div>
                     </div>
                 </div>
@@ -114,71 +114,71 @@ include('includes/navbar.php');
 
             <!-- BLOQUE 3: OPERATIVA (COMPETICIONES Y FASES) -->
             <div>
-                <div class="flex items-center gap-4 border-l-[8px] border-emerald-500 pl-6 py-2 mb-8 uppercase tracking-widest text-emerald-600 font-black italic">
+                <div class="flex items-center gap-3 sm:gap-4 border-l-4 sm:border-l-[8px] border-emerald-500 pl-3.5 sm:pl-6 py-1 sm:py-2 mb-4 sm:mb-8 uppercase tracking-widest text-emerald-600 text-xs sm:text-sm font-black italic">
                     Competición & Operativa
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                     <!-- Fases sin Nadadoras -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-emerald-500 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-6 shadow-sm border border-emerald-100"><i class="fas fa-ghost text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Fases Vacías</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Fases activas que no tienen ninguna inscripción de deportistas registrada.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-emerald-100"><i class="fas fa-ghost text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Fases Vacías</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Fases activas que no tienen ninguna inscripción de deportistas registrada.</p>
                         </div>
                         <?php
                         $q_f_vacia = "SELECT COUNT(*) as total FROM fases WHERE id NOT IN (SELECT id_fase FROM inscripciones_figuras) AND id_competicion IN (SELECT id FROM competiciones WHERE activo = 'si')";
                         $f_vacias = mysqli_fetch_assoc(mysqli_query($connection, $q_f_vacia))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black <?php echo $f_vacias > 0 ? 'text-amber-500' : 'text-slate-400'; ?>"><?php echo $f_vacias; ?> <span class="text-[10px] uppercase">fases</span></span>
-                            <button onclick="analizar('fases_vacias')" class="px-6 py-2.5 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-emerald-500/20 hover:scale-105 transition-all">Detectar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black tabular-nums <?php echo $f_vacias > 0 ? 'text-amber-500' : 'text-slate-400'; ?>"><?php echo $f_vacias; ?> <span class="text-[10px] uppercase font-bold">fases</span></span>
+                            <button onclick="analizar('fases_vacias')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all">Detectar</button>
                         </div>
                     </div>
 
                     <!-- Competiciones sin Fases -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-emerald-400 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-emerald-400 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-6 shadow-sm border border-slate-100"><i class="fas fa-calendar-xmark text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Eventos Huérfanos</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Competiciones dadas de alta que no tienen fases técnicas asociadas.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-slate-100"><i class="fas fa-calendar-xmark text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Eventos Huérfanos</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Competiciones dadas de alta que no tienen fases técnicas asociadas.</p>
                         </div>
                         <?php
                         $q_c_huerf = "SELECT COUNT(*) as total FROM competiciones WHERE id NOT IN (SELECT id_competicion FROM fases)";
                         $c_huerf = mysqli_fetch_assoc(mysqli_query($connection, $q_c_huerf))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black text-slate-400"><?php echo $c_huerf; ?> <span class="text-[10px] uppercase">eventos</span></span>
-                            <button onclick="analizar('competiciones_sin_fases')" class="px-6 py-2.5 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">Verificar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black text-slate-400 tabular-nums"><?php echo $c_huerf; ?> <span class="text-[10px] uppercase font-bold">eventos</span></span>
+                            <button onclick="analizar('competiciones_sin_fases')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all">Verificar</button>
                         </div>
                     </div>
 
                     <!-- Notas Huérfanas -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-red-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-red-500 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-6 shadow-sm border border-red-100"><i class="fas fa-triangle-exclamation text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Integridad de Notas</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Notas que han perdido su panel de jueces. Acción crítica requerida si hay detecciones.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-red-50 text-red-600 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-red-100"><i class="fas fa-triangle-exclamation text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Integridad de Notas</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Notas que han perdido su panel de jueces. Acción crítica requerida si hay detecciones.</p>
                         </div>
                         <?php
                         $q_n_huerf = "SELECT COUNT(*) as total FROM puntuaciones_jueces WHERE id_panel_juez NOT IN (SELECT id FROM panel_jueces)";
                         $n_huerf = mysqli_fetch_assoc(mysqli_query($connection, $q_n_huerf))['total'];
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black <?php echo $n_huerf > 0 ? 'text-red-600 animate-pulse' : 'text-slate-400'; ?>"><?php echo $n_huerf; ?> <span class="text-[10px] uppercase">críticos</span></span>
-                            <button onclick="analizar('notas_huerfanas')" class="px-6 py-2.5 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 hover:scale-105 transition-all">Reparar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black tabular-nums <?php echo $n_huerf > 0 ? 'text-red-600 animate-pulse' : 'text-slate-400'; ?>"><?php echo $n_huerf; ?> <span class="text-[10px] uppercase font-bold">críticos</span></span>
+                            <button onclick="analizar('notas_huerfanas')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-red-500/20 active:scale-[0.98] transition-all">Reparar</button>
                         </div>
                     </div>
 
                     <!-- Limpieza en Cascada de Competiciones -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-slate-800 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-slate-800 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center mb-6 shadow-sm border border-slate-200"><i class="fas fa-broom text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Limpieza en Cascada</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Eliminación completa de eventos (Figuras/Rutinas) y todas sus dependencias técnicas.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-slate-200"><i class="fas fa-broom text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Limpieza en Cascada</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Eliminación completa de eventos (Figuras/Rutinas) y todas sus dependencias técnicas.</p>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-black uppercase text-slate-400">Acción Destructiva</span>
-                            <button onclick="abrirSelectorCascada()" class="px-6 py-2.5 bg-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">Iniciar Limpieza</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400">Acción Destructiva</span>
+                            <button onclick="abrirSelectorCascada()" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all">Iniciar Limpieza</button>
                         </div>
                     </div>
                 </div>
@@ -186,16 +186,16 @@ include('includes/navbar.php');
 
             <!-- BLOQUE 4: MULTIMEDIA -->
             <div>
-                <div class="flex items-center gap-4 border-l-[8px] border-indigo-500 pl-6 py-2 mb-8 uppercase tracking-widest text-indigo-600 font-black italic">
+                <div class="flex items-center gap-3 sm:gap-4 border-l-4 sm:border-l-[8px] border-indigo-500 pl-3.5 sm:pl-6 py-1 sm:py-2 mb-4 sm:mb-8 uppercase tracking-widest text-indigo-600 text-xs sm:text-sm font-black italic">
                     Ámbito Multimedia
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                     <!-- Archivos MP3 Huérfanos -->
-                    <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-200 border-l-[6px] border-l-indigo-500 flex flex-col justify-between group hover:shadow-xl transition-all">
+                    <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-indigo-500 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-6 shadow-sm border border-indigo-100"><i class="fas fa-file-audio text-lg"></i></div>
-                            <h3 class="text-xl font-black text-slate-800 mb-2">Música Huérfana</h3>
-                            <p class="text-xs font-medium text-slate-400 italic mb-8">Archivos MP3 en el servidor que no están vinculados a ninguna rutina en la base de datos.</p>
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-indigo-100"><i class="fas fa-file-audio text-base sm:text-lg"></i></div>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Música Huérfana</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Archivos MP3 en el servidor que no están vinculados a ninguna rutina en la base de datos.</p>
                         </div>
                         <?php
                         $huerfanos_mp3 = 0;
@@ -229,9 +229,9 @@ include('includes/navbar.php');
                             }
                         }
                         ?>
-                        <div class="flex items-center justify-between">
-                            <span class="text-2xl font-black <?php echo $huerfanos_mp3 > 0 ? 'text-amber-500' : 'text-slate-400'; ?>"><?php echo $huerfanos_mp3; ?> <span class="text-[10px] uppercase">archivos</span></span>
-                            <button onclick="analizar('archivos_musica_huerfanos')" class="px-6 py-2.5 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg shadow-indigo-500/20 hover:scale-105 transition-all">Analizar</button>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-xl sm:text-2xl font-black tabular-nums <?php echo $huerfanos_mp3 > 0 ? 'text-amber-500' : 'text-slate-400'; ?>"><?php echo $huerfanos_mp3; ?> <span class="text-[10px] uppercase font-bold">archivos</span></span>
+                            <button onclick="analizar('archivos_musica_huerfanos')" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-indigo-600 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg shadow-indigo-500/20 active:scale-[0.98] transition-all">Analizar</button>
                         </div>
                     </div>
                 </div>
@@ -349,7 +349,7 @@ include('includes/navbar.php');
                     confirmButtonText: '¡SÍ, BORRAR TODO!',
                     cancelButtonText: 'Abortar',
                     confirmButtonColor: '#ef4444',
-                    width: '650px'
+                    width: window.innerWidth < 640 ? '95%' : '650px'
                 }).then((resConfirm) => {
                     if (resConfirm.isConfirmed) {
                         ejecutarBorrado(ids);
@@ -440,7 +440,7 @@ include('includes/navbar.php');
             icon: data.registros.length > 0 ? 'warning' : 'success',
             confirmButtonText: 'Cerrar',
             confirmButtonColor: '#1e293b',
-            width: '650px'
+            width: window.innerWidth < 640 ? '95%' : '650px'
         });
     }
 
