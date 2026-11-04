@@ -40,60 +40,99 @@ if(isset($_POST['update_btn'])){
 		$_SESSION['estado'] = 'Error, el Time no se ha actualizado <br>'.mysqli_error($connection);
 	}
 	//actualizar TIPO DE HIBRIDO (PART)
-	$query = "UPDATE hibridos_rutina SET texto = '$id_tipo_hibrido' WHERE tipo='part' and id_rutina ='$id_rutina' and elemento='$elemento' and texto not like '3'";
+    $id_th = (int)$id_tipo_hibrido;
+	$query = "UPDATE hibridos_rutina SET id_dificultad = '$id_th', texto = '$id_th' WHERE tipo='part' and id_rutina ='$id_rutina' and elemento='$elemento' and texto not like '3'";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'PART actualizada con éxito. ';
 	}else{
 		$_SESSION['estado'] .= 'Error, la PART no se ha actualizado <br>'.mysqli_error($connection);
 	}
-	//actualizar TIPO DE BASEMARK
-	$query = "SELECT valor, codigo from dificultad_basemark WHERE id = '$Basemark0'";
-	$query_run2 = mysqli_query($connection,$query);
-	$valor = mysqli_fetch_assoc($query_run2);
-	$texto = @$valor['codigo'];
-	$valor = @$valor['valor'];
-	if($valor != '')
-			$valor = ", valor = '$valor' ";
-	if($Basemark0 == '')
-		$valor = ", valor = NULL ";
-	$query = "UPDATE hibridos_rutina SET texto = '$texto' $valor WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+
+	//actualizar TIPO DE BASEMARK (Por ID con fallback a código)
+    $bm_val = trim($Basemark0 ?? '');
+    $texto_bm = '';
+    $valor_bm = 'NULL';
+    $id_dif_bm = 'NULL';
+
+    if(!empty($bm_val)){
+        if(is_numeric($bm_val)){
+            $bm_id_int = (int)$bm_val;
+            $q_bm = mysqli_query($connection, "SELECT id, codigo, valor FROM dificultad_basemark WHERE id = '$bm_id_int'");
+            if($r_bm = mysqli_fetch_assoc($q_bm)){
+                $texto_bm = $r_bm['codigo'];
+                $valor_bm = "'" . number_format((float)$r_bm['valor'], 3, '.', '') . "'";
+                $id_dif_bm = (int)$r_bm['id'];
+            }
+        } else {
+            $bm_code_safe = mysqli_real_escape_string($connection, $bm_val);
+            $q_bm = mysqli_query($connection, "SELECT id, codigo, valor FROM dificultad_basemark WHERE codigo = '$bm_code_safe' LIMIT 1");
+            if($r_bm = mysqli_fetch_assoc($q_bm)){
+                $texto_bm = $r_bm['codigo'];
+                $valor_bm = "'" . number_format((float)$r_bm['valor'], 3, '.', '') . "'";
+                $id_dif_bm = (int)$r_bm['id'];
+            }
+        }
+    }
+
+	$query = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_bm, texto = '$texto_bm', valor = $valor_bm WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'Basemark actualizado con éxito. ';
 	}else{
 		$_SESSION['estado'] .= 'Error, el Basemark no se ha actualizado <br>'.mysqli_error($connection);
 	}
-	//actualizar TIPO DE HIBRIDO (DD)
+
+	//actualizar TIPO DE HIBRIDO (DD) - Por ID con fallback a código
 	if($id_tipo_hibrido == 1)
-		$tabla = ' dificultad_hibridos ';
+		$tabla = 'dificultad_hibridos';
 	else if($id_tipo_hibrido == 2)
-		$tabla = ' dificultad_tre ';
+		$tabla = 'dificultad_tre';
 	else if($id_tipo_hibrido == 4)
-		$tabla = ' dificultad_acrobacias ';
+		$tabla = 'dificultad_acrobacias';
+    else
+        $tabla = 'dificultad_hibridos';
+
 	if ($id_tipo_hibrido != 3) {
-//    	$ddArray = array($dd0, $dd1, $dd2, $dd3, $dd4, $dd5, $dd6, $dd7, $dd8, $dd9);
 		$ddArray = array($dd0, $dd1, $dd2, $dd3, $dd4, $dd5, $dd6, $dd7, $dd8, $dd9, $dd10, $dd11, $dd12, $dd13, $dd14);
 
     	for ($i = 0; $i < count($ddArray); $i++) {
-        	$ddValue = $ddArray[$i];
-			$ddValue = str_replace("XX", "\'", $ddValue);
-//        	if ($ddValue != '') {
-				$query = "SELECT valor from $tabla WHERE codigo = '$ddValue'";
-				$query = "SELECT codigo, valor from $tabla WHERE id = '$ddValue'";
-				$query_run2 = mysqli_query($connection,$query);
-				$valor = mysqli_fetch_assoc($query_run2);
-				$texto = @$valor['codigo'];
-				$valor = @$valor['valor'];
-				if($valor == '')
-					$valor = 'NULL';
-				$query = "SELECT id from hibridos_rutina WHERE tipo='dd' and id_rutina ='$id_rutina' and elemento='$elemento' limit $i,1";
-				$query_run2 = mysqli_query($connection,$query);
-				$id = mysqli_fetch_assoc($query_run2);
-				$id = @$id['id'];
-			$query = "UPDATE hibridos_rutina SET id_dificultad = '".$id."', texto = '".$texto."', valor=".$valor." WHERE id='$id'";
-				$query_run = mysqli_query($connection,$query);
-}
+        	$ddValue = trim($ddArray[$i] ?? '');
+			$ddValue = str_replace("XX", "'", $ddValue);
+            
+            $texto_dd = '';
+            $valor_dd = 'NULL';
+            $id_dif_dd = 'NULL';
+
+            if(!empty($ddValue)){
+                if(is_numeric($ddValue)){
+                    $dd_id_int = (int)$ddValue;
+                    $q_item = mysqli_query($connection, "SELECT id, codigo, valor FROM $tabla WHERE id = '$dd_id_int'");
+                    if($r_item = mysqli_fetch_assoc($q_item)){
+                        $texto_dd = $r_item['codigo'];
+                        $valor_dd = "'" . number_format((float)$r_item['valor'], 3, '.', '') . "'";
+                        $id_dif_dd = (int)$r_item['id'];
+                    }
+                } else {
+                    $dd_code_safe = mysqli_real_escape_string($connection, $ddValue);
+                    $q_item = mysqli_query($connection, "SELECT id, codigo, valor FROM $tabla WHERE codigo = '$dd_code_safe' LIMIT 1");
+                    if($r_item = mysqli_fetch_assoc($q_item)){
+                        $texto_dd = $r_item['codigo'];
+                        $valor_dd = "'" . number_format((float)$r_item['valor'], 3, '.', '') . "'";
+                        $id_dif_dd = (int)$r_item['id'];
+                    }
+                }
+            }
+
+            // Localizar el registro exacto del slot en hibridos_rutina
+            $query_row = "SELECT id FROM hibridos_rutina WHERE tipo='dd' AND id_rutina ='$id_rutina' AND elemento='$elemento' ORDER BY id ASC LIMIT $i, 1";
+            $res_row = mysqli_query($connection, $query_row);
+            if($res_row && $row_target = mysqli_fetch_assoc($res_row)){
+                $target_id = (int)$row_target['id'];
+                $q_upd_dd = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_dd, texto = '$texto_dd', valor = $valor_dd WHERE id = '$target_id'";
+                mysqli_query($connection, $q_upd_dd);
+            }
+        }
 		if(mysqli_error($connection) == ''){
 			$_SESSION['correcto'] .= 'DD actualizado con éxito. ';
 		}else{
@@ -190,7 +229,7 @@ if(isset($_POST['save_btn'])){
 	$elemento = $_POST['elemento_transicion'];
 	$id_tipo_hibrido = 3;
 
-	$query="INSERT INTO hibridos_rutina (id_rutina, elemento, tipo, texto) VALUES ('$id_rutina','$elemento', 'part', '$id_tipo_hibrido')";
+	$query="INSERT INTO hibridos_rutina (id_rutina, elemento, tipo, texto, id_dificultad) VALUES ('$id_rutina','$elemento', 'part', '$id_tipo_hibrido', '$id_tipo_hibrido')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] = 'Transición añadida con éxito';
@@ -217,7 +256,7 @@ if(isset($_POST['dlt_btn_transicion'])){
 //	$elemento = $_POST['elemento_transicion'];
 //	$id_tipo_hibrido = 3;
 //
-//	$query="INSERT INTO hibridos_rutina (id_rutina, elemento, tipo, texto) VALUES ('$id_rutina','$elemento', 'part', '$id_tipo_hibrido')";
+//	$query="INSERT INTO hibridos_rutina (id_rutina, elemento, tipo, texto, id_dificultad) VALUES ('$id_rutina','$elemento', 'part', '$id_tipo_hibrido', '$id_tipo_hibrido')";
 //	//$query_run = mysqli_query($connection,$query);
 //	if(mysqli_error($connection) == ''){
 //		$_SESSION['correcto'] = 'Transiciones añadidas con éxito';

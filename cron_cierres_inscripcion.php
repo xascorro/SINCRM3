@@ -36,19 +36,13 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     $host = "localhost"; // Ejecución interna en el contenedor
     $cron_token = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
     
-    // Ruta del informe según tipo
-    if ($is_figuras) {
-        $report_url = "http://localhost/informes/informe_figuras.php?id_competicion=$id_comp&cron_token=$cron_token";
-    } else {
-        $report_url = "http://localhost/informes/informe_preinscripciones.php?id_competicion=$id_comp&cron_token=$cron_token";
-    }
+    // Ruta del informe unificado oficial (gestiona figuras, rutinas y mixtas)
+    $report_url = "http://localhost/informes/informe_figuras.php?id_competicion=$id_comp&titulo=Inscripciones&cron_token=$cron_token";
 
     // Usamos cURL para obtener el binario del PDF
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $report_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    // IMPORTANTE: Los informes requieren sesión. Para este cron, modificamos el informe 
-    // o usamos un token de seguridad. Por simplicidad en esta prueba, asumimos acceso local.
     $pdf_content = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
@@ -57,6 +51,12 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
         write_log("Cron Inscripciones: Error al generar PDF para ID $id_comp (HTTP $http_code)", "ERROR");
         continue;
     }
+
+    // Guardar copia física en ./docs/ para descarga directa desde el Dashboard
+    if (!is_dir(__DIR__ . '/docs')) {
+        @mkdir(__DIR__ . '/docs', 0775, true);
+    }
+    @file_put_contents(__DIR__ . "/docs/{$id_comp}-inscripciones.pdf", $pdf_content);
 
     // 3. Enviar vía Pulse Hub API (Servidor Blue)
     $destinatario = "xascorro@gmail.com";

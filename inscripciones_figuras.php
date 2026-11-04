@@ -1,7 +1,10 @@
 <?php
 include('security.php');
-include('includes/header.php');
-include('includes/navbar.php');
+
+// Redirección fluida al portal unificado de inscripciones v4
+$id_redirect = $_POST['id_competicion'] ?? ($_GET['id_competicion'] ?? ($_SESSION['id_competicion_usuario'] ?? ''));
+header('Location: inscripciones.php?tab=figuras' . (!empty($id_redirect) ? '&id_competicion=' . $id_redirect : ''));
+exit();
 
 $id_comp = $_SESSION['id_competicion_usuario'] ?? 0;
 $condicion_club = '';

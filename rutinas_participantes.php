@@ -10,7 +10,77 @@ if ($id_rutina == 0) {
 }
 
 include('includes/header.php');
+?>
+<link rel="stylesheet" href="vendor/tom-select/tom-select.default.min.css">
+<style>
+/* Estilos Flotantes TomSelect */
+.ts-wrapper.tom-select-nadadora {
+    width: 100% !important;
+}
+.ts-wrapper.tom-select-nadadora .ts-control {
+    background-color: #ffffff !important;
+    border: 1.5px solid #bfdbfe !important;
+    border-radius: 0.75rem !important;
+    padding: 0.65rem 1rem !important;
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    min-height: 42px !important;
+    display: flex !important;
+    align-items: center !important;
+    cursor: text !important;
+}
+.ts-wrapper.tom-select-nadadora.focus .ts-control {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+.ts-wrapper.tom-select-nadadora .ts-control input {
+    font-size: 0.8125rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+.ts-dropdown {
+    background-color: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    padding: 0.375rem !important;
+    font-family: inherit !important;
+    font-size: 0.8125rem !important;
+    max-height: 240px !important;
+    overflow-y: auto !important;
+    z-index: 999999 !important;
+}
+.ts-dropdown .option {
+    padding: 0.625rem 0.875rem !important;
+    border-radius: 0.5rem !important;
+    color: #1e293b !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+}
+.ts-dropdown .option:hover,
+.ts-dropdown .option.active {
+    background-color: #eff6ff !important;
+    color: #1d4ed8 !important;
+}
+.ts-dropdown .option[data-selectable="false"],
+.ts-dropdown .option.disabled {
+    opacity: 0.45 !important;
+    background-color: #f8fafc !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+}
+</style>
+<?php
 include('includes/navbar.php');
+
+if(isset($_POST['from_inscripciones'])) {
+    $_SESSION['return_to_inscripciones'] = true;
+} elseif(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'rutinas.php') !== false) {
+    unset($_SESSION['return_to_inscripciones']);
+}
+$volver_url = (!empty($_SESSION['return_to_inscripciones'])) ? 'inscripciones.php?tab=rutinas' : 'rutinas.php';
 
 // Fetch Routine Details
 $query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, 
@@ -29,7 +99,7 @@ $res_rutina = mysqli_query($connection, $query);
 $data = mysqli_fetch_assoc($res_rutina);
 
 if(!$data) {
-    header('Location: rutinas.php');
+    header('Location: ' . $volver_url);
     exit();
 }
 
@@ -70,7 +140,7 @@ $id_club_rutina = $data['id_club'];
                 <button onclick="saveAllParticipants()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center gap-2">
                     <i class="fas fa-save text-xs"></i> <span>Asignar Todo</span>
                 </button>
-                <a href="rutinas.php" class="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 font-bold uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-xs hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-2">
+                <a href="<?php echo $volver_url; ?>" class="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 font-bold uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-xs hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-2">
                     <i class="fas fa-chevron-left text-xs"></i> <span>Volver</span>
                 </a>
             </div>
@@ -136,7 +206,15 @@ $id_club_rutina = $data['id_club'];
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora w-full text-xs sm:text-sm font-bold"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            $clean_select = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html);
+                            $clean_select = preg_replace(
+                                '/<select[^>]*>/i', 
+                                '<select name="id_nadadora" class="select-nadadora tom-select-nadadora w-full" placeholder="Buscar por apellidos o nombre...">', 
+                                $clean_select
+                            );
+                            $clean_select = str_replace("value=' '", 'value=""', $clean_select);
+                            $clean_select = str_replace('value=" "', 'value=""', $clean_select);
+                            echo $clean_select;
                             ?>
                         </div>
 
@@ -213,7 +291,15 @@ $id_club_rutina = $data['id_club'];
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora w-full text-xs sm:text-sm font-bold"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            $clean_select = preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html);
+                            $clean_select = preg_replace(
+                                '/<select[^>]*>/i', 
+                                '<select name="id_nadadora" class="select-nadadora tom-select-nadadora w-full" placeholder="Buscar por apellidos o nombre...">', 
+                                $clean_select
+                            );
+                            $clean_select = str_replace("value=' '", 'value=""', $clean_select);
+                            $clean_select = str_replace('value=" "', 'value=""', $clean_select);
+                            echo $clean_select;
                             ?>
                         </div>
 
@@ -247,7 +333,45 @@ $id_club_rutina = $data['id_club'];
     <div id="bulkInputs"></div>
 </form>
 
+<script src="vendor/tom-select/tom-select.complete.min.js"></script>
 <script>
+const tsInstances = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.tom-select-nadadora').forEach(function(el) {
+        if (typeof TomSelect !== 'undefined') {
+            const ts = new TomSelect(el, {
+                create: false,
+                maxItems: 1,
+                closeAfterSelect: true,
+                allowEmptyOption: true,
+                dropdownParent: 'body',
+                placeholder: 'Buscar por apellidos o nombre...',
+                render: {
+                    no_results: function(data, escape) {
+                        return '<div class="no-results p-3 text-xs text-slate-400 font-bold">No se encontraron nadadoras con ese nombre</div>';
+                    }
+                }
+            });
+
+            // Al elegir nadadora: cerrar popup, liberar foco y enfocar el botón guardar de la fila
+            ts.on('change', function(value) {
+                if (value && value.toString().trim() !== '' && value !== '0') {
+                    ts.close();
+                    ts.blur();
+                    const form = el.closest('form');
+                    if (form) {
+                        const btn = form.querySelector('button[name="save_btn"]') || form.querySelector('button[name="update_btn"]');
+                        if (btn) btn.focus();
+                    }
+                }
+            });
+
+            tsInstances.push(ts);
+        }
+    });
+});
+
 function updateStatus(type, message) {
     const container = document.getElementById('statusMessage');
     const text = document.getElementById('statusText');
@@ -273,7 +397,7 @@ function validateIndividual(form) {
     const currentSelect = form.querySelector('.select-nadadora');
     const val = currentSelect.value.trim();
     
-    if (val === '' || val === ' ') {
+    if (val === '' || val === ' ' || val === '0') {
         updateStatus('error', 'Por favor, selecciona una nadadora.');
         return false;
     }
@@ -282,20 +406,25 @@ function validateIndividual(form) {
     const swimmerIds = [];
 
     // Reset visuales inicial
-    selects.forEach(s => {
-        s.style.cssText = ''; 
+    document.querySelectorAll('.ts-control').forEach(ctrl => {
+        ctrl.style.borderColor = '';
+        ctrl.style.backgroundColor = '';
+        ctrl.style.boxShadow = '';
     });
 
     selects.forEach((select) => {
         const sVal = select.value.trim();
-        if (sVal !== '' && sVal !== ' ') {
+        if (sVal !== '' && sVal !== ' ' && sVal !== '0') {
             if (swimmerIds.includes(sVal)) {
                 duplicateFound = true;
                 selects.forEach(s => {
                     if (s.value.trim() === sVal) {
-                        s.style.setProperty('border-color', '#ef4444', 'important');
-                        s.style.setProperty('background-color', '#fef2f2', 'important');
-                        s.style.setProperty('box-shadow', '0 0 0 3px rgba(239, 68, 68, 0.4)', 'important');
+                        const ctrl = s.closest('.participant-form')?.querySelector('.ts-control');
+                        if (ctrl) {
+                            ctrl.style.borderColor = '#ef4444';
+                            ctrl.style.backgroundColor = '#fef2f2';
+                            ctrl.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.4)';
+                        }
                     }
                 });
             } else {
@@ -321,6 +450,11 @@ function validateIndividual(form) {
         return false;
     }
 
+    const submitBtn = form.querySelector('button[type="submit"]:hover') || form.querySelector('button[type="submit"]:focus') || form.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.classList.add('opacity-75', 'pointer-events-none');
+    }
+
     return true;
 }
 
@@ -334,9 +468,10 @@ function saveAllParticipants() {
     let count = 0;
 
     // Reset visuales inicial
-    selects.forEach(s => {
-        s.style.cssText = ''; 
-        s.classList.remove('!border-red-500', '!bg-red-50', '!ring-2', '!ring-red-500');
+    document.querySelectorAll('.ts-control').forEach(ctrl => {
+        ctrl.style.borderColor = '';
+        ctrl.style.backgroundColor = '';
+        ctrl.style.boxShadow = '';
     });
 
     selects.forEach((select, index) => {
@@ -345,14 +480,17 @@ function saveAllParticipants() {
         const idRegistro = form.querySelector('input[name="id"]').value;
         const reserva = form.querySelector('input[name="reserva"]').value;
 
-        if (val !== '' && val !== ' ') {
+        if (val !== '' && val !== ' ' && val !== '0') {
             if (swimmerIds.includes(val)) {
                 duplicateFound = true;
                 selects.forEach(s => {
                     if (s.value.trim() === val) {
-                        s.style.setProperty('border-color', '#ef4444', 'important');
-                        s.style.setProperty('background-color', '#fef2f2', 'important');
-                        s.style.setProperty('box-shadow', '0 0 0 3px rgba(239, 68, 68, 0.4)', 'important');
+                        const ctrl = s.closest('.participant-form')?.querySelector('.ts-control');
+                        if (ctrl) {
+                            ctrl.style.borderColor = '#ef4444';
+                            ctrl.style.backgroundColor = '#fef2f2';
+                            ctrl.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.4)';
+                        }
                     }
                 });
             } else {

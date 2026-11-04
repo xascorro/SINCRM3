@@ -464,3 +464,53 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-11-04 07:12:55] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #2 actualizada con factores y tiempos
 [2026-11-04 07:13:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #4 actualizada con factores y tiempos
 [2026-11-04 07:13:22] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #3 actualizada con factores y tiempos
+[2026-11-04 07:29:59] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 07:30:11] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 07:32:19] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 07:32:31] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 07:33:06] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 07:33:13] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 07:35:10] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para MARTÍNEZ OTALORA, ÁFRICA en competición #81
+[2026-11-04 07:35:10] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para MARTÍNEZ MUÑOZ, GALA en competición #81
+[2026-11-04 07:35:10] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para SOTO MARTÍNEZ, ALICIA en competición #81
+[2026-11-04 07:35:44] [SUCCESS] [club@club.com] [10.0.2.20] Música subida con éxito: ./public/music/81/763.mp3 (Original: musica 1.mp3)
+[2026-11-04 07:35:46] [SUCCESS] [club@club.com] [10.0.2.20] Música subida con éxito: ./public/music/81/764.mp3 (Original: musica 2.mp3)
+[2026-11-04 07:42:13] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario () ha expirado por inactividad
+[2026-11-04 07:42:21] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario () ha expirado por inactividad
+[2026-11-04 07:49:25] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para CASTILLO PARRA, IRENE en competición #81
+[2026-11-04 07:49:25] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para CAJA GRZEGORZEWSKA, AMELIA en competición #81
+[2026-11-04 07:49:26] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para PÉREZ ORTEGA, PAULA en competición #81
+[2026-11-04 07:49:34] [SUCCESS] [club@club.com] [10.0.2.20] Asignación masiva en rutina #765: 1 exitos
+[2026-11-04 07:49:34] [SUCCESS] [club@club.com] [10.0.2.20] Asignación masiva en rutina #766: 2 exitos
+[2026-11-04 07:49:38] [SUCCESS] [club@club.com] [10.0.2.20] Música subida con éxito: ./public/music/81/765.mp3 (Original: musica 1.mp3)
+[2026-11-04 07:49:41] [SUCCESS] [club@club.com] [10.0.2.20] Música subida con éxito: ./public/music/81/766.mp3 (Original: musica 2.mp3)
+[2026-11-04 08:48:21] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 08:48:27] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Alevín para LUCÍA NAVAZO TERUEL (Club 1) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Alevín para ISABEL VARCARCEL FERNÁNDEZ (Club 1) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Alevín para LEIRE GONZÁLEZ SÁNCHEZ (Club 19) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Alevín para BLANCA LÓPEZ GOMEZ (Club 19) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Infantil para ANNETTE YLENIA FLORES SARCHE (Club 1) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Figuras Infantil para NATALIA MELLADO COSTA (Club 1) en comp #81
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Creada Rutina Junior Equipo #767 para Club 1
+[2026-11-04 08:58:00] [SUCCESS] [SISTEMA] [0.0.0.0] Test Inscription: Creada Rutina Junior Dúo #768 para Club 19 (Lorca)
+[2026-11-04 09:21:43] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 09:21:49] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 10:12:03] [SECURITY] [SISTEMA] [0.0.0.0] LIMPIEZA DE COMPETICIÓN (LIMPIEZA SELECTIVA): IDs [999999]. Módulos: [musica, coach_cards]. Registros/Archivos afectados: 2
+[2026-11-04 10:12:15] [SECURITY] [SISTEMA] [0.0.0.0] LIMPIEZA DE COMPETICIÓN (CASCADA TOTAL): IDs [999999]. Módulos: [competicion]. Registros/Archivos afectados: 3
+[2026-11-04 10:15:05] [SECURITY] [xascorro@gmail.com] [10.0.2.20] LIMPIEZA DE COMPETICIÓN (LIMPIEZA SELECTIVA): IDs [81]. Módulos: [musica, coach_cards, inscripciones, puntuaciones, sorteos, documentos]. Registros/Archivos afectados: 514
+[2026-11-04 10:30:53] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 10:30:59] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 10:32:19] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para ENRIQUEZ PEDREÑO, EMMA en competición #81
+[2026-11-04 10:38:44] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 10:38:47] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 10:39:07] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 10:39:10] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 10:39:45] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para CASTILLO PARRA, IRENE en competición #81
+[2026-11-04 10:39:56] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para CAJA GRZEGORZEWSKA, AMELIA en competición #81
+[2026-11-04 10:40:10] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para INTRIAGO VILLEJAS, DANNA YULISA en competición #81
+[2026-11-04 10:40:37] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para ARROYO MORA, REBECA en competición #81
+[2026-11-04 11:18:56] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 11:19:02] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 11:23:24] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para SORIA GARCÍA, MARTINA en competición #81
+[2026-11-04 11:23:38] [SUCCESS] [club@club.com] [10.0.2.20] Rutina #773 inscrita con éxito (Fase #437, Club #1, Comp #81)

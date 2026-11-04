@@ -6,10 +6,13 @@ setlocale(LC_ALL,'es_ES');
 require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
 include('../lib/my_functions.php');
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-if(!$_SESSION['username']){
+if (!isset($_SESSION['email']) && !isset($_SESSION['username'])) {
 	header('Location: ../login.php');
+    exit();
 }
 $query = "SELECT * FROM competiciones WHERE activo = 'si'";
 if(isset($_GET['id_competicion']))
@@ -25,13 +28,12 @@ $GLOBALS["fecha"] = $competicion['fecha'];
 $GLOBALS["organizador"] = $competicion['organizador'];;
 $GLOBALS["header"] = $competicion['header_informe'];
 $GLOBALS["footer"] = $competicion['footer_informe'];
-$id_rutina=$_GET['id_rutina'];
-$id_competicion=$_GET['id_competicion'];
+$id_rutina = isset($_GET['id_rutina']) ? intval($_GET['id_rutina']) : null;
+$id_competicion = isset($_GET['id_competicion']) ? intval($_GET['id_competicion']) : (int)($_SESSION['id_competicion_activa'] ?? 0);
 ////****************************//
 $titulo = 'Coach Card Composer';
-$titulo_documento = $_SESSION['nombre_competicion_activa']."<br>".$titulo;
-$titulo_documento = $_GET['id_rutina'].' '.$titulo;
-$nombre_documento = $_GET['id_rutina'].' Coach Card Composer.pdf';
+$titulo_documento = ($id_rutina ? $id_rutina . ' ' : '') . $titulo;
+$nombre_documento = ($id_rutina ? $id_rutina . '_' : '') . 'Coach_Card_' . str_replace(' ', '_', $competicion['nombre'] ?? 'Competicion') . '.pdf';
 $GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."\n <br> Fecha: ".dateAFecha($GLOBALS['fecha']);
 $logo_header_width= 100;
 $GLOBALS['header_image'] = '../'.$GLOBALS['header'];
@@ -120,15 +122,32 @@ $error_color = "#E65B5E";
 $rutina_color_par = "#FCE4EC";
 $rutina_color_impar = "#F7F7F7";
 
-//una rutina
-if(isset($_GET['id_rutina'])){
-	$query = "SELECT id FROM rutinas WHERE id=".$_GET['id_rutina']." ORDER by id_fase";
-//las rutinas de un club
-}elseif(isset($_GET['id_club'])){
-	$query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion and id_club=".$_GET['id_club']." and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
-//todas las rutinas
-}elseif(isset($_GET['id_competicion'])){
-	$query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion  and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
+// Control de privacidad estricto por rol:
+// El usuario Club (id_rol = 5) SOLO puede descargar las Coach Cards de su propio club
+$is_rol_club = (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == 5);
+$club_sesion = (int)($_SESSION['club'] ?? 0);
+
+if ($is_rol_club && $club_sesion > 0) {
+    if(isset($_GET['id_rutina'])){
+        $id_r_safe = (int)$_GET['id_rutina'];
+        $query = "SELECT id FROM rutinas WHERE id = '$id_r_safe' AND id_club = '$club_sesion' ORDER by id_fase";
+    } else {
+        $query = "SELECT rutinas.id FROM rutinas, fases 
+                  WHERE fases.id_competicion = $id_competicion 
+                  AND rutinas.id_club = $club_sesion 
+                  AND rutinas.id_fase = fases.id 
+                  AND fases.elementos_coach_card > 0 
+                  ORDER by id_fase, rutinas.orden";
+    }
+} else {
+    // Roles superiores (Admin, Secretario...)
+    if(isset($_GET['id_rutina'])){
+        $query = "SELECT id FROM rutinas WHERE id=".(int)$_GET['id_rutina']." ORDER by id_fase";
+    }elseif(isset($_GET['id_club'])){
+        $query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion and id_club=".(int)$_GET['id_club']." and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
+    }elseif(isset($_GET['id_competicion'])){
+        $query = "SELECT rutinas.id FROM rutinas, fases WHERE fases.id_competicion=$id_competicion and rutinas.id_fase = fases.id and fases.elementos_coach_card > 0 ORDER by id_fase, rutinas.orden";
+    }
 }
 $query_rutinas = mysqli_query($connection,$query);
 		while ($id_rutina = mysqli_fetch_assoc($query_rutinas)) {

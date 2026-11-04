@@ -3,10 +3,17 @@ include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
 
-$id_rutina = $_POST['id_rutina'] ?? $_GET['id_rutina'] ?? null;
+$id_rutina = $_POST['id_rutina'] ?? $_POST['id'] ?? $_GET['id_rutina'] ?? $_GET['id'] ?? null;
+
+if(isset($_POST['from_inscripciones'])) {
+    $_SESSION['return_to_inscripciones'] = true;
+} elseif(isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'rutinas.php') !== false) {
+    unset($_SESSION['return_to_inscripciones']);
+}
+$volver_url = (!empty($_SESSION['return_to_inscripciones'])) ? 'inscripciones.php?tab=rutinas' : 'rutinas.php';
 
 if (!$id_rutina) {
-    header("Location: rutinas.php");
+    header("Location: " . $volver_url);
     exit();
 }
 
@@ -15,7 +22,7 @@ $query_run = mysqli_query($connection, $query);
 $rutina = mysqli_fetch_assoc($query_run);
 
 if (!$rutina) {
-    header("Location: rutinas.php");
+    header("Location: " . $volver_url);
     exit();
 }
 ?>
@@ -35,7 +42,7 @@ if (!$rutina) {
                 <p class="text-slate-500 font-medium">Actualiza la configuración de la rutina #<?php echo $rutina['id']; ?></p>
             </div>
             <div class="flex gap-3">
-                <a href="rutinas.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2">
+                <a href="<?php echo $volver_url; ?>" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2">
                     <i class="fas fa-arrow-left text-xs"></i> Volver
                 </a>
             </div>
@@ -43,6 +50,7 @@ if (!$rutina) {
 
         <form action="rutinas_code.php" method="POST" enctype="multipart/form-data" class="animate-fade-in space-y-8">
             <input type="hidden" name="edit_id" value="<?php echo $rutina['id']; ?>">
+            <input type="hidden" name="return_to" value="<?php echo $volver_url; ?>">
 
             <div class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-sm border border-slate-200 border-t-[6px] border-t-emerald-500 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>

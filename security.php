@@ -71,11 +71,36 @@ if(!isset($_SESSION['email'])){
     // Seguridad de acceso por roles
     if(@$_SESSION['paginas_permitidas'] != '*' and $_SESSION['username'] != 'registrando'){
         $current_page = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-		if(!in_array($current_page, $_SESSION['paginas_permitidas'])){
-			$_SESSION['no_acceso'] = 'Acceso denegado a '.$current_page.'.';
-			header('Location: '.$_SESSION['startPage']);
-            exit();
-    	}
+        $permitidas = is_array($_SESSION['paginas_permitidas'] ?? null) ? $_SESSION['paginas_permitidas'] : [];
+
+        if(!in_array($current_page, $permitidas)){
+            $rol_id = (int)($_SESSION['id_rol'] ?? 0);
+            $safe_page = mysqli_real_escape_string($connection, $current_page);
+            
+            // Re-validar en caliente en la base de datos por si se añadió el permiso durante la sesión activa
+            $q_check = "SELECT 1 FROM permisos_roles pr 
+                        JOIN paginas_sistema p ON pr.id_pagina = p.id 
+                        WHERE pr.id_rol = '$rol_id' AND p.archivo = '$safe_page' LIMIT 1";
+            $res_check = mysqli_query($connection, $q_check);
+
+            $permitir = ($res_check && mysqli_num_rows($res_check) > 0);
+
+            // Compatibilidad para la transición a inscripciones.php
+            if(!$permitir && $current_page === 'inscripciones.php') {
+                if(in_array('rutinas.php', $permitidas) || in_array('inscripciones_figuras.php', $permitidas)) {
+                    $permitir = true;
+                }
+            }
+
+            if($permitir) {
+                if(!is_array($_SESSION['paginas_permitidas'])) $_SESSION['paginas_permitidas'] = [];
+                $_SESSION['paginas_permitidas'][] = $current_page;
+            } else {
+                $_SESSION['no_acceso'] = 'Acceso denegado a '.$current_page.'.';
+                header('Location: '.($_SESSION['startPage'] ?? 'index.php'));
+                exit();
+            }
+        }
     }
 }
 ?>

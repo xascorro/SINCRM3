@@ -1,6 +1,14 @@
 <?php
 include('security.php');
 include('./lib/my_functions.php');
+
+// Determinación inteligente de redirección (inscripciones.php vs rutinas.php)
+$redirect_target = 'rutinas.php';
+if (isset($_POST['return_to']) && !empty($_POST['return_to'])) {
+    $redirect_target = $_POST['return_to'];
+} elseif (isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'inscripciones.php') !== false) {
+    $redirect_target = 'inscripciones.php?tab=rutinas';
+}
 //if(isset($_POST['id_competicion'])){
 //	$id_competicion = $_POST['id_competicion'];
 //	$_SESSION['id_competicion_usuario'] = $_POST['id_competicion'];
@@ -20,12 +28,23 @@ include('./lib/my_functions.php');
 //session_start();
 //Añadir rutina
 if(isset($_POST['save_btn'])){
-	$id_fase = (int)$_POST['id_fase'];
-	$id_club = (int)$_POST['club'];
-	if(isset($_POST['id_competicion']))
+	$id_fase = (int)($_POST['id_fase'] ?? ($_POST['fase'] ?? 0));
+	$id_club = isset($_POST['club']) ? (int)$_POST['club'] : (isset($_POST['id_club']) ? (int)$_POST['id_club'] : (int)($_SESSION['club'] ?? 0));
+	if(isset($_POST['id_competicion']) && !empty($_POST['id_competicion']))
 		  $id_competicion = (int)$_POST['id_competicion'];
 	else
-		  $id_competicion = (int)$_SESSION['id_competicion_activa'];
+		  $id_competicion = (int)($_SESSION['id_competicion_activa'] ?? 0);
+
+    if ($id_fase <= 0) {
+        $_SESSION['estado'] = "Debes seleccionar una fase / modalidad válida.";
+        header('Location: ' . $redirect_target);
+        exit();
+    }
+    if ($id_club <= 0) {
+        $_SESSION['estado'] = "Debes seleccionar un club válido para la rutina.";
+        header('Location: ' . $redirect_target);
+        exit();
+    }
 
     // Control de Cupos Federativos FNRM / AQUA
     $q_fase_info = "SELECT f.id_modalidad, f.id_competicion, m.nombre as mod_nom, c.figuras as comp_tipo 
@@ -43,7 +62,7 @@ if(isset($_POST['save_btn'])){
         // Comprobación de cupo de 2 rutinas por club y modalidad técnica
         if ($num_club_routines >= 2) {
             $_SESSION['estado'] = "Cupo completo: Cada club solo puede inscribir un máximo de 2 rutinas en esta modalidad (" . htmlspecialchars($fase_info['mod_nom']) . ").";
-            header('Location: rutinas.php');
+            header('Location: ' . $redirect_target);
             exit();
         }
         
@@ -55,7 +74,7 @@ if(isset($_POST['save_btn'])){
             $tot_parts = mysqli_fetch_assoc(mysqli_query($connection, $q_parts))['tot'] ?? 0;
             if ($tot_parts < 4) {
                 $_SESSION['estado'] = "Para inscribir un segundo Equipo Técnico, el primer equipo debe estar completado previamente con sus nadadoras.";
-                header('Location: rutinas.php');
+                header('Location: ' . $redirect_target);
                 exit();
             }
         }
@@ -64,11 +83,16 @@ if(isset($_POST['save_btn'])){
 	$query="INSERT INTO rutinas (id_fase, id_club, id_competicion) VALUES ('".$id_fase."','".$id_club."','".$id_competicion."')";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
+        $new_id = mysqli_insert_id($connection);
+        write_log("Rutina #$new_id inscrita con éxito (Fase #$id_fase, Club #$id_club, Comp #$id_competicion)", "SUCCESS");
 		$_SESSION['correcto'] = 'Rutina añadida con éxito';
-		header('Location: rutinas.php');
+		header('Location: ' . $redirect_target);
+        exit();
 	}else{
+        write_log("Error al crear rutina: " . mysqli_error($connection), "ERROR");
 		$_SESSION['estado'] = 'Error, rutina no añadida <br>'.mysqli_error($connection);
-		header('Location: rutinas.php');
+		header('Location: ' . $redirect_target);
+        exit();
 	}
 }
 
@@ -91,7 +115,7 @@ if(isset($_POST['update_btn'])){
         write_log("Error al actualizar la rutina (ID: $id_rutina): " . mysqli_error($connection), "ERROR");
 		$_SESSION['estado'] = 'Error, la Rutina no se ha actualizado <br>'.mysqli_error($connection);
 	}
-    header('Location: rutinas.php');
+    header('Location: ' . $redirect_target);
     exit();
 }
 
@@ -136,6 +160,9 @@ if(isset($_POST['delete_btn'])){
 			    $_SESSION['correcto'] .= 'Archivo de música eliminado<br>';
 	    }
 	}
+    write_log("Rutina #$id eliminada de la competición", "WARNING");
+    header('Location: ' . $redirect_target);
+    exit();
 }
 
 //Subir o actualizar musica
@@ -217,7 +244,7 @@ if(isset($_POST['delete_music']) && isset($_POST['del_music_id'])){
     } else {
         $_SESSION['estado'] = 'Error al desenlazar el audio de la base de datos: ' . mysqli_error($connection);
     }
-    header('Location: rutinas.php');
+    header('Location: ' . $redirect_target);
     exit();
 }
 
@@ -237,6 +264,6 @@ if(isset($_GET['dar_baja'])){
 	exit();
 }
 
-header('Location: rutinas.php');
+header('Location: ' . $redirect_target);
 
 ?>

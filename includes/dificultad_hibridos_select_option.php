@@ -19,30 +19,43 @@ if($tipo_elemento == 'dd'){
         $query = "SELECT * from dificultad_tre  where version = '2425'";
 		$class = 'id_tipo_hibrido';
     }else if($_POST['id_tipo_hibrido']==4 or isset($_GET['tipo_acro'])){
-		$where = '';
-		if(isset($_GET['tipo_acro']) ){
+		$where_clauses = ["(version = '2425' OR version IS NULL OR version = '')"];
+		if(isset($_GET['tipo_acro']) && $_GET['tipo_acro'] !== ''){
 			$tipo_acro = $_GET['tipo_acro'];
 			switch ($tipo_acro) {
 				case 3:
+				case 'ACROPAIR':
 					$tipo_acro = 'ACROPAIR';
 					break;
+				case 4:
 				case 8:
-					$tipo_acro = 'Grupo-A';
+				case 'Grupo-A':
+				case 'ACRO-A':
+					$tipo_acro = 'ACRO-A';
 					break;
+				case 5:
 				case 9:
-					$tipo_acro = 'Grupo-B';
+				case 'Grupo-B':
+				case 'ACRO-B':
+					$tipo_acro = 'ACRO-B';
 					break;
+				case 7:
 				case 11:
-					$tipo_acro = 'Grupo-P';
+				case 'Grupo-P':
+				case 'ACRO-P':
+					$tipo_acro = 'ACRO-P';
 					break;
+				case 6:
 				case 12:
-					$tipo_acro = 'Grupo-C';
+				case 'Grupo-C':
+				case 'ACRO-C':
+					$tipo_acro = 'ACRO-C';
 					break;
 			}
-			$where = ' WHERE agrupar like "%'.$_GET['tipo_acro'].'%"';
-			$where = ' WHERE agrupar like "%'.$tipo_acro.'%"';
+			$safe_param = mysqli_real_escape_string($connection, $_GET['tipo_acro']);
+			$where_clauses[] = "(agrupar LIKE '%$tipo_acro%' OR agrupar LIKE '%$safe_param%')";
 		}
-        $query = "SELECT * from dificultad_acrobacias".$where." and version = '2425' order by orden_select";
+        $query = "SELECT * FROM dificultad_acrobacias WHERE " . implode(' AND ', $where_clauses) . " ORDER BY orden_select, id ASC";
 		$class = 'id_tipo_hibrido';
     }
 }
@@ -89,7 +102,7 @@ if(mysqli_num_rows($query_run2) > 0){
 		if($agrupar != @$row_dif['agrupar'].@$row_dif['subagrupar']){
 				$select .= '</optgroup><optgroup label="'.$row_dif['agrupar'].' '.@$row_dif['subagrupar'].'">';
 			}
-		if($id_dificultad == $row_dif['id'] or $texto == $row_dif['codigo']){
+		if((!empty($id_dificultad) && $id_dificultad == $row_dif['id']) || (!empty($texto) && $texto == $row_dif['codigo'])){
 			$select .= "<option selected value=".$row_dif['id'].">".$row_dif['codigo']." +".$row_dif['valor']."</option>";
 		}
 		else{

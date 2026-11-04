@@ -13,7 +13,8 @@ public/zips/*
 
 # Dependencias (si se usaran en el futuro)
 node_modules/
-vendor/
+vendor/*
+!vendor/tom-select/
 
 # Archivos de sistema y editores
 .vscode/

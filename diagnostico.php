@@ -169,16 +169,16 @@ include('includes/navbar.php');
                         </div>
                     </div>
 
-                    <!-- Limpieza en Cascada de Competiciones -->
+                    <!-- Limpieza Selectiva y Cascada de Competiciones -->
                     <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-slate-800 flex flex-col justify-between group hover:shadow-xl transition-all">
                         <div>
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center mb-3 sm:mb-6 shadow-sm border border-slate-200"><i class="fas fa-broom text-base sm:text-lg"></i></div>
-                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Limpieza en Cascada</h3>
-                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Eliminación completa de eventos (Figuras/Rutinas) y todas sus dependencias técnicas.</p>
+                            <h3 class="text-base sm:text-xl font-black text-slate-800 mb-1 sm:mb-2">Limpieza Selectiva / Cascada</h3>
+                            <p class="text-[11px] sm:text-xs font-medium text-slate-400 italic mb-4 sm:mb-8">Purga modular de datos de prueba (músicas, coach cards, inscripciones, notas) o eliminación total de competiciones.</p>
                         </div>
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400">Acción Destructiva</span>
-                            <button onclick="abrirSelectorCascada()" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all">Iniciar Limpieza</button>
+                            <span class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400">Control Modular</span>
+                            <button onclick="abrirSelectorCascada()" class="px-4 sm:px-6 py-2 sm:py-2.5 bg-slate-800 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center gap-2"><i class="fas fa-sliders text-xs"></i> Iniciar Limpieza</button>
                         </div>
                     </div>
                 </div>
@@ -243,9 +243,16 @@ include('includes/navbar.php');
 </main>
 
 <script>
+    let rawCompeticiones = [];
+
     function abrirSelectorCascada() {
         const formData = new FormData();
         formData.append('action', 'get_competiciones_list');
+
+        Swal.fire({
+            title: 'Cargando competiciones...',
+            didOpen: () => { Swal.showLoading(); }
+        });
 
         fetch('mantenimiento_code.php', {
             method: 'POST',
@@ -254,27 +261,50 @@ include('includes/navbar.php');
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                let html = '<div class="text-left font-lexend"><p class="text-xs font-bold text-slate-500 mb-4 italic">Selecciona las competiciones que deseas borrar POR COMPLETO (fases, inscripciones, notas, etc.):</p>';
-                html += '<div class="max-h-64 overflow-y-auto custom-scrollbar space-y-2 pr-2">';
-                data.competiciones.forEach(c => {
-                    html += `<label class="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100 transition-all cursor-pointer">
-                                <input type="checkbox" name="comp_ids[]" value="${c.id}" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[11px] font-black text-slate-700 truncate">${c.nombre}</p>
-                                    <p class="text-[9px] font-bold text-slate-400 uppercase italic">ID: #${c.id} | Fecha: ${c.fecha}</p>
-                                </div>
-                             </label>`;
+                rawCompeticiones = data.competiciones || [];
+                
+                let html = `
+                <div class="text-left font-lexend space-y-4">
+                    <p class="text-xs font-bold text-slate-500 italic">Selecciona una o varias competiciones para simular su limpieza:</p>
+                    
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+                        <input type="text" id="filter-comp-input" placeholder="Buscar por nombre o ID..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-800 transition-all" oninput="filtrarCompeticionesModal(this.value)">
+                    </div>
+
+                    <div class="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400 px-1">
+                        <span>Competiciones encontradas: <span id="comp-count" class="text-slate-700 font-bold">${rawCompeticiones.length}</span></span>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="marcarTodasComps(true)" class="text-blue-600 hover:underline">Marcar todas</button>
+                            <span>&bull;</span>
+                            <button type="button" onclick="marcarTodasComps(false)" class="text-slate-500 hover:underline">Desmarcar</button>
+                        </div>
+                    </div>
+
+                    <div id="comps-container" class="max-h-64 overflow-y-auto custom-scrollbar space-y-2 pr-1">`;
+                
+                rawCompeticiones.forEach(c => {
+                    html += `
+                    <label class="comp-label flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100/80 transition-all cursor-pointer group" data-id="${c.id}" data-name="${c.nombre.toLowerCase()}">
+                        <input type="checkbox" name="comp_ids[]" value="${c.id}" class="w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[11px] font-black text-slate-800 truncate">${c.nombre}</p>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase italic">ID: #${c.id} | Fecha: ${c.fecha || 'Sin fecha'}</p>
+                        </div>
+                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg bg-white border border-slate-200 text-slate-500 tabular-nums">#${c.id}</span>
+                    </label>`;
                 });
-                html += '</div></div>';
+
+                html += `</div></div>`;
 
                 Swal.fire({
-                    title: 'Seleccionar Competiciones',
+                    title: 'Seleccionar Competición',
                     html: html,
-                    icon: 'info',
                     showCancelButton: true,
-                    confirmButtonText: 'Simular Borrado',
+                    confirmButtonText: '<i class="fas fa-play text-xs mr-1"></i> Simular Limpieza',
                     cancelButtonText: 'Cancelar',
-                    confirmButtonColor: '#1e293b',
+                    confirmButtonColor: '#0f172a',
+                    width: window.innerWidth < 640 ? '95%' : '600px',
                     preConfirm: () => {
                         const selected = Array.from(document.querySelectorAll('input[name="comp_ids[]"]:checked')).map(cb => cb.value);
                         if (selected.length === 0) {
@@ -288,17 +318,53 @@ include('includes/navbar.php');
                         simularBorrado(result.value);
                     }
                 });
+            } else {
+                Swal.fire('Error', 'No se pudo cargar el listado de competiciones.', 'error');
+            }
+        })
+        .catch(err => {
+            Swal.fire('Error', 'Fallo de conexión al cargar competiciones.', 'error');
+        });
+    }
+
+    function filtrarCompeticionesModal(query) {
+        const q = query.trim().toLowerCase();
+        let visibleCount = 0;
+        document.querySelectorAll('#comps-container .comp-label').forEach(el => {
+            const id = el.getAttribute('data-id');
+            const name = el.getAttribute('data-name');
+            if (!q || id.includes(q) || name.includes(q)) {
+                el.style.display = 'flex';
+                visibleCount++;
+            } else {
+                el.style.display = 'none';
+            }
+        });
+        const counterEl = document.getElementById('comp-count');
+        if (counterEl) counterEl.textContent = visibleCount;
+    }
+
+    function marcarTodasComps(check) {
+        document.querySelectorAll('#comps-container .comp-label').forEach(el => {
+            if (el.style.display !== 'none') {
+                const cb = el.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = check;
             }
         });
     }
 
+    let currentSimData = null;
+    let currentSimIds = [];
+
     function simularBorrado(ids) {
+        currentSimIds = ids;
         const formData = new FormData();
         formData.append('action', 'simular_cascada');
         formData.append('ids', JSON.stringify(ids));
 
         Swal.fire({
             title: 'Calculando impacto...',
+            html: '<p class="text-xs text-slate-500 font-medium">Analizando dependencias de base de datos y archivos en disco...</p>',
             didOpen: () => { Swal.showLoading(); }
         });
 
@@ -309,64 +375,269 @@ include('includes/navbar.php');
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
-                let html = '<div class="text-left font-lexend space-y-6">';
-                html += '<p class="text-xs font-bold text-red-500 uppercase tracking-widest bg-red-50 p-3 rounded-xl border border-red-100">Atención: Esta acción eliminará permanentemente todos estos datos:</p>';
+                currentSimData = data;
+                renderModalSeleccionModular(data, ids);
+            } else {
+                Swal.fire('Error', data.message || 'No se pudo simular el borrado.', 'error');
+            }
+        })
+        .catch(err => {
+            Swal.fire('Error', 'Fallo de conexión al simular la limpieza.', 'error');
+        });
+    }
+
+    function renderModalSeleccionModular(data, ids) {
+        const compsList = (data.competiciones || []).map(c => `<span class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-slate-800 font-bold text-[10px] shadow-sm">#${c.id} ${c.nombre}</span>`).join(' ');
+
+        let html = `
+        <div class="text-left font-lexend space-y-4">
+            
+            <!-- Banner de Competiciones Afectadas -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                <p class="text-[9px] font-black uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5"><i class="fas fa-trophy text-slate-500"></i> Evento Seleccionado:</p>
+                <div class="flex flex-wrap gap-1.5">${compsList}</div>
+            </div>
+
+            <!-- Botones de Preconfiguración Rápida -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400">Presets de Limpieza:</span>
+                <div class="flex flex-wrap gap-1.5">
+                    <button type="button" onclick="aplicarPreset('pruebas')" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-wider rounded-xl border border-blue-200 active:scale-[0.98] transition-all flex items-center gap-1.5">
+                        <i class="fas fa-vial-virus text-xs"></i> Solo Datos de Prueba
+                    </button>
+                    <button type="button" onclick="aplicarPreset('todo')" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 text-[10px] font-black uppercase tracking-wider rounded-xl border border-red-200 active:scale-[0.98] transition-all flex items-center gap-1.5">
+                        <i class="fas fa-fire-flame-curved text-xs"></i> Borrar Todo (Cascada)
+                    </button>
+                    <button type="button" onclick="aplicarPreset('desmarcar')" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-black uppercase tracking-wider rounded-xl border border-slate-200 active:scale-[0.98] transition-all">
+                        Desmarcar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Aviso dinámico si se marca borrar la competición entera -->
+            <div id="warning-competicion" class="hidden p-3.5 bg-red-50 border border-red-200 rounded-2xl text-red-800 text-xs font-bold flex items-center gap-3 animate-pulse">
+                <i class="fas fa-triangle-exclamation text-lg text-red-500 shrink-0"></i>
+                <div class="leading-tight">
+                    <p class="font-black text-red-900 uppercase tracking-wide text-[10px]">¡Atención! Cascada Total Activada</p>
+                    <p class="text-[11px] font-normal text-red-700">Se eliminará la ficha de la competición del calendario y todas sus fases técnicas.</p>
+                </div>
+            </div>
+
+            <!-- Cuadrícula Modular de Selección -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-80 overflow-y-auto custom-scrollbar pr-1" id="modulos-grid">`;
+
+        const colorMap = {
+            indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', border: 'border-indigo-100', badge: 'bg-indigo-100 text-indigo-700' },
+            blue: { bg: 'bg-blue-50', text: 'text-blue-600', border: 'border-blue-100', badge: 'bg-blue-100 text-blue-700' },
+            pink: { bg: 'bg-pink-50', text: 'text-pink-600', border: 'border-pink-100', badge: 'bg-pink-100 text-pink-700' },
+            amber: { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-100', badge: 'bg-amber-100 text-amber-700' },
+            purple: { bg: 'bg-purple-50', text: 'text-purple-600', border: 'border-purple-100', badge: 'bg-purple-100 text-purple-700' },
+            emerald: { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-100', badge: 'bg-emerald-100 text-emerald-700' },
+            red: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-100', badge: 'bg-red-100 text-red-700' },
+            slate: { bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-300', badge: 'bg-slate-800 text-white' }
+        };
+
+        const modulos = data.modulos || {};
+        for (const [key, m] of Object.entries(modulos)) {
+            const colors = colorMap[m.color] || colorMap.slate;
+            const isZero = (m.total === 0);
+            const defaultChecked = (!isZero && key !== 'competicion');
+
+            html += `
+            <label class="modulo-card flex items-start gap-3 p-3 bg-white rounded-2xl border-2 border-slate-100 hover:border-slate-300 transition-all cursor-pointer relative group ${m.is_competicion ? 'border-dashed border-red-300 bg-red-50/20' : ''}" data-key="${key}" onclick="toggleModuloCard(event, '${key}')">
+                <input type="checkbox" name="modulos[]" value="${key}" class="modulo-cb mt-1 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-800 cursor-pointer" ${defaultChecked ? 'checked' : ''} onchange="actualizarResumenModulos()">
                 
-                html += '<div class="grid grid-cols-2 gap-4">';
-                data.conteo.forEach(item => {
-                    html += `<div class="p-4 bg-slate-50 rounded-[1.5rem] border border-slate-100">
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter mb-1">${item.entidad}</p>
-                                <p class="text-xl font-black text-slate-800">${item.total}</p>
-                             </div>`;
-                });
-                html += '</div>';
+                <div class="w-8 h-8 rounded-xl ${colors.bg} ${colors.text} flex items-center justify-center shrink-0 border ${colors.border} shadow-sm text-xs mt-0.5">
+                    <i class="${m.icono}"></i>
+                </div>
+                
+                <div class="flex-1 min-w-0 pr-1">
+                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                        <p class="text-[11px] font-black text-slate-800 truncate">${m.titulo}</p>
+                    </div>
+                    <p class="text-[9.5px] font-medium text-slate-400 leading-tight mb-2">${m.descripcion}</p>
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-[9px] font-black px-2 py-0.5 rounded-lg ${colors.badge} tabular-nums uppercase">${m.badge}</span>
+                        <span class="text-[8.5px] font-bold text-slate-400 tabular-nums italic">${m.detalle}</span>
+                    </div>
+                </div>
+            </label>`;
+        }
 
-                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
-                html += `<div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
-                            <i class="fas fa-database text-blue-400"></i>
-                            <div>
-                                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest leading-none mb-1">Ahorro en Base de Datos</p>
-                                <p class="text-base font-black text-blue-700">${data.db_reclaimed}</p>
-                            </div>
-                         </div>`;
-                html += `<div class="p-4 bg-indigo-50 rounded-2xl border border-indigo-100 flex items-center gap-3">
-                            <i class="fas fa-hard-drive text-indigo-400"></i>
-                            <div>
-                                <p class="text-[9px] font-black text-indigo-400 uppercase tracking-widest leading-none mb-1">Espacio Disco Recuperado</p>
-                                <p class="text-base font-black text-indigo-700">${data.disk_reclaimed}</p>
-                            </div>
-                         </div>`;
-                html += '</div>';
+        html += `
+            </div>
 
-                html += '<div class="p-4 bg-amber-50 rounded-2xl border border-amber-100"><p class="text-[10px] font-bold text-amber-700 italic">Total de registros afectados: <span class="font-black">' + data.total_global + '</span></p></div>';
-                html += '</div>';
+            <!-- Barra de Impacto y Resumen -->
+            <div class="p-3.5 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-md">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white"><i class="fas fa-chart-pie text-sm"></i></div>
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-wider text-slate-400 leading-none mb-1">Módulos Seleccionados</p>
+                        <p class="text-sm font-black tabular-nums"><span id="summary-mod-count">0</span> de 8 elegidos</p>
+                    </div>
+                </div>
+                <div class="flex items-center justify-end gap-4 border-t sm:border-t-0 pt-2 sm:pt-0 border-white/10 text-right">
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-wider text-slate-400 leading-none mb-1">Registros / Archivos</p>
+                        <p class="text-xs font-black text-blue-300 tabular-nums" id="summary-total-count">0</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-wider text-slate-400 leading-none mb-1">Espacio Disco</p>
+                        <p class="text-xs font-black text-emerald-400 tabular-nums" id="summary-disk-space">0 B</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>`;
+
+        Swal.fire({
+            title: 'Configurar Limpieza',
+            html: html,
+            showCancelButton: true,
+            confirmButtonText: '¡EJECUTAR LIMPIEZA SELECCIONADA!',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#ef4444',
+            width: window.innerWidth < 640 ? '95%' : '760px',
+            didOpen: () => {
+                actualizarResumenModulos();
+            },
+            preConfirm: () => {
+                const selected = Array.from(document.querySelectorAll('input[name="modulos[]"]:checked')).map(cb => cb.value);
+                if (selected.length === 0) {
+                    Swal.showValidationMessage('Debes seleccionar al menos un módulo para limpiar');
+                    return false;
+                }
+                return selected;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const modulosSeleccionados = result.value;
+                const incluyeCompeticion = modulosSeleccionados.includes('competicion');
+
+                let confirmTitle = '¿Confirmar Limpieza?';
+                let confirmText = `Se purgarán los ${modulosSeleccionados.length} módulos seleccionados.`;
+                let confirmBtn = '¡Sí, proceder!';
+
+                if (incluyeCompeticion) {
+                    confirmTitle = '⚠️ ¡ELIMINACIÓN TOTAL!';
+                    confirmText = 'Has marcado borrar la COMPETICIÓN COMPLETA. Se eliminarán sus fases técnicas y la ficha del calendario de forma irreversible.';
+                    confirmBtn = '¡SÍ, BORRAR TODO DEFINITIVAMENTE!';
+                }
 
                 Swal.fire({
-                    title: 'Confirmar Eliminación',
-                    html: html,
+                    title: confirmTitle,
+                    text: confirmText,
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: '¡SÍ, BORRAR TODO!',
+                    confirmButtonText: confirmBtn,
                     cancelButtonText: 'Abortar',
-                    confirmButtonColor: '#ef4444',
-                    width: window.innerWidth < 640 ? '95%' : '650px'
-                }).then((resConfirm) => {
-                    if (resConfirm.isConfirmed) {
-                        ejecutarBorrado(ids);
+                    confirmButtonColor: '#ef4444'
+                }).then((confirmRes) => {
+                    if (confirmRes.isConfirmed) {
+                        ejecutarBorrado(ids, modulosSeleccionados);
                     }
                 });
             }
         });
     }
 
-    function ejecutarBorrado(ids) {
+    function toggleModuloCard(event, key) {
+        if (event.target.tagName.toLowerCase() === 'input') return;
+        const card = document.querySelector(`.modulo-card[data-key="${key}"]`);
+        if (card) {
+            const cb = card.querySelector('input[type="checkbox"]');
+            if (cb) {
+                cb.checked = !cb.checked;
+                actualizarResumenModulos();
+            }
+        }
+    }
+
+    function aplicarPreset(preset) {
+        const cbs = document.querySelectorAll('input[name="modulos[]"]');
+        cbs.forEach(cb => {
+            if (preset === 'desmarcar') {
+                cb.checked = false;
+            } else if (preset === 'todo') {
+                cb.checked = true;
+            } else if (preset === 'pruebas') {
+                // Solo datos de prueba: conserva competición y fases
+                if (cb.value === 'competicion' || cb.value === 'paneles') {
+                    cb.checked = false;
+                } else {
+                    cb.checked = true;
+                }
+            }
+        });
+        actualizarResumenModulos();
+    }
+
+    function actualizarResumenModulos() {
+        if (!currentSimData || !currentSimData.modulos) return;
+
+        const checkedCbs = Array.from(document.querySelectorAll('input[name="modulos[]"]:checked'));
+        const modCountEl = document.getElementById('summary-mod-count');
+        const totalCountEl = document.getElementById('summary-total-count');
+        const diskSpaceEl = document.getElementById('summary-disk-space');
+        const warningComp = document.getElementById('warning-competicion');
+
+        let totalRegistros = 0;
+        let totalBytesDisco = 0;
+        let incluyeCompeticion = false;
+
+        checkedCbs.forEach(cb => {
+            const k = cb.value;
+            const m = currentSimData.modulos[k];
+            if (m) {
+                totalRegistros += (m.total || 0);
+                totalBytesDisco += (m.bytes_disco || 0);
+            }
+            if (k === 'competicion') incluyeCompeticion = true;
+        });
+
+        if (modCountEl) modCountEl.textContent = checkedCbs.length;
+        if (totalCountEl) totalCountEl.textContent = totalRegistros.toLocaleString();
+        
+        function formatBytes(bytes, precision = 2) {
+            if (!bytes || bytes <= 0) return '0 B';
+            const units = ['B', 'KB', 'MB', 'GB'];
+            const pow = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+            return (bytes / Math.pow(1024, pow)).toFixed(precision) + ' ' + units[pow];
+        }
+
+        if (diskSpaceEl) diskSpaceEl.textContent = formatBytes(totalBytesDisco);
+
+        if (warningComp) {
+            if (incluyeCompeticion) {
+                warningComp.classList.remove('hidden');
+            } else {
+                warningComp.classList.add('hidden');
+            }
+        }
+
+        // Resaltar visualmente las tarjetas marcadas
+        document.querySelectorAll('.modulo-card').forEach(card => {
+            const cb = card.querySelector('input[type="checkbox"]');
+            if (cb && cb.checked) {
+                card.classList.add('border-slate-800', 'shadow-sm');
+                card.classList.remove('border-slate-100');
+            } else {
+                card.classList.remove('border-slate-800', 'shadow-sm');
+                card.classList.add('border-slate-100');
+            }
+        });
+    }
+
+    function ejecutarBorrado(ids, modulos) {
         const formData = new FormData();
         formData.append('action', 'ejecutar_cascada');
         formData.append('ids', JSON.stringify(ids));
+        formData.append('modulos', JSON.stringify(modulos));
 
         Swal.fire({
             title: 'Ejecutando limpieza...',
-            html: 'Por favor, no cierres la ventana.',
+            html: '<p class="text-xs text-slate-500 font-medium">Purgando los módulos seleccionados. Por favor, no cierres la ventana.</p>',
+            allowOutsideClick: false,
             didOpen: () => { Swal.showLoading(); }
         });
 
@@ -377,16 +648,34 @@ include('includes/navbar.php');
         .then(response => response.json())
         .then(data => {
             if(data.status === 'success') {
+                let detallesHtml = '';
+                if (data.detalles && data.detalles.length > 0) {
+                    detallesHtml = '<div class="text-left font-lexend mt-3 p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs space-y-1.5">';
+                    data.detalles.forEach(d => {
+                        detallesHtml += `<p class="flex items-center gap-2 text-slate-700 font-medium"><i class="fas fa-check text-emerald-500 text-[10px]"></i> ${d}</p>`;
+                    });
+                    detallesHtml += '</div>';
+                }
+
                 Swal.fire({
                     title: '¡Limpieza Completada!',
-                    text: `Se han eliminado ${data.total_borrado} registros con éxito.`,
-                    icon: 'success'
+                    html: `
+                    <div class="font-lexend">
+                        <p class="text-xs text-slate-600">Se han eliminado / reseteado con éxito <b>${data.total_borrado}</b> registros y archivos.</p>
+                        ${detallesHtml}
+                    </div>`,
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#0f172a'
                 }).then(() => {
                     location.reload();
                 });
             } else {
-                Swal.fire('Error', data.message, 'error');
+                Swal.fire('Error', data.message || 'Fallo al ejecutar la limpieza.', 'error');
             }
+        })
+        .catch(err => {
+            Swal.fire('Error', 'Fallo de conexión al procesar el borrado.', 'error');
         });
     }
 

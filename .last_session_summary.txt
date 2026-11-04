@@ -1,38 +1,14 @@
-=========================================================
-SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-04 07:10
-=========================================================
+=== SESION SINCRM: IMPLEMENTACIÓN SELECT FLOTANTE EN RUTINAS PARTICIPANTES ===
+Fecha: 2026-11-04 11:27 CET
 
-8. UNIFICACIÓN DE GÉNERO EN FASES Y LIMPIEZA DE MODALIDADES MASC/FEM:
-   - Base de Datos:
-     * Añadida columna `genero` (ENUM('femenino', 'masculino') DEFAULT 'femenino') a la tabla `fases` en los 3 entornos (`sincrm4`, `sincrm4beta` y Docker `sincrm_prod_db`).
-     * Eliminadas de raíz las modalidades 12 ('Solo Técnico Fem') y 13 ('Solo Técnico Masc') de la tabla `modalidades`.
-     * Las fases afectadas (Fases 435, 436, 440 y 441 del Campeonato 81) se han actualizado a la modalidad genérica 5 ('Solo Técnico').
-     * Asignados géneros correspondientes: 435 (Fem), 436 (Masc), 440 (Fem), 441 (Masc).
-     * Heredados automáticamente los parámetros y límites oficiales de World Aquatics 2026 desde `reglas_competicion` (TRE = 5, CC = 6, Duración = 120s, etc.).
-     * Actualizadas también las fases 437, 438, 439, 442, 443 y 444 con sus reglas oficiales.
-   - Frontend (fases.php y fases_edit.php):
-     * Selector de género interactivo (button slide / toggle segmentado):
-       - "Femenino" por defecto (icono venus, acento rose-500).
-       - "Masculino" al marcarlo (icono mars, acento blue-600).
-   - Backend (fases_code.php):
-     * Soporte completo para persistir `genero` en creación (`save_btn`) y edición (`update_btn`).
+1. Tarea Realizada:
+- Se aplicó la misma solución del selector flotante de nadadoras (TomSelect) en rutinas_participantes.php (gestión de titulares y reservas):
+  * Estilos flotantes corporativos (Tailwind v4) con z-index 999999 y dropdownParent: 'body'.
+  * Desplegable contenido con buscador integrado por apellidos o nombre.
+  * Cierre instantáneo (closeAfterSelect: true / ts.close()) y liberación del foco (ts.blur()) tras seleccionar una deportista.
+  * Autofoco automático en el botón de guardar/actualizar de la fila correspondiente para permitir confirmación inmediata con un clic o pulsando Enter.
+  * Integración completa y transparente con el guardado individual y el guardado masivo "Asignar Todo" (saveAllParticipants()).
+  * Detección visual mejorada de nadadoras duplicadas remarcando el control del selector con borde rojo y fondo suave.
 
-9. PRODUCCIÓN (https://sincrm.pedrodiaz.eu): NOMENCLATURA DINÁMICA DE FASES (SUFIJO 'MASC' EXCLUSIVO):
-   - Ajustada la lógica global para cumplir con la regla de negocio:
-     * Si la fase es masculina (`genero === 'masculino'`), se añade 'Masc' al nombre de la modalidad para despejar cualquier duda.
-     * Si la fase es femenina, no se añade ningún sufijo (al ser el género reglamentario por defecto en natación artística).
-   - Secciones actualizadas con el sufijo 'Masc' dinámico:
-     * Dashboard Principal (`index.php`): Tanto en el listado colapsable móvil como en la tabla desktop de fases.
-     * Gestión de Fases (`fases.php`): Título en tarjetas mobile, tarjetas desktop y vista de tabla compacta. Eliminados badges redundantes de Fem.
-     * Panel de Puntuaciones (`puntuaciones_lista_fases.php`): En grid de fases, grid de rutinas y tabla de mesa técnica.
-     * Mesa Técnica en Vivo (`puntuaciones_lista_rutinas.php` y `puntuaciones_lista_rutinas_live.php`): En el encabezado oficial de la fase.
-     * Puntuación de Rutina (`puntuaciones_rutina.php` y `puntuaciones_rutina_obsoleta.php`): En el título de la fase puntuada.
-     * Listado de Rutinas (`rutinas.php`): En los separadores por fase en vistas móvil y escritorio.
-     * Sorteo (`sorteo.php`): En las cabeceras sticky de fases sorteadas.
-     * Paneles de Jueces (`paneles_jueces.php`): En la asignación de jueces a fases.
-     * Descarga de Música (`download_music.php`): En la jerarquía de fases y nombres de carpetas dentro del archivo ZIP oficial.
-     * APIs Live (`api_live_detailed.php` y `api_live_ranking.php`): En el campo nombre de las fases emitidas en JSON.
-     * Informes Oficiales (`informes/informe_puntuaciones.php`): En el encabezado del acta PDF de resultados.
-     * Vistas Legacy de Puntuación (`puntuaciones_lista_figuras_rutinas_tecnicas.php`, `puntuaciones_lista_rutinas_tecnicas.php`, `puntuaciones_lista_figuras2.php`).
-   - Verificado el entorno de producción en vivo (`sincrm_prod_app` / `sincrm.pedrodiaz.eu`): Respuesta HTTP 200 OK.
+2. Archivos modificados:
+- /var/www/html/sincrm/rutinas_participantes.php

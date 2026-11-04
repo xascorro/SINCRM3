@@ -8,7 +8,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
     // Agrupación de páginas para estados activos
     $group_users = ['usuarios.php', 'roles.php', 'paginas.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
     $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'modalidades.php', 'jueces.php', 'figuras.php', 'reglas_competicion.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'modalidades_edit.php', 'competiciones_edit.php'];
-    $group_operativa = ['fases.php', 'paneles_jueces.php', 'rutinas.php', 'sorteo.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
+    $group_operativa = ['fases.php', 'paneles_jueces.php', 'inscripciones.php', 'rutinas.php', 'sorteo.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
     $group_mantenimiento = ['estado_sistema.php', 'configuracion_sistema.php', 'diagnostico.php'];
 ?>
@@ -85,31 +85,12 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                     <i class="fas fa-scale-balanced w-4 text-center"></i> Paneles
                 </a>
                 
-                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
-                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
-                    </a>
-                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas Téc.
-                    </a>
-                    <a href="sorteo.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteos
-                    </a>
-                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'no'): ?>
-                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas
-                    </a>
-                    <a href="sorteo.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteo
-                    </a>
-                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'si'): ?>
-                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
-                    </a>
-                    <a href="sorteo.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                        <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteo
-                    </a>
-                <?php endif; ?>
+                <a href="inscripciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                    <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
+                </a>
+                <a href="sorteo.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                    <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteos
+                </a>
                 
                 <a href="puntuaciones_lista_fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'puntuaciones_lista_fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap font-bold border-t border-white/5 mt-2 pt-2">
                     <i class="fas fa-calculator w-4 text-center"></i> Puntuaciones
@@ -265,7 +246,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
 // BARRA LATERAL PARA EL ROL CLUB (id_rol = 5)
 if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
     $current_page = basename($_SERVER['PHP_SELF']);
-    $group_club_comp = ['inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php'];
+    $group_club_comp = ['inscripciones.php', 'inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php'];
 ?>
 <aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-primary text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
     
@@ -306,22 +287,9 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_club_comp) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp-club"></i>
             </button>
             <div id="sub-comp-club" data-active="<?php echo in_array($current_page, $group_club_comp) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <?php if (@$_SESSION['competicion_figuras_usuario'] == 'mixta'): ?>
-                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
-                        <i class="fas fa-clipboard-list w-4 text-center"></i> Insc. Figuras
-                    </a>
-                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
-                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas Técnicas
-                    </a>
-                <?php elseif (@$_SESSION['competicion_figuras_usuario'] == 'si'): ?>
-                    <a href="inscripciones_figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'inscripciones_figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
-                        <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
-                    </a>
-                <?php else: ?>
-                    <a href="rutinas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'rutinas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
-                        <i class="fas fa-users-line w-4 text-center"></i> Rutinas
-                    </a>
-                <?php endif; ?>
+                <a href="inscripciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
+                    <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
+                </a>
             </div>
         </div>
 

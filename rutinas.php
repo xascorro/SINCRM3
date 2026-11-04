@@ -87,7 +87,7 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
             </div>
             <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 <?php if($_SESSION['id_rol'] != 5): ?>
-                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                    <a target="_blank" href="./informes/informe_figuras.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
                         <i class="fas fa-file-pdf text-red-500"></i> <span class="hidden sm:inline">PDF</span> INSCRIPCIONES
                     </a>
                     <?php if($has_coach_cards): ?>
@@ -102,8 +102,8 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                         </button>
                     </form>
                 <?php else: ?>
-                    <a target="_blank" href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_competicion?>&club=<?php echo $_SESSION['club']?>&titulo=Inscripciones <?php echo $_SESSION['nombre_club']?>" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
-                        <i class="fas fa-file-pdf text-red-500"></i> INSCRIPCIÓN
+                    <a target="_blank" href="./informes/informe_figuras.php?id_competicion=<?php echo $id_competicion?>&titulo=Inscripciones" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">
+                        <i class="fas fa-file-pdf text-red-500"></i> INSCRIPCIONES
                     </a>
                     <?php if($has_coach_cards): ?>
                         <a target="_blank" href="./informes/informe_coach_card.php?titulo=Coach%20Card%20Composer&id_club=<?php echo $_SESSION['club'];?>&id_competicion=<?php echo $id_competicion;?>" class="px-3 sm:px-4 py-2 bg-white border border-slate-200 rounded-xl text-[11px] sm:text-xs font-black text-slate-600 hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-sm">

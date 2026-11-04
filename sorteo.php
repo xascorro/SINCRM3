@@ -60,6 +60,15 @@ $v3_colors = [
             <!-- Botones de Acción (Contextuales a la pestaña activa) -->
             <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                 
+                <?php if($is_mixta): ?>
+                <!-- Acción Sorteo Integral (Competición Completa) -->
+                <form action="sorteo_figuras_code.php" method="POST" class="inline" onsubmit="return confirm('¿Deseas sortear TODAS las fases de la competición (Figuras y Rutinas) de una sola vez?');">
+                    <button type="submit" name="sorteo_completo_btn" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-indigo-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-indigo-500/20 active:scale-[0.98] hover:bg-indigo-700 transition-all flex items-center gap-2">
+                        <i class="fas fa-dice text-xs"></i> Sortear Todo
+                    </button>
+                </form>
+                <?php endif; ?>
+
                 <!-- Acciones Figuras -->
                 <div id="actionsFiguras" class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto <?php echo $current_tab === 'figuras' ? '' : 'hidden'; ?>">
                     <button type="button" onclick="toggleAddSorteoFiguras()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center gap-2">
@@ -68,7 +77,7 @@ $v3_colors = [
                     <button type="button" onclick="toggleAnularFiguras()" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-red-200 text-red-500 font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-red-50 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-trash-can text-xs"></i> Anular
                     </button>
-                    <a href="./informes/informe_figuras_orden_salida_cortes.php?titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
+                    <a href="./informes/informe_figuras.php?id_competicion=<?php echo $id_comp; ?>&titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
                         <i class="fas fa-file-pdf text-xs"></i> PDF Oficial
                     </a>
                 </div>
@@ -81,8 +90,8 @@ $v3_colors = [
                     <button type="button" onclick="toggleAnularRutinas()" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-white border border-red-200 text-red-500 font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-red-50 active:scale-[0.98] transition-all flex items-center gap-2 shadow-sm">
                         <i class="fas fa-trash-can text-xs"></i> Anular Todo
                     </button>
-                    <a href="./informes/inscripciones_numericas_rutinas.php?id_competicion=<?php echo $id_comp; ?>&titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
-                        <i class="fas fa-download text-xs"></i> PDF Oficial
+                    <a href="./informes/informe_figuras.php?id_competicion=<?php echo $id_comp; ?>&titulo=Orden de salida" target="_blank" class="px-3.5 sm:px-5 py-2.5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center gap-2 shadow-md">
+                        <i class="fas fa-file-pdf text-xs"></i> PDF Oficial
                     </a>
                 </div>
 
@@ -299,6 +308,7 @@ $v3_colors = [
                         <div class="md:col-span-8 space-y-2">
                             <label class="text-[10px] font-black uppercase text-slate-400 px-1">Seleccionar Fase de Competición</label>
                             <?php 
+                            $include_todas_fases = true;
                             ob_start();
                             include('includes/fases_competicion_select_option.php');
                             $select_html = ob_get_clean();

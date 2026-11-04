@@ -69,7 +69,7 @@ if ($id_competicion > 0) {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-12">
             
             <!-- Inscripciones -->
-            <a href="informes/informe_preinscripciones.php?titulo=Nadadoras%20inscritas" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-600 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
+            <a href="informes/informe_figuras.php?titulo=Inscripciones" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-blue-600 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
                 <div class="flex justify-between items-center mb-3 sm:mb-6">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
                         <i class="fas fa-users-line text-lg sm:text-xl"></i>
@@ -79,13 +79,13 @@ if ($id_competicion > 0) {
                 <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mb-0.5 sm:mb-1 leading-none tabular-nums"><?php echo $total_nadadoras; ?></h3>
                 <p class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-3 sm:mb-6">Atletas Registradas</p>
                 <div class="pt-3 sm:pt-4 border-t border-slate-50 flex items-center justify-between text-blue-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-blue-700">
-                    <span>Descargar Listado</span>
+                    <span>Descargar Listado Oficial</span>
                     <i class="fas fa-arrow-right animate-pulse"></i>
                 </div>
             </a>
 
-            <!-- Rutinas -->
-            <a href="./informes/inscripciones_numericas_rutinas.php?titulo=Orden%20de%20salida" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-purple-500 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
+            <!-- Rutinas / Orden de Salida -->
+            <a href="./informes/informe_figuras.php?titulo=Orden%20de%20salida" target="_blank" class="bg-white p-4 sm:p-7 rounded-2xl sm:rounded-[2rem] shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-purple-500 transition-all hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] group">
                 <div class="flex justify-between items-center mb-3 sm:mb-6">
                     <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-all shadow-sm">
                         <i class="fas fa-list-ol text-lg sm:text-xl"></i>
@@ -95,7 +95,7 @@ if ($id_competicion > 0) {
                 <h3 class="text-2xl sm:text-3xl font-black text-slate-800 mb-0.5 sm:mb-1 leading-none tabular-nums"><?php echo $total_rutinas; ?></h3>
                 <p class="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-tight mb-3 sm:mb-6">Rutinas en Sorteo</p>
                 <div class="pt-3 sm:pt-4 border-t border-slate-50 flex items-center justify-between text-purple-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-colors group-hover:text-purple-700">
-                    <span>Ver Orden Salida</span>
+                    <span>Ver Orden Oficial</span>
                     <i class="fas fa-arrow-right animate-pulse"></i>
                 </div>
             </a>
