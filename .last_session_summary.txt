@@ -1,14 +1,21 @@
-=== SESION SINCRM: IMPLEMENTACIÓN SELECT FLOTANTE EN RUTINAS PARTICIPANTES ===
-Fecha: 2026-11-04 11:27 CET
+=== SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
+Fecha: 2026-11-04 11:34 CET
+Commit: 0e84d00 ("feat(inscripciones): portal unificado v4, selectores flotantes TomSelect y control de duplicados")
 
-1. Tarea Realizada:
-- Se aplicó la misma solución del selector flotante de nadadoras (TomSelect) en rutinas_participantes.php (gestión de titulares y reservas):
-  * Estilos flotantes corporativos (Tailwind v4) con z-index 999999 y dropdownParent: 'body'.
-  * Desplegable contenido con buscador integrado por apellidos o nombre.
-  * Cierre instantáneo (closeAfterSelect: true / ts.close()) y liberación del foco (ts.blur()) tras seleccionar una deportista.
-  * Autofoco automático en el botón de guardar/actualizar de la fila correspondiente para permitir confirmación inmediata con un clic o pulsando Enter.
-  * Integración completa y transparente con el guardado individual y el guardado masivo "Asignar Todo" (saveAllParticipants()).
-  * Detección visual mejorada de nadadoras duplicadas remarcando el control del selector con borde rojo y fondo suave.
-
-2. Archivos modificados:
-- /var/www/html/sincrm/rutinas_participantes.php
+1. Resumen de Actuaciones Completadas:
+- Detección y bloqueo estricto de duplicados en Figuras:
+  * includes/nadadoras_select_option.php: Ahora consulta al cargar la categoría qué nadadoras ya están inscritas en esa competición y categoría. A nadadoras como Amelia Caja les asigna el atributo 'disabled' y la etiqueta visual '[YA INSCRITA]'. TomSelect respeta el estado deshabilitado e impide seleccionarlas.
+  * inscripciones_figuras_code.php: Blindaje en servidor que verifica antes del INSERT si la deportista ya cuenta con inscripción previa en esa categoría y competición, impidiendo inserciones duplicadas incluso ante peticiones forzadas.
+- Selectores flotantes TomSelect (Figuras y Rutinas Participantes):
+  * Cierre instantáneo del popup al elegir nadadora y liberación del foco.
+  * Autofoco automático en el botón de Registrar/Guardar (permite pulsar Enter o hacer un solo clic inmediato).
+  * Solución al fallo de pantalla en blanco: sustituido btn.disabled = true por pointer-events-none y asegurado el envío del parámetro POST save_btn mediante input oculto de respaldo.
+- Selector de Fase y Club en Rutinas:
+  * Desplegable de club operativo para administradores con todos los clubes activos.
+  * Identificación clara de fases masculinas con sufijo 'Masc' (ej: Solo Técnico Masc Junior vs Solo Técnico Junior).
+  * Select de fase configurado con name='id_fase' y required.
+- Verificación Integral y Pruebas en Vivo:
+  * Comprobada la sintaxis PHP (php -l) en todos los scripts.
+  * Comprobada la generación del PDF oficial (HTTP 200, 167 KB válido).
+  * Permisos ajustados a ubuntu:www-data 664/775.
+  * Commit realizado en master.
