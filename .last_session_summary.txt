@@ -1,16 +1,23 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 12:09 CET
-Commit: abf3ef6 ("style(login): diseño luminoso acuático, eliminación de contenedor oscuro en logo móvil y retirada de texto oficial")
+Fecha: 2026-11-04 12:13 CET
+Commit: 69f5f1a ("feat(login): modal de bienvenida avanzado con cascada avatar -> logo club -> iniciales")
 
 1. Resumen de Actuaciones Completadas:
-- Rediseño Estético Luminoso y Limpio de login.php (Ajuste según feedback del usuario):
-  * Eliminado el tema oscuro y los fondos negros/slate-950: Sustituido por una paleta acuática luminosa, limpia y fresca (degradados en azules y cianes vibrantes en Desktop, y fondo blanco/slate-50 limpio en formulario).
-  * Eliminado el recuadro/caja oscura del logo en móviles y tablets: El logo se muestra ahora de forma limpia, directa y con mix-blend-multiply sobre fondo blanco, sin bordes ni recuadros oscuros a los lados.
-  * Eliminado el texto 'Plataforma Técnica Oficial', sustituido por un texto mucho más conciso y natural ('Gestión de Natación Artística').
-  * Botón de acceso rediseñado a degradado azul royal y cian acuático (from-blue-600 via-sky-600 to-blue-700) con glow azul suave.
-  * Ajuste de SweetAlert2 con color primario azul (#2563eb) en popups y tema claro.
-  * Preservación del 100% de la lógica de autenticación AJAX, SweetAlert2, service worker PWA y toggle de contraseña.
+- Modal de Bienvenida Dinámico tras Login Exitoso (login.php y login_code.php):
+  * Cascada de Identidad Visual Completa:
+    1. Avatar Personal: Si el usuario cuenta con foto de perfil en su cuenta (`usuarios.foto`), se muestra su avatar circular de alta resolución con halo gradiente y un sub-badge con el escudo de su club si dispone de él.
+    2. Logo de Club: Si no tiene avatar personal pero pertenece a un club (`usuarios.club > 0`), se extrae y muestra el escudo/logo oficial del club en contenedor suave.
+    3. Iniciales Dinámicas: Si no dispone de avatar ni logo de club, se generan sus iniciales (ej: "PD" para Pedro Díaz, "MC" para María Carmen) en un círculo con gradiente azul royal y cian vibrante.
+  * Tarjeta de Acceso Autorizado Premium:
+    - Chip verde con indicador de pulso orgánico ("Acceso Autorizado").
+    - Nombre del usuario en tipografía Lexend bold de gran legibilidad.
+    - Pills con su Rol en el sistema (ej: "Administrador", "Juez", etc.) y nombre de su Club.
+    - Barra de progreso animada (0% -> 100%) que sincroniza la transición suave de 2.3s hacia el dashboard.
+  * Backend login_code.php:
+    - sendResponse actualizado para devolver datos estructurados `user` (name, role, club, avatar, club_logo, initials) manteniendo 100% retrocompatibilidad.
+    - Detección universal del club para cualquier usuario asignado a un club (no solo rol 5).
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l (0 errores).
+- Sintaxis PHP validada con php -l en login.php y login_code.php (0 errores).
+- Comprobada generación de iniciales y búsqueda de fotos de perfil existentes.
 - Permisos asignados a ubuntu:www-data (664).

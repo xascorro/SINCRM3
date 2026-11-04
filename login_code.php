@@ -90,17 +90,22 @@ if (isset($_POST['reenviar_verificacion'])) {
  * @param string $status 'success' or 'error'
  * @param string $message Text to show
  * @param string $redirect Redirect URL
- * @param string|null $icon Optional club logo path
+ * @param string|null $icon Optional club logo or avatar path
+ * @param array $extra Optional additional data payload
  */
-function sendResponse($status, $message, $redirect = 'login.php', $icon = null) {
+function sendResponse($status, $message, $redirect = 'login.php', $icon = null, $extra = []) {
     if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         header('Content-Type: application/json');
-        echo json_encode([
+        $payload = [
             'status' => $status,
             'message' => $message,
             'redirect' => $redirect,
             'icon' => $icon
-        ]);
+        ];
+        if (!empty($extra) && is_array($extra)) {
+            $payload = array_merge($payload, $extra);
+        }
+        echo json_encode($payload);
         exit();
     } else {
         if ($status != 'success') {
@@ -151,20 +156,44 @@ if(isset($_POST['login_btn'])){
             $_SESSION['icono'] = $usuario['icono'];
             $_SESSION['foto'] = $usuario['foto'];
             
+            // 1. Avatar de usuario (si tiene foto en su perfil)
+            $user_avatar = null;
+            if(!empty($usuario['foto']) && file_exists(__DIR__ . '/' . $usuario['foto'])){
+                $user_avatar = $usuario['foto'];
+            }
+
+            // 2. Logo y nombre del Club (si tiene club asignado)
             $club_logo = null;
-            if($_SESSION['id_rol'] == 5){
-                $query = "SELECT nombre, logo FROM clubes WHERE id = ".$_SESSION['club'];
+            $club_nombre = null;
+            if(!empty($usuario['club']) && intval($usuario['club']) > 0){
+                $c_id = intval($usuario['club']);
+                $query = "SELECT nombre, logo FROM clubes WHERE id = $c_id";
                 $res_club = mysqli_query($connection, $query);
                 if($res_club && mysqli_num_rows($res_club) > 0) {
                     $c_data = mysqli_fetch_assoc($res_club);
-                    $_SESSION['nombre_club'] = $c_data['nombre'];
-                    if(!empty($c_data['logo'])) $club_logo = $c_data['logo'];
+                    $club_nombre = $c_data['nombre'];
+                    $_SESSION['nombre_club'] = $club_nombre;
+                    if(!empty($c_data['logo']) && file_exists(__DIR__ . '/' . $c_data['logo'])) {
+                        $club_logo = $c_data['logo'];
+                    }
                 }
+            }
+
+            // 3. Iniciales del usuario como respaldo
+            $username_clean = trim($usuario['username'] ?? '');
+            $words = preg_split('/\s+/', $username_clean, -1, PREG_SPLIT_NO_EMPTY);
+            $initials = '';
+            if (count($words) >= 2) {
+                $initials = mb_strtoupper(mb_substr($words[0], 0, 1) . mb_substr($words[1], 0, 1));
+            } elseif (count($words) === 1) {
+                $initials = mb_strtoupper(mb_substr($words[0], 0, 2));
+            } else {
+                $initials = 'US';
             }
 
             // Nuevo sistema de log mejorado
             $log_msg = "Inicio de sesión exitoso: " . $usuario['username'] . " (" . $usuario['nombre_rol'] . ")";
-            if($_SESSION['id_rol'] == 5) $log_msg .= " - Club: " . ($_SESSION['nombre_club'] ?? 'N/A');
+            if(!empty($club_nombre)) $log_msg .= " - Club: " . $club_nombre;
             write_log($log_msg, "SUCCESS");
 
 			// Lógica de permisos dinámicos (Nueva versión consolidada)
@@ -191,7 +220,18 @@ if(isset($_POST['login_btn'])){
                 write_log("Intento de acceso: Usuario invitado no aprobado ($login_email)", "SECURITY");
                 sendResponse('error', "Estas registrado como Invitado, debes de esperar a que el administrador aprueba tu registro.");
             } else {
-                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $club_logo ?? null);
+                $user_data = [
+                    'user' => [
+                        'name' => $usuario['username'],
+                        'role' => $usuario['nombre_rol'],
+                        'club' => $club_nombre,
+                        'avatar' => $user_avatar,
+                        'club_logo' => $club_logo,
+                        'initials' => $initials
+                    ]
+                ];
+                $primary_icon = $user_avatar ?: ($club_logo ?: null);
+                sendResponse('success', "Bienvenido " . $usuario['username'], $_SESSION['startPage'], $primary_icon, $user_data);
             }
 		}else {
             write_log("Fallo de autenticación: Contraseña incorrecta para el email $login_email", "SECURITY");

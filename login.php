@@ -418,24 +418,85 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(response) {
                 if (response.status === 'success') {
-                    let customIcon = '';
-                    if(response.icon) {
-                        customIcon = `<div class="flex justify-center mb-6"><div class="w-24 h-24 rounded-3xl bg-slate-50 p-4 shadow-inner flex items-center justify-center border border-slate-100"><img src="${response.icon}" class="max-w-full max-h-full object-contain" alt="Logo Club"></div></div>`;
+                    const user = response.user || {};
+                    const avatar = user.avatar;
+                    const clubLogo = user.club_logo || response.icon;
+                    const initials = user.initials || 'US';
+                    const userName = user.name || (response.message ? response.message.replace(/^Bienvenido\s*/i, '') : 'Usuario');
+                    const userRole = user.role || '';
+                    const clubName = user.club || '';
+
+                    // Cascada de identidad visual: 1. Avatar -> 2. Logo Club -> 3. Iniciales
+                    let visualHtml = '';
+                    if (avatar) {
+                        visualHtml = `
+                            <div class="relative inline-block mx-auto mb-4">
+                                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full p-1 bg-gradient-to-tr from-blue-600 via-sky-400 to-cyan-300 shadow-xl shadow-blue-500/25">
+                                    <img src="${avatar}" class="w-full h-full object-cover rounded-full bg-white" alt="${userName}">
+                                </div>
+                                ${clubLogo ? `
+                                    <div class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-white p-1 shadow-md border border-slate-100 flex items-center justify-center ring-2 ring-white">
+                                        <img src="${clubLogo}" class="w-full h-full object-contain" alt="Club">
+                                    </div>` : ''}
+                            </div>
+                        `;
+                    } else if (clubLogo) {
+                        visualHtml = `
+                            <div class="relative inline-block mx-auto mb-4">
+                                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-50 p-4 shadow-xl shadow-slate-900/5 ring-4 ring-blue-500/10 flex items-center justify-center border border-slate-100">
+                                    <img src="${clubLogo}" class="max-w-full max-h-full object-contain drop-shadow-sm" alt="Club">
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        visualHtml = `
+                            <div class="relative inline-block mx-auto mb-4">
+                                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-400 text-white font-black text-2xl sm:text-3xl flex items-center justify-center shadow-xl shadow-blue-500/25 ring-4 ring-blue-500/15 tracking-wider select-none">
+                                    ${initials}
+                                </div>
+                            </div>
+                        `;
                     }
 
+                    const modalHtml = `
+                        <div class="font-lexend text-center pt-1">
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-[10px] font-bold uppercase tracking-wider mb-4">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Acceso Autorizado</span>
+                            </div>
+
+                            ${visualHtml}
+
+                            <p class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1">¡Hola de nuevo!</p>
+                            <h3 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight mb-2">${userName}</h3>
+
+                            <div class="flex items-center justify-center flex-wrap gap-1.5 mb-5">
+                                ${userRole ? `<span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-[11px] font-bold border border-blue-100 flex items-center gap-1"><i class="fas fa-id-badge text-[10px]"></i> ${userRole}</span>` : ''}
+                                ${clubName ? `<span class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-semibold flex items-center gap-1"><i class="fas fa-shield text-[10px] text-slate-400"></i> ${clubName}</span>` : ''}
+                            </div>
+
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden mb-3">
+                                <div id="swalProgress" class="bg-gradient-to-r from-blue-600 to-cyan-500 h-full w-0 transition-all duration-[2000ms] ease-out rounded-full"></div>
+                            </div>
+                            <p class="text-[11px] text-slate-400 font-medium flex items-center justify-center gap-2">
+                                <i class="fas fa-circle-notch fa-spin text-blue-600 text-[10px]"></i>
+                                <span>Cargando tu panel de control...</span>
+                            </p>
+                        </div>
+                    `;
+
                     Swal.fire({
-                        icon: response.icon ? undefined : 'success',
-                        title: '<span class="swal2-title-v3">Acceso Concedido</span>',
-                        html: `
-                            <div class="font-lexend text-center">
-                                ${customIcon}
-                                <p class="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2">${response.message}</p>
-                                <p class="text-xs sm:text-sm text-slate-400 font-medium">Sincronizando con tu club...</p>
-                            </div>`,
-                        timer: 2200,
+                        html: modalHtml,
+                        timer: 2300,
                         showConfirmButton: false,
                         background: '#ffffff',
-                        customClass: { popup: 'swal2-popup-v3' }
+                        customClass: { popup: 'swal2-popup-v3' },
+                        didOpen: () => {
+                            setTimeout(() => {
+                                const bar = document.getElementById('swalProgress');
+                                if (bar) bar.style.width = '100%';
+                            }, 50);
+                        }
                     }).then(() => { 
                         window.location.href = response.redirect; 
                     });
