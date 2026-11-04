@@ -80,6 +80,38 @@ if(isset($_POST['update_btn'])){
         "club='$id_club'"
     ];
 
+    // Gestión de avatar / foto de perfil
+    if(isset($_FILES['foto']) && $_FILES['foto']['error'] == 0){
+        $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $filename = $_FILES['foto']['name'];
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        
+        if(in_array($ext, $allowed)){
+            $target_dir = "images/users/";
+            if(!is_dir($target_dir)){
+                mkdir($target_dir, 0777, true);
+            }
+            $new_filename = "user_" . $id . "_" . time() . "." . $ext;
+            $target_file = $target_dir . $new_filename;
+            
+            if(move_uploaded_file($_FILES['foto']['tmp_name'], $target_file)){
+                $query_parts[] = "foto = '$target_file'";
+                if(isset($_SESSION['id_usario']) && $_SESSION['id_usario'] == $id){
+                    $_SESSION['foto'] = $target_file;
+                }
+                write_log("Avatar actualizado para usuario ID $id ($email)", "INFO");
+            } else {
+                write_log("Error al mover foto de usuario ID $id", "ERROR");
+            }
+        }
+    } elseif(isset($_POST['remove_foto']) && $_POST['remove_foto'] == '1') {
+        $query_parts[] = "foto = NULL";
+        if(isset($_SESSION['id_usario']) && $_SESSION['id_usario'] == $id){
+            $_SESSION['foto'] = null;
+        }
+        write_log("Avatar eliminado para usuario ID $id ($email)", "INFO");
+    }
+
     // Obtener estado anterior para ver si hay cambios que requieran notificación
     $q_old = mysqli_query($connection, "SELECT id_rol, activo FROM usuarios WHERE id = '$id'");
     $old_data = mysqli_fetch_assoc($q_old);

@@ -1,23 +1,27 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 12:13 CET
-Commit: 69f5f1a ("feat(login): modal de bienvenida avanzado con cascada avatar -> logo club -> iniciales")
+Fecha: 2026-11-04 12:41 CET
+Commit: 96bce52 ("feat(admin): rediseño v4 dual-view para usuarios, páginas y roles con gestor de avatar")
 
 1. Resumen de Actuaciones Completadas:
-- Modal de Bienvenida Dinámico tras Login Exitoso (login.php y login_code.php):
-  * Cascada de Identidad Visual Completa:
-    1. Avatar Personal: Si el usuario cuenta con foto de perfil en su cuenta (`usuarios.foto`), se muestra su avatar circular de alta resolución con halo gradiente y un sub-badge con el escudo de su club si dispone de él.
-    2. Logo de Club: Si no tiene avatar personal pero pertenece a un club (`usuarios.club > 0`), se extrae y muestra el escudo/logo oficial del club en contenedor suave.
-    3. Iniciales Dinámicas: Si no dispone de avatar ni logo de club, se generan sus iniciales (ej: "PD" para Pedro Díaz, "MC" para María Carmen) en un círculo con gradiente azul royal y cian vibrante.
-  * Tarjeta de Acceso Autorizado Premium:
-    - Chip verde con indicador de pulso orgánico ("Acceso Autorizado").
-    - Nombre del usuario en tipografía Lexend bold de gran legibilidad.
-    - Pills con su Rol en el sistema (ej: "Administrador", "Juez", etc.) y nombre de su Club.
-    - Barra de progreso animada (0% -> 100%) que sincroniza la transición suave de 2.3s hacia el dashboard.
-  * Backend login_code.php:
-    - sendResponse actualizado para devolver datos estructurados `user` (name, role, club, avatar, club_logo, initials) manteniendo 100% retrocompatibilidad.
-    - Detección universal del club para cualquier usuario asignado a un club (no solo rol 5).
+- Rediseño Estético y Dual-View de Administración v4:
+  * usuarios.php:
+    - Implementación del diseño dual-view oficial (tabla en desktop, tarjetas táctiles optimizadas en móvil).
+    - Buscador dinámico en tiempo real situado en cabecera con filtrado simultáneo de tabla y tarjetas móviles.
+    - Avatares reales con foto si el usuario tiene `usuarios.foto` o inicial en gradiente.
+    - Indicador de estado de email confirmado/no confirmado y badges estilizados de rol y club.
+    - KPIs con `tabular-nums` y bordes de acento de color.
+  * usuarios_edit.php:
+    - Nuevo gestor de avatar de usuario: visualización de foto actual o inicial, selector de archivo con previsualización reactiva inmediata mediante FileReader en JS, y opción para eliminar la foto.
+    - Backend usuarios_code.php actualizado con upload seguro en `images/users/` (JPG, PNG, GIF, WEBP) y sincronización con la sesión actual.
+    - Estructura limpia en tarjetas temáticas (Identidad, Permisos/Vinculaciones y Credenciales).
+  * paginas.php:
+    - Rediseño con arquitectura dual-view y KPIs técnicos de scripts, módulos y permisos activos.
+    - Buscador dinámico global en tiempo real en la cabecera.
+    - Modal de edición optimizado con diseño claro y campos tipográficos estilizados.
+  * roles.php y roles_edit.php:
+    - Rediseño completo con dual-view móvil, buscador dinámico en tiempo real y KPIs de jerarquía.
+    - roles_edit.php modernizado con cuadrícula de permisos agrupada por módulos, botón de invertir selección táctil y barra inferior de confirmación limpia.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l en login.php y login_code.php (0 errores).
-- Comprobada generación de iniciales y búsqueda de fotos de perfil existentes.
+- Sintaxis PHP validada con php -l en los 6 ficheros implicados (0 errores).
 - Permisos asignados a ubuntu:www-data (664).
