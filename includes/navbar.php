@@ -12,141 +12,169 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
     $group_mantenimiento = ['estado_sistema.php', 'configuracion_sistema.php', 'diagnostico.php'];
 ?>
-<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-primary text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
+<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-gradient-to-b from-slate-950 via-[#071328] to-slate-950 text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
     
     <!-- BRAND AREA -> HOME LINK (ADMIN) -->
-    <a href="index.php" class="flex-shrink-0 h-24 flex items-center px-6 overflow-hidden bg-white/5 border-b border-white/5 hover:bg-white/10 transition-colors no-underline group">
-        <div class="w-10 h-10 bg-white/10 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-110 transition-transform">
-            <i class="fas fa-house-chimney text-white text-lg"></i>
+    <a href="index.php" class="flex-shrink-0 h-20 flex items-center px-4 lg:px-5 overflow-hidden bg-white/[0.03] border-b border-white/[0.08] hover:bg-white/[0.06] transition-colors no-underline group relative" title="SINCRM Inicio">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-400 p-2 flex-shrink-0 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform border border-white/20">
+            <img src="./img/logo_sincrm4.png" class="w-full h-full object-contain mix-blend-multiply" alt="SINCRM">
         </div>
-        <div class="sidebar-text hidden ml-4">
-            <span class="text-xl font-black tracking-tighter text-white uppercase italic">Inicio</span>
-            <p class="text-[8px] font-bold text-blue-100 uppercase tracking-widest leading-none opacity-80">Dashboard Principal</p>
+        <div class="sidebar-text hidden ml-3 min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 leading-none mb-1">
+                <span class="text-base font-black tracking-tight text-white">SINCRM</span>
+                <span class="px-1.5 py-0.5 rounded-md bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[9px] font-black">4</span>
+            </div>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none truncate">
+                <?php echo ($_SESSION['id_rol'] == '1') ? 'SuperAdmin' : 'Panel Técnico'; ?>
+            </p>
         </div>
     </a>
 
     <!-- MAIN NAVIGATION -->
-    <nav class="flex-1 px-3 space-y-6 mt-6">
+    <nav class="flex-1 px-3 space-y-5 mt-5">
         
         <!-- 1. Datos Maestros -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Configuración</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Configuración</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
 
-            <button onclick="toggleV3Submenu('sub-datos')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_datos) ? 'nav-item-active' : 'text-blue-50'; ?>" title="Datos Maestros">
-                <i class="fas fa-database w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Datos Maestros</span>
+            <button onclick="toggleV3Submenu('sub-datos')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_datos) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Datos Maestros">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_datos) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-database text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">Datos Maestros</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_datos) ? 'rotate-90' : ''; ?>" id="arrow-sub-datos"></i>
             </button>
-            <div id="sub-datos" data-active="<?php echo in_array($current_page, $group_datos) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="competiciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'competiciones.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-trophy w-4 text-center"></i> Competiciones
+            <div id="sub-datos" data-active="<?php echo in_array($current_page, $group_datos) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_datos) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="competiciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'competiciones.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-trophy w-3.5 text-center text-[11px] opacity-70"></i> Competiciones
                 </a>
-                <a href="federaciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'federaciones.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-landmark w-4 text-center"></i> Federaciones
+                <a href="federaciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'federaciones.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-landmark w-3.5 text-center text-[11px] opacity-70"></i> Federaciones
                 </a>
-                <a href="clubes.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'clubes.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-shield-halved w-4 text-center"></i> Clubes
+                <a href="clubes.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'clubes.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-shield-halved w-3.5 text-center text-[11px] opacity-70"></i> Clubes
                 </a>
-                <a href="nadadoras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'nadadoras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-person-swimming w-4 text-center"></i> Nadadoras
+                <a href="nadadoras.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'nadadoras.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-person-swimming w-3.5 text-center text-[11px] opacity-70"></i> Nadadoras
                 </a>
-                <a href="categorias.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'categorias.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-layer-group w-4 text-center"></i> Categorías
+                <a href="categorias.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'categorias.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-layer-group w-3.5 text-center text-[11px] opacity-70"></i> Categorías
                 </a>
-                <a href="modalidades.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'modalidades.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-water w-4 text-center"></i> Modalidades
+                <a href="modalidades.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'modalidades.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-water w-3.5 text-center text-[11px] opacity-70"></i> Modalidades
                 </a>
-                <a href="jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-gavel w-4 text-center"></i> Jueces
+                <a href="jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'jueces.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-gavel w-3.5 text-center text-[11px] opacity-70"></i> Jueces
                 </a>
-                <a href="figuras.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'figuras.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-shapes w-4 text-center"></i> Figuras
+                <a href="figuras.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'figuras.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-shapes w-3.5 text-center text-[11px] opacity-70"></i> Figuras
                 </a>
-                <a href="reglas_competicion.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'reglas_competicion.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-stopwatch w-4 text-center"></i> Reglamento y Tiempos
+                <a href="reglas_competicion.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'reglas_competicion.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-stopwatch w-3.5 text-center text-[11px] opacity-70"></i> Reglamento
                 </a>
             </div>
         </div>
 
         <!-- 2. Competición -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Operativa</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Operativa</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
 
-            <button onclick="toggleV3Submenu('sub-comp')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_operativa) ? 'nav-item-active' : 'text-blue-50'; ?>" title="Competición">
-                <i class="fas fa-flag-checkered w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
+            <button onclick="toggleV3Submenu('sub-comp')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_operativa) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Competición">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_operativa) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-flag-checkered text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_operativa) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp"></i>
             </button>
-            <div id="sub-comp" data-active="<?php echo in_array($current_page, $group_operativa) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-list-check w-4 text-center"></i> Fases
+            <div id="sub-comp" data-active="<?php echo in_array($current_page, $group_operativa) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_operativa) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="fases.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'fases.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-list-check w-3.5 text-center text-[11px] opacity-70"></i> Fases
                 </a>
-                <a href="paneles_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'paneles_jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-scale-balanced w-4 text-center"></i> Paneles
+                <a href="paneles_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'paneles_jueces.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-scale-balanced w-3.5 text-center text-[11px] opacity-70"></i> Paneles
                 </a>
-                
-                <a href="inscripciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
+                <a href="inscripciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-clipboard-list w-3.5 text-center text-[11px] opacity-70"></i> Inscripciones
                 </a>
-                <a href="sorteo.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-wand-magic-sparkles w-4 text-center"></i> Sorteos
+                <a href="sorteo.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['sorteo.php', 'sorteo_figuras.php', 'sorteo_rutinas.php']) ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-wand-magic-sparkles w-3.5 text-center text-[11px] opacity-70"></i> Sorteos
                 </a>
-                
-                <a href="puntuaciones_lista_fases.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'puntuaciones_lista_fases.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap font-bold border-t border-white/5 mt-2 pt-2">
-                    <i class="fas fa-calculator w-4 text-center"></i> Puntuaciones
+                <a href="puntuaciones_lista_fases.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'puntuaciones_lista_fases.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap border-t border-white/[0.06] pt-2 mt-1">
+                    <i class="fas fa-calculator w-3.5 text-center text-[11px] opacity-70"></i> Puntuaciones
                 </a>
             </div>
         </div>
 
         <!-- 3. BIAS Analizer -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Evaluación</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Evaluación</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
 
-            <button onclick="toggleV3Submenu('sub-bias')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_bias) ? 'nav-item-active' : 'text-blue-50'; ?>" title="BIAS Analizer">
-                <i class="fas fa-magnifying-glass-chart w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
+            <button onclick="toggleV3Submenu('sub-bias')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_bias) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="BIAS Analizer">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_bias) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-magnifying-glass-chart text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
+            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="mi_auditoria.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-user-check w-3.5 text-center text-[11px] opacity-70"></i> Mi Auditoría
                 </a>
-                <a href="ranking_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-ranking-star w-4 text-center"></i> Ranking Calidad
+                <a href="ranking_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-ranking-star w-3.5 text-center text-[11px] opacity-70"></i> Ranking Calidad
                 </a>
-                <a href="analisis_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['analisis_jueces.php', 'analisis_juez_detalle.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-calendar-check w-4 text-center"></i> Auditoría Evento
+                <a href="analisis_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['analisis_jueces.php', 'analisis_juez_detalle.php']) ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-calendar-check w-3.5 text-center text-[11px] opacity-70"></i> Auditoría Evento
                 </a>
             </div>
         </div>
 
         <!-- 4. Informes -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Documentación</div>
-            <a href="informes_competicion.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'informes_competicion.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Informes">
-                <i class="fas fa-file-pdf w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Informes</span>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Documentos</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
+            <a href="informes_competicion.php" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo $current_page == 'informes_competicion.php' ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Informes">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo $current_page == 'informes_competicion.php' ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-file-pdf text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Informes Oficiales</span>
             </a>
         </div>
 
         <!-- 5. Usuarios -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Seguridad</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Seguridad</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
             <div class="relative">
-                <button onclick="toggleV3Submenu('sub-users')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_users) ? 'nav-item-active' : 'text-blue-50'; ?>" title="Usuarios">
-                    <i class="fas fa-user-shield w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                    <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Usuarios</span>
+                <button onclick="toggleV3Submenu('sub-users')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_users) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Usuarios">
+                    <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_users) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                        <i class="fas fa-user-shield text-sm"></i>
+                    </div>
+                    <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Usuarios y Acceso</span>
                     <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_users) ? 'rotate-90' : ''; ?>" id="arrow-sub-users"></i>
                 </button>
-                <div id="sub-users" data-active="<?php echo in_array($current_page, $group_users) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                    <a href="usuarios.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'usuarios.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="fas fa-users-gear w-4 text-center"></i> Directorio
+                <div id="sub-users" data-active="<?php echo in_array($current_page, $group_users) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_users) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                    <a href="usuarios.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'usuarios.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                        <i class="fas fa-users-gear w-3.5 text-center text-[11px] opacity-70"></i> Directorio
                     </a>
-                    <a href="roles.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'roles.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="fas fa-user-lock w-4 text-center"></i> Roles
+                    <a href="roles.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'roles.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                        <i class="fas fa-user-lock w-3.5 text-center text-[11px] opacity-70"></i> Roles y Permisos
                     </a>
-                    <a href="paginas.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'paginas.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors">
-                        <i class="fas fa-file-shield w-4 text-center"></i> Catálogo
+                    <a href="paginas.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'paginas.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                        <i class="fas fa-file-shield w-3.5 text-center text-[11px] opacity-70"></i> Catálogo Páginas
                     </a>
                 </div>
             </div>
@@ -154,22 +182,27 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
 
         <!-- 6. Mantenimiento -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Sistema</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Sistema</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
             
-            <button onclick="toggleV3Submenu('sub-maint')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_mantenimiento) ? 'nav-item-active' : 'text-blue-50'; ?>" title="Mantenimiento">
-                <i class="fa-solid fa-screwdriver-wrench w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left">Mantenimiento</span>
+            <button onclick="toggleV3Submenu('sub-maint')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_mantenimiento) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Mantenimiento">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_mantenimiento) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fa-solid fa-screwdriver-wrench text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Mantenimiento</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_mantenimiento) ? 'rotate-90' : ''; ?>" id="arrow-sub-maint"></i>
             </button>
-            <div id="sub-maint" data-active="<?php echo in_array($current_page, $group_mantenimiento) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="estado_sistema.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'estado_sistema.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap">
-                    <i class="fas fa-chart-line w-4 text-center"></i> Estado
+            <div id="sub-maint" data-active="<?php echo in_array($current_page, $group_mantenimiento) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_mantenimiento) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="estado_sistema.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'estado_sistema.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-chart-line w-3.5 text-center text-[11px] opacity-70"></i> Estado
                 </a>
-                <a href="configuracion_sistema.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'configuracion_sistema.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap">
-                    <i class="fas fa-sliders w-4 text-center"></i> Configuración
+                <a href="configuracion_sistema.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'configuracion_sistema.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-sliders w-3.5 text-center text-[11px] opacity-70"></i> Configuración
                 </a>
-                <a href="diagnostico.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'diagnostico.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 transition-colors whitespace-nowrap">
-                    <i class="fas fa-stethoscope w-4 text-center"></i> Diagnóstico
+                <a href="diagnostico.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'diagnostico.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-stethoscope w-3.5 text-center text-[11px] opacity-70"></i> Diagnóstico
                 </a>
             </div>
         </div>
@@ -183,59 +216,77 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
     $current_page = basename($_SERVER['PHP_SELF']);
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
 ?>
-<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-primary text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
+<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-gradient-to-b from-slate-950 via-[#071328] to-slate-950 text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
     
     <!-- BRAND AREA -> HOME LINK (JUEZ) -->
-    <a href="index.php" class="flex-shrink-0 h-24 flex items-center px-6 overflow-hidden bg-white/5 border-b border-white/5 hover:bg-white/10 transition-colors no-underline group">
-        <div class="w-10 h-10 bg-white/10 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-110 transition-transform">
-            <i class="fas fa-house-chimney text-white text-lg"></i>
+    <a href="index.php" class="flex-shrink-0 h-20 flex items-center px-4 lg:px-5 overflow-hidden bg-white/[0.03] border-b border-white/[0.08] hover:bg-white/[0.06] transition-colors no-underline group relative" title="SINCRM Inicio">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-400 p-2 flex-shrink-0 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform border border-white/20">
+            <img src="./img/logo_sincrm4.png" class="w-full h-full object-contain mix-blend-multiply" alt="SINCRM">
         </div>
-        <div class="sidebar-text hidden ml-4">
-            <span class="text-xl font-black tracking-tighter text-white uppercase italic">Inicio</span>
-            <p class="text-[8px] font-bold text-blue-100 uppercase tracking-widest leading-none opacity-80">Panel del Juez</p>
+        <div class="sidebar-text hidden ml-3 min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 leading-none mb-1">
+                <span class="text-base font-black tracking-tight text-white">SINCRM</span>
+                <span class="px-1.5 py-0.5 rounded-md bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[9px] font-black">4</span>
+            </div>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none truncate">Panel del Juez</p>
         </div>
     </a>
 
     <!-- MAIN NAVIGATION -->
-    <nav class="flex-1 px-3 space-y-6 mt-6">
+    <nav class="flex-1 px-3 space-y-5 mt-5">
         
         <!-- 1. Perfil -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Mi Cuenta</div>
-            <a href="perfil.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'perfil.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Mi Perfil">
-                <i class="fas fa-user-circle w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Mi Perfil</span>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Mi Cuenta</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
+            <a href="perfil.php" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo $current_page == 'perfil.php' ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Mi Perfil">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo $current_page == 'perfil.php' ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-user-circle text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Mi Perfil</span>
             </a>
         </div>
 
-        <!-- 2. BIAS Analizer (Eje Central para Jueces) -->
+        <!-- 2. BIAS Analizer -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Evaluación</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Evaluación</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
 
-            <button onclick="toggleV3Submenu('sub-bias')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_bias) ? 'nav-item-active' : 'text-blue-50'; ?>" title="BIAS Analizer">
-                <i class="fas fa-magnifying-glass-chart w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
+            <button onclick="toggleV3Submenu('sub-bias')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_bias) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="BIAS Analizer">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_bias) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-magnifying-glass-chart text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_bias) ? 'rotate-90' : ''; ?>" id="arrow-sub-bias"></i>
             </button>
-            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="mi_auditoria.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-user-check w-4 text-center"></i> Mi Auditoría
+            <div id="sub-bias" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="mi_auditoria.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-user-check w-3.5 text-center text-[11px] opacity-70"></i> Mi Auditoría
                 </a>
-                <a href="ranking_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-ranking-star w-4 text-center"></i> Ranking Calidad
+                <a href="ranking_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-ranking-star w-3.5 text-center text-[11px] opacity-70"></i> Ranking Calidad
                 </a>
-                <a href="analisis_jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['analisis_jueces.php', 'analisis_juez_detalle.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
-                    <i class="fas fa-calendar-check w-4 text-center"></i> Auditoría Evento
+                <a href="analisis_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['analisis_jueces.php', 'analisis_juez_detalle.php']) ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?> whitespace-nowrap">
+                    <i class="fas fa-calendar-check w-3.5 text-center text-[11px] opacity-70"></i> Auditoría Evento
                 </a>
             </div>
         </div>
 
         <!-- 3. Informes -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Documentación</div>
-            <a href="informes_competicion.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'informes_competicion.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Informes">
-                <i class="fas fa-file-pdf w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Informes</span>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Documentos</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
+            <a href="informes_competicion.php" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo $current_page == 'informes_competicion.php' ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Informes">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo $current_page == 'informes_competicion.php' ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-file-pdf text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Informes</span>
             </a>
         </div>
 
@@ -248,47 +299,64 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
     $current_page = basename($_SERVER['PHP_SELF']);
     $group_club_comp = ['inscripciones.php', 'inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php'];
 ?>
-<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-primary text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
+<aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-gradient-to-b from-slate-950 via-[#071328] to-slate-950 text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
     
     <!-- BRAND AREA (CLUB) -->
-    <a href="index.php" class="flex-shrink-0 h-24 flex items-center px-6 overflow-hidden bg-white/5 border-b border-white/5 hover:bg-white/10 transition-colors no-underline group">
-        <div class="w-10 h-10 bg-white/10 rounded-xl flex-shrink-0 flex items-center justify-center shadow-lg shadow-black/10 group-hover:scale-110 transition-transform">
-            <i class="fas fa-house-chimney text-white text-lg"></i>
+    <a href="index.php" class="flex-shrink-0 h-20 flex items-center px-4 lg:px-5 overflow-hidden bg-white/[0.03] border-b border-white/[0.08] hover:bg-white/[0.06] transition-colors no-underline group relative" title="SINCRM Inicio">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-400 p-2 flex-shrink-0 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform border border-white/20">
+            <img src="./img/logo_sincrm4.png" class="w-full h-full object-contain mix-blend-multiply" alt="SINCRM">
         </div>
-        <div class="sidebar-text hidden ml-4">
-            <span class="text-xl font-black tracking-tighter text-white uppercase italic">Inicio</span>
-            <p class="text-[8px] font-bold text-blue-100 uppercase tracking-widest leading-none opacity-80"><?php echo $_SESSION['nombre_club'] ?? 'Mi Club'; ?></p>
+        <div class="sidebar-text hidden ml-3 min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 leading-none mb-1">
+                <span class="text-base font-black tracking-tight text-white">SINCRM</span>
+                <span class="px-1.5 py-0.5 rounded-md bg-blue-500/20 border border-blue-400/30 text-cyan-300 text-[9px] font-black">4</span>
+            </div>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-wider leading-none truncate">
+                <?php echo htmlspecialchars($_SESSION['nombre_club'] ?? 'Mi Club'); ?>
+            </p>
         </div>
     </a>
 
     <!-- MAIN NAVIGATION -->
-    <nav class="flex-1 px-3 space-y-6 mt-6">
+    <nav class="flex-1 px-3 space-y-5 mt-5">
         
         <!-- 1. Gestión de Equipo -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Mi Entorno</div>
-            <a href="mi_equipo.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'mi_equipo.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Mi Equipo">
-                <i class="fas fa-users-gear w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Mi Equipo</span>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Mi Entorno</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
+            <a href="mi_equipo.php" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo $current_page == 'mi_equipo.php' ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Mi Equipo">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo $current_page == 'mi_equipo.php' ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-users-gear text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Mi Equipo</span>
             </a>
-            <a href="nadadoras.php" class="flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo $current_page == 'nadadoras.php' ? 'nav-item-active' : 'text-blue-50'; ?>" title="Nadadoras">
-                <i class="fas fa-person-swimming w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm">Nadadoras</span>
+            <a href="nadadoras.php" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo $current_page == 'nadadoras.php' ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Nadadoras">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo $current_page == 'nadadoras.php' ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-person-swimming text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left">Nadadoras</span>
             </a>
         </div>
 
         <!-- 2. Competición -->
         <div class="space-y-1">
-            <div class="sidebar-text hidden px-4 text-[9px] font-black uppercase text-white/50 mb-2">Operativa</div>
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/80 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Operativa</span>
+                <div class="h-px flex-1 bg-white/[0.06]"></div>
+            </div>
 
-            <button onclick="toggleV3Submenu('sub-comp-club')" class="w-full flex items-center gap-4 p-3.5 rounded-2xl transition-all duration-300 hover:bg-white/10 group <?php echo in_array($current_page, $group_club_comp) ? 'nav-item-active' : 'text-blue-50'; ?>" title="Competición">
-                <i class="fas fa-flag-checkered w-8 text-center text-lg group-hover:text-white transition-colors"></i>
-                <span class="sidebar-text hidden font-bold text-sm flex-1 text-left whitespace-nowrap">Gestión Activa</span>
+            <button onclick="toggleV3Submenu('sub-comp-club')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-300 hover:bg-white/[0.07] group <?php echo in_array($current_page, $group_club_comp) ? 'nav-item-active' : 'text-slate-300 hover:text-white'; ?>" title="Competición">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_club_comp) ? 'bg-blue-500/20 text-cyan-300 shadow-sm' : 'bg-white/[0.04] text-slate-400 group-hover:bg-white/[0.08] group-hover:text-white'; ?> transition-all">
+                    <i class="fas fa-flag-checkered text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">Gestión Activa</span>
                 <i class="fas fa-chevron-right text-[9px] sidebar-text hidden opacity-40 transition-transform duration-300 <?php echo in_array($current_page, $group_club_comp) ? 'rotate-90' : ''; ?>" id="arrow-sub-comp-club"></i>
             </button>
-            <div id="sub-comp-club" data-active="<?php echo in_array($current_page, $group_club_comp) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden pl-10 mt-1 space-y-1">
-                <a href="inscripciones.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5">
-                    <i class="fas fa-clipboard-list w-4 text-center"></i> Inscripciones
+            <div id="sub-comp-club" data-active="<?php echo in_array($current_page, $group_club_comp) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l border-white/10">
+                <a href="inscripciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-slate-400 hover:text-white hover:bg-white/[0.05]'; ?>">
+                    <i class="fas fa-clipboard-list w-3.5 text-center text-[11px] opacity-70"></i> Inscripciones
                 </a>
             </div>
         </div>
@@ -300,11 +368,14 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
 
     <!-- FOOTER / TOGGLE (COMÚN) -->
     <?php if(isset($_SESSION['id_rol'])): ?>
-    <div class="flex-shrink-0 p-4 bg-white/5 border-t border-white/10">
-        <button onclick="toggleV3Sidebar()" class="w-full h-12 flex items-center justify-center rounded-xl bg-white/5 hover:bg-white/10 transition-all group overflow-hidden">
-            <i class="fas fa-angles-right sidebar-transition text-blue-100 group-hover:text-white" id="v3-toggle-icon"></i>
-            <span class="sidebar-text hidden ml-3 text-[10px] font-black uppercase tracking-widest text-blue-50">Compactar</span>
+    <div class="flex-shrink-0 p-3 bg-white/[0.02] border-t border-white/[0.08]">
+        <button onclick="toggleV3Sidebar()" class="w-full h-11 flex items-center justify-center rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-[0.98] transition-all group overflow-hidden border border-white/[0.06] tap-press">
+            <i class="fas fa-angles-right text-slate-400 group-hover:text-cyan-300 text-xs transition-colors" id="v3-toggle-icon"></i>
+            <span class="sidebar-text hidden ml-2.5 text-[9px] font-black uppercase tracking-widest text-slate-300">Compactar Menú</span>
         </button>
+        <div class="sidebar-text hidden mt-2 text-center">
+            <span class="text-[9px] font-bold text-slate-500 uppercase tracking-widest tabular-nums">SINCRM v<?php echo htmlspecialchars(getVersion()); ?></span>
+        </div>
     </div>
     <?php endif; ?>
 </aside>

@@ -1,15 +1,17 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 12:47 CET
-Commit: bf3c9ff ("feat(topbar): avatar estilizado con iniciales sobre gradiente acuático cuando no hay foto")
+Fecha: 2026-11-04 12:58 CET
+Commit: feat(sidebar): rediseño visual v4 con brand header, fondo oceanic midnight, tree guide y estados activos linear
 
 1. Resumen de Actuaciones Completadas:
-- Avatar de Iniciales con Gradiente Acuático en Topbar (includes/topbar.php):
-  * Se sustituyó el icono genérico (<i class="fas fa-user"></i>) por el avatar circular/cuadrado redondeado estilizado con las iniciales del usuario (ej: "PD") sobre gradiente acuático vibrante (from-blue-600 via-sky-500 to-cyan-400) cuando el usuario no dispone de foto de perfil.
-  * Si el usuario cuenta con foto (`$_SESSION['foto']`), se sigue mostrando su imagen de perfil con object-cover.
-  * Sincronización automática de `nombre_usuario` en sesiones existentes y en login_code.php para garantizar iniciales exactas basadas en el nombre y apellidos.
-  * Se ignoraron los avatares dinámicos subidos en .gitignore preservando el archivo .gitkeep.
+- Rediseño Gráfico Integral del Sidebar / Navbar (includes/navbar.php & includes/header.php):
+  * Fondo "Oceanic Midnight" ultra-premium (#0b1329 a #070d1e con suave tinte cian/azul) sustituyendo el degradado plano anterior.
+  * Brand Header renovado: contenedor del logo estilizado con halo y border hairline, display de marca con tipografía tracking-tight y pill de versión 'v4' integrada.
+  * Contenedores de iconos de navegación con cajas geométricas redondeadas (w-9 h-9 rounded-xl), fondo translúcido y sutil brillo al hover.
+  * Árbol de submenús ('Tree guide') con línea divisoria izquierda (border-l border-white/10) y micro-dots indicadores al estar activo.
+  * Estados activos refinados (.nav-item-active y .sub-nav-item-active): fondo con degradado linear acuático suave y borde izquierdo/superior iluminado.
+  * Botón inferior de colapso y versión rediseñados para máxima ergonomía visual.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l en includes/topbar.php y login_code.php (0 errores).
-- Probada la renderización en CLI para casos con foto y sin foto (iniciales calculadas con éxito).
+- Sintaxis PHP validada con php -l (0 errores en includes/navbar.php y includes/header.php).
 - Permisos asignados a ubuntu:www-data (664).
+- Subido y sincronizado con GitHub (origin/master).

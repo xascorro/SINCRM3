@@ -66,15 +66,17 @@ include('./lib/my_functions.php');
         }
 
         .nav-item-active {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-left: 4px solid #3b82f6 !important;
-            color: #fff !important;
+            background: linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(6, 182, 212, 0.12) 100%) !important;
+            border: 1px solid rgba(56, 189, 248, 0.3) !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.25) !important;
         }
 
         .sub-nav-item-active {
-            border-left: 4px solid #3b82f6 !important;
-            color: #fff !important;
-            background: transparent !important;
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #38bdf8 !important;
+            font-weight: 700 !important;
+            border-left: 2px solid #38bdf8 !important;
         }
 
         /* FIX CAPAS SWEETALERT2 */
