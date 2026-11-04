@@ -1,25 +1,20 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 13:05 CET
-Commit: feat(equipo): rediseño visual v4 de mi_equipo.php con vista dual, avatares, KPIs y filtros de censo
+Fecha: 2026-11-04 13:09 CET
+Commit: feat(ui): sidebar en modo claro y corrección del isotipo de sincrm con recorte nítido
 
 1. Resumen de Actuaciones Completadas:
-- Rediseño Integral de Mi Equipo (mi_equipo.php):
-  * Cabecera renovada: badge de escudo del club con fallback de iniciales y soporte para código de club y federación autonómica.
-  * Selector zero-gray para Administradores con recarga instantánea para inspección de cualquier club.
-  * 4 KPIs con diseño v4 y `tabular-nums`: Staff Técnico, Censo de Nadadoras, Edad Promedio y Cobertura de Licencias Oficiales (total y %).
-  * Sección Staff Técnico / Compañeros:
-    - Avatares reales de usuarios o iniciales con gradiente acuático si no disponen de foto.
-    - Enlaces directos a email (`mailto:`) y teléfono (`tel:`).
-    - Buscador reactivo en tiempo real con recuento dinámico.
-    - Vista dual (tabla de alta densidad en desktop y tarjetas táctiles en móvil).
-  * Sección Censo de Atletas / Nadadoras:
-    - Buscador reactivo por apellidos, nombre, año, categoría o licencia.
-    - Filtros por chips ("Todas", "Con Licencia", "Sin Licencia").
-    - Cálculo dinámico de edad y asignación automática de categoría (Benjamín, Alevín, Infantil, Junior, Absoluto).
-    - Vista dual (tabla con cabecera pegajosa en desktop y tarjetas de deportista en móvil).
-    - Acceso rápido a edición para Administradores y Clubes.
+- Corrección de Visibilidad del Logo en Botón de Inicio:
+  * El logo original (`logo_sincrm4.png`) tenía márgenes blancos masivos y un efecto `mix-blend-multiply` que lo hacía desaparecer.
+  * Se generó `img/logo_sincrm_icon.png` recortado con transparencia nítida y proporciones optimizadas al 100% de la silueta/texto.
+  * Se insertó en un contenedor blanco satinado (`w-11 h-11`) con bordes suaves que realzan la silueta rosa y la tipografía negra de SINCRM con nitidez total.
+- Sidebar en Modo Claro (Light Mode):
+  * Fondo `bg-white` puro con borde lateral hairline `border-slate-200/80`.
+  * Estados inactivos con tipografía oscura de alto contraste (`text-slate-600` / `text-slate-900`) e iconos en contenedores suaves `bg-slate-100 text-slate-500`.
+  * Estados activos (`nav-item-active` y `sub-nav-item-active`) con pastillas `bg-blue-50`, texto `text-blue-700` e iconos en azul royal vibrante con sombra.
+  * Líneas guía de submenú (`border-l-2 border-slate-200/80`) y botón inferior de compactar integrado en tonos claros elegantes.
+  * Aplicado transversalmente a los paneles de Administrador, Club y Juez.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l en mi_equipo.php (0 errores).
-- Probado el renderizado en CLI tanto en modo CLUB como en modo ROLE (ambos operativos al 100%).
+- Sintaxis PHP validada con php -l en includes/navbar.php y includes/header.php (0 errores).
+- Probado el renderizado en CLI.
 - Permisos asignados a ubuntu:www-data (664).
