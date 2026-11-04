@@ -4,7 +4,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '1'){
     
     // Agrupación de páginas para estados activos
     $group_users = ['usuarios.php', 'roles.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
-    $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'jueces.php', 'figuras.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'competiciones_edit.php'];
+    $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'modalidades.php', 'jueces.php', 'figuras.php', 'reglas_competicion.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'modalidades_edit.php', 'competiciones_edit.php'];
     $group_operativa = ['fases.php', 'paneles_jueces.php', 'rutinas.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
 ?>
 <aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-primary text-white flex flex-col shadow-2xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-white/10 font-lexend">
@@ -47,6 +47,9 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '1'){
                 </a>
                 <a href="categorias.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'categorias.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-layer-group w-4 text-center"></i> Categorías
+                </a>
+                <a href="modalidades.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'modalidades.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
+                    <i class="fas fa-water w-4 text-center"></i> Modalidades
                 </a>
                 <a href="jueces.php" class="flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-xl transition-all <?php echo $current_page == 'jueces.php' ? 'sub-nav-item-active' : 'text-blue-50/70'; ?> hover:text-white hover:bg-white/5 whitespace-nowrap">
                     <i class="fas fa-gavel w-4 text-center"></i> Jueces

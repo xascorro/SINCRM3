@@ -157,10 +157,12 @@ if(isset($_POST['upload_music'])){
 
     $original_name = mysqli_real_escape_string($connection, sanitizeFileName($_FILES['musica']['name']));
 
+    $music_duration = isset($_POST['music_duration']) ? (int)$_POST['music_duration'] : 0;
+    $dur_sql = ($music_duration > 0) ? ", music_duration='$music_duration'" : "";
+
     try {
-        $query = "UPDATE rutinas SET music_name='$music_name', music_original_name='$original_name' WHERE id='$id'";
+        $query = "UPDATE rutinas SET music_name='$music_name', music_original_name='$original_name' $dur_sql WHERE id='$id'";
         $query_run = mysqli_query($connection, $query);
-        $_SESSION['correcto'] = 'Acompañamiento músical añadido';
     } catch (Exception $e) {
         write_log("Error DB al subir música: " . $e->getMessage(), "ERROR");
         $_SESSION['estado'] = 'Error, la música no se ha podido registrar en la base de datos.';
@@ -169,20 +171,23 @@ if(isset($_POST['upload_music'])){
 	if(isset($_FILES["musica"]) && $_FILES["musica"]["tmp_name"] != ''){
 		$path = './public/music/'.$id_competicion.'/';
 		if (!is_dir($path)) {
-    		mkdir($path, 0777, true);
+    		@mkdir($path, 0775, true);
 		}
 		$target_file = $path.$id.'.mp3';
 		if(move_uploaded_file($_FILES["musica"]["tmp_name"], $target_file)){
 			write_log("Música subida con éxito: $target_file (Original: ".$_FILES['musica']['name'].")", "SUCCESS");
+            $_SESSION['correcto'] = 'Acompañamiento musical guardado con éxito.';
 		} else {
 			$error_code = $_FILES['musica']['error'];
 			write_log("Error al mover el archivo subido a $target_file. Código error PHP: $error_code", "ERROR");
-			$_SESSION['estado'] .= " Error al guardar el archivo físico (Código: $error_code).";
+            unset($_SESSION['correcto']);
+			$_SESSION['estado'] = "Error al guardar el archivo físico en el servidor. (Código PHP: $error_code)";
 		}
 	} else {
 		if(isset($_POST['upload_music'])) {
 			$error_code = $_FILES['musica']['error'] ?? 'N/A';
 			write_log("No se recibió archivo o tmp_name está vacío. Código error PHP: $error_code", "WARNING");
+            $_SESSION['estado'] = "No se recibió el archivo de audio para subir.";
 		}
 	}
 }
@@ -193,7 +198,7 @@ if(isset($_POST['delete_music']) && isset($_POST['del_music_id'])){
     $id_competicion = (int)$_POST['del_music_comp'];
     
     // Primero, limpiar base de datos
-    $query = "UPDATE rutinas SET music_name = NULL, music_original_name = NULL WHERE id = $id_rutina AND id_competicion = $id_competicion";
+    $query = "UPDATE rutinas SET music_name = NULL, music_original_name = NULL, music_duration = NULL WHERE id = $id_rutina AND id_competicion = $id_competicion";
     if(mysqli_query($connection, $query)){
         // Luego, intentar borrar el archivo físico
         $file_path = './public/music/' . $id_competicion . '/' . $id_rutina . '.mp3';

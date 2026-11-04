@@ -5,12 +5,25 @@ include('includes/navbar.php');
 
 $id_rutina = $_POST['id_rutina'] ?? $_GET['id_rutina'] ?? 0;
 
-$query = "SELECT f.* FROM fases f JOIN rutinas r ON f.id = r.id_fase WHERE r.id='$id_rutina'";
+$query = "SELECT f.*, 
+                 COALESCE(NULLIF(f.f_chomu, 0), rc.f_chomu, 1.0) as f_chomu,
+                 COALESCE(NULLIF(f.f_performance, 0), rc.f_performance, 1.0) as f_performance,
+                 COALESCE(NULLIF(f.f_transitions, 0), rc.f_transitions, 1.0) as f_transitions,
+                 COALESCE(NULLIF(f.f_hybrid, 0), rc.f_hybrid, 1.0) as f_hybrid,
+                 COALESCE(NULLIF(f.f_acro, 0), rc.f_acro, 1.0) as f_acro,
+                 COALESCE(NULLIF(f.f_tre, 0), rc.f_tre, 1.0) as f_tre,
+                 COALESCE(NULLIF(f.error_xs, 0), rc.error_xs, -0.1) as error_xs,
+                 COALESCE(NULLIF(f.error_ob, 0), rc.error_ob, -0.5) as error_ob,
+                 COALESCE(NULLIF(f.error_xl, 0), rc.error_xl, -3.0) as error_xl
+          FROM fases f 
+          JOIN rutinas r ON f.id = r.id_fase 
+          LEFT JOIN reglas_competicion rc ON (f.id_categoria = rc.id_categoria AND f.id_modalidad = rc.id_modalidad)
+          WHERE r.id='$id_rutina'";
 $fase = mysqli_fetch_assoc(mysqli_query($connection, $query));
 $id_fase = $fase['id'];
 $isOldSystem = ($fase['obsoleto'] == 'si');
 
-$q_rutina = "SELECT r.id, r.orden, r.nombre as nombre_rutina, r.id_club, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, m.numero_participantes, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card, m.id as id_modalidad, r.dd_total, r.nota_final 
+$q_rutina = "SELECT r.id, r.orden, r.nombre as nombre_rutina, r.id_club, r.baja, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, m.numero_participantes, cat.nombre as nombre_categoria, r.id_fase, f.elementos_coach_card, f.genero as fase_genero, m.id as id_modalidad, r.dd_total, r.nota_final 
              FROM rutinas r 
              JOIN fases f ON r.id_fase = f.id 
              JOIN modalidades m ON f.id_modalidad = m.id 
@@ -48,7 +61,7 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                     Puntuación
                 </h1>
                 <p class="text-slate-500 font-medium text-lg uppercase tracking-tight italic">
-                    <?php echo $rutina['nombre_modalidad']." ".$rutina['nombre_categoria']; ?>
+                    <?php echo $rutina['nombre_modalidad'] . (($rutina['fase_genero'] ?? '') === 'masculino' ? ' Masc' : '') . " " . $rutina['nombre_categoria']; ?>
                 </p>
             </div>
             

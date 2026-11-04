@@ -438,3 +438,29 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-06-03 12:51:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.6] Inicio de sesión exitoso: Pedro Díaz (Administrador)
 [2026-06-03 12:51:48] [INFO] [xascorro@gmail.com] [10.0.2.6] Usuario actualizado (ID: 53): xascorro+prueba@gmail.com
 [2026-06-03 12:51:48] [INFO] [xascorro@gmail.com] [10.0.2.6] Email de actualización enviado a xascorro+prueba@gmail.com (Rol: Club)
+[2026-11-04 00:31:57] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Música subida con éxito: ./public/music/81/762.mp3 (Original: 4 - Infantil - Solo Libre - SALHAMA - ALICIA.mp3)
+[2026-11-04 00:44:29] [INFO] [xascorro@gmail.com] [10.0.2.20] Música eliminada con éxito (Físico y DB): ./public/music/81/762.mp3
+[2026-11-04 00:44:57] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Música subida con éxito: ./public/music/81/762.mp3 (Original: 3 - Mixto - Combo - SALHAMA - REBECA, MARÍA ANGÉLICA, PILAR, CELIA, CARLA, NATALIA, LEIRE, PAULA, MARÍA ISABEL, ALICIA, MARINA, MARTINA.mp3)
+[2026-11-04 00:45:15] [INFO] [xascorro@gmail.com] [10.0.2.20] Música eliminada con éxito (Físico y DB): ./public/music/81/762.mp3
+[2026-11-04 04:59:35] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 04:59:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 06:02:43] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 06:02:48] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 06:02:51] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 06:05:05] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #437 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:06:37] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #444 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:06:48] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #443 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:07:50] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #442 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:08:25] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #437 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:08:36] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #438 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:08:46] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #439 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:10:04] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #443 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:10:13] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #442 actualizada con todos sus parámetros técnicos
+[2026-11-04 06:13:01] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] ACTUALIZADO: Panel Técnico (ID: 123) - Nuevo Nombre: 'Sincronización', Jueces: 2, Peso: 100%, Obsoleto: no, Puntua: no
+[2026-11-04 06:18:26] [INFO] [xascorro@gmail.com] [10.0.2.20] Perfil actualizado por el usuario
+[2026-11-04 06:18:56] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 06:18:59] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 06:54:30] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Modalidad ID#9 actualizada: Rutina Acrobática [RA] (Activo: 1)
+[2026-11-04 07:12:55] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #2 actualizada con factores y tiempos
+[2026-11-04 07:13:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #4 actualizada con factores y tiempos
+[2026-11-04 07:13:22] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Regla técnica #3 actualizada con factores y tiempos

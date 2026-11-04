@@ -464,7 +464,7 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
 
             <?php
             $query = "SELECT fases.id as id, fases.elementos_coach_card, fases.id_categoria, categorias.nombre as nombre_categoria, 
-                             fases.id_figura, figuras.nombre as nombre_figura, figuras.numero, 
+                             fases.id_figura, figuras.nombre as nombre_figura, figuras.numero, fases.genero, 
                              fases.id_modalidad, modalidades.nombre as nombre, fases.orden, fases.obsoleto 
                       FROM fases 
                       JOIN categorias ON fases.id_categoria = categorias.id 
@@ -477,7 +477,7 @@ while($f = mysqli_fetch_assoc($res_fases_all)) {
             if(mysqli_num_rows($query_run) > 0):
                 while ($row = mysqli_fetch_assoc($query_run)):
                     $is_phase_fig = (!empty($row['id_figura']) && $row['id_figura'] > 0);
-                    $nombre_fase = $is_phase_fig ? $row['nombre_figura'] : $row['nombre'];
+                    $nombre_fase = $is_phase_fig ? $row['nombre_figura'] : ($row['nombre'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : ''));
                     $categoria_fase = $row['nombre_categoria'];
                     $id_fase = $row['id'];
                     $fase_label_origin = $categoria_fase . " - " . ($is_phase_fig ? "#".$row['numero']." " : "") . $nombre_fase;

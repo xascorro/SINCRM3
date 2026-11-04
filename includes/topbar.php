@@ -5,8 +5,8 @@ include('security.php');
 <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 font-lexend">
     
     <div class="flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-        <!-- Navegación Mobile (Solo para Admins) -->
-        <?php if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '1'): ?>
+        <!-- Navegación Mobile -->
+        <?php if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], ['1', '2', '3', '4', '5'])): ?>
             <button onclick="toggleV3Sidebar()" class="lg:hidden w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-2xl bg-slate-50 text-secondary border border-slate-100 hover:bg-slate-100 transition-all active:scale-95 group">
                 <i class="fas fa-bars text-lg group-hover:scale-110 transition-transform"></i>
             </button>

@@ -130,7 +130,7 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8" id="compGrid">
             <?php
-            $query = "SELECT * FROM competiciones ORDER BY fecha DESC";
+            $query = "SELECT * FROM competiciones ORDER BY fecha DESC, id DESC";
             $query_run = mysqli_query($connection, $query); 
             $meses_es = ['Jan'=>'ENE','Feb'=>'FEB','Mar'=>'MAR','Apr'=>'ABR','May'=>'MAY','Jun'=>'JUN','Jul'=>'JUL','Aug'=>'AGO','Sep'=>'SEP','Oct'=>'OCT','Nov'=>'NOV','Dec'=>'DIC'];
             
@@ -151,16 +151,16 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                 <div class="absolute top-3 right-4 sm:top-4 sm:right-8 text-[10px] font-black text-slate-300 italic tracking-wider uppercase tabular-nums">ID: #<?php echo $row['id']; ?></div>
 
                 <div class="flex justify-between items-start mb-4 sm:mb-8 mt-1 sm:mt-2">
-                    <div class="flex items-center gap-3 sm:gap-5 min-w-0">
+                    <div class="flex items-start gap-3 sm:gap-5 min-w-0 flex-1 pr-12 sm:pr-14">
                         <!-- Fecha en Español + Año -->
                         <div class="flex flex-col items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-xl sm:rounded-[1.8rem] text-white shadow-md transition-transform group-hover:scale-105 duration-300 shrink-0" style="background-color: <?php echo $color; ?>; box-shadow: 0 8px 20px -4px <?php echo $color; ?>44;">
                             <span class="text-[8px] sm:text-[9px] font-black uppercase tracking-wider mb-0.5 opacity-80"><?php echo $mes; ?></span>
                             <span class="text-lg sm:text-2xl font-black leading-none tabular-nums"><?php echo $dia; ?></span>
                             <span class="text-[8px] sm:text-[9px] font-black mt-0.5 opacity-80 tabular-nums"><?php echo $año; ?></span>
                         </div>
-                        <div class="min-w-0">
-                            <h3 class="text-sm sm:text-xl font-black text-slate-800 leading-tight group-hover:text-blue-600 transition-colors uppercase tracking-tight italic truncate"><?php echo $row['nombre']; ?></h3>
-                            <p class="text-xs font-bold text-slate-400 flex items-center gap-1.5 mt-1 sm:mt-2 uppercase tracking-tight truncate"><i class="fas fa-location-dot" style="color: <?php echo $color; ?>;"></i> <?php echo $row['lugar']; ?></p>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-sm sm:text-lg lg:text-xl font-black text-slate-800 leading-snug group-hover:text-blue-600 transition-colors uppercase tracking-tight italic break-words"><?php echo $row['nombre']; ?></h3>
+                            <p class="text-xs font-bold text-slate-400 flex items-center gap-1.5 mt-1 sm:mt-2 uppercase tracking-tight"><i class="fas fa-location-dot" style="color: <?php echo $color; ?>;"></i> <?php echo $row['lugar']; ?></p>
                         </div>
                     </div>
                 </div>

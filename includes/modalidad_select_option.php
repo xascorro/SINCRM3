@@ -1,5 +1,5 @@
 <?php
-$query_mod = "SELECT id, nombre, numero_participantes, numero_reservas FROM modalidades";
+$query_mod = "SELECT id, nombre, numero_participantes, numero_reservas FROM modalidades WHERE activo = 1 ORDER BY orden ASC, id ASC";
 $query_run_mod = mysqli_query($connection, $query_mod);
 $select = "<label for='modalidades'>Modalidad</label>";
 $select .= "<select name='modalidad' id='modalidad' class='form-control'>";

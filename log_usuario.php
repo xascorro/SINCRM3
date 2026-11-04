@@ -4,11 +4,13 @@ include('includes/header.php');
 include('includes/navbar.php');
 
 $club_filter = "";
+$club_nombre = "";
 if (isset($_SESSION['club']) && $_SESSION['club'] > 0) {
-    $c_id = $_SESSION['club'];
-    $q_c = mysqli_query($connection, "SELECT nombre_corto FROM clubes WHERE id = '$c_id'");
+    $c_id = intval($_SESSION['club']);
+    $q_c = mysqli_query($connection, "SELECT nombre, nombre_corto FROM clubes WHERE id = '$c_id'");
     if($c_data = mysqli_fetch_assoc($q_c)) {
         $club_filter = $c_data['nombre_corto'];
+        $club_nombre = $c_data['nombre'];
     }
 }
 ?>
@@ -19,155 +21,247 @@ if (isset($_SESSION['club']) && $_SESSION['club'] > 0) {
     <?php include('includes/topbar.php'); ?>
 
     <!-- Contenido de la Página -->
-    <div class="p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend text-primary">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-6xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header de Sección -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-slate-500 shadow-sm border border-slate-100"><i class="fas fa-history"></i></span>
+                <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-xs border border-blue-100">
+                        <i class="fas fa-history text-sm sm:text-base"></i>
+                    </span>
                     Mi Actividad
                 </h1>
-                <p class="text-slate-500 font-medium">Cronología de acciones realizadas por tu equipo.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Cronología de acciones y eventos registrados en tu cuenta o club.</p>
             </div>
-            <div class="flex gap-3">
-                <button onclick="window.location.reload()" class="px-6 py-3 bg-white text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl border border-slate-200 hover:bg-slate-50 transition-all flex items-center gap-2 shadow-sm">
-                    <i class="fas fa-sync-alt text-xs"></i> Actualizar Registro
+            <div class="flex items-center gap-2.5 self-start sm:self-auto">
+                <a href="perfil.php" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl hover:bg-slate-50 active:scale-[0.98] transition-all shadow-xs">
+                    <i class="fas fa-arrow-left text-xs"></i> Perfil
+                </a>
+                <button onclick="window.location.reload()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white text-xs sm:text-sm font-bold rounded-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-md shadow-blue-500/20">
+                    <i class="fas fa-rotate text-xs"></i> Actualizar
                 </button>
             </div>
         </div>
 
-        <!-- Visor de Actividad (Estilo Usuario) -->
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-2 md:p-4">
-                <div class="divide-y divide-slate-100">
-                    <?php
-                    $archivo_log = './log/log.txt';
-                    $user_email = $_SESSION['email'];
-                    $pagina_actual = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-                    $lineas_por_pagina = 30;
+        <?php
+        $archivo_log = './log/log.txt';
+        $user_email = $_SESSION['email'] ?? '';
+        $pagina_actual = isset($_GET['pagina']) ? max(1, intval($_GET['pagina'])) : 1;
+        $nivel_filtro = isset($_GET['nivel']) ? strtoupper(trim($_GET['nivel'])) : 'TODOS';
+        $lineas_por_pagina = 25;
 
-                    if (file_exists($archivo_log)) {
-                        $lineas = file($archivo_log);
-                        
-                        // FILTRO DUAL: Email O Nombre del Club
-                        $lineas_usuario = array_filter($lineas, function($line) use ($user_email, $club_filter) {
-                            $match_user = strpos($line, $user_email) !== false;
-                            $match_club = ($club_filter !== "" && strpos($line, $club_filter) !== false);
-                            return $match_user || $match_club;
-                        });
+        $lineas_usuario = [];
+        $count_success = 0;
+        $count_error = 0;
+        $count_warn = 0;
 
-                        $lineas_usuario = array_reverse($lineas_usuario);
-                        $total_lineas = count($lineas_usuario);
-                        $total_paginas = ceil($total_lineas / $lineas_por_pagina);
-                        
-                        $inicio = ($pagina_actual - 1) * $lineas_por_pagina;
-                        $pagina_lineas = array_slice($lineas_usuario, $inicio, $lineas_por_pagina);
+        if (file_exists($archivo_log)) {
+            $todas_lineas = @file($archivo_log) ?: [];
+            
+            // Filtrar líneas correspondientes al usuario o su club
+            foreach ($todas_lineas as $line) {
+                $match_user = (!empty($user_email) && strpos($line, $user_email) !== false);
+                $match_club = (!empty($club_filter) && strpos($line, $club_filter) !== false);
+                
+                if ($match_user || $match_club) {
+                    if (strpos($line, '[SUCCESS]') !== false) $count_success++;
+                    if (strpos($line, '[ERROR]') !== false) $count_error++;
+                    if (strpos($line, '[WARNING]') !== false || strpos($line, '[SECURITY]') !== false) $count_warn++;
 
-                        if (empty($pagina_lineas)) {
-                            echo '<div class="py-24 text-center">
-                                    <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
-                                        <i class="fas fa-search fa-2x"></i>
-                                    </div>
-                                    <p class="text-slate-400 font-bold italic">No se han encontrado registros de actividad recientemente.</p>
-                                  </div>';
-                        }
-
-                        foreach ($pagina_lineas as $linea) {
-                            // Parsear línea: [FECHA] [NIVEL] [USUARIO] [IP] MENSAJE
-                            if (preg_match('/^\[(.*?)\] \[(.*?)\] \[(.*?)\] \[(.*?)\] (.*)$/', $linea, $matches)) {
-                                $fecha_raw = $matches[1];
-                                $nivel = $matches[2];
-                                $usuario_log = $matches[3];
-                                $ip = $matches[4];
-                                $mensaje = $matches[5];
-
-                                // Formatear fecha humana
-                                $timestamp = strtotime($fecha_raw);
-                                $fecha_h = date("d/m/Y", $timestamp);
-                                $hora_h = date("H:i", $timestamp);
-
-                                // Estilos por nivel
-                                $bg_nivel = "bg-slate-100 text-slate-500";
-                                $icon = "fa-info-circle";
-                                if($nivel == 'SUCCESS') { $bg_nivel = "bg-emerald-50 text-emerald-600"; $icon = "fa-check-circle"; }
-                                if($nivel == 'ERROR') { $bg_nivel = "bg-red-50 text-red-600"; $icon = "fa-exclamation-circle"; }
-                                if($nivel == 'WARNING') { $bg_nivel = "bg-amber-50 text-amber-600"; $icon = "fa-triangle-exclamation"; }
-                                if($nivel == 'SECURITY') { $bg_nivel = "bg-purple-50 text-purple-600"; $icon = "fa-shield-halved"; }
-                    ?>
-                                <div class="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-10 p-6 hover:bg-slate-50/50 transition-colors group">
-                                    
-                                    <!-- Header de Fila (Fecha, Hora e Icono en Mobile) -->
-                                    <div class="flex flex-row items-center justify-between lg:justify-start gap-4 shrink-0 lg:w-48">
-                                        <div class="flex flex-row lg:flex-col items-center lg:items-start gap-3 lg:gap-0">
-                                            <p class="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-tighter"><?php echo $fecha_h; ?></p>
-                                            <p class="text-sm font-black text-slate-700 bg-slate-100 lg:bg-transparent px-2 py-0.5 lg:px-0 rounded-md"><?php echo $hora_h; ?></p>
-                                        </div>
-
-                                        <!-- Icono visible solo en móvil en esta fila -->
-                                        <div class="lg:hidden shrink-0 w-10 h-10 rounded-xl <?php echo $bg_nivel; ?> flex items-center justify-center text-sm shadow-sm">
-                                            <i class="fas <?php echo $icon; ?>"></i>
-                                        </div>
-                                    </div>
-
-                                    <div class="flex items-center gap-4 flex-1">
-                                        <!-- Icono visible solo en desktop -->
-                                        <div class="hidden lg:flex shrink-0 w-11 h-11 rounded-2xl <?php echo $bg_nivel; ?> flex items-center justify-center text-base shadow-sm transition-transform group-hover:scale-110">
-                                            <i class="fas <?php echo $icon; ?>"></i>
-                                        </div>
-
-                                        <!-- Mensaje y Detalles -->
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm md:text-base font-bold text-slate-800 leading-snug mb-1 break-words">
-                                                <?php echo htmlspecialchars($mensaje); ?>
-                                            </p>
-                                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                                                <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter flex items-center gap-1.5">
-                                                    <i class="fas fa-user-circle opacity-50"></i> <?php echo htmlspecialchars($usuario_log); ?>
-                                                </span>
-                                                <?php if($club_filter && strpos($mensaje, $club_filter) !== false): ?>
-                                                <span class="text-[10px] font-black text-blue-500 uppercase tracking-tighter bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100/50">
-                                                    Gestión de Club
-                                                </span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Flecha decorativa -->
-                                    <div class="hidden lg:block opacity-0 group-hover:opacity-100 transition-opacity pr-2">
-                                        <i class="fas fa-chevron-right text-slate-300 text-xs"></i>
-                                    </div>
-                                </div>
-                    <?php
-                            }
-                        }
-                    } else {
-                        echo '<div class="py-24 text-center text-slate-400 font-bold italic">Archivo de registro no disponible.</div>';
+                    // Aplicar filtro por nivel si no es TODOS
+                    if ($nivel_filtro === 'TODOS' || strpos($line, "[$nivel_filtro]") !== false) {
+                        $lineas_usuario[] = $line;
                     }
+                }
+            }
+        }
+
+        $lineas_usuario = array_reverse($lineas_usuario);
+        $total_lineas = count($lineas_usuario);
+        $total_paginas = max(1, ceil($total_lineas / $lineas_por_pagina));
+        $inicio = ($pagina_actual - 1) * $lineas_por_pagina;
+        $pagina_lineas = array_slice($lineas_usuario, $inicio, $lineas_por_pagina);
+        ?>
+
+        <!-- KPIs Resumen de Actividad -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 mb-6 sm:mb-8">
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-blue-600">
+                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest block">Total Registros</span>
+                <span class="text-xl sm:text-2xl font-black text-slate-800 tabular-nums block mt-1"><?php echo count($lineas_usuario); ?></span>
+                <span class="text-[10px] text-slate-400 font-medium truncate block">Acciones auditadas</span>
+            </div>
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
+                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest block">Completadas</span>
+                <span class="text-xl sm:text-2xl font-black text-emerald-600 tabular-nums block mt-1"><?php echo $count_success; ?></span>
+                <span class="text-[10px] text-emerald-500 font-medium truncate block">Operaciones con éxito</span>
+            </div>
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-rose-500">
+                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest block">Errores</span>
+                <span class="text-xl sm:text-2xl font-black text-rose-600 tabular-nums block mt-1"><?php echo $count_error; ?></span>
+                <span class="text-[10px] text-rose-500 font-medium truncate block">Fallos o excepciones</span>
+            </div>
+            <div class="bg-white p-3.5 sm:p-5 rounded-2xl shadow-sm border border-slate-200 border-l-4 border-l-purple-500">
+                <span class="text-[9px] font-black uppercase text-slate-400 tracking-widest block">Club Vinculado</span>
+                <span class="text-sm sm:text-base font-black text-purple-700 truncate block mt-1">
+                    <?php echo $club_filter ?: 'Individual'; ?>
+                </span>
+                <span class="text-[10px] text-slate-400 font-medium truncate block"><?php echo $club_nombre ?: 'Sin club asignado'; ?></span>
+            </div>
+        </div>
+
+        <!-- Barra de Búsqueda y Chips de Filtro -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200/80 mb-6 sm:mb-8">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+                <!-- Buscador en tiempo real -->
+                <div class="relative flex-1">
+                    <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                        <i class="fas fa-search text-xs"></i>
+                    </span>
+                    <input type="text" id="logSearchInput" placeholder="Filtrar por texto en esta página..." 
+                           class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:border-blue-500 focus:bg-white transition-all outline-none"
+                           onkeyup="filterLogRows()">
+                </div>
+
+                <!-- Chips de Nivel -->
+                <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+                    <?php
+                    $niveles = [
+                        'TODOS' => ['label' => 'Todos', 'icon' => 'fa-list'],
+                        'SUCCESS' => ['label' => 'Éxito', 'icon' => 'fa-check'],
+                        'ERROR' => ['label' => 'Errores', 'icon' => 'fa-triangle-exclamation'],
+                        'WARNING' => ['label' => 'Avisos', 'icon' => 'fa-shield'],
+                        'INFO' => ['label' => 'Info', 'icon' => 'fa-info']
+                    ];
+                    foreach ($niveles as $key => $cfg):
+                        $active = ($nivel_filtro === $key);
                     ?>
+                        <a href="?nivel=<?php echo $key; ?>&pagina=1" 
+                           class="px-3 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-tight flex items-center gap-1.5 whitespace-nowrap transition-all <?php echo $active ? 'bg-blue-600 text-white shadow-xs' : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200/80'; ?>">
+                            <i class="fas <?php echo $cfg['icon']; ?> text-[9px]"></i> <?php echo $cfg['label']; ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
+        </div>
 
-            <!-- Paginación Elegante -->
-            <?php if (isset($total_paginas) && $total_paginas > 1): ?>
-            <div class="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Página <?php echo $pagina_actual; ?> de <?php echo $total_paginas; ?></p>
-                <div class="flex gap-2">
-                    <?php 
-                    $start_p = max(1, $pagina_actual - 1);
-                    $end_p = min($total_paginas, $pagina_actual + 1);
-                    
-                    if($pagina_actual > 1): ?>
-                        <a href="?pagina=<?php echo $pagina_actual - 1; ?>" class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"><i class="fas fa-chevron-left text-xs"></i></a>
+        <!-- Contenedor Principal de Logs -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden mb-10">
+            <div class="px-5 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+                <span class="text-xs font-black uppercase text-slate-700 tracking-wider flex items-center gap-2">
+                    <i class="fas fa-timeline text-blue-500"></i> Cronología de Eventos
+                </span>
+                <span class="text-[10px] font-bold text-slate-400 tabular-nums">
+                    Mostrando <?php echo count($pagina_lineas); ?> de <?php echo $total_lineas; ?> eventos
+                </span>
+            </div>
+
+            <div class="divide-y divide-slate-100" id="logRowsContainer">
+                <?php if (empty($pagina_lineas)): ?>
+                    <div class="py-16 sm:py-24 text-center px-4">
+                        <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3 text-slate-300">
+                            <i class="fas fa-inbox text-2xl"></i>
+                        </div>
+                        <h3 class="text-sm font-black text-slate-700">Sin registros de actividad</h3>
+                        <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">No se encontraron eventos registrados para los filtros seleccionados.</p>
+                        <a href="log_usuario.php" class="inline-block mt-4 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-all">
+                            Restablecer Filtros
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <?php foreach ($pagina_lineas as $linea): 
+                        if (preg_match('/^\[(.*?)\] \[(.*?)\] \[(.*?)\] \[(.*?)\] (.*)$/', $linea, $matches)):
+                            $fecha_raw = $matches[1];
+                            $nivel = $matches[2];
+                            $usuario_log = $matches[3];
+                            $ip = $matches[4];
+                            $mensaje = $matches[5];
+
+                            $timestamp = strtotime($fecha_raw);
+                            $fecha_h = date("d/m/Y", $timestamp);
+                            $hora_h = date("H:i:s", $timestamp);
+
+                            // Estilos por nivel
+                            $badge_bg = "bg-blue-50 text-blue-700 border-blue-200";
+                            $icon = "fa-info";
+                            if($nivel == 'SUCCESS') { $badge_bg = "bg-emerald-50 text-emerald-700 border-emerald-200"; $icon = "fa-check"; }
+                            if($nivel == 'ERROR') { $badge_bg = "bg-rose-50 text-rose-700 border-rose-200"; $icon = "fa-triangle-exclamation"; }
+                            if($nivel == 'WARNING') { $badge_bg = "bg-amber-50 text-amber-700 border-amber-200"; $icon = "fa-shield"; }
+                            if($nivel == 'SECURITY') { $badge_bg = "bg-purple-50 text-purple-700 border-purple-200"; $icon = "fa-lock"; }
+                    ?>
+                        <div class="log-entry-row p-3.5 sm:p-5 hover:bg-slate-50/70 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4"
+                             data-search="<?php echo htmlspecialchars(strtolower($fecha_h.' '.$hora_h.' '.$nivel.' '.$mensaje.' '.$usuario_log)); ?>">
+                            
+                            <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                                <!-- Icono de nivel -->
+                                <div class="shrink-0 w-8 h-8 rounded-xl <?php echo $badge_bg; ?> border flex items-center justify-center text-xs mt-0.5 sm:mt-0 shadow-2xs">
+                                    <i class="fas <?php echo $icon; ?>"></i>
+                                </div>
+
+                                <!-- Mensaje y detalles -->
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-xs sm:text-sm font-bold text-slate-800 leading-snug break-words">
+                                        <?php echo htmlspecialchars($mensaje); ?>
+                                    </p>
+                                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-[10px] text-slate-400">
+                                        <span class="flex items-center gap-1 font-bold">
+                                            <i class="fas fa-user-circle opacity-60"></i> <?php echo htmlspecialchars($usuario_log); ?>
+                                        </span>
+                                        <?php if ($ip && $ip !== '127.0.0.1' && $ip !== '::1'): ?>
+                                            <span class="font-mono tabular-nums opacity-75">
+                                                <i class="fas fa-network-wired text-[9px] mr-0.5"></i> <?php echo htmlspecialchars($ip); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                        <?php if($club_filter && strpos($mensaje, $club_filter) !== false): ?>
+                                            <span class="px-1.5 py-0.2 bg-indigo-50 text-indigo-700 font-black rounded border border-indigo-100 uppercase text-[9px]">
+                                                <?php echo htmlspecialchars($club_filter); ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Fecha y Hora -->
+                            <div class="shrink-0 text-left sm:text-right flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-100 text-[11px] tabular-nums font-mono">
+                                <span class="text-slate-800 font-bold"><?php echo $hora_h; ?></span>
+                                <span class="text-slate-400 text-[10px]"><?php echo $fecha_h; ?></span>
+                            </div>
+
+                        </div>
+                    <?php endif; endforeach; ?>
+                <?php endif; ?>
+            </div>
+
+            <!-- Paginación -->
+            <?php if ($total_paginas > 1): ?>
+            <div class="px-4 sm:px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p class="text-xs font-bold text-slate-500 tabular-nums">
+                    Página <strong class="text-slate-800"><?php echo $pagina_actual; ?></strong> de <strong class="text-slate-800"><?php echo $total_paginas; ?></strong>
+                </p>
+                <div class="flex items-center gap-1.5">
+                    <?php if($pagina_actual > 1): ?>
+                        <a href="?nivel=<?php echo urlencode($nivel_filtro); ?>&pagina=<?php echo $pagina_actual - 1; ?>" 
+                           class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 active:scale-[0.98] transition-all shadow-2xs">
+                            <i class="fas fa-chevron-left text-xs"></i>
+                        </a>
                     <?php endif; ?>
 
-                    <?php for ($i = $start_p; $i <= $end_p; $i++): ?>
-                        <a href="?pagina=<?php echo $i; ?>" class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs transition-all <?php echo ($i == $pagina_actual) ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' : 'bg-white border border-slate-200 text-slate-400 hover:bg-slate-50'; ?>"><?php echo $i; ?></a>
+                    <?php 
+                    $start_p = max(1, $pagina_actual - 2);
+                    $end_p = min($total_paginas, $pagina_actual + 2);
+                    for ($i = $start_p; $i <= $end_p; $i++): 
+                    ?>
+                        <a href="?nivel=<?php echo urlencode($nivel_filtro); ?>&pagina=<?php echo $i; ?>" 
+                           class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-black transition-all <?php echo ($i == $pagina_actual) ? 'bg-blue-600 text-white shadow-xs' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'; ?>">
+                            <?php echo $i; ?>
+                        </a>
                     <?php endfor; ?>
 
                     <?php if($pagina_actual < $total_paginas): ?>
-                        <a href="?pagina=<?php echo $pagina_actual + 1; ?>" class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-blue-600 hover:text-white hover:border-blue-600 transition-all shadow-sm"><i class="fas fa-chevron-right text-xs"></i></a>
+                        <a href="?nivel=<?php echo urlencode($nivel_filtro); ?>&pagina=<?php echo $pagina_actual + 1; ?>" 
+                           class="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 active:scale-[0.98] transition-all shadow-2xs">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </a>
                     <?php endif; ?>
                 </div>
             </div>
@@ -176,5 +270,18 @@ if (isset($_SESSION['club']) && $_SESSION['club'] > 0) {
 
     </div>
 </main>
+
+<script>
+function filterLogRows() {
+    const input = document.getElementById('logSearchInput');
+    const filter = input.value.toLowerCase().trim();
+    const rows = document.querySelectorAll('.log-entry-row');
+    
+    rows.forEach(row => {
+        const searchAttr = row.getAttribute('data-search') || row.textContent.toLowerCase();
+        row.style.display = searchAttr.indexOf(filter) > -1 ? "" : "none";
+    });
+}
+</script>
 
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>

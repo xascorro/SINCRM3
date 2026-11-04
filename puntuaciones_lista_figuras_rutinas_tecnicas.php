@@ -20,9 +20,9 @@ include('includes/navbar.php');
     <div class="container-fluid">
       <!-- Titulo página y pdf -->
       <?php
-        $query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad FROM fases, categorias, modalidades WHERE fases.id=".$_POST['id_fase']." and categorias.id = fases.id_categoria and modalidades.id = fases.id_modalidad";
+        $query = "SELECT categorias.nombre as categoria, modalidades.nombre as modalidad, fases.genero FROM fases, categorias, modalidades WHERE fases.id=".$_POST['id_fase']." and categorias.id = fases.id_categoria and modalidades.id = fases.id_modalidad";
         $nombres = mysqli_fetch_assoc(mysqli_query($connection,$query));
-        $nombre_modalidad = $nombres['modalidad'];
+        $nombre_modalidad = $nombres['modalidad'] . (($nombres['genero'] ?? '') === 'masculino' ? ' Masc' : '');
         $nombre_categoria = $nombres['categoria'];
 
         ?>

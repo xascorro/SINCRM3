@@ -1,0 +1,129 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SINCRM//Calendario Natacion Artistica 2026-2027//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Sincro Temporada 2026-2027
+X-WR-TIMEZONE:Europe/Madrid
+BEGIN:VEVENT
+UID:sincrm-comp-81@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20261114
+DTEND;VALUE=DATE:20261115
+SUMMARY:XIV Liga de Figuras (1ª Jornada)
+LOCATION:Lorca / Alhama de Murcia
+DESCRIPTION:Competición Mixta: Figuras Alevín/Infantil y Rutinas Técnicas Junior/Senior. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-83@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20261121
+DTEND;VALUE=DATE:20261122
+SUMMARY:Pase de Nivel 1
+LOCATION:Piscina Cubierta Municipal, Alhama de Murcia
+DESCRIPTION:Pruebas oficiales de pase de nivel de figuras técnicas FNRM. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-84@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20261219
+DTEND;VALUE=DATE:20261220
+SUMMARY:Pase de Nivel 2
+LOCATION:Piscina Cubierta Municipal, Alhama de Murcia
+DESCRIPTION:Pruebas oficiales de pase de nivel de figuras técnicas FNRM. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-85@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270123
+DTEND;VALUE=DATE:20270124
+SUMMARY:Pase de Nivel 3
+LOCATION:Piscina Cubierta Municipal, Alhama de Murcia
+DESCRIPTION:Pruebas oficiales de pase de nivel de figuras técnicas FNRM. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-86@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270220
+DTEND;VALUE=DATE:20270221
+SUMMARY:XIV Liga de Figuras (2ª Jornada)
+LOCATION:Lorca
+DESCRIPTION:Competición Mixta: Figuras Alevín/Infantil y Rutinas Técnicas Junior/Senior. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-87@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270306
+DTEND;VALUE=DATE:20270307
+SUMMARY:Pase de Nivel 4
+LOCATION:Piscina Cubierta Municipal, Alhama de Murcia
+DESCRIPTION:Pruebas oficiales de pase de nivel de figuras técnicas FNRM. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-88@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270313
+DTEND;VALUE=DATE:20270314
+SUMMARY:Campeonato Regional Escolar de Figuras
+LOCATION:Por determinar
+DESCRIPTION:Competición escolar de figuras individual (no federada). | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-89@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270410
+DTEND;VALUE=DATE:20270412
+SUMMARY:XX Campeonato Regional OPEN (10-11 Abril)
+LOCATION:Por determinar
+DESCRIPTION:Campeonato Regional Open de Rutinas completas (Solos, Dúos, Equipos, Acrobática). | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-90@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270515
+DTEND;VALUE=DATE:20270516
+SUMMARY:XIV Liga de Figuras (3ª Jornada)
+LOCATION:Por determinar
+DESCRIPTION:Competición Mixta: Figuras Alevín/Infantil y Rutinas Técnicas Junior/Senior. | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-91@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270612
+DTEND;VALUE=DATE:20270613
+SUMMARY:XIV Liga de Figuras (4ª Jornada)
+LOCATION:Por determinar
+DESCRIPTION:Competición Mixta: Figuras Alevín/Infantil y Rutinas Técnicas Junior/Senior (Jornada Final). | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:sincrm-comp-92@sincrm.pedrodiaz.eu
+DTSTAMP:20261103T223926Z
+DTSTART;VALUE=DATE:20270619
+DTEND;VALUE=DATE:20270620
+SUMMARY:Campeonato Regional Escolar de Rutinas OPEN
+LOCATION:Por determinar
+DESCRIPTION:Competición escolar de rutinas completas con música (no federada). | Sistema SINCRM: https://sincrm.pedrodiaz.eu/competiciones.php
+STATUS:CONFIRMED
+TRANSP:TRANSPARENT
+END:VEVENT
+END:VCALENDAR

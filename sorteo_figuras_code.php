@@ -88,7 +88,7 @@ if(isset($_POST['save_btn'])){
     } else {
         $_SESSION['estado'] = 'No se ha realizado ningún sorteo. Compruebe que existan inscripciones en la Competición Activa.';
     }
-    header('Location: sorteo_figuras.php');
+    header('Location: sorteo.php?tab=figuras');
     exit();
 }
 
@@ -108,10 +108,10 @@ if(isset($_POST['delete_btn'])){
         $_SESSION['estado'] = 'Error al anular: ' . mysqli_error($connection);
         write_log("Error al anular sorteo de figuras: " . mysqli_error($connection), "ERROR");
     }
-    header('Location: sorteo_figuras.php');
+    header('Location: sorteo.php?tab=figuras');
     exit();
 }
 
-header('Location: sorteo_figuras.php');
+header('Location: sorteo.php?tab=figuras');
 exit();
 ?>

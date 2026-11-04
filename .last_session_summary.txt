@@ -1,34 +1,38 @@
 =========================================================
 SINCRM v4 - RESUMEN DE SESIÓN Y ÚLTIMAS ACTUALIZACIONES
-Fecha: 2026-11-03 23:49
+Fecha: 2026-11-04 07:10
 =========================================================
 
-1. PANELES TÉCNICOS POR TIPO DE FASE (paneles_jueces.php y paneles_jueces_code.php):
-   - Diagnóstico e investigación:
-     * El panel 'Panel 1' (ID 121, tipo Figuras #6) y 'CT' (ID 122, Controladores Técnicos #4) se mostraban indiscriminadamente en todas las fases de la competición 81.
-     * En la creación de paneles (save_btn_panel), se omitían los campos `obsoleto` y `puntua`, guardándose CT como `puntua = 'si'` en lugar de `puntua = 'no'` (DTC / Sincro).
-   - Soluciones aplicadas:
-     * Filtro inteligente por fase en paneles_jueces.php:
-       - Fases de Figuras (Alevín / Infantil): Únicamente se renderizan paneles de tipo Figuras (id_paneles_tipo = 6).
-       - Fases de Rutinas (Junior / Absoluta): Únicamente se renderizan paneles de Rutinas (id_paneles_tipo != 6, como CT, Elementos, Impresión Artística, Sincro).
-     * Modal de Clonación Inteligente:
-       - Ahora discrimina por tipo de fase: al clonar la composición de un panel de Rutinas (ej. CT), solo muestra las otras 9 fases de rutinas para poder replicar el panel general con un solo clic.
-     * Base de datos: Panel 122 (CT) actualizado a `puntua = 'no'` (DTC).
-     * Código `paneles_jueces_code.php`: Añadida persistencia de `obsoleto` y `puntua` en el alta de paneles.
+8. UNIFICACIÓN DE GÉNERO EN FASES Y LIMPIEZA DE MODALIDADES MASC/FEM:
+   - Base de Datos:
+     * Añadida columna `genero` (ENUM('femenino', 'masculino') DEFAULT 'femenino') a la tabla `fases` en los 3 entornos (`sincrm4`, `sincrm4beta` y Docker `sincrm_prod_db`).
+     * Eliminadas de raíz las modalidades 12 ('Solo Técnico Fem') y 13 ('Solo Técnico Masc') de la tabla `modalidades`.
+     * Las fases afectadas (Fases 435, 436, 440 y 441 del Campeonato 81) se han actualizado a la modalidad genérica 5 ('Solo Técnico').
+     * Asignados géneros correspondientes: 435 (Fem), 436 (Masc), 440 (Fem), 441 (Masc).
+     * Heredados automáticamente los parámetros y límites oficiales de World Aquatics 2026 desde `reglas_competicion` (TRE = 5, CC = 6, Duración = 120s, etc.).
+     * Actualizadas también las fases 437, 438, 439, 442, 443 y 444 con sus reglas oficiales.
+   - Frontend (fases.php y fases_edit.php):
+     * Selector de género interactivo (button slide / toggle segmentado):
+       - "Femenino" por defecto (icono venus, acento rose-500).
+       - "Masculino" al marcarlo (icono mars, acento blue-600).
+   - Backend (fases_code.php):
+     * Soporte completo para persistir `genero` en creación (`save_btn`) y edición (`update_btn`).
 
-2. ENVÍO DE CALENDARIO 2026-2027 (OUTLOOK / GOOGLE CALENDAR):
-   - Generado archivo estándar iCalendar RFC-5545: `Calendario_Sincro_2026_2027.ics`.
-   - Enviado vía Servidor Blue a `pedrofrancisco.diaz@elpozo.com` y `xascorro@gmail.com`.
-
-3. CALENDARIO COMPLETO TEMPORADA 2026-2027 INSERTADO:
-   - Competiciones registradas y sincronizadas en sincrm_prod_db, sincrm4 y sincrm4beta (#81 a #92).
-
-4. COMPORTAMIENTO INTELIGENTE DEL SIDEBAR:
-   - Padre activo se mantiene abierto al expandir desde estado colapsado.
-   - Conmutación en acordeón al seleccionar elementos inactivos.
-
-5. ESTADO TÉCNICO:
-   - Sintaxis PHP validada con `php -l`.
-   - Entorno Beta sincronizado (permisos 664).
-   - Git actualizado en master.
-=========================================================
+9. PRODUCCIÓN (https://sincrm.pedrodiaz.eu): NOMENCLATURA DINÁMICA DE FASES (SUFIJO 'MASC' EXCLUSIVO):
+   - Ajustada la lógica global para cumplir con la regla de negocio:
+     * Si la fase es masculina (`genero === 'masculino'`), se añade 'Masc' al nombre de la modalidad para despejar cualquier duda.
+     * Si la fase es femenina, no se añade ningún sufijo (al ser el género reglamentario por defecto en natación artística).
+   - Secciones actualizadas con el sufijo 'Masc' dinámico:
+     * Dashboard Principal (`index.php`): Tanto en el listado colapsable móvil como en la tabla desktop de fases.
+     * Gestión de Fases (`fases.php`): Título en tarjetas mobile, tarjetas desktop y vista de tabla compacta. Eliminados badges redundantes de Fem.
+     * Panel de Puntuaciones (`puntuaciones_lista_fases.php`): En grid de fases, grid de rutinas y tabla de mesa técnica.
+     * Mesa Técnica en Vivo (`puntuaciones_lista_rutinas.php` y `puntuaciones_lista_rutinas_live.php`): En el encabezado oficial de la fase.
+     * Puntuación de Rutina (`puntuaciones_rutina.php` y `puntuaciones_rutina_obsoleta.php`): En el título de la fase puntuada.
+     * Listado de Rutinas (`rutinas.php`): En los separadores por fase en vistas móvil y escritorio.
+     * Sorteo (`sorteo.php`): En las cabeceras sticky de fases sorteadas.
+     * Paneles de Jueces (`paneles_jueces.php`): En la asignación de jueces a fases.
+     * Descarga de Música (`download_music.php`): En la jerarquía de fases y nombres de carpetas dentro del archivo ZIP oficial.
+     * APIs Live (`api_live_detailed.php` y `api_live_ranking.php`): En el campo nombre de las fases emitidas en JSON.
+     * Informes Oficiales (`informes/informe_puntuaciones.php`): En el encabezado del acta PDF de resultados.
+     * Vistas Legacy de Puntuación (`puntuaciones_lista_figuras_rutinas_tecnicas.php`, `puntuaciones_lista_rutinas_tecnicas.php`, `puntuaciones_lista_figuras2.php`).
+   - Verificado el entorno de producción en vivo (`sincrm_prod_app` / `sincrm.pedrodiaz.eu`): Respuesta HTTP 200 OK.

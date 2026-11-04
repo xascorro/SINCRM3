@@ -9,7 +9,7 @@ if (!$id_rutina) {
     exit();
 }
 
-$q_rutina = "SELECT r.*, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, cat.nombre as nombre_categoria, f.id_competicion 
+$q_rutina = "SELECT r.*, c.nombre_corto as nombre_club, m.nombre as nombre_modalidad, cat.nombre as nombre_categoria, f.id_competicion, f.genero as fase_genero 
              FROM rutinas r 
              JOIN fases f ON r.id_fase = f.id 
              JOIN modalidades m ON f.id_modalidad = m.id 
@@ -82,7 +82,7 @@ $total_pen = mysqli_fetch_assoc($res_pen_total)['total'] ?? 0;
                     Puntuación Tradicional
                 </h1>
                 <p class="text-slate-500 font-medium text-lg uppercase tracking-tight italic">
-                    <?php echo $rutina['nombre_modalidad']." ".$rutina['nombre_categoria']; ?>
+                    <?php echo $rutina['nombre_modalidad'] . (($rutina['fase_genero'] ?? '') === 'masculino' ? ' Masc' : '') . " " . $rutina['nombre_categoria']; ?>
                 </p>
             </div>
             

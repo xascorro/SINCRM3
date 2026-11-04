@@ -72,7 +72,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
             <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl border border-blue-100 relative">
                 <h2 class="text-lg sm:text-xl font-black text-slate-800 mb-4 sm:mb-8 flex items-center gap-2.5 sm:gap-3"><i class="fas fa-plus-circle text-blue-600"></i> Nueva Fase</h2>
                 <form action="fases_code.php" method="POST" class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
-                    <div class="md:col-span-4 space-y-2">
+                    <div class="md:col-span-3 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Categoría</label>
                         <?php 
                         ob_start(); include('includes/categoria_select_option.php');
@@ -82,7 +82,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         echo $cat_html;
                         ?>
                     </div>
-                    <div class="md:col-span-4 space-y-2">
+                    <div class="md:col-span-3 space-y-2">
                         <?php if($is_mixta): ?>
                             <!-- Selector dinámico en competición Mixta -->
                             <div class="flex items-center justify-between px-1 mb-1">
@@ -144,6 +144,27 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                             echo $mod_html;
                             ?>
                         <?php endif; ?>
+                    </div>
+                    <!-- Selector de Género: Femenino por defecto o Masculino si lo marcamos -->
+                    <div class="md:col-span-2 space-y-2">
+                        <div class="flex items-center justify-between px-1">
+                            <label class="text-[10px] font-black uppercase text-slate-400">Género</label>
+                            <span id="addGeneroLabel" class="text-[10px] font-bold text-rose-500">Fem</span>
+                        </div>
+                        <div class="flex items-center p-1 bg-slate-50 border border-slate-200 rounded-xl">
+                            <label class="flex-1 relative cursor-pointer text-center">
+                                <input type="radio" name="genero" value="femenino" checked class="peer sr-only" onchange="document.getElementById('addGeneroLabel').textContent='Fem'; document.getElementById('addGeneroLabel').className='text-[10px] font-bold text-rose-500';">
+                                <span class="flex items-center justify-center gap-1 py-2 text-xs font-black rounded-lg transition-all peer-checked:bg-white peer-checked:text-rose-600 peer-checked:shadow-sm text-slate-400 hover:text-slate-600">
+                                    <i class="fas fa-venus text-rose-500"></i> Fem
+                                </span>
+                            </label>
+                            <label class="flex-1 relative cursor-pointer text-center">
+                                <input type="radio" name="genero" value="masculino" class="peer sr-only" onchange="document.getElementById('addGeneroLabel').textContent='Masc'; document.getElementById('addGeneroLabel').className='text-[10px] font-bold text-blue-600';">
+                                <span class="flex items-center justify-center gap-1 py-2 text-xs font-black rounded-lg transition-all peer-checked:bg-white peer-checked:text-blue-600 peer-checked:shadow-sm text-slate-400 hover:text-slate-600">
+                                    <i class="fas fa-mars text-blue-500"></i> Masc
+                                </span>
+                            </label>
+                        </div>
                     </div>
                     <div class="md:col-span-2 space-y-2">
                         <label class="text-[10px] font-black uppercase text-slate-400 px-1">Orden</label>
@@ -222,6 +243,9 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     <div class="md:hidden flex-1 min-w-0 pr-12">
                         <div class="flex flex-wrap items-center gap-1.5 mb-1">
                             <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[9px] font-black rounded border border-slate-200 uppercase"><?php echo $row['cat_nombre']; ?></span>
+                            <?php if(!$is_phase_figura && ($row['genero'] ?? '') === 'masculino'): ?>
+                                <span class="px-2 py-0.5 bg-blue-100 text-blue-700 text-[9px] font-black rounded border border-blue-200 uppercase"><i class="fas fa-mars mr-1"></i> Masc</span>
+                            <?php endif; ?>
                             <?php if($is_phase_figura): ?>
                                 <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[9px] font-black rounded border border-blue-100 uppercase"><i class="fas fa-person-swimming mr-1"></i> Figura</span>
                             <?php else: ?>
@@ -232,7 +256,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                             <?php endif; ?>
                         </div>
                         <h3 class="text-sm font-black <?php echo $isOldSystem ? 'text-slate-500' : 'text-slate-800'; ?> truncate">
-                            <?php echo $is_phase_figura ? "Fig. ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
+                            <?php echo $is_phase_figura ? ("Fig. ".$row['fig_num']." - ".$row['fig_nombre']) : ($row['mod_nombre'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : '')); ?>
                         </h3>
                     </div>
                 </div>
@@ -241,6 +265,10 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     <div class="mb-2 flex flex-wrap items-center gap-2">
                         <span class="px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black rounded-lg border border-slate-200 uppercase tracking-widest"><?php echo $row['cat_nombre']; ?></span>
                         
+                        <?php if(!$is_phase_figura && ($row['genero'] ?? '') === 'masculino'): ?>
+                            <span class="px-2.5 py-1 bg-blue-100 text-blue-700 text-[9px] font-black rounded-lg border border-blue-200 uppercase tracking-widest flex items-center gap-1.5"><i class="fas fa-mars text-blue-600"></i> Masculino</span>
+                        <?php endif; ?>
+
                         <?php if($is_phase_figura): ?>
                             <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-widest"><i class="fas fa-person-swimming mr-1"></i> Figura</span>
                         <?php else: ?>
@@ -264,7 +292,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                     </div>
                     <div class="flex items-center gap-3 mb-1">
                         <h3 class="text-xl font-black <?php echo $isOldSystem ? 'text-slate-500' : 'text-slate-800'; ?> tracking-tight">
-                            <?php echo $is_phase_figura ? "Figura ".$row['fig_num']." - ".$row['fig_nombre'] : $row['mod_nombre']; ?>
+                            <?php echo $is_phase_figura ? ("Figura ".$row['fig_num']." - ".$row['fig_nombre']) : ($row['mod_nombre'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : '')); ?>
                         </h3>
                     </div>
                     <?php if($is_phase_figura): ?>
@@ -346,7 +374,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
                         $res_f_list = mysqli_query($connection, $q_f_list);
                         while($fl = mysqli_fetch_assoc($res_f_list)):
                             $is_fl_fig = (!empty($fl['id_figura']) && $fl['id_figura'] > 0);
-                            $fl_nom = $is_fl_fig ? ($fl['f_num'].' - '.$fl['f_nom']) : ($fl['m_nom'] ?? 'Rutina');
+                            $fl_nom = $is_fl_fig ? ($fl['f_num'].' - '.$fl['f_nom']) : ($fl['m_nom'] . (($fl['genero'] ?? '') === 'masculino' ? ' Masc' : ''));
                             $fl_gd = $is_fl_fig ? $fl['f_gd'] : '-';
                         ?>
                         <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-3.5 sm:p-4 md:p-0">
@@ -362,7 +390,7 @@ $next_order = ($row_next['max_o'] ?? 0) + 1;
 
                             <!-- Desktop Only: Nombre -->
                             <td class="hidden md:table-cell px-4 py-3">
-                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight">
+                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight flex items-center gap-2">
                                     <?php echo $fl_nom; ?>
                                 </p>
                             </td>

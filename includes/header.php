@@ -40,10 +40,29 @@ include('./lib/my_functions.php');
         .sidebar-transition { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .oceanic-gradient { background: linear-gradient(135deg, #64748b 0%, #334155 100%); }
 
-        /* Evitar desbordamientos en sidebar colapsado (Desktop) */
-        #sidebar.lg\:w-20 .sidebar-text,
-        #sidebar.lg\:w-20 [id^="sub-"] {
-            display: none !important;
+        /* Evitar desbordamientos en sidebar colapsado SOLO en Desktop (>= 1024px) */
+        @media (min-width: 1024px) {
+            #sidebar.lg\:w-20 .sidebar-text,
+            #sidebar.lg\:w-20 [id^="sub-"] {
+                display: none !important;
+            }
+        }
+
+        /* En Mobile (< 1024px), el sidebar siempre se muestra expandido (w-72) al abrir */
+        @media (max-width: 1023px) {
+            #sidebar .sidebar-text {
+                display: inline-block !important;
+            }
+            #sidebar div.sidebar-text,
+            #sidebar p.sidebar-text {
+                display: block !important;
+            }
+            #sidebar [id^="sub-"].submenu-open {
+                display: block !important;
+            }
+            #sidebar [id^="sub-"].submenu-closed {
+                display: none !important;
+            }
         }
 
         .nav-item-active {

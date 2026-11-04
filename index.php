@@ -608,6 +608,7 @@ $meses_es = [
                                         fs.orden,
                                         fs.id_figura,
                                         fs.id_modalidad,
+                                        fs.genero,
                                         c.nombre as cat,
                                         f.nombre as fig,
                                         f.numero as fig_num,
@@ -660,7 +661,7 @@ $meses_es = [
                                                 <span class="text-slate-800 font-bold text-xs leading-snug break-words"><?php echo $f['fig']; ?></span>
                                             <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
                                                 <span class="px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-md font-black text-[10px] uppercase shrink-0 mt-0.5"><i class="fas fa-water mr-1"></i>Rutina</span>
-                                                <span class="text-slate-800 font-bold text-xs leading-snug break-words"><?php echo $f['modali']; ?></span>
+                                                <span class="text-slate-800 font-bold text-xs leading-snug break-words"><?php echo $f['modali'] . (($f['genero'] ?? '') === 'masculino' ? ' Masc' : ''); ?></span>
                                             <?php else: ?>
                                                 <span class="text-slate-400 italic text-xs">No asignada</span>
                                             <?php endif; ?>
@@ -691,7 +692,7 @@ $meses_es = [
                                                             <span class="text-slate-800 font-bold"><?php echo $f['fig']; ?></span>
                                                         <?php elseif(!empty($f['id_modalidad']) && !empty($f['modali'])): ?>
                                                             <span class="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg mr-2 font-black text-xs uppercase"><i class="fas fa-water mr-1"></i> Rutina</span>
-                                                            <span class="text-slate-800 font-bold"><?php echo $f['modali']; ?></span>
+                                                            <span class="text-slate-800 font-bold"><?php echo $f['modali'] . (($f['genero'] ?? '') === 'masculino' ? ' Masc' : ''); ?></span>
                                                         <?php else: ?>
                                                             <span class="text-slate-400 italic">No asignada</span>
                                                         <?php endif; ?>

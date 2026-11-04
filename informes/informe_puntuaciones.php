@@ -361,19 +361,30 @@ while($fase = mysqli_fetch_array($fases)){
     $id_categoria=mysqli_result(mysqli_query($connection,$query),0,1);
 	$query = "select nombre, id from modalidades where id = '".$fase['id_modalidad']."'";
     $nombre_modalidad=mysqli_result(mysqli_query($connection,$query),0);
+    if (($fase['genero'] ?? '') === 'masculino') {
+        $nombre_modalidad .= ' Masc';
+    }
 //    $id_categoria=mysqli_result(mysqli_query($connection,$query),0,1);
     $id_modalidad=mysqli_result(mysqli_query($connection,$query),1);
 	//FACTORIZACIÓN
-	$query = "SELECT fases.id, fases.f_chomu, f_performance, f_transitions, f_hybrid, f_acro, f_tre FROM fases WHERE id='$id_fase'";
-	$f_fase = mysqli_query($connection, $query);
-	$f_fase = mysqli_fetch_assoc($f_fase);
-	$id_fase = $fase['id'];
-	$f_chomu = $fase['f_chomu'];
-	$f_performance = $fase['f_performance'];
-	$f_transitions = $fase['f_transitions'];
-	$f_hybrid = $fase['f_hybrid'];
-	$f_acro = $fase['f_acro'];
-	$f_tre = $fase['f_tre'];
+	$query = "SELECT fases.id, 
+                     COALESCE(NULLIF(fases.f_chomu, 0), rc.f_chomu, 1.0) as f_chomu, 
+                     COALESCE(NULLIF(fases.f_performance, 0), rc.f_performance, 1.0) as f_performance, 
+                     COALESCE(NULLIF(fases.f_transitions, 0), rc.f_transitions, 1.0) as f_transitions, 
+                     COALESCE(NULLIF(fases.f_hybrid, 0), rc.f_hybrid, 1.0) as f_hybrid, 
+                     COALESCE(NULLIF(fases.f_acro, 0), rc.f_acro, 1.0) as f_acro, 
+                     COALESCE(NULLIF(fases.f_tre, 0), rc.f_tre, 1.0) as f_tre 
+              FROM fases 
+              LEFT JOIN reglas_competicion rc ON (fases.id_categoria = rc.id_categoria AND fases.id_modalidad = rc.id_modalidad)
+              WHERE fases.id='$id_fase'";
+	$res_fase_fact = mysqli_query($connection, $query);
+	$fase_fact = ($res_fase_fact) ? mysqli_fetch_assoc($res_fase_fact) : [];
+	$f_chomu = $fase_fact['f_chomu'] ?? 1.0;
+	$f_performance = $fase_fact['f_performance'] ?? 1.0;
+	$f_transitions = $fase_fact['f_transitions'] ?? 1.0;
+	$f_hybrid = $fase_fact['f_hybrid'] ?? 1.0;
+	$f_acro = $fase_fact['f_acro'] ?? 1.0;
+	$f_tre = $fase_fact['f_tre'] ?? 1.0;
 	//FIN FACTORIZACIÓN
 
 

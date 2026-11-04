@@ -63,6 +63,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
                 categorias.nombre AS cat_nom, 
                 clubes.nombre_corto AS nombre_club,
                 fases.orden,
+                fases.genero as fase_genero,
                 (SELECT GROUP_CONCAT(CONCAT(n.nombre, ' ', n.apellidos) SEPARATOR ', ') 
                  FROM rutinas_participantes rp 
                  JOIN nadadoras n ON rp.id_nadadora = n.id 
@@ -88,10 +89,12 @@ if ($id_competicion !== null && is_dir($path_base)) {
             $id_rutina = (int)$row['id'];
             $ids_en_db[] = $id_rutina;
 
+            $nombre_fase_zip = $row['orden'] . ". " . $row['mod_nom'] . (($row['fase_genero'] ?? '') === 'masculino' ? ' Masc' : '') . " " . $row['cat_nom'];
+
             // Inicializar fase en el árbol si no existe
             if (!isset($arbol_fases[$f_id])) {
                 $arbol_fases[$f_id] = [
-                    'nombre' => $row['orden'] . ". " . $row['mod_nom'] . " " . $row['cat_nom'],
+                    'nombre' => $nombre_fase_zip,
                     'rutinas' => []
                 ];
             }
@@ -99,7 +102,7 @@ if ($id_competicion !== null && is_dir($path_base)) {
             // Inicializar fase en el array de estadísticas si no existe
             if (!isset($stats_fases[$f_id])) {
                 $stats_fases[$f_id] = [
-                    'nombre' => $row['orden'] . ". " . $row['mod_nom'] . " " . $row['cat_nom'],
+                    'nombre' => $nombre_fase_zip,
                     'total' => 0,
                     'subidas' => 0
                 ];

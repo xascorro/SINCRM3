@@ -11,15 +11,16 @@ if ($id_comp == 0 && $_SESSION['id_rol'] == 1 && isset($_SESSION['id_competicion
 }
 
 // Obtener info de la fase
-$query_fase = "SELECT c.nombre as categoria, m.nombre as modalid 
+$query_fase = "SELECT c.nombre as categoria, m.nombre as modalid, f.genero 
                FROM fases f 
                JOIN categorias c ON f.id_categoria = c.id 
                JOIN modalidades m ON f.id_modalidad = m.id 
                WHERE f.id = $id_fase";
 $res_fase = mysqli_query($connection, $query_fase);
 $info_fase = mysqli_fetch_assoc($res_fase);
-$nombre_modalidad = $info_fase['modalidad'] ?? 'Desconocida';
+$nombre_modalidad = $info_fase['modalid'] ?? 'Desconocida';
 $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
+$tag_genero = (($info_fase['genero'] ?? 'femenino') === 'masculino') ? ' Masc' : '';
 ?>
 
 <!-- Contenedor Principal -->
@@ -39,7 +40,7 @@ $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
                     <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-flag-checkered text-lg"></i></span>
                     Puntuar Rutinas
                 </h1>
-                <p class="text-slate-500 font-medium text-lg uppercase tracking-tight italic"><?php echo $nombre_modalidad." ".$nombre_categoria; ?></p>
+                <p class="text-slate-500 font-medium text-lg uppercase tracking-tight italic"><?php echo $nombre_modalidad . $tag_genero . " " . $nombre_categoria; ?></p>
             </div>
             <div class="flex flex-wrap gap-3">
                 <a href="./puntuaciones_lista_rutinas_live.php?id_fase=<?php echo $id_fase; ?>" class="px-5 py-3 bg-emerald-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-all flex items-center gap-2">

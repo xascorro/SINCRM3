@@ -24,7 +24,7 @@ $res_info = mysqli_query($connection, $q_info);
 $info_comp = mysqli_fetch_assoc($res_info);
 
 // Obtener fases
-$q_fases = "SELECT f.id, c.nombre as categoria, m.nombre as modalidad, f.orden 
+$q_fases = "SELECT f.id, c.nombre as categoria, m.nombre as modalidad, f.orden, f.genero 
             FROM fases f 
             JOIN categorias c ON f.id_categoria = c.id 
             JOIN modalidades m ON f.id_modalidad = m.id 
@@ -42,7 +42,7 @@ while ($f = mysqli_fetch_assoc($res_fases)) {
     $id_fase = $f['id'];
     $fase_data = [
         'id' => $id_fase,
-        'nombre' => $f['categoria'] . ' - ' . $f['modalidad'],
+        'nombre' => $f['categoria'] . ' - ' . $f['modalidad'] . (($f['genero'] ?? '') === 'masculino' ? ' Masc' : ''),
         'rutinas' => []
     ];
 

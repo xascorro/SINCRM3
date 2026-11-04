@@ -222,13 +222,85 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
             </div>
 
             <?php
-            $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, fases.elementos_coach_card
-                      FROM rutinas, fases, modalidades, categorias, clubes
-                      WHERE rutinas.id_fase = fases.id
-                      AND fases.id_modalidad = modalidades.id
-                      AND fases.id_categoria = categorias.id
-                      AND rutinas.id_club = clubes.id
-                      AND fases.id_competicion = $id_competicion $condicion_club
+            function getReglamentaryRoutineDuration($nombre_modalidad, $nombre_categoria) {
+                $mod = mb_strtolower($nombre_modalidad ?? '', 'UTF-8');
+                $cat = mb_strtolower($nombre_categoria ?? '', 'UTF-8');
+                $margin = 5;
+                $targetSec = 0;
+                $targetStr = '';
+
+                if (strpos($mod, 'solo') !== false) {
+                    if (strpos($mod, 'técnico') !== false || strpos($mod, 'tecnico') !== false) {
+                        $targetSec = 120;
+                        $targetStr = '2:00 min';
+                    } else {
+                        if (strpos($cat, 'junior') !== false || strpos($cat, 'absolut') !== false || strpos($cat, 'senior') !== false) {
+                            $targetSec = 135;
+                            $targetStr = '2:15 min';
+                        } else {
+                            $targetSec = 120;
+                            $targetStr = '2:00 min';
+                        }
+                    }
+                } elseif (strpos($mod, 'dúo') !== false || strpos($mod, 'duo') !== false) {
+                    if (strpos($mod, 'técnico') !== false || strpos($mod, 'tecnico') !== false) {
+                        $targetSec = 140;
+                        $targetStr = '2:20 min';
+                    } else {
+                        if (strpos($cat, 'junior') !== false || strpos($cat, 'absolut') !== false || strpos($cat, 'senior') !== false) {
+                            $targetSec = 165;
+                            $targetStr = '2:45 min';
+                        } else {
+                            $targetSec = 150;
+                            $targetStr = '2:30 min';
+                        }
+                    }
+                } elseif (strpos($mod, 'equipo') !== false) {
+                    if (strpos($mod, 'técnico') !== false || strpos($mod, 'tecnico') !== false) {
+                        $targetSec = 170;
+                        $targetStr = '2:50 min';
+                    } else {
+                        if (strpos($cat, 'junior') !== false || strpos($cat, 'absolut') !== false || strpos($cat, 'senior') !== false) {
+                            $targetSec = 210;
+                            $targetStr = '3:30 min';
+                        } else {
+                            $targetSec = 180;
+                            $targetStr = '3:00 min';
+                        }
+                    }
+                } elseif (strpos($mod, 'combo') !== false) {
+                    if (strpos($cat, 'junior') !== false || strpos($cat, 'absolut') !== false) {
+                        $targetSec = 210;
+                        $targetStr = '3:30 min';
+                    } else {
+                        $targetSec = 180;
+                        $targetStr = '3:00 min';
+                    }
+                } elseif (strpos($mod, 'acrobátic') !== false || strpos($mod, 'acrobatic') !== false || strpos($mod, 'highlight') !== false) {
+                    $targetSec = 180;
+                    $targetStr = '3:00 min';
+                }
+
+                return [
+                    'targetSec' => $targetSec,
+                    'targetStr' => $targetStr,
+                    'marginSec' => $margin
+                ];
+            }
+
+            $query = "SELECT rutinas.id, rutinas.dd_total, rutinas.nombre as nombre_rutina, rutinas.orden, rutinas.preswimmer, 
+                             rutinas.id_fase, rutinas.id_club, rutinas.music_name, rutinas.music_original_name, rutinas.music_duration, 
+                             clubes.nombre_corto as nombre_club, clubes.logo, modalidades.nombre as nombre_modalidad, categorias.nombre as nombre_categoria, 
+                             fases.elementos_coach_card, fases.id_modalidad, fases.id_categoria, fases.genero as fase_genero,
+                             COALESCE(NULLIF(fases.duracion_musica, 0), reglas.duracion_musica, 0) as duracion_oficial_db,
+                             COALESCE(NULLIF(fases.margen_musica, 0), reglas.margen_musica, 5) as margen_oficial_db
+                      FROM rutinas
+                      JOIN fases ON rutinas.id_fase = fases.id
+                      JOIN modalidades ON fases.id_modalidad = modalidades.id
+                      JOIN categorias ON fases.id_categoria = categorias.id
+                      JOIN clubes ON rutinas.id_club = clubes.id
+                      LEFT JOIN reglas_competicion reglas ON (fases.id_categoria = reglas.id_categoria AND fases.id_modalidad = reglas.id_modalidad)
+                      WHERE fases.id_competicion = $id_competicion $condicion_club
                       ORDER BY fases.orden ASC, fases.id ASC, rutinas.orden ASC, clubes.nombre_corto ASC, rutinas.id ASC";
             $res = mysqli_query($connection, $query);
 
@@ -262,7 +334,45 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                             $orden_display = $row['orden'] == 0 ? '-' : $row['orden'];
                         }
                         $has_music = (!empty($row['music_name']));
-                        $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-400';
+                        $music_time_warning = false;
+                        $music_warning_msg = '';
+
+                        // Duración reglamentaria: prioridad BD (fase o regla maestra), fallback a función código
+                        if (!empty($row['duracion_oficial_db']) && (int)$row['duracion_oficial_db'] > 0) {
+                            $tSec = (int)$row['duracion_oficial_db'];
+                            $mSec = (int)($row['margen_oficial_db'] ?: 5);
+                            $time_rule = [
+                                'targetSec' => $tSec,
+                                'targetStr' => sprintf('%d:%02d min', floor($tSec / 60), $tSec % 60),
+                                'marginSec' => $mSec
+                            ];
+                        } else {
+                            $time_rule = getReglamentaryRoutineDuration($row['nombre_modalidad'], $row['nombre_categoria']);
+                        }
+
+                        if ($has_music && !empty($row['music_duration'])) {
+                            if ($time_rule['targetSec'] > 0) {
+                                $diff = abs((int)$row['music_duration'] - $time_rule['targetSec']);
+                                if ($diff > $time_rule['marginSec']) {
+                                    $music_time_warning = true;
+                                    $dur_m = floor($row['music_duration'] / 60);
+                                    $dur_s = $row['music_duration'] % 60;
+                                    $dur_fmt = sprintf('%d:%02d', $dur_m, $dur_s);
+                                    $music_warning_msg = "Duración {$dur_fmt} min: no cumple tiempo oficial ({$time_rule['targetStr']} ±{$time_rule['marginSec']}s)";
+                                }
+                            }
+                        }
+
+                        if ($music_time_warning) {
+                            $btn_music_class = 'bg-amber-50 text-amber-600 border border-amber-300';
+                            $btn_music_title = $music_warning_msg;
+                        } elseif ($has_music) {
+                            $btn_music_class = 'bg-indigo-50 text-indigo-600 border border-indigo-100';
+                            $btn_music_title = 'Música';
+                        } else {
+                            $btn_music_class = 'bg-slate-100 text-slate-400 border border-slate-200';
+                            $btn_music_title = 'Sin música';
+                        }
 
                         if ($curr_fase_m !== $row['id_fase']):
                             $curr_fase_m = $row['id_fase'];
@@ -270,7 +380,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                             <div class="pt-2 pb-1">
                                 <div class="flex items-center gap-2 px-1">
                                     <span class="w-1.5 h-4 bg-blue-600 rounded-full"></span>
-                                    <span class="text-xs font-black text-slate-700 uppercase tracking-wide"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                    <span class="text-xs font-black text-slate-700 uppercase tracking-wide"><?php echo $row['nombre_modalidad'] . (($row['fase_genero'] ?? '') === 'masculino' ? ' Masc' : '') . ' ' . $row['nombre_categoria']; ?></span>
+                                    <?php if(($row['fase_genero'] ?? '') === 'masculino'): ?>
+                                        <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 border border-blue-200">
+                                            <i class="fas fa-mars mr-0.5"></i> Masc
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -321,9 +436,14 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                     </form>
 
                                     <!-- Música -->
-                                    <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>)' 
-                                            class="w-9 h-9 rounded-lg <?php echo $btn_music_class; ?> flex items-center justify-center active:scale-[0.98] border border-indigo-100" title="Música">
+                                    <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>, <?php echo (int)($time_rule["targetSec"] ?? 0); ?>, <?php echo (int)($time_rule["marginSec"] ?? 5); ?>)' 
+                                            class="w-9 h-9 rounded-lg <?php echo $btn_music_class; ?> flex items-center justify-center active:scale-[0.98] relative" title="<?php echo htmlspecialchars($btn_music_title); ?>">
                                         <i class="fas <?php echo $has_music ? 'fa-play' : 'fa-music'; ?> text-xs"></i>
+                                        <?php if ($music_time_warning): ?>
+                                            <span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[8px] font-black shadow-md border-2 border-white pointer-events-none" title="<?php echo htmlspecialchars($music_warning_msg); ?>">
+                                                <i class="fas fa-exclamation"></i>
+                                            </span>
+                                        <?php endif; ?>
                                     </button>
 
                                     <!-- Coach Card -->
@@ -393,7 +513,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                         <td colspan="10" class="px-8 py-3.5">
                                             <div class="flex items-center gap-3">
                                                 <span class="w-2 h-5 bg-blue-600 rounded-full"></span>
-                                                <span class="text-xs font-black text-slate-700 uppercase tracking-widest"><?php echo $row['nombre_modalidad'].' '.$row['nombre_categoria']; ?></span>
+                                                <span class="text-xs font-black text-slate-700 uppercase tracking-widest"><?php echo $row['nombre_modalidad'] . (($row['fase_genero'] ?? '') === 'masculino' ? ' Masc' : '') . ' ' . $row['nombre_categoria']; ?></span>
+                                                <?php if(($row['fase_genero'] ?? '') === 'masculino'): ?>
+                                                    <span class="px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-700 border border-blue-200">
+                                                        <i class="fas fa-mars mr-1"></i> Masculino
+                                                    </span>
+                                                <?php endif; ?>
                                             </div>
                                         </td>
                                     </tr>
@@ -410,7 +535,45 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                     $orden_display = $row['orden'] == 0 ? '-' : $row['orden'];
                                 }
                                 $has_music = (!empty($row['music_name']));
-                                $btn_music_class = $has_music ? 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600' : 'bg-slate-50 text-slate-400 hover:bg-indigo-600';
+                                $music_time_warning = false;
+                                $music_warning_msg = '';
+
+                                // Duración reglamentaria: prioridad BD (fase o regla maestra), fallback a función código
+                                if (!empty($row['duracion_oficial_db']) && (int)$row['duracion_oficial_db'] > 0) {
+                                    $tSec = (int)$row['duracion_oficial_db'];
+                                    $mSec = (int)($row['margen_oficial_db'] ?: 5);
+                                    $time_rule = [
+                                        'targetSec' => $tSec,
+                                        'targetStr' => sprintf('%d:%02d min', floor($tSec / 60), $tSec % 60),
+                                        'marginSec' => $mSec
+                                    ];
+                                } else {
+                                    $time_rule = getReglamentaryRoutineDuration($row['nombre_modalidad'], $row['nombre_categoria']);
+                                }
+
+                                if ($has_music && !empty($row['music_duration'])) {
+                                    if ($time_rule['targetSec'] > 0) {
+                                        $diff = abs((int)$row['music_duration'] - $time_rule['targetSec']);
+                                        if ($diff > $time_rule['marginSec']) {
+                                            $music_time_warning = true;
+                                            $dur_m = floor($row['music_duration'] / 60);
+                                            $dur_s = $row['music_duration'] % 60;
+                                            $dur_fmt = sprintf('%d:%02d', $dur_m, $dur_s);
+                                            $music_warning_msg = "Duración {$dur_fmt} min: no cumple tiempo oficial ({$time_rule['targetStr']} ±{$time_rule['marginSec']}s)";
+                                        }
+                                    }
+                                }
+
+                                if ($music_time_warning) {
+                                    $btn_music_class = 'bg-amber-50 text-amber-600 border border-amber-300 hover:bg-amber-600 hover:text-white shadow-xs';
+                                    $btn_music_title = $music_warning_msg;
+                                } elseif ($has_music) {
+                                    $btn_music_class = 'bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white border border-indigo-100 shadow-xs';
+                                    $btn_music_title = 'Acompañamiento Musical';
+                                } else {
+                                    $btn_music_class = 'bg-slate-50 text-slate-400 hover:bg-indigo-600 hover:text-white border border-slate-100';
+                                    $btn_music_title = 'Sin música';
+                                }
                                 ?>
                                 <tr class="hover:bg-slate-50/50 transition-colors group">
                                     <td class="px-4 py-5">
@@ -460,9 +623,14 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                                             </form>
 
                                             <!-- Música -->
-                                            <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>)' 
-                                                    class="w-10 h-10 rounded-xl <?php echo $btn_music_class; ?> flex items-center justify-center hover:text-white transition-all shadow-sm group/btn" title="Acompañamiento Musical">
+                                            <button onclick='openMusicPlayer(<?php echo $row["id"]; ?>, <?php echo json_encode($row["nombre_modalidad"]." ".$row["nombre_categoria"]); ?>, <?php echo json_encode($row["nombre_club"]); ?>, <?php echo json_encode($row["nombres"]); ?>, <?php echo json_encode($row["music_name"] ? "./public/music/".$id_competicion."/".$row["id"].".mp3" : ""); ?>, <?php echo json_encode($row["music_original_name"]); ?>, <?php echo json_encode($row["id_club"]); ?>, <?php echo json_encode($row["logo"] ?: "./images/default_club.png"); ?>, <?php echo (int)($time_rule["targetSec"] ?? 0); ?>, <?php echo (int)($time_rule["marginSec"] ?? 5); ?>)' 
+                                                    class="w-10 h-10 rounded-xl <?php echo $btn_music_class; ?> flex items-center justify-center transition-all shadow-xs active:scale-95 group/btn relative" title="<?php echo htmlspecialchars($btn_music_title); ?>">
                                                 <i class="fas <?php echo $has_music ? 'fa-play' : 'fa-music'; ?> text-xs group-hover/btn:scale-110"></i>
+                                                <?php if ($music_time_warning): ?>
+                                                    <span class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-amber-500 text-white flex items-center justify-center text-[8px] font-black shadow-md border-2 border-white pointer-events-none" title="<?php echo htmlspecialchars($music_warning_msg); ?>">
+                                                        <i class="fas fa-exclamation"></i>
+                                                    </span>
+                                                <?php endif; ?>
                                             </button>
 
                                             <!-- Coach Card -->
@@ -571,12 +739,14 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                 <form action="rutinas_code.php" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="syncMusicInputs(this)">
                     <div class="relative group">
                         <label class="block text-[10px] font-black uppercase text-slate-400 mb-2 px-1">Subir nuevo archivo (.mp3)</label>
-                        <input type="file" name="musica" accept=".mp3" required 
+                        <input type="file" name="musica" id="musicFileInput" accept=".mp3" required 
                                class="w-full px-5 py-4 bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl text-xs font-bold text-slate-500 group-hover:border-indigo-400 transition-all cursor-pointer">
+                        <div id="uploadDurationNotice" class="hidden mt-2 p-3 rounded-xl text-xs font-bold border"></div>
                     </div>
                     <input type="hidden" name="edit_id" id="form_music_edit_id">
                     <input type="hidden" name="club" id="form_music_club_id">
                     <input type="hidden" name="music_name" id="form_music_name_val">
+                    <input type="hidden" name="music_duration" id="form_music_duration_val" value="0">
                     <input type="hidden" name="id_competicion" value="<?php echo $id_competicion; ?>">
                     <button type="submit" name="upload_music" class="w-full py-4 bg-indigo-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-[1.02] transition-all">
                         Guardar Audio
@@ -613,13 +783,78 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
 </div>
 
 <script>
+    function getReglamentaryDuration(routineStr) {
+        const rLower = (routineStr || '').toLowerCase();
+        let targetSec = 0;
+        let targetStr = '';
+        const marginSec = 5;
+
+        if (rLower.includes('solo')) {
+            if (rLower.includes('técnico') || rLower.includes('tecnico')) {
+                targetSec = 120;
+                targetStr = '2:00 min';
+            } else {
+                if (rLower.includes('junior') || rLower.includes('absolut') || rLower.includes('senior')) {
+                    targetSec = 135;
+                    targetStr = '2:15 min';
+                } else {
+                    targetSec = 120;
+                    targetStr = '2:00 min';
+                }
+            }
+        } else if (rLower.includes('dúo') || rLower.includes('duo')) {
+            if (rLower.includes('técnico') || rLower.includes('tecnico')) {
+                targetSec = 140;
+                targetStr = '2:20 min';
+            } else {
+                if (rLower.includes('junior') || rLower.includes('absolut') || rLower.includes('senior')) {
+                    targetSec = 165;
+                    targetStr = '2:45 min';
+                } else {
+                    targetSec = 150;
+                    targetStr = '2:30 min';
+                }
+            }
+        } else if (rLower.includes('equipo')) {
+            if (rLower.includes('técnico') || rLower.includes('tecnico')) {
+                targetSec = 170;
+                targetStr = '2:50 min';
+            } else {
+                if (rLower.includes('junior') || rLower.includes('absolut') || rLower.includes('senior')) {
+                    targetSec = 210;
+                    targetStr = '3:30 min';
+                } else {
+                    targetSec = 180;
+                    targetStr = '3:00 min';
+                }
+            }
+        } else if (rLower.includes('combo')) {
+            if (rLower.includes('junior') || rLower.includes('absolut')) {
+                targetSec = 210;
+                targetStr = '3:30 min';
+            } else {
+                targetSec = 180;
+                targetStr = '3:00 min';
+            }
+        } else if (rLower.includes('acrobátic') || rLower.includes('acrobatic') || rLower.includes('highlight')) {
+            targetSec = 180;
+            targetStr = '3:00 min';
+        }
+
+        return { targetSec, targetStr, marginSec };
+    }
+
     function toggleAddRutinaPanel() {
         const panel = document.getElementById('addRutinaPanel');
         panel.classList.toggle('hidden');
         if(!panel.classList.contains('hidden')) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function openMusicPlayer(id, routine, club, participants, fileUrl, originalName, clubId, logoUrl) {
+    function openMusicPlayer(id, routine, club, participants, fileUrl, originalName, clubId, logoUrl, expectedSec, marginSec) {
+        const modalEl = document.getElementById('musicModal');
+        modalEl.dataset.expectedSec = expectedSec || 0;
+        modalEl.dataset.marginSec = (typeof marginSec !== 'undefined' && marginSec !== null) ? marginSec : 5;
+
         document.getElementById('music_edit_id').value = id;
         document.getElementById('music_club_id').value = clubId;
         document.getElementById('music_name_val').value = routine + ' - ' + club + ' - ' + participants;
@@ -634,6 +869,12 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
         const playerSec = document.getElementById('playerSection');
         const noMusic = document.getElementById('noMusicAlert');
         const fileName = document.getElementById('fileName');
+
+        const uploadNotice = document.getElementById('uploadDurationNotice');
+        if(uploadNotice) {
+            uploadNotice.classList.add('hidden');
+            uploadNotice.innerHTML = '';
+        }
 
         const warnBox = document.getElementById('musicDurationNotice');
         if(warnBox) {
@@ -653,24 +894,27 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
                 const s = durSec % 60;
                 const durStr = m + ':' + (s < 10 ? '0' : '') + s;
                 
-                let targetStr = '';
-                let targetSec = 0;
-                const rLower = routine.toLowerCase();
-                if (rLower.includes('solo')) {
-                    targetStr = '2:00 min';
-                    targetSec = 120;
-                } else if (rLower.includes('dúo') || rLower.includes('duo')) {
-                    targetStr = '2:20 min';
-                    targetSec = 140;
+                let ruleTarget = parseInt(modalEl.dataset.expectedSec || '0');
+                let ruleMargin = parseInt(modalEl.dataset.marginSec || '5');
+                let ruleTargetStr = '';
+                if (ruleTarget > 0) {
+                    const tm = Math.floor(ruleTarget / 60);
+                    const ts = ruleTarget % 60;
+                    ruleTargetStr = tm + ':' + (ts < 10 ? '0' : '') + ts + ' min';
+                } else {
+                    const fallback = getReglamentaryDuration(routine);
+                    ruleTarget = fallback.targetSec;
+                    ruleMargin = fallback.marginSec;
+                    ruleTargetStr = fallback.targetStr;
                 }
 
-                if (warnBox && targetSec > 0) {
-                    const diff = Math.abs(durSec - targetSec);
-                    if (diff > 5) {
-                        warnBox.innerHTML = '<div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-800 text-[10px] font-bold flex items-center gap-2"><i class="fas fa-triangle-exclamation text-amber-500"></i> Duración audio: ' + durStr + ' (Oficial FNRM: ' + targetStr + ' &plusmn;5s) - Advertencia no bloqueante</div>';
+                if (warnBox && ruleTarget > 0) {
+                    const diff = Math.abs(durSec - ruleTarget);
+                    if (diff > ruleMargin) {
+                        warnBox.innerHTML = '<div class="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-amber-800 text-xs font-bold flex items-center gap-2.5 shadow-xs"><i class="fas fa-triangle-exclamation text-amber-500 text-base shrink-0"></i><div><p class="leading-snug">Duración audio: <span class="font-black">' + durStr + ' min</span></p><p class="text-[10px] text-amber-700/90 font-medium">Oficial: ' + ruleTargetStr + ' &plusmn;' + ruleMargin + 's — <span class="underline">No cumple tiempo reglamentario</span></p></div></div>';
                         warnBox.classList.remove('hidden');
                     } else {
-                        warnBox.innerHTML = '<div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-800 text-[10px] font-bold flex items-center gap-2"><i class="fas fa-check-circle text-emerald-500"></i> Duración audio: ' + durStr + ' (Cumple tiempo reglamentario: ' + targetStr + ')</div>';
+                        warnBox.innerHTML = '<div class="p-3 bg-emerald-50 rounded-2xl border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2.5 shadow-xs"><i class="fas fa-check-circle text-emerald-500 text-base shrink-0"></i><div><p class="leading-snug">Duración audio: <span class="font-black">' + durStr + ' min</span></p><p class="text-[10px] text-emerald-700/90 font-medium">Cumple tiempo oficial (' + ruleTargetStr + ')</p></div></div>';
                         warnBox.classList.remove('hidden');
                     }
                 }
@@ -684,6 +928,59 @@ $has_coach_cards = (($stats['requieren_coach_card'] ?? 0) > 0);
 
         document.getElementById('musicModal').classList.remove('hidden');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const musicInput = document.getElementById('musicFileInput');
+        if(musicInput) {
+            musicInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const notice = document.getElementById('uploadDurationNotice');
+                const durInput = document.getElementById('form_music_duration_val');
+                if (!file || !notice) return;
+
+                const aObj = new Audio(URL.createObjectURL(file));
+                aObj.onloadedmetadata = function() {
+                    const sec = Math.round(aObj.duration);
+                    if(durInput) durInput.value = sec;
+
+                    const m = Math.floor(sec / 60);
+                    const s = sec % 60;
+                    const durStr = m + ':' + (s < 10 ? '0' : '') + s;
+
+                    const modalEl = document.getElementById('musicModal');
+                    const routine = document.getElementById('playerRoutine')?.textContent || '';
+                    let ruleTarget = parseInt(modalEl?.dataset.expectedSec || '0');
+                    let ruleMargin = parseInt(modalEl?.dataset.marginSec || '5');
+                    let ruleTargetStr = '';
+                    if (ruleTarget > 0) {
+                        const tm = Math.floor(ruleTarget / 60);
+                        const ts = ruleTarget % 60;
+                        ruleTargetStr = tm + ':' + (ts < 10 ? '0' : '') + ts + ' min';
+                    } else {
+                        const fallback = getReglamentaryDuration(routine);
+                        ruleTarget = fallback.targetSec;
+                        ruleMargin = fallback.marginSec;
+                        ruleTargetStr = fallback.targetStr;
+                    }
+
+                    notice.classList.remove('hidden');
+                    if (ruleTarget > 0) {
+                        const diff = Math.abs(sec - ruleTarget);
+                        if (diff > ruleMargin) {
+                            notice.className = 'mt-2 p-3 rounded-xl text-xs font-bold border bg-amber-50 border-amber-200 text-amber-800 flex items-center gap-2';
+                            notice.innerHTML = '<i class="fas fa-triangle-exclamation text-amber-500 text-sm shrink-0"></i> <div>Duración detectada: <span class="font-black">' + durStr + ' min</span>. <span class="font-medium text-amber-700">Aviso: fuera de tiempo reglamentario (' + ruleTargetStr + ' &plusmn;' + ruleMargin + 's).</span></div>';
+                        } else {
+                            notice.className = 'mt-2 p-3 rounded-xl text-xs font-bold border bg-emerald-50 border-emerald-200 text-emerald-800 flex items-center gap-2';
+                            notice.innerHTML = '<i class="fas fa-check-circle text-emerald-500 text-sm shrink-0"></i> <div>Duración detectada: <span class="font-black">' + durStr + ' min</span>. ✓ Cumple tiempo oficial.</div>';
+                        }
+                    } else {
+                        notice.className = 'mt-2 p-3 rounded-xl text-xs font-bold border bg-slate-50 border-slate-200 text-slate-700';
+                        notice.innerHTML = 'Duración detectada: <span class="font-black">' + durStr + ' min</span>.';
+                    }
+                };
+            });
+        }
+    });
 
     function closeMusicModal() {
         const audio = document.getElementById('audioElement');

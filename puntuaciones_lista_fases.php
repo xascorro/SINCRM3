@@ -168,7 +168,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                 $badge_sub = '<span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black rounded uppercase">Figura</span>';
                             } else {
                                 $target_page = "puntuaciones_lista_rutinas.php";
-                                $item_title = $row['mod_nom'];
+                                $item_title = $row['mod_nom'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : '');
                                 $item_sub = "Rutina Técnica";
                                 $badge_sub = '<span class="px-2 py-0.5 bg-purple-50 text-purple-600 text-[8px] font-black rounded uppercase">Rutina</span>';
                             }
@@ -260,7 +260,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                     </div>
 
                     <h2 class="text-base sm:text-xl font-black text-slate-800 tracking-tight leading-snug mb-1 truncate">
-                        <?php echo $row['mod_nom']; ?>
+                        <?php echo $row['mod_nom'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : ''); ?>
                     </h2>
                     <div class="flex items-center gap-2 mb-4 sm:mb-8">
                         <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider italic"><?php echo $row['cat_nom']; ?></span>
@@ -330,7 +330,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                     $label = "Figura " . $row['item_num'] . " - " . $row['item_nom'];
                                 } else {
                                     $target_page = "puntuaciones_lista_rutinas.php";
-                                    $label = $row['item_nom'];
+                                    $label = $row['item_nom'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : '');
                                 }
                             ?>
                             <tr class="hover:bg-slate-50 transition-colors group">

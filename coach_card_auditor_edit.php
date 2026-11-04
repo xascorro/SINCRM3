@@ -16,18 +16,36 @@ if(isset($_POST['update_btn'])){
     // Si la apnea está vacía, la guardamos como NULL en SQL
     $max_apnea = !empty($_POST['max_apnea']) ? $_POST['max_apnea'] : 'NULL';
 
+    $dur_raw = trim($_POST['duracion_musica'] ?? '');
+    if ($dur_raw !== '') {
+        if (strpos($dur_raw, ':') !== false) {
+            $p = explode(':', $dur_raw);
+            $dur_sec = (intval($p[0]) * 60) + intval($p[1] ?? 0);
+        } else {
+            $dur_sec = intval($dur_raw);
+        }
+        $dur_sql = ($dur_sec > 0) ? intval($dur_sec) : 'NULL';
+    } else {
+        $dur_sql = 'NULL';
+    }
+
+    $margen_raw = trim($_POST['margen_musica'] ?? '');
+    $margen_sec = ($margen_raw !== '') ? intval($margen_raw) : 5;
+
     $query_update = "UPDATE reglas_competicion SET 
                         max_tre = '$max_tre', 
                         max_hibridos = '$max_hibridos', 
                         max_acrobacias = '$max_acrobacias', 
                         req_hibrido_creativo = '$req_hibrido_creativo', 
-                        max_apnea = $max_apnea 
+                        max_apnea = $max_apnea,
+                        duracion_musica = $dur_sql,
+                        margen_musica = $margen_sec
                      WHERE id_regla = '$id_regla'";
                      
     $query_update_run = mysqli_query($connection, $query_update);
 
     if($query_update_run){
-        $_SESSION['correcto'] = 'Los límites del Apéndice III se han modificado correctamente.';
+        $_SESSION['correcto'] = 'Los límites del Apéndice III y duración de música se han modificado correctamente.';
     } else {
         $_SESSION['estado'] = 'Error al actualizar: ' . mysqli_error($connection);
     }
@@ -80,6 +98,23 @@ if(isset($_POST['update_btn'])){
                         <hr>
 
                         <!-- Campos Editables -->
+                        <div class="row mb-3 bg-light p-3 rounded border">
+                            <div class="col-md-6 form-group">
+                                <label class="fw-bold text-primary"><i class="fas fa-music"></i> Duración Reglamentaria de Música</label>
+                                <?php 
+                                $d_sec = (int)($row['duracion_musica'] ?? 0);
+                                $d_fmt = ($d_sec > 0) ? sprintf('%d:%02d', floor($d_sec / 60), $d_sec % 60) : '';
+                                ?>
+                                <input type="text" name="duracion_musica" value="<?php echo $d_fmt; ?>" class="form-control" placeholder="ej: 2:20 o 140">
+                                <small class="text-muted">Formato mm:ss o segundos totales</small>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="fw-bold text-primary"><i class="fas fa-arrows-left-right-to-line"></i> Margen Oficial (±segundos)</label>
+                                <input type="number" name="margen_musica" value="<?php echo ($row['margen_musica'] !== null) ? $row['margen_musica'] : 5; ?>" class="form-control" placeholder="5">
+                                <small class="text-muted">Margen de tolerancia reglamentaria (±5s)</small>
+                            </div>
+                        </div>
+
                         <div class="row mb-3">
                             <div class="col-md-3 form-group">
                                 <label class="fw-bold">Max. Híbridos Libres</label>
@@ -113,8 +148,7 @@ if(isset($_POST['update_btn'])){
                         <!-- Botones de Acción -->
                         <div class="row">
                             <div class="col-md-12 text-end">
-                                <!-- Cambia 'admin_reglas.php' por el nombre de tu tabla principal si es distinto -->
-                                <a href="admin_reglas.php" class="btn btn-danger">Cancelar</a>
+                                <a href="reglas_competicion.php" class="btn btn-secondary">Volver al Reglamento</a>
                                 <button type="submit" name="update_btn" class="btn btn-primary">
                                     <i class="fas fa-save"></i> Guardar Cambios
                                 </button>

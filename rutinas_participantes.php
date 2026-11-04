@@ -45,73 +45,112 @@ $id_club_rutina = $data['id_club'];
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
 
-    <div class="p-6 md:p-10 max-w-5xl mx-auto w-full font-lexend text-primary">
+    <div class="px-3 py-4 sm:p-6 md:p-10 max-w-5xl mx-auto w-full font-lexend text-primary">
         
         <!-- Header -->
-        <div class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
-                <h1 class="text-3xl font-black text-slate-800 tracking-tighter mb-2 flex items-center gap-3">
-                    <span class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200"><i class="fas fa-users text-lg"></i></span>
-                    Participantes
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200/60"><?php echo $nombre_club; ?></span>
+                    <span class="text-slate-300">/</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider"><?php echo $nombre_modalidad . ' · ' . $nombre_categoria; ?></span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tight flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 shadow-sm border border-slate-200 shrink-0">
+                        <i class="fas fa-users text-base sm:text-lg"></i>
+                    </span>
+                    <span>Participantes <span class="text-slate-300 font-light mx-1 hidden sm:inline">/</span> <span class="text-blue-600 italic text-xl sm:text-3xl block sm:inline"><?php echo $nombre_rutina ?: 'Rutina #' . $id_rutina; ?></span></span>
                 </h1>
-                <p class="text-slate-500 font-medium"><?php echo $nombre_modalidad." ".$nombre_categoria." - ". $nombre_club.' '.$nombre_rutina; ?></p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                    Asignación oficial · Titulares (<span class="tabular-nums font-bold text-slate-700"><?php echo $numero_participantes; ?></span>) y Reservas (<span class="tabular-nums font-bold text-slate-700"><?php echo $numero_reservas; ?></span>)
+                </p>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="saveAllParticipants()" class="px-6 py-3 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
-                    <i class="fas fa-save"></i> ASIGNAR TODO
+            
+            <div class="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                <button onclick="saveAllParticipants()" class="flex-1 sm:flex-initial justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all flex items-center gap-2">
+                    <i class="fas fa-save text-xs"></i> <span>Asignar Todo</span>
                 </button>
-                <a href="rutinas.php" class="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-black uppercase text-xs tracking-widest rounded-2xl shadow-sm hover:bg-slate-50 transition-all flex items-center gap-2">
-                    <i class="fas fa-chevron-left text-xs"></i> Volver
+                <a href="rutinas.php" class="px-4 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 font-bold uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-xs hover:bg-slate-50 active:scale-[0.98] transition-all flex items-center gap-2">
+                    <i class="fas fa-chevron-left text-xs"></i> <span>Volver</span>
                 </a>
             </div>
         </div>
 
         <?php include('includes/alertas_v4.php'); ?>
 
-        <div id="statusMessage" class="mb-6 p-4 rounded-2xl bg-blue-50 border border-blue-100 flex items-center gap-3 text-blue-700 font-medium transition-all">
-            <i class="fas fa-info-circle"></i>
-            <span id="statusText">Selecciona las nadadoras para los puestos disponibles.</span>
+        <!-- Mensaje de Estado Reactivo -->
+        <div id="statusMessage" class="mb-4 sm:mb-6 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-blue-50 border border-blue-100 flex items-center gap-3 text-blue-700 text-xs sm:text-sm font-medium transition-all shadow-xs">
+            <i class="fas fa-info-circle text-base shrink-0"></i>
+            <span id="statusText">Selecciona las nadadoras para los puestos disponibles y pulsa guardar o "Asignar Todo".</span>
         </div>
 
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden mb-10">
-            <div class="p-8 border-b border-slate-100 bg-slate-50/50">
-                <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
-                    <span class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm"><i class="fas fa-id-badge"></i></span>
-                    Titulares (<?php echo $numero_participantes; ?>)
+        <!-- BLOQUE TITULARES -->
+        <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200/80 overflow-hidden mb-6 sm:mb-10 border-t-4 border-t-blue-500">
+            <div class="p-4 sm:p-6 md:p-8 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs sm:text-sm shadow-inner"><i class="fas fa-id-badge"></i></span>
+                    <span>Titulares</span>
                 </h3>
+                <span class="px-3 py-1 bg-blue-100/70 text-blue-700 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-wider tabular-nums">
+                    <?php echo $numero_participantes; ?> plazas
+                </span>
             </div>
             
-            <div class="p-8 space-y-4" id="titulares-container">
+            <div class="p-3 sm:p-6 md:p-8 space-y-3 sm:space-y-4" id="titulares-container">
                 <?php for ($x=0; $x<$numero_participantes; $x++): 
                     $query_p = "SELECT * FROM rutinas_participantes WHERE id_rutina=$id_rutina AND reserva='no' LIMIT $x,1";
                     $participante = mysqli_fetch_assoc(mysqli_query($connection, $query_p));
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-blue-200 transition-colors">
-                        <div class="md:col-span-2">
-                            <span class="px-3 py-1 bg-blue-600 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">TITULAR <?php echo $x+1; ?></span>
+                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form p-3 sm:p-4 bg-slate-50/60 rounded-xl sm:rounded-2xl border border-slate-200/70 hover:border-blue-300 transition-all flex flex-col md:grid md:grid-cols-12 gap-2.5 sm:gap-4 md:items-center">
+                        <input type="hidden" name="id" value="<?php echo $id_registro; ?>">
+                        <input type="hidden" name="reserva" value="no">
+
+                        <!-- Header en Móvil / Columna 1 en Desktop -->
+                        <div class="flex items-center justify-between md:col-span-3">
+                            <span class="px-2.5 py-1 bg-blue-600 text-white text-[9px] sm:text-[10px] font-black uppercase rounded-lg tracking-wider shadow-xs">
+                                TITULAR <?php echo $x+1; ?>
+                            </span>
+
+                            <!-- Acciones Mobile (< md) -->
+                            <div class="flex md:hidden items-center gap-1.5">
+                                <?php if ($id_nadadora > 0): ?>
+                                    <button type="submit" name="update_btn" class="h-8 px-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center text-xs font-bold active:scale-[0.97] transition-all gap-1.5 shadow-xs" title="Actualizar">
+                                        <i class="fas fa-save text-[11px]"></i> <span>Guardar</span>
+                                    </button>
+                                    <button type="submit" name="delete_btn" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 border border-red-200/80 flex items-center justify-center active:scale-[0.97] transition-all shadow-xs" title="Quitar">
+                                        <i class="fas fa-trash-alt text-[11px]"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <button type="submit" name="save_btn" class="h-8 px-3 bg-blue-600 text-white font-black uppercase text-[10px] tracking-wider rounded-lg shadow-sm active:scale-[0.97] transition-all flex items-center gap-1">
+                                        <i class="fas fa-plus text-[9px]"></i> <span>Asignar</span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="md:col-span-8">
+
+                        <!-- Selector de Nadadora -->
+                        <div class="w-full md:col-span-7">
                             <?php 
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora w-full text-xs sm:text-sm font-bold"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
                             ?>
                         </div>
-                        <div class="md:col-span-2 flex justify-end gap-2">
-                            <input type="hidden" name="id" value="<?php echo $id_registro; ?>">
-                            <input type="hidden" name="reserva" value="no">
+
+                        <!-- Acciones Desktop (>= md) -->
+                        <div class="hidden md:flex md:col-span-2 justify-end gap-2">
                             <?php if ($id_nadadora > 0): ?>
-                                <button type="submit" name="update_btn" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Actualizar">
+                                <button type="submit" name="update_btn" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-xs active:scale-95" title="Actualizar">
                                     <i class="fas fa-save text-xs"></i>
                                 </button>
-                                <button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Quitar">
+                                <button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200/60 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-xs active:scale-95" title="Quitar">
                                     <i class="fas fa-trash-alt text-xs"></i>
                                 </button>
                             <?php else: ?>
-                                <button type="submit" name="save_btn" class="w-full py-2.5 bg-blue-600 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">
+                                <button type="submit" name="save_btn" class="w-full py-2.5 bg-blue-600 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-md hover:bg-blue-700 active:scale-95 transition-all">
                                     Asignar
                                 </button>
                             <?php endif; ?>
@@ -121,46 +160,74 @@ $id_club_rutina = $data['id_club'];
             </div>
         </div>
 
+        <!-- BLOQUE RESERVAS -->
         <?php if($numero_reservas > 0): ?>
-        <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden">
-            <div class="p-8 border-b border-slate-100 bg-amber-50/30">
-                <h3 class="text-lg font-black text-slate-800 flex items-center gap-3">
-                    <span class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-sm"><i class="fas fa-id-badge"></i></span>
-                    Reservas (<?php echo $numero_reservas; ?>)
+        <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200/80 overflow-hidden border-t-4 border-t-amber-500">
+            <div class="p-4 sm:p-6 md:p-8 border-b border-slate-100 bg-amber-50/30 flex items-center justify-between">
+                <h3 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2.5 sm:gap-3">
+                    <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-xs sm:text-sm shadow-inner"><i class="fas fa-id-badge"></i></span>
+                    <span>Reservas</span>
                 </h3>
+                <span class="px-3 py-1 bg-amber-100/70 text-amber-700 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-wider tabular-nums">
+                    <?php echo $numero_reservas; ?> plazas
+                </span>
             </div>
             
-            <div class="p-8 space-y-4" id="reservas-container">
+            <div class="p-3 sm:p-6 md:p-8 space-y-3 sm:space-y-4" id="reservas-container">
                 <?php for ($x=0; $x<$numero_reservas; $x++): 
                     $query_p = "SELECT * FROM rutinas_participantes WHERE id_rutina=$id_rutina AND reserva='si' LIMIT $x,1";
                     $participante = mysqli_fetch_assoc(mysqli_query($connection, $query_p));
                     $id_nadadora = $participante['id_nadadora'] ?? 0;
                     $id_registro = $participante['id'] ?? 0;
                 ?>
-                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form grid grid-cols-1 md:grid-cols-12 gap-4 items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-amber-200 transition-colors">
-                        <div class="md:col-span-2">
-                            <span class="px-3 py-1 bg-amber-500 text-white text-[10px] font-black uppercase rounded-lg tracking-widest">RESERVA <?php echo $x+1; ?></span>
+                    <form action="rutinas_participantes_code.php" method="POST" onsubmit="return validateIndividual(this)" class="participant-form p-3 sm:p-4 bg-slate-50/60 rounded-xl sm:rounded-2xl border border-slate-200/70 hover:border-amber-300 transition-all flex flex-col md:grid md:grid-cols-12 gap-2.5 sm:gap-4 md:items-center">
+                        <input type="hidden" name="id" value="<?php echo $id_registro; ?>">
+                        <input type="hidden" name="reserva" value="si">
+
+                        <!-- Header en Móvil / Columna 1 en Desktop -->
+                        <div class="flex items-center justify-between md:col-span-3">
+                            <span class="px-2.5 py-1 bg-amber-500 text-white text-[9px] sm:text-[10px] font-black uppercase rounded-lg tracking-wider shadow-xs">
+                                RESERVA <?php echo $x+1; ?>
+                            </span>
+
+                            <!-- Acciones Mobile (< md) -->
+                            <div class="flex md:hidden items-center gap-1.5">
+                                <?php if ($id_nadadora > 0): ?>
+                                    <button type="submit" name="update_btn" class="h-8 px-3 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/80 flex items-center justify-center text-xs font-bold active:scale-[0.97] transition-all gap-1.5 shadow-xs" title="Actualizar">
+                                        <i class="fas fa-save text-[11px]"></i> <span>Guardar</span>
+                                    </button>
+                                    <button type="submit" name="delete_btn" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 border border-red-200/80 flex items-center justify-center active:scale-[0.97] transition-all shadow-xs" title="Quitar">
+                                        <i class="fas fa-trash-alt text-[11px]"></i>
+                                    </button>
+                                <?php else: ?>
+                                    <button type="submit" name="save_btn" class="h-8 px-3 bg-amber-500 text-white font-black uppercase text-[10px] tracking-wider rounded-lg shadow-sm active:scale-[0.97] transition-all flex items-center gap-1">
+                                        <i class="fas fa-plus text-[9px]"></i> <span>Asignar</span>
+                                    </button>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                        <div class="md:col-span-8">
+
+                        <!-- Selector de Nadadora -->
+                        <div class="w-full md:col-span-7">
                             <?php 
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
-                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
+                            echo str_replace('<select', '<select name="id_nadadora" class="v3-select-fix select-nadadora w-full text-xs sm:text-sm font-bold"', preg_replace('/<label.*?>.*?<\/label>/i', '', $select_html));
                             ?>
                         </div>
-                        <div class="md:col-span-2 flex justify-end gap-2">
-                            <input type="hidden" name="id" value="<?php echo $id_registro; ?>">
-                            <input type="hidden" name="reserva" value="si">
+
+                        <!-- Acciones Desktop (>= md) -->
+                        <div class="hidden md:flex md:col-span-2 justify-end gap-2">
                             <?php if ($id_nadadora > 0): ?>
-                                <button type="submit" name="update_btn" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-sm" title="Actualizar">
+                                <button type="submit" name="update_btn" class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-all shadow-xs active:scale-95" title="Actualizar">
                                     <i class="fas fa-save text-xs"></i>
                                 </button>
-                                <button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm" title="Quitar">
+                                <button type="submit" name="delete_btn" class="w-10 h-10 rounded-xl bg-red-50 text-red-600 border border-red-200/60 flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-xs active:scale-95" title="Quitar">
                                     <i class="fas fa-trash-alt text-xs"></i>
                                 </button>
                             <?php else: ?>
-                                <button type="submit" name="save_btn" class="w-full py-2.5 bg-amber-500 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-lg hover:scale-105 transition-all">
+                                <button type="submit" name="save_btn" class="w-full py-2.5 bg-amber-500 text-white font-black uppercase text-[10px] tracking-widest rounded-xl shadow-md hover:bg-amber-600 active:scale-95 transition-all">
                                     Asignar
                                 </button>
                             <?php endif; ?>
@@ -186,17 +253,17 @@ function updateStatus(type, message) {
     const text = document.getElementById('statusText');
     const icon = container.querySelector('i');
 
-    container.className = 'mb-6 p-4 rounded-2xl flex items-center gap-3 font-medium transition-all border';
+    container.className = 'mb-4 sm:mb-6 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl flex items-center gap-3 font-medium transition-all border text-xs sm:text-sm shadow-xs';
     
     if (type === 'error') {
         container.classList.add('bg-red-50', 'border-red-200', 'text-red-700');
-        icon.className = 'fas fa-exclamation-circle';
+        icon.className = 'fas fa-exclamation-circle text-base shrink-0';
     } else if (type === 'success') {
         container.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-700');
-        icon.className = 'fas fa-check-circle';
+        icon.className = 'fas fa-check-circle text-base shrink-0';
     } else {
         container.classList.add('bg-blue-50', 'border-blue-200', 'text-blue-700');
-        icon.className = 'fas fa-info-circle';
+        icon.className = 'fas fa-info-circle text-base shrink-0';
     }
     text.textContent = message;
 }
@@ -224,7 +291,6 @@ function validateIndividual(form) {
         if (sVal !== '' && sVal !== ' ') {
             if (swimmerIds.includes(sVal)) {
                 duplicateFound = true;
-                // Marcar todos los que tengan este ID
                 selects.forEach(s => {
                     if (s.value.trim() === sVal) {
                         s.style.setProperty('border-color', '#ef4444', 'important');
@@ -240,12 +306,18 @@ function validateIndividual(form) {
 
     if (duplicateFound) {
         updateStatus('error', 'Error: Se han detectado nadadoras duplicadas. No se puede realizar la asignación.');
-        Swal.fire({
-            icon: 'error',
-            title: 'Validación Fallida',
-            text: 'Esta nadadora ya está seleccionada en otro puesto de la rutina.',
-            confirmButtonColor: '#3b82f6'
-        });
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validación Fallida',
+                text: 'Esta nadadora ya está seleccionada en otro puesto de la rutina.',
+                confirmButtonColor: '#3b82f6',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl px-6 py-3 font-black uppercase text-xs'
+                }
+            });
+        }
         return false;
     }
 
@@ -276,7 +348,6 @@ function saveAllParticipants() {
         if (val !== '' && val !== ' ') {
             if (swimmerIds.includes(val)) {
                 duplicateFound = true;
-                // Marcar todos los que tengan este ID
                 selects.forEach(s => {
                     if (s.value.trim() === val) {
                         s.style.setProperty('border-color', '#ef4444', 'important');
@@ -296,12 +367,18 @@ function saveAllParticipants() {
 
     if (duplicateFound) {
         updateStatus('error', 'Error: Se han detectado nadadoras duplicadas en la misma rutina.');
-        Swal.fire({
-            icon: 'error',
-            title: 'Validación Fallida',
-            text: 'Una nadadora no puede ser asignada varias veces. Revisa los campos marcados.',
-            confirmButtonColor: '#3b82f6'
-        });
+        if(typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validación Fallida',
+                text: 'Una nadadora no puede ser asignada varias veces. Revisa los campos marcados.',
+                confirmButtonColor: '#3b82f6',
+                customClass: {
+                    popup: 'rounded-[2rem]',
+                    confirmButton: 'rounded-xl px-6 py-3 font-black uppercase text-xs'
+                }
+            });
+        }
         return;
     }
 

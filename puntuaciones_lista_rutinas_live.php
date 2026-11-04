@@ -11,14 +11,14 @@ if ($id_comp == 0 && $_SESSION['id_rol'] == 1 && isset($_SESSION['id_competicion
 }
 
 // Obtener info de la fase
-$query_fase = "SELECT c.nombre as categoria, m.nombre as modalidad 
+$query_fase = "SELECT c.nombre as categoria, m.nombre as modalidad, f.genero 
                FROM fases f 
                JOIN categorias c ON f.id_categoria = c.id 
                JOIN modalidades m ON f.id_modalidad = m.id 
                WHERE f.id = $id_fase";
 $res_fase = mysqli_query($connection, $query_fase);
 $info_fase = mysqli_fetch_assoc($res_fase);
-$nombre_modalidad = $info_fase['modalidad'] ?? 'Desconocida';
+$nombre_modalidad = ($info_fase['modalidad'] ?? 'Desconocida') . ((($info_fase['genero'] ?? '') === 'masculino') ? ' Masc' : '');
 $nombre_categoria = $info_fase['categoria'] ?? 'Desconocida';
 ?>
 
