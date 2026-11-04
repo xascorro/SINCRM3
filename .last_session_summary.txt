@@ -1,17 +1,25 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 12:58 CET
-Commit: feat(sidebar): rediseño visual v4 con brand header, fondo oceanic midnight, tree guide y estados activos linear
+Fecha: 2026-11-04 13:05 CET
+Commit: feat(equipo): rediseño visual v4 de mi_equipo.php con vista dual, avatares, KPIs y filtros de censo
 
 1. Resumen de Actuaciones Completadas:
-- Rediseño Gráfico Integral del Sidebar / Navbar (includes/navbar.php & includes/header.php):
-  * Fondo "Oceanic Midnight" ultra-premium (#0b1329 a #070d1e con suave tinte cian/azul) sustituyendo el degradado plano anterior.
-  * Brand Header renovado: contenedor del logo estilizado con halo y border hairline, display de marca con tipografía tracking-tight y pill de versión 'v4' integrada.
-  * Contenedores de iconos de navegación con cajas geométricas redondeadas (w-9 h-9 rounded-xl), fondo translúcido y sutil brillo al hover.
-  * Árbol de submenús ('Tree guide') con línea divisoria izquierda (border-l border-white/10) y micro-dots indicadores al estar activo.
-  * Estados activos refinados (.nav-item-active y .sub-nav-item-active): fondo con degradado linear acuático suave y borde izquierdo/superior iluminado.
-  * Botón inferior de colapso y versión rediseñados para máxima ergonomía visual.
+- Rediseño Integral de Mi Equipo (mi_equipo.php):
+  * Cabecera renovada: badge de escudo del club con fallback de iniciales y soporte para código de club y federación autonómica.
+  * Selector zero-gray para Administradores con recarga instantánea para inspección de cualquier club.
+  * 4 KPIs con diseño v4 y `tabular-nums`: Staff Técnico, Censo de Nadadoras, Edad Promedio y Cobertura de Licencias Oficiales (total y %).
+  * Sección Staff Técnico / Compañeros:
+    - Avatares reales de usuarios o iniciales con gradiente acuático si no disponen de foto.
+    - Enlaces directos a email (`mailto:`) y teléfono (`tel:`).
+    - Buscador reactivo en tiempo real con recuento dinámico.
+    - Vista dual (tabla de alta densidad en desktop y tarjetas táctiles en móvil).
+  * Sección Censo de Atletas / Nadadoras:
+    - Buscador reactivo por apellidos, nombre, año, categoría o licencia.
+    - Filtros por chips ("Todas", "Con Licencia", "Sin Licencia").
+    - Cálculo dinámico de edad y asignación automática de categoría (Benjamín, Alevín, Infantil, Junior, Absoluto).
+    - Vista dual (tabla con cabecera pegajosa en desktop y tarjetas de deportista en móvil).
+    - Acceso rápido a edición para Administradores y Clubes.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l (0 errores en includes/navbar.php y includes/header.php).
+- Sintaxis PHP validada con php -l en mi_equipo.php (0 errores).
+- Probado el renderizado en CLI tanto en modo CLUB como en modo ROLE (ambos operativos al 100%).
 - Permisos asignados a ubuntu:www-data (664).
-- Subido y sincronizado con GitHub (origin/master).
