@@ -2,7 +2,7 @@
 include('security.php');
 
 $id_fase = $_GET['id_fase'] ?? 0;
-$temporada_año = $_GET['temporada_año'] ?? date('Y');
+$temporada_año = $_GET['temporada_año'] ?? ((intval(date('n')) >= 9) ? (intval(date('Y')) + 1) : intval(date('Y')));
 
 if($id_fase > 0){
     // 1. Obtener la categoría de esta fase

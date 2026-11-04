@@ -40,6 +40,13 @@ include('includes/header.php');
     font-weight: 700 !important;
     color: #1e293b !important;
 }
+.ts-wrapper.tom-select-nadadora .ts-control input::placeholder {
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+}
+.ts-wrapper.tom-select-nadadora.ts-typing .item {
+    display: none !important;
+}
 .ts-dropdown {
     background-color: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
@@ -83,7 +90,7 @@ if(isset($_POST['from_inscripciones'])) {
 $volver_url = (!empty($_SESSION['return_to_inscripciones'])) ? 'inscripciones.php?tab=rutinas' : 'rutinas.php';
 
 // Fetch Routine Details
-$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, 
+$query = "SELECT rutinas.id, rutinas.nombre as nombre_rutina, rutinas.id_fase, rutinas.id_club, fases.id_categoria, 
                  clubes.nombre_corto as nombre_club, modalidades.nombre as nombre_modalidad, 
                  categorias.nombre as nombre_categoria, modalidades.numero_participantes, 
                  modalidades.numero_reservas 
@@ -101,6 +108,30 @@ $data = mysqli_fetch_assoc($res_rutina);
 if(!$data) {
     header('Location: ' . $volver_url);
     exit();
+}
+
+// Año de referencia de temporada para validación de edades (RFEN/AQUA)
+$temporada_año = 0;
+if ($id_competicion > 0) {
+    $q_comp = mysqli_query($connection, "SELECT temporada, fecha FROM competiciones WHERE id = '$id_competicion'");
+    if ($r_comp = mysqli_fetch_assoc($q_comp)) {
+        $t_raw = trim($r_comp['temporada'] ?? '');
+        if (preg_match('/[\/\-](\d{4})/', $t_raw, $m_t)) {
+            $temporada_año = intval($m_t[1]);
+        } elseif (preg_match('/^\d{4}$/', $t_raw)) {
+            $temporada_año = intval($t_raw);
+        } else {
+            $f_ev = new DateTime($r_comp['fecha'] ?? 'now');
+            $m_ev = intval($f_ev->format('n'));
+            $y_ev = intval($f_ev->format('Y'));
+            $temporada_año = ($m_ev >= 9) ? ($y_ev + 1) : $y_ev;
+        }
+    }
+}
+if ($temporada_año <= 0) {
+    $cur_m = intval(date('n'));
+    $cur_y = intval(date('Y'));
+    $temporada_año = ($cur_m >= 9) ? ($cur_y + 1) : $cur_y;
 }
 
 $nombre_modalidad = $data['nombre_modalidad'];
@@ -203,6 +234,9 @@ $id_club_rutina = $data['id_club'];
                         <!-- Selector de Nadadora -->
                         <div class="w-full md:col-span-7">
                             <?php 
+                            $modo_rutina = true;
+                            $id_categoria_rutina = intval($data['id_categoria'] ?? 0);
+                            $temporada_año = $temporada_año;
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
@@ -212,8 +246,7 @@ $id_club_rutina = $data['id_club'];
                                 '<select name="id_nadadora" class="select-nadadora tom-select-nadadora w-full" placeholder="Buscar por apellidos o nombre...">', 
                                 $clean_select
                             );
-                            $clean_select = str_replace("value=' '", 'value=""', $clean_select);
-                            $clean_select = str_replace('value=" "', 'value=""', $clean_select);
+                            $clean_select = preg_replace('/<option[^>]*value=[\'"]\s*[\'"][^>]*>.*?<\/option>/i', '<option value=""></option>', $clean_select);
                             echo $clean_select;
                             ?>
                         </div>
@@ -288,6 +321,9 @@ $id_club_rutina = $data['id_club'];
                         <!-- Selector de Nadadora -->
                         <div class="w-full md:col-span-7">
                             <?php 
+                            $modo_rutina = true;
+                            $id_categoria_rutina = intval($data['id_categoria'] ?? 0);
+                            $temporada_año = $temporada_año;
                             ob_start();
                             include('./includes/nadadoras_select_option.php');
                             $select_html = ob_get_clean();
@@ -297,8 +333,7 @@ $id_club_rutina = $data['id_club'];
                                 '<select name="id_nadadora" class="select-nadadora tom-select-nadadora w-full" placeholder="Buscar por apellidos o nombre...">', 
                                 $clean_select
                             );
-                            $clean_select = str_replace("value=' '", 'value=""', $clean_select);
-                            $clean_select = str_replace('value=" "', 'value=""', $clean_select);
+                            $clean_select = preg_replace('/<option[^>]*value=[\'"]\s*[\'"][^>]*>.*?<\/option>/i', '<option value=""></option>', $clean_select);
                             echo $clean_select;
                             ?>
                         </div>
@@ -344,7 +379,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 create: false,
                 maxItems: 1,
                 closeAfterSelect: true,
-                allowEmptyOption: true,
+                allowEmptyOption: false,
                 dropdownParent: 'body',
                 placeholder: 'Buscar por apellidos o nombre...',
                 render: {
@@ -354,8 +389,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
+            // Ocultar el texto de item o selección previa en cuanto se empieza a escribir
+            ts.on('type', function(str) {
+                if (str && str.trim().length > 0) {
+                    ts.wrapper.classList.add('ts-typing');
+                } else {
+                    ts.wrapper.classList.remove('ts-typing');
+                }
+            });
+            ts.on('blur', function() {
+                ts.wrapper.classList.remove('ts-typing');
+            });
+
             // Al elegir nadadora: cerrar popup, liberar foco y enfocar el botón guardar de la fila
             ts.on('change', function(value) {
+                ts.wrapper.classList.remove('ts-typing');
                 if (value && value.toString().trim() !== '' && value !== '0') {
                     ts.close();
                     ts.blur();

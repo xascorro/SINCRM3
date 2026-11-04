@@ -73,15 +73,19 @@ $comp_data = mysqli_fetch_assoc($res_comp);
 $fecha_evento = new DateTime($comp_data['fecha']);
 $is_figuras = ($comp_data['figuras'] == 'si');
 
-// Extraer año de referencia de la temporada (ej: "2025/2026" -> 2026)
-$temporada_raw = $comp_data['temporada'] ?? '';
+// Extraer año de referencia de la temporada según normativa RFEN/World Aquatics
+// (año en que finaliza la temporada, ej: "2026-2027" o "2026/2027" -> 2027)
+$temporada_raw = trim($comp_data['temporada'] ?? '');
 $temporada_año = 0;
-if(preg_match('/\/(\d{4})/', $temporada_raw, $matches)){
+if(preg_match('/[\/\-](\d{4})/', $temporada_raw, $matches)){
     $temporada_año = intval($matches[1]);
-} elseif(is_numeric($temporada_raw)) {
+} elseif(preg_match('/^\d{4}$/', $temporada_raw)) {
     $temporada_año = intval($temporada_raw);
 } else {
-    $temporada_año = intval($fecha_evento->format('Y'));
+    // Si no está definida la temporada, calcular por fecha de competición (temporada sep-ago)
+    $mes_evento = intval($fecha_evento->format('n'));
+    $año_evento = intval($fecha_evento->format('Y'));
+    $temporada_año = ($mes_evento >= 9) ? ($año_evento + 1) : $año_evento;
 }
 
 $dias_cierre = $comp_data['dias_fin_inscripcion'] ?? 7;

@@ -31,6 +31,13 @@ include('includes/header.php');
     font-weight: 700 !important;
     color: #1e293b !important;
 }
+.ts-wrapper.tom-select-nadadora .ts-control input::placeholder {
+    color: #94a3b8 !important;
+    font-weight: 500 !important;
+}
+.ts-wrapper.tom-select-nadadora.ts-typing .item {
+    display: none !important;
+}
 .ts-dropdown {
     background-color: #ffffff !important;
     border: 1px solid #cbd5e1 !important;
@@ -154,15 +161,19 @@ $enable_musica = ($musica_abierta) ? '' : 'disabled';
 $enable_coach_card = ($cc_abierta) ? '' : 'disabled';
 $enable_inscripcion = ($inscripcion_abierta) ? '' : 'disabled';
 
-// Extraer año de referencia de la temporada (ej: "2025/2026" -> 2026)
-$temporada_raw = $comp_data['temporada'] ?? '';
+// Extraer año de referencia de la temporada según normativa RFEN/World Aquatics
+// (año en que finaliza la temporada, ej: "2026-2027" o "2026/2027" -> 2027)
+$temporada_raw = trim($comp_data['temporada'] ?? '');
 $temporada_año = 0;
-if(preg_match('/\/(\d{4})/', $temporada_raw, $matches)){
+if(preg_match('/[\/\-](\d{4})/', $temporada_raw, $matches)){
     $temporada_año = intval($matches[1]);
-} elseif(is_numeric($temporada_raw)) {
+} elseif(preg_match('/^\d{4}$/', $temporada_raw)) {
     $temporada_año = intval($temporada_raw);
 } else {
-    $temporada_año = intval($fecha_evento->format('Y'));
+    // Si no está definida la temporada, calcular por fecha de competición (temporada sep-ago)
+    $mes_evento = intval($fecha_evento->format('n'));
+    $año_evento = intval($fecha_evento->format('Y'));
+    $temporada_año = ($mes_evento >= 9) ? ($año_evento + 1) : $año_evento;
 }
 
 // 5. KPIs Combinados para la Competición
@@ -422,8 +433,7 @@ $total_clubs = mysqli_fetch_assoc(mysqli_query($connection, $q_clubs_fig))['tota
                                 '<select name="id_nadadora" id="select_nadadora_' . $id_cat . '" required class="tom-select-nadadora w-full" placeholder="Escribe para buscar nadadora por apellidos o nombre...">', 
                                 $clean_select
                             );
-                            $clean_select = str_replace("value=' '", 'value=""', $clean_select);
-                            $clean_select = str_replace('value=" "', 'value=""', $clean_select);
+                            $clean_select = preg_replace('/<option[^>]*value=[\'"]\s*[\'"][^>]*>.*?<\/option>/i', '<option value=""></option>', $clean_select);
                             echo $clean_select;
                             ?>
                         </div>
@@ -815,7 +825,7 @@ function initTomSelectCat(idCat) {
             create: false,
             maxItems: 1,
             closeAfterSelect: true,
-            allowEmptyOption: true,
+            allowEmptyOption: false,
             dropdownParent: 'body',
             placeholder: 'Escribe para buscar nadadora por apellidos o nombre...',
             render: {
@@ -825,8 +835,21 @@ function initTomSelectCat(idCat) {
             }
         });
 
+        // Ocultar el texto de item o selección previa en cuanto se empieza a escribir
+        ts.on('type', function(str) {
+            if (str && str.trim().length > 0) {
+                ts.wrapper.classList.add('ts-typing');
+            } else {
+                ts.wrapper.classList.remove('ts-typing');
+            }
+        });
+        ts.on('blur', function() {
+            ts.wrapper.classList.remove('ts-typing');
+        });
+
         // Al seleccionar nadadora: cerrar popup, liberar foco del buscador y enfocar el botón Registrar
         ts.on('change', function(value) {
+            ts.wrapper.classList.remove('ts-typing');
             if (value && value.toString().trim() !== '' && value !== '0') {
                 ts.close();
                 ts.blur();

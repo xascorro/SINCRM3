@@ -12,6 +12,9 @@ include('includes/navbar.php');
     <!-- Contenido de la Página -->
     <div class="p-6 md:p-10 max-w-5xl mx-auto w-full">
         
+        <?php 
+        $edit_swimmer_id = (int)($_POST['edit_id'] ?? ($_GET['id'] ?? 0)); 
+        ?>
         <!-- Header de Sección -->
         <div class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
@@ -22,15 +25,15 @@ include('includes/navbar.php');
                 <p class="text-slate-500 font-medium">Actualización de expediente y vinculación técnica.</p>
             </div>
             <div class="flex gap-3">
-                <a href="nadadoras.php" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2">
+                <a href="nadadoras.php<?php echo $edit_swimmer_id > 0 ? '#nadadora-'.$edit_swimmer_id : ''; ?>" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2">
                     <i class="fas fa-arrow-left text-xs"></i> Volver
                 </a>
             </div>
         </div>
 
         <?php
-        if(isset($_POST['edit_btn'])):
-            $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+        if(isset($_POST['edit_btn']) || $edit_swimmer_id > 0):
+            $id = $edit_swimmer_id;
             
             // Seguridad: Si es Rol Club (5), verificar que la nadadora le pertenece
             if ($_SESSION['id_rol'] == 5) {
@@ -121,7 +124,7 @@ include('includes/navbar.php');
                 </div>
 
                 <div class="pt-6 flex justify-end gap-4 border-t border-slate-100">
-                    <a href="nadadoras.php" class="px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Cancelar</a>
+                    <a href="nadadoras.php<?php echo $edit_swimmer_id > 0 ? '#nadadora-'.$edit_swimmer_id : ''; ?>" class="px-8 py-4 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors">Cancelar</a>
                     <button type="submit" name="update_btn" class="px-12 py-4 bg-blue-600 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-blue-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
                         <i class="fas fa-save"></i> Guardar Ficha
                     </button>

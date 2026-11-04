@@ -22,12 +22,16 @@ if (!function_exists('get_team_initials')) {
  * Helper para calcular categoría estimada según el año de nacimiento
  */
 if (!function_exists('get_swimmer_category_badge')) {
-    function get_swimmer_category_badge($year) {
+    function get_swimmer_category_badge($year, $season_year = null) {
         if (!$year || intval($year) <= 1900) {
             return ['nombre' => 'S/D', 'class' => 'bg-slate-100 text-slate-500 border-slate-200'];
         }
-        $current_year = intval(date('Y'));
-        $edad = $current_year - intval($year);
+        if (!$season_year) {
+            $cur_m = intval(date('n'));
+            $cur_y = intval(date('Y'));
+            $season_year = ($cur_m >= 9) ? ($cur_y + 1) : $cur_y;
+        }
+        $edad = $season_year - intval($year);
 
         if ($edad <= 8) {
             return ['nombre' => 'Benjamín', 'class' => 'bg-emerald-50 text-emerald-700 border-emerald-200'];
@@ -90,8 +94,13 @@ if ($view_mode == 'CLUB') {
     $q_count_nad = "SELECT COUNT(*) as total FROM nadadoras WHERE club = '$target_club_id' AND activo = 1";
     $total_athletes = intval(mysqli_fetch_assoc(mysqli_query($connection, $q_count_nad))['total'] ?? 0);
 
+    // Año de referencia de temporada deportiva (RFEN: temporada finaliza al año siguiente si mes >= septiembre)
+    $cur_m = intval(date('n'));
+    $cur_y = intval(date('Y'));
+    $season_year = ($cur_m >= 9) ? ($cur_y + 1) : $cur_y;
+
     // KPI 3: Media Edad
-    $q_avg_age = "SELECT AVG(YEAR(CURDATE()) - año_nacimiento) as media FROM nadadoras WHERE club = '$target_club_id' AND activo = 1 AND año_nacimiento > 1900";
+    $q_avg_age = "SELECT AVG($season_year - año_nacimiento) as media FROM nadadoras WHERE club = '$target_club_id' AND activo = 1 AND año_nacimiento > 1900";
     $res_avg = mysqli_query($connection, $q_avg_age);
     $avg_age = $res_avg ? round(floatval(mysqli_fetch_assoc($res_avg)['media'] ?? 0), 1) : 0;
 
@@ -111,7 +120,7 @@ if ($view_mode == 'CLUB') {
     }
 
     // Listado Nadadoras
-    $q_nad = "SELECT n.*, (YEAR(CURDATE()) - n.año_nacimiento) as edad 
+    $q_nad = "SELECT n.*, ($season_year - n.año_nacimiento) as edad 
               FROM nadadoras n 
               WHERE n.club = '$target_club_id' AND n.activo = 1 
               ORDER BY n.apellidos ASC, n.nombre ASC";

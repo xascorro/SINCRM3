@@ -84,7 +84,36 @@ if(isset($_POST['update_btn'])){
 		$_SESSION['estado'] = 'No se pudieron actualizar los datos: ' . $e->getMessage();
     }
 
-    header('Location: nadadoras.php');
+    header('Location: nadadoras.php#nadadora-' . $id);
+    exit();
+}
+
+// CONMUTADOR RÁPIDO ACTIVA / BAJA (AJAX)
+if(isset($_POST['toggle_activo_ajax'])){
+    header('Content-Type: application/json');
+    $id = (int)($_POST['id_nadadora'] ?? 0);
+
+    if (!verificarPropiedadNadadora($connection, $id)) {
+        echo json_encode(['success' => false, 'message' => 'Acceso denegado: sin permisos']);
+        exit();
+    }
+
+    $q_cur = mysqli_query($connection, "SELECT activo, nombre, apellidos FROM nadadoras WHERE id = $id");
+    if ($row = mysqli_fetch_assoc($q_cur)) {
+        $nuevo_activo = ($row['activo'] == 1) ? 0 : 1;
+        $q_upd = "UPDATE nadadoras SET activo = $nuevo_activo WHERE id = $id";
+        if (mysqli_query($connection, $q_upd)) {
+            $estado_txt = $nuevo_activo ? "ACTIVA" : "BAJA";
+            write_log("Nadadora conmutada a $estado_txt (ID: $id): " . $row['nombre'] . " " . $row['apellidos'], "INFO");
+            echo json_encode([
+                'success' => true,
+                'nuevo_activo' => $nuevo_activo,
+                'estado_txt' => $estado_txt
+            ]);
+            exit();
+        }
+    }
+    echo json_encode(['success' => false, 'message' => 'Error al conmutar estado']);
     exit();
 }
 

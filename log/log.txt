@@ -514,3 +514,102 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-11-04 11:19:02] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
 [2026-11-04 11:23:24] [SUCCESS] [club@club.com] [10.0.2.20] Inscripción realizada para SORIA GARCÍA, MARTINA en competición #81
 [2026-11-04 11:23:38] [SUCCESS] [club@club.com] [10.0.2.20] Rutina #773 inscrita con éxito (Fase #437, Club #1, Comp #81)
+[2026-11-04 12:02:50] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 12:03:14] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 12:03:25] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 12:03:39] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:04:00] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 12:04:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:04:17] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:04:34] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:06:18] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:06:27] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:12:03] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:12:08] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:13:28] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:13:37] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:17:20] [SECURITY] [xascorro@gmail.com] [10.0.2.20] LIMPIEZA DE COMPETICIÓN (LIMPIEZA SELECTIVA): IDs [57]. Módulos: [musica, coach_cards, inscripciones, puntuaciones, sorteos, documentos]. Registros/Archivos afectados: 1044
+[2026-11-04 12:43:32] [INFO] [xascorro@gmail.com] [10.0.2.20] Avatar actualizado para usuario ID 9 (elenacerondiaz@gmail.com)
+[2026-11-04 12:43:32] [INFO] [xascorro@gmail.com] [10.0.2.20] Usuario actualizado (ID: 9): elenacerondiaz@gmail.com
+[2026-11-04 12:44:09] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:44:12] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 12:44:17] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 12:44:20] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 12:49:35] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 12:49:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 13:07:53] [SECURITY] [xascorro@gmail.com] [10.0.2.20] LIMPIEZA DE COMPETICIÓN (LIMPIEZA SELECTIVA): IDs [81]. Módulos: [musica, coach_cards, inscripciones, puntuaciones, sorteos, documentos]. Registros/Archivos afectados: 29
+[2026-11-04 13:45:57] [SUCCESS] [laura.manzanerasanchez@clubsincroalhama.com] [10.0.2.20] Inicio de sesión exitoso: Laura Manzanera (Club) - Club: Club Sincro Alhama
+[2026-11-04 18:06:54] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 18:07:35] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 20:51:57] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 20:52:05] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 20:52:30] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 20:52:38] [INFO] [SISTEMA] [10.0.2.20] OTP generado y enviado para xascorro@gmail.com
+[2026-11-04 20:53:16] [SECURITY] [SISTEMA] [10.0.2.20] Intento de verificación de OTP fallido para xascorro@gmail.com
+[2026-11-04 20:53:24] [SECURITY] [SISTEMA] [10.0.2.20] Intento de verificación de OTP fallido para xascorro@gmail.com
+[2026-11-04 21:47:39] [WARNING] [SISTEMA] [10.0.2.20] Intento de acceso sin verificar email: elenacerondiaz@gmail.com
+[2026-11-04 21:47:43] [INFO] [SISTEMA] [10.0.2.20] Reenvío de verificación solicitado para elenacerondiaz@gmail.com
+[2026-11-04 21:48:22] [SUCCESS] [SISTEMA] [10.0.2.20] Email verificado con éxito: elenacerondiaz@gmail.com
+[2026-11-04 21:48:33] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Elena Cerón  (Club) - Club: Club Sincro Alhama
+[2026-11-04 21:49:00] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para IANCU, MARÍA ANGÉLICA en competición #81
+[2026-11-04 21:49:09] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para MARTÍNEZ MUÑOZ, GALA en competición #81
+[2026-11-04 21:49:14] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para CAJA GRZEGORZEWSKA, AMELIA en competición #81
+[2026-11-04 21:49:25] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para ENRIQUEZ PEDREÑO, EMMA en competición #81
+[2026-11-04 21:49:34] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para MARTÍNEZ OTALORA, ÁFRICA en competición #81
+[2026-11-04 21:49:42] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para SÁNCHEZ ALCARAZ, MAR en competición #81
+[2026-11-04 21:49:58] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para NAVAZO TERUEL, LUCÍA en competición #81
+[2026-11-04 21:50:12] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para PÉREZ ORTEGA, PAULA en competición #81
+[2026-11-04 21:50:20] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para MELLADO COSTA, NATALIA en competición #81
+[2026-11-04 21:51:31] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para LEGAZ LEGAZ, CELIA en competición #81
+[2026-11-04 21:51:38] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para MIRAS CAMÚÑEZ, ALMUDENA en competición #81
+[2026-11-04 21:51:45] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para DÍAZ DÍAZ, CRISTINA en competición #81
+[2026-11-04 21:51:57] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para VICENTE MARTÍNEZ, MARTINA en competición #81
+[2026-11-04 21:52:14] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Inscripción realizada para PEDROSA HERNÁIZ, LEIRE en competición #81
+[2026-11-04 21:53:41] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #774 inscrita con éxito (Fase #435, Club #1, Comp #81)
+[2026-11-04 21:53:49] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #775 inscrita con éxito (Fase #435, Club #1, Comp #81)
+[2026-11-04 21:54:06] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #71 añadida a rutina #774
+[2026-11-04 21:54:28] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #59 añadida a rutina #775
+[2026-11-04 21:54:41] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #776 inscrita con éxito (Fase #440, Club #1, Comp #81)
+[2026-11-04 21:54:49] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #777 inscrita con éxito (Fase #440, Club #1, Comp #81)
+[2026-11-04 21:54:59] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #68 añadida a rutina #776
+[2026-11-04 21:55:16] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #60 añadida a rutina #777
+[2026-11-04 21:55:46] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #778 inscrita con éxito (Fase #437, Club #1, Comp #81)
+[2026-11-04 21:56:04] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #71 añadida a rutina #778
+[2026-11-04 21:56:11] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #68 añadida a rutina #778
+[2026-11-04 21:56:27] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #779 inscrita con éxito (Fase #437, Club #1, Comp #81)
+[2026-11-04 21:56:38] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #59 añadida a rutina #779
+[2026-11-04 21:57:25] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #60 añadida a rutina #779
+[2026-11-04 21:57:34] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Rutina #780 inscrita con éxito (Fase #439, Club #1, Comp #81)
+[2026-11-04 21:57:45] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #71 añadida a rutina #780
+[2026-11-04 21:57:50] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #68 añadida a rutina #780
+[2026-11-04 21:57:56] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #59 añadida a rutina #780
+[2026-11-04 21:58:01] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.20] Participante #614 añadida a rutina #780
+[2026-11-04 21:58:52] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Participante actualizada en registro #2106
+[2026-11-04 21:59:37] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 69): ROCIO CORBALÁN MERINO | Estado: BAJA
+[2026-11-04 21:59:47] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 66): MARIELA CAZORLA BENEDICTO | Estado: BAJA
+[2026-11-04 21:59:56] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 449): MARTINA CRESPO LOPEZ | Estado: BAJA
+[2026-11-04 22:00:06] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 496): GLORIA DEL BARCO STROINSKA | Estado: BAJA
+[2026-11-04 22:00:15] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 616): PAULA FERNANDEZ MIRAS | Estado: BAJA
+[2026-11-04 22:00:23] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 437): DANNA YULISA INTRIAGO VILLEJAS | Estado: BAJA
+[2026-11-04 22:00:35] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 446): NATALIA HERRAIZ MARCOS | Estado: BAJA
+[2026-11-04 22:00:50] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 70): AMAYA MELLADO COSTA | Estado: BAJA
+[2026-11-04 22:01:12] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 440): MARÍA THALÍA RUBIRA JÓDAR | Estado: BAJA
+[2026-11-04 22:01:32] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 273): CELIA SÁNCHEZ VELAZQUEZ | Estado: BAJA
+[2026-11-04 22:01:43] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 72): ALICIA SOTO MARTÍNEZ | Estado: BAJA
+[2026-11-04 22:02:06] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 57): MARTA SOTO MARTÍNEZ | Estado: BAJA
+[2026-11-04 22:02:48] [INFO] [elenacerondiaz@gmail.com] [10.0.2.20] Nadadora actualizada (ID: 433): ISABEL VARCARCEL FERNÁNDEZ | Estado: BAJA
+[2026-11-04 22:19:37] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 22:42:58] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-04 22:43:00] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-04 22:43:07] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-04 22:46:49] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-04 22:46:54] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 23:05:50] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 23:05:57] [SUCCESS] [club@club.com] [10.0.2.20] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-04 23:13:29] [INFO] [Pedro Díaz] [0.0.0.0] Nadadora conmutada a BAJA (ID: 614): ANGELA BARQUEROS ROMERO
+[2026-11-04 23:13:33] [INFO] [Pedro Díaz] [0.0.0.0] Nadadora conmutada a ACTIVA (ID: 614): ANGELA BARQUEROS ROMERO
+[2026-11-04 23:16:02] [INFO] [club@club.com] [10.0.2.20] Nadadora actualizada (ID: 499): ARIANA GRISEL LÓPEZ ROCHE | Estado: ACTIVA
+[2026-11-04 23:24:10] [INFO] [club@club.com] [10.0.2.20] Cierre de sesión: club@club.com
+[2026-11-04 23:24:18] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 23:26:02] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Categoría ID#238 actualizada: ABSOLUTO [AB]
+[2026-11-04 23:26:26] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Categoría ID#246 actualizada: MIXTO ABSOLUTO [MA]

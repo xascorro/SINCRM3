@@ -1,20 +1,35 @@
-=== SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 13:09 CET
-Commit: feat(ui): sidebar en modo claro y corrección del isotipo de sincrm con recorte nítido
+=== SESION SINCRM: SOLAPAMIENTO OFICIAL RFEN/AQUA EN RUTINAS Y EDADES ===
+Fecha: 2026-11-04 23:33 CET
+Archivos modificados:
+  - includes/nadadoras_select_option.php
+  - rutinas_participantes_code.php
+  - rutinas_participantes.php
+  - nadadoras.php
+  - nadadoras_edit.php
+  - nadadoras_code.php
+  - inscripciones.php
+  - inscripciones_figuras.php
+  - inscripciones_figuras_ajax_nadadoras.php
+  - mi_equipo.php
 
 1. Resumen de Actuaciones Completadas:
-- Corrección de Visibilidad del Logo en Botón de Inicio:
-  * El logo original (`logo_sincrm4.png`) tenía márgenes blancos masivos y un efecto `mix-blend-multiply` que lo hacía desaparecer.
-  * Se generó `img/logo_sincrm_icon.png` recortado con transparencia nítida y proporciones optimizadas al 100% de la silueta/texto.
-  * Se insertó en un contenedor blanco satinado (`w-11 h-11`) con bordes suaves que realzan la silueta rosa y la tipografía negra de SINCRM con nitidez total.
-- Sidebar en Modo Claro (Light Mode):
-  * Fondo `bg-white` puro con borde lateral hairline `border-slate-200/80`.
-  * Estados inactivos con tipografía oscura de alto contraste (`text-slate-600` / `text-slate-900`) e iconos en contenedores suaves `bg-slate-100 text-slate-500`.
-  * Estados activos (`nav-item-active` y `sub-nav-item-active`) con pastillas `bg-blue-50`, texto `text-blue-700` e iconos en azul royal vibrante con sombra.
-  * Líneas guía de submenú (`border-l-2 border-slate-200/80`) y botón inferior de compactar integrado en tonos claros elegantes.
-  * Aplicado transversalmente a los paneles de Administrador, Club y Juez.
+- Soporte de Solapamiento Oficial de Categorías en Natación Artística (RFEN / World Aquatics):
+  * Verificación normativa para la temporada 2026-2027 (año de cálculo 2027):
+    - Una nadadora nacida en 2009 cumple 18 años.
+    - Es de edad Junior (15-18 años) y a la vez cumple de sobra los requisitos para nadar en Absoluto (a partir de 15 años).
+  * Migración del motor de validación en rutinas:
+    - En lugar de escalones cerrados no solapables, la validación toma directamente `edad_minima` y `edad_maxima` configurados en la tabla `categorias`.
+    - Esto permite que cualquier cambio en `categorias.php` (ej. Junior 15-18 y Absoluto 15-99) aplique de inmediato sin tocar código.
+    - Respeta avisos elegantes `[DEMASIADO JOVEN: X años]` y `[DEMASIADO MAYOR: X años]`.
+- Reposicionamiento Automático y Destacado Visual (Scroll-to & Hash) en Nadadoras.
+- Conmutador Rápido de Estado (Activa / Baja) Directo vía AJAX.
+- Reactividad al teclear en TomSelect de búsqueda.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l en includes/navbar.php y includes/header.php (0 errores).
-- Probado el renderizado en CLI.
-- Permisos asignados a ubuntu:www-data (664).
+- Pruebas CLI ejecutadas con casos reales:
+  * 2009 (18 años) en Junior (15-18): PERMITIDA.
+  * 2009 (18 años) en Absoluto (15-99): PERMITIDA.
+  * 2016 (11 años) en Junior: BLOQUEADA (demasiado joven).
+  * 2000 (27 años) en Junior: BLOQUEADA (demasiado mayor).
+  * 2000 (27 años) en Absoluto: PERMITIDA.
+- `php -l` verificado con 0 errores de sintaxis en todos los ficheros.

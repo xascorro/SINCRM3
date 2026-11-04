@@ -8,11 +8,15 @@ if(isset($_SESSION['club']) && $_SESSION['club'] > 0){
     $condicion_club = " AND n.club = ".$_SESSION['club'];
 }
 
-// 1. Cálculos de KPIs
+// 1. Cálculos de KPIs (Año de referencia de temporada deportiva RFEN: año de finalización)
+$cur_m = intval(date('n'));
+$cur_y = intval(date('Y'));
+$season_year = ($cur_m >= 9) ? ($cur_y + 1) : $cur_y;
+
 $q_stats = "SELECT 
             COUNT(*) as total,
             SUM(CASE WHEN n.activo = 1 THEN 1 ELSE 0 END) as activas,
-            AVG(YEAR(CURRENT_DATE) - n.año_nacimiento) as edad_media,
+            AVG($season_year - n.año_nacimiento) as edad_media,
             COUNT(DISTINCT n.club) as total_clubes
             FROM nadadoras n WHERE 1=1 $condicion_club";
 $res_stats = mysqli_query($connection, $q_stats);
@@ -21,6 +25,17 @@ $stats = mysqli_fetch_assoc($res_stats);
 
 <!-- Contenedor Principal -->
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
+    <style>
+    @keyframes swimmerHighlight {
+        0% { background-color: rgba(37, 99, 235, 0.22); transform: scale(1.004); }
+        50% { background-color: rgba(37, 99, 235, 0.10); }
+        100% { background-color: transparent; transform: scale(1); }
+    }
+    .highlight-row {
+        animation: swimmerHighlight 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+        border-radius: 0.75rem;
+    }
+    </style>
     
     <?php include('includes/topbar.php'); ?>
 
@@ -145,7 +160,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                     <?php foreach ($nadadoras_list as $row): 
                         $is_active = ($row['activo'] == 1);
                     ?>
-                    <div class="nadadora-mobile-card p-3.5 sm:p-4 hover:bg-slate-50/60 transition-colors <?php echo !$is_active ? 'opacity-40 bg-slate-50' : ''; ?>"
+                    <div id="nadadora-card-<?php echo $row['id']; ?>" class="nadadora-mobile-card p-3.5 sm:p-4 hover:bg-slate-50/60 transition-all <?php echo !$is_active ? 'opacity-40 bg-slate-50' : ''; ?>"
                          data-search="<?php echo htmlspecialchars(strtolower($row['apellidos'].' '.$row['nombre'].' '.$row['id'].' '.$row['año_nacimiento'].' '.$row['licencia'].' '.$row['club_nombre'])); ?>">
                         <div class="flex items-start justify-between gap-2.5 mb-2">
                             <div class="min-w-0 flex-1">
@@ -154,9 +169,11 @@ $stats = mysqli_fetch_assoc($res_stats);
                                 </h3>
                                 <div class="flex flex-wrap items-center gap-1.5 mt-1">
                                     <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider tabular-nums">ID #<?php echo $row['id']; ?></span>
-                                    <?php if (!$is_active): ?>
-                                        <span class="px-1.5 py-0.5 bg-red-50 text-red-500 text-[8px] font-black rounded border border-red-100 uppercase">Inactiva</span>
-                                    <?php endif; ?>
+                                    <button type="button" onclick="toggleEstadoNadadora(<?php echo $row['id']; ?>, this)" 
+                                            class="status-toggle-btn px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider transition-all active:scale-95 inline-flex items-center gap-1 <?php echo $is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200'; ?>">
+                                        <i class="fas <?php echo $is_active ? 'fa-check' : 'fa-xmark'; ?> text-[8px]"></i>
+                                        <span><?php echo $is_active ? 'ACTIVA' : 'BAJA'; ?></span>
+                                    </button>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1.5 shrink-0">
@@ -202,6 +219,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                             <th class="px-4 py-4 text-center">Año</th>
                             <th class="px-4 py-4">Licencia</th>
                             <th class="px-4 py-4">Club</th>
+                            <th class="px-4 py-4 text-center">Estado</th>
                             <th class="px-4 py-4 text-center w-32">Acciones</th>
                         </tr>
                     </thead>
@@ -209,7 +227,7 @@ $stats = mysqli_fetch_assoc($res_stats);
                         <?php foreach ($nadadoras_list as $row): 
                             $is_active = ($row['activo'] == 1);
                         ?>
-                        <tr class="hover:bg-slate-50/50 transition-colors <?php echo !$is_active ? 'opacity-40 bg-slate-50' : ''; ?>">
+                        <tr id="nadadora-<?php echo $row['id']; ?>" class="hover:bg-slate-50/50 transition-all <?php echo !$is_active ? 'opacity-40 bg-slate-50' : ''; ?>">
                             <td class="px-8 py-4">
                                 <p class="text-sm font-black text-slate-700 leading-tight"><?php echo $row['apellidos']; ?>, <?php echo $row['nombre']; ?></p>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5 tabular-nums">ID: #<?php echo $row['id']; ?></p>
@@ -218,6 +236,15 @@ $stats = mysqli_fetch_assoc($res_stats);
                             <td class="px-4 py-4 text-xs font-medium text-slate-400"><?php echo $row['licencia'] ?: '-'; ?></td>
                             <td class="px-4 py-4">
                                 <span class="px-3 py-1 bg-slate-100 text-slate-600 text-[9px] font-black rounded-lg uppercase tracking-tighter"><?php echo $row['club_nombre'] ?: 'N/A'; ?></span>
+                            </td>
+                            <td class="px-4 py-4 text-center">
+                                <button type="button" 
+                                        onclick="toggleEstadoNadadora(<?php echo $row['id']; ?>, this)" 
+                                        title="Pulsar para alternar Activa / Baja"
+                                        class="status-toggle-btn px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 <?php echo $is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-200/80 hover:bg-rose-100'; ?>">
+                                    <span class="w-1.5 h-1.5 rounded-full <?php echo $is_active ? 'bg-emerald-500' : 'bg-rose-500'; ?>"></span>
+                                    <span class="status-label"><?php echo $is_active ? 'ACTIVA' : 'BAJA'; ?></span>
+                                </button>
                             </td>
                             <td class="px-4 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
@@ -238,9 +265,13 @@ $stats = mysqli_fetch_assoc($res_stats);
 <script>
 function toggleAddNadadoraPanel() { document.getElementById('addNadadoraPanel').classList.toggle('hidden'); }
 
-function filterNadadorasTable() {
+// Persistencia del buscador
+function filterNadadorasTable(saveSession = true) {
     const input = document.getElementById('nadadoraSearchInput');
     const filter = input.value.toLowerCase().trim();
+    if (saveSession) {
+        sessionStorage.setItem('nadadoras_search_filter', input.value);
+    }
     
     // Filtrar tabla escritorio
     const table = document.getElementById('nadadorasTable');
@@ -257,6 +288,115 @@ function filterNadadorasTable() {
     mobileCards.forEach(card => {
         const searchAttr = card.getAttribute('data-search') || card.textContent.toLowerCase();
         card.style.display = searchAttr.indexOf(filter) > -1 ? "" : "none";
+    });
+}
+
+// Reposicionamiento suave con resaltado elástico
+function scrollToTargetSwimmer() {
+    let targetId = null;
+    if (window.location.hash && window.location.hash.startsWith('#nadadora-')) {
+        targetId = window.location.hash.replace('#nadadora-', '');
+    }
+    
+    if (targetId) {
+        const desktopRow = document.getElementById('nadadora-' + targetId);
+        const mobileCard = document.getElementById('nadadora-card-' + targetId);
+        const targetEl = (window.innerWidth >= 768 && desktopRow) ? desktopRow : (mobileCard || desktopRow);
+        
+        if (targetEl) {
+            setTimeout(() => {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                targetEl.classList.add('highlight-row');
+                setTimeout(() => {
+                    targetEl.classList.remove('highlight-row');
+                }, 2800);
+            }, 180);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('nadadoraSearchInput');
+    const savedSearch = sessionStorage.getItem('nadadoras_search_filter');
+    if (searchInput && savedSearch) {
+        searchInput.value = savedSearch;
+        filterNadadorasTable(false);
+    }
+    scrollToTargetSwimmer();
+});
+
+// Conmutar Activa / Baja directamente desde la lista vía AJAX
+function toggleEstadoNadadora(id, btn) {
+    if (!id || btn.disabled) return;
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('toggle_activo_ajax', '1');
+    formData.append('id_nadadora', id);
+
+    fetch('nadadoras_code.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.disabled = false;
+        if (data.success) {
+            const isActiva = (data.nuevo_activo == 1);
+            
+            // 1. Actualizar Fila Escritorio
+            const row = document.getElementById('nadadora-' + id);
+            if (row) {
+                if (isActiva) {
+                    row.classList.remove('opacity-40', 'bg-slate-50');
+                } else {
+                    row.classList.add('opacity-40', 'bg-slate-50');
+                }
+                const deskBtn = row.querySelector('.status-toggle-btn');
+                if (deskBtn) {
+                    deskBtn.className = 'status-toggle-btn px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 ' + 
+                        (isActiva ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80 hover:bg-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-200/80 hover:bg-rose-100');
+                    deskBtn.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + (isActiva ? 'bg-emerald-500' : 'bg-rose-500') + '"></span><span class="status-label">' + data.estado_txt + '</span>';
+                }
+            }
+
+            // 2. Actualizar Card Móvil
+            const card = document.getElementById('nadadora-card-' + id);
+            if (card) {
+                if (isActiva) {
+                    card.classList.remove('opacity-40', 'bg-slate-50');
+                } else {
+                    card.classList.add('opacity-40', 'bg-slate-50');
+                }
+                const mobBtn = card.querySelector('.status-toggle-btn');
+                if (mobBtn) {
+                    mobBtn.className = 'status-toggle-btn px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider transition-all active:scale-95 inline-flex items-center gap-1 ' + 
+                        (isActiva ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200');
+                    mobBtn.innerHTML = '<i class="fas ' + (isActiva ? 'fa-check' : 'fa-xmark') + ' text-[8px]"></i><span>' + data.estado_txt + '</span>';
+                }
+            }
+
+            // 3. Feedback Táctil SweetAlert2 Toast
+            if (typeof Swal !== 'undefined') {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 1600,
+                    timerProgressBar: false
+                });
+                Toast.fire({
+                    icon: isActiva ? 'success' : 'info',
+                    title: 'Estado: ' + data.estado_txt
+                });
+            }
+        } else {
+            alert(data.message || 'Error al actualizar estado');
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        console.error('Error al conmutar estado:', err);
     });
 }
 </script>
