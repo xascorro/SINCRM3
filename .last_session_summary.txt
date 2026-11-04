@@ -1,20 +1,15 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 11:53 CET
-Commit: 5512edd ("feat(login): rediseño premium responsive con físicas de muelles, toggle de contraseña y estética v4")
+Fecha: 2026-11-04 12:09 CET
+Commit: abf3ef6 ("style(login): diseño luminoso acuático, eliminación de contenedor oscuro en logo móvil y retirada de texto oficial")
 
 1. Resumen de Actuaciones Completadas:
-- Rediseño Estético Integral de la Pantalla de Login (login.php):
-  * Diseño Responsive Multi-dispositivo: Experiencia unificada y cuidada para Desktop, Tablets y Móviles (PWA).
-  * Panel Lateral Hero Desktop: Fondo oceanic dark con malla y fotografía sincro integrada sutilmente, glassmorphism con logotipo del club/sistema, badges dinámicos con respiración orgánica (pulse-breathing) para AQUA Rules, BIAS Engine y PWA Ready, además de chip de versión dinámica.
-  * Encabezado Compacto Mobile/Tablet: Nueva cabecera con branding elegante, brillo ambiental (ambient glow) y transición fluida hacia el formulario.
-  * Físicas de Muelles y Microinteracciones: Controles interactivos con muelles elásticos (spring curves), microescalado reactivo al pulsar (active:scale-[0.98]) y elevaciones sutiles.
-  * Zero-Gray Controls: Inputs estilizados sin grises planos, bordes nítidos hairline (#e2e8f0), halo de foco azul sincro suave y tipografía tabular-nums en credenciales.
-  * Toggle de Visibilidad de Contraseña: Botón integrado de mostrar/ocultar contraseña con icono dinámico (ojo abierto/tachado) para mayor ergonomía táctil en móviles y escritorios.
-  * Botón de Acceso Premium: Gradiente vibrante con flecha direccional reactiva y estado de carga AJAX animado.
-  * Preservación Total de Funcionalidades: 
-    - Envío AJAX intacto hacia login_code.php con login_btn=1.
-    - Diálogos SweetAlert2 con logo de club personalizado en éxito, advertencias y reenlace de verificación por correo (reenviarVerificacion).
-    - Soporte completo de Service Worker, PWA manifest y recordatorio de sesión.
+- Rediseño Estético Luminoso y Limpio de login.php (Ajuste según feedback del usuario):
+  * Eliminado el tema oscuro y los fondos negros/slate-950: Sustituido por una paleta acuática luminosa, limpia y fresca (degradados en azules y cianes vibrantes en Desktop, y fondo blanco/slate-50 limpio en formulario).
+  * Eliminado el recuadro/caja oscura del logo en móviles y tablets: El logo se muestra ahora de forma limpia, directa y con mix-blend-multiply sobre fondo blanco, sin bordes ni recuadros oscuros a los lados.
+  * Eliminado el texto 'Plataforma Técnica Oficial', sustituido por un texto mucho más conciso y natural ('Gestión de Natación Artística').
+  * Botón de acceso rediseñado a degradado azul royal y cian acuático (from-blue-600 via-sky-600 to-blue-700) con glow azul suave.
+  * Ajuste de SweetAlert2 con color primario azul (#2563eb) en popups y tema claro.
+  * Preservación del 100% de la lógica de autenticación AJAX, SweetAlert2, service worker PWA y toggle de contraseña.
 
 2. Verificación Técnica:
 - Sintaxis PHP validada con php -l (0 errores).
