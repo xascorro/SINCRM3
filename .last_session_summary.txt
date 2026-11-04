@@ -1,21 +1,21 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 11:34 CET
-Commit: 0e84d00 ("feat(inscripciones): portal unificado v4, selectores flotantes TomSelect y control de duplicados")
+Fecha: 2026-11-04 11:53 CET
+Commit: 5512edd ("feat(login): rediseño premium responsive con físicas de muelles, toggle de contraseña y estética v4")
 
 1. Resumen de Actuaciones Completadas:
-- Detección y bloqueo estricto de duplicados en Figuras:
-  * includes/nadadoras_select_option.php: Ahora consulta al cargar la categoría qué nadadoras ya están inscritas en esa competición y categoría. A nadadoras como Amelia Caja les asigna el atributo 'disabled' y la etiqueta visual '[YA INSCRITA]'. TomSelect respeta el estado deshabilitado e impide seleccionarlas.
-  * inscripciones_figuras_code.php: Blindaje en servidor que verifica antes del INSERT si la deportista ya cuenta con inscripción previa en esa categoría y competición, impidiendo inserciones duplicadas incluso ante peticiones forzadas.
-- Selectores flotantes TomSelect (Figuras y Rutinas Participantes):
-  * Cierre instantáneo del popup al elegir nadadora y liberación del foco.
-  * Autofoco automático en el botón de Registrar/Guardar (permite pulsar Enter o hacer un solo clic inmediato).
-  * Solución al fallo de pantalla en blanco: sustituido btn.disabled = true por pointer-events-none y asegurado el envío del parámetro POST save_btn mediante input oculto de respaldo.
-- Selector de Fase y Club en Rutinas:
-  * Desplegable de club operativo para administradores con todos los clubes activos.
-  * Identificación clara de fases masculinas con sufijo 'Masc' (ej: Solo Técnico Masc Junior vs Solo Técnico Junior).
-  * Select de fase configurado con name='id_fase' y required.
-- Verificación Integral y Pruebas en Vivo:
-  * Comprobada la sintaxis PHP (php -l) en todos los scripts.
-  * Comprobada la generación del PDF oficial (HTTP 200, 167 KB válido).
-  * Permisos ajustados a ubuntu:www-data 664/775.
-  * Commit realizado en master.
+- Rediseño Estético Integral de la Pantalla de Login (login.php):
+  * Diseño Responsive Multi-dispositivo: Experiencia unificada y cuidada para Desktop, Tablets y Móviles (PWA).
+  * Panel Lateral Hero Desktop: Fondo oceanic dark con malla y fotografía sincro integrada sutilmente, glassmorphism con logotipo del club/sistema, badges dinámicos con respiración orgánica (pulse-breathing) para AQUA Rules, BIAS Engine y PWA Ready, además de chip de versión dinámica.
+  * Encabezado Compacto Mobile/Tablet: Nueva cabecera con branding elegante, brillo ambiental (ambient glow) y transición fluida hacia el formulario.
+  * Físicas de Muelles y Microinteracciones: Controles interactivos con muelles elásticos (spring curves), microescalado reactivo al pulsar (active:scale-[0.98]) y elevaciones sutiles.
+  * Zero-Gray Controls: Inputs estilizados sin grises planos, bordes nítidos hairline (#e2e8f0), halo de foco azul sincro suave y tipografía tabular-nums en credenciales.
+  * Toggle de Visibilidad de Contraseña: Botón integrado de mostrar/ocultar contraseña con icono dinámico (ojo abierto/tachado) para mayor ergonomía táctil en móviles y escritorios.
+  * Botón de Acceso Premium: Gradiente vibrante con flecha direccional reactiva y estado de carga AJAX animado.
+  * Preservación Total de Funcionalidades: 
+    - Envío AJAX intacto hacia login_code.php con login_btn=1.
+    - Diálogos SweetAlert2 con logo de club personalizado en éxito, advertencias y reenlace de verificación por correo (reenviarVerificacion).
+    - Soporte completo de Service Worker, PWA manifest y recordatorio de sesión.
+
+2. Verificación Técnica:
+- Sintaxis PHP validada con php -l (0 errores).
+- Permisos asignados a ubuntu:www-data (664).

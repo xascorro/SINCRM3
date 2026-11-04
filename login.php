@@ -15,14 +15,14 @@ require_once 'lib/my_functions.php';
 $version = getVersion();
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>SINCRM | Acceso</title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0" name="viewport"/>
+    <title>SINCRM | Acceso al Sistema</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#070b14">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -42,7 +42,10 @@ $version = getVersion();
         }
     </script>
 
-    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet"/>
+    <!-- Tipografía Lexend y FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <script src="https://kit.fontawesome.com/83d95dbe8d.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <script>
@@ -50,127 +53,319 @@ $version = getVersion();
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#0f172a",
-                        "secondary": "#3b82f6",
+                        "primary": "#070b14",
+                        "brand-blue": "#2563eb",
+                        "brand-cyan": "#0284c7"
                     },
-                    fontFamily: { lexend: ["Lexend", "sans-serif"] }
+                    fontFamily: { 
+                        lexend: ["Lexend", "sans-serif"] 
+                    }
                 },
             },
         }
     </script>
     <style>
-        body { font-family: 'Lexend', sans-serif; }
-        .glass-overlay {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        :root {
+            --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --spring-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .animate-fade-in { animation: fadeIn 0.8s ease-out both; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { 
+            font-family: 'Lexend', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tabular-nums {
+            font-variant-numeric: tabular-nums;
+        }
+        .tap-press {
+            transition: transform 0.2s var(--spring-bounce), box-shadow 0.2s var(--spring-smooth);
+        }
+        .tap-press:active {
+            transform: scale(0.98);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-badge {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .input-glow {
+            transition: border-color 0.2s var(--spring-smooth), box-shadow 0.2s var(--spring-smooth), background-color 0.2s;
+        }
+        .input-glow:focus {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12), 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+            background-color: #ffffff !important;
+        }
+        @keyframes pulseBreathing {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.18); opacity: 0.75; }
+        }
+        .pulse-breathing {
+            animation: pulseBreathing 2.4s ease-in-out infinite;
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(6px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .animate-fade-in { 
+            animation: fadeIn 0.5s var(--spring-smooth) both; 
+        }
         
         /* SweetAlert2 Custom Styling */
         .swal2-popup-v3 {
-            border-radius: 3.5rem !important;
-            padding: 3rem !important;
+            border-radius: 2.5rem !important;
+            padding: 2.5rem !important;
             font-family: 'Lexend', sans-serif !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            border: 1px solid #e2e8f0 !important;
         }
         .swal2-title-v3 {
-            font-size: 0.75rem !important;
+            font-size: 0.8125rem !important;
             text-transform: uppercase !important;
-            letter-spacing: 0.2em !important;
+            letter-spacing: 0.18em !important;
             font-weight: 900 !important;
-            color: #94a3b8 !important;
+            color: #64748b !important;
             margin-bottom: 0.5rem !important;
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
-<main class="flex min-h-screen">
+<body class="bg-slate-950 text-slate-800 h-full antialiased selection:bg-blue-600 selection:text-white">
+
+<main class="min-h-screen w-full flex flex-col lg:flex-row relative overflow-hidden bg-slate-950">
     
-    <!-- PANEL IZQUIERDO: VISUAL -->
-    <section class="hidden lg:flex lg:w-1/2 relative overflow-hidden items-center justify-center bg-slate-900">
-        <img alt="Natación Sincronizada" class="absolute inset-0 w-full h-full object-cover opacity-70" src="img/bg_sincro_login.jpg"/>
-        <div class="relative z-10 glass-overlay p-12 rounded-[2.5rem] max-w-lg mx-8 animate-fade-in">
-            <div class="flex flex-col gap-4">
-                <!-- <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-xl">
-                    <img src="img/logo_sincrm4.png" class="w-10" alt="Logo">
-                </div> -->
-                <h1 class="text-5xl font-black text-white tracking-tighter italic">SINCRM <span class="text-blue-400">4</span></h1>
-                <p class="text-xl text-blue-50 font-light leading-relaxed">Donde el arte se une a la precisión. La gestión definitiva para natación artística.</p>
+    <!-- ========================================================================= -->
+    <!-- PANEL IZQUIERDO: HERO VISUAL (PC Y TABLETS EN HORIZONTAL)                 -->
+    <!-- ========================================================================= -->
+    <section class="hidden lg:flex lg:w-1/2 xl:w-[54%] relative overflow-hidden flex-col justify-between p-10 xl:p-14 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        
+        <!-- Fondos Ambientales y Textura Acuática -->
+        <div class="absolute inset-0 z-0">
+            <img alt="Natación Sincronizada" class="w-full h-full object-cover opacity-25 scale-105 filter blur-[0.5px]" src="img/bg_sincro_login.jpg"/>
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-transparent to-slate-950"></div>
+            <!-- Luces Ambientales de Acento -->
+            <div class="absolute -top-32 -left-32 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
+        </div>
+
+        <!-- Cabecera Superior Izquierda -->
+        <div class="relative z-10 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-white p-2 shadow-xl shadow-blue-500/10 flex items-center justify-center border border-white/20 tap-press">
+                    <img src="img/logo_sincrm4.png" class="w-full h-full object-contain" alt="Logo SINCRM 4">
+                </div>
+                <div>
+                    <h2 class="text-xl font-black text-white tracking-tight flex items-center gap-1.5 leading-none">
+                        SINCRM <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 font-extrabold">4</span>
+                    </h2>
+                    <span class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Plataforma Técnica Oficial</span>
+                </div>
+            </div>
+            <div class="glass-badge px-3.5 py-1.5 rounded-full flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-breathing"></span>
+                <span class="text-[10px] font-bold text-slate-300 uppercase tracking-widest tabular-nums">Sistema Operativo</span>
             </div>
         </div>
-        <div class="absolute bottom-10 left-10 z-10 flex items-center gap-3">
-            <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-            <p class="text-[10px] font-black text-white/60 uppercase tracking-[0.3em]"><?php echo $version; ?> stable</p>
+
+        <!-- Tarjeta Central de Marca (Glassmorphism) -->
+        <div class="relative z-10 my-auto py-8">
+            <div class="glass-card rounded-[2.5rem] p-8 xl:p-12 shadow-2xl relative overflow-hidden animate-fade-in">
+                <!-- Resplandor Interior -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-2xl -mr-20 -mt-20 pointer-events-none"></div>
+                
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/20 text-blue-300 text-[10px] font-black uppercase tracking-wider mb-5">
+                    <i class="fas fa-water text-xs text-cyan-400"></i> Natación Artística FNRM & AQUA
+                </div>
+
+                <h1 class="text-4xl xl:text-5xl font-black text-white tracking-tight leading-[1.15] mb-4">
+                    Donde el arte se une a la <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-200">precisión técnica</span>.
+                </h1>
+
+                <p class="text-sm xl:text-base text-slate-300 font-light leading-relaxed mb-8 max-w-lg">
+                    Gestión integral de inscripciones, composición de Coach Cards, auditoría de sesgos (BIAS) y control en tiempo real de competiciones federadas.
+                </p>
+
+                <!-- Características Destacadas -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 border-t border-white/10">
+                    <div class="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex flex-col gap-1.5">
+                        <i class="fas fa-shield-halved text-blue-400 text-sm"></i>
+                        <span class="text-xs font-black text-white">Normativa AQUA</span>
+                        <span class="text-[10px] text-slate-400 font-medium leading-tight">Dificultad, TRE y sumatorio de DDs oficial.</span>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex flex-col gap-1.5">
+                        <i class="fas fa-chart-line text-cyan-400 text-sm"></i>
+                        <span class="text-xs font-black text-white">BIAS Analizer</span>
+                        <span class="text-[10px] text-slate-400 font-medium leading-tight">Auditoría estadística y precisión de jueces.</span>
+                    </div>
+                    <div class="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex flex-col gap-1.5">
+                        <i class="fas fa-mobile-screen-button text-purple-400 text-sm"></i>
+                        <span class="text-xs font-black text-white">PWA Móvil</span>
+                        <span class="text-[10px] text-slate-400 font-medium leading-tight">Instalable, ligera y rápida a pie de piscina.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pie de Información Izquierdo -->
+        <div class="relative z-10 flex items-center justify-between text-[11px] font-bold text-slate-400 pt-4">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-circle-check text-emerald-400 text-xs"></i>
+                <span class="uppercase tracking-wider">Temporada Oficial 2026 / 2027</span>
+            </div>
+            <div class="tabular-nums uppercase tracking-widest text-[10px] text-slate-500 font-black">
+                Versión <?php echo htmlspecialchars($version); ?>
+            </div>
         </div>
     </section>
 
-    <!-- PANEL DERECHO: FORMULARIO -->
-    <section class="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-16 bg-white lg:rounded-l-[3rem] shadow-2xl z-20">
-        <div class="w-full max-w-md animate-fade-in">
-            <div class="lg:hidden text-center mb-10">
-                <img src="img/logo_sincrm4.png" class="w-16 mx-auto mb-4" alt="Logo">
-                <h1 class="text-3xl font-black text-slate-800 tracking-tighter italic">SINCRM <span class="text-blue-500">4</span></h1>
+    <!-- ========================================================================= -->
+    <!-- PANEL DERECHO: FORMULARIO DE ACCESO (MÓVIL, TABLET Y ESCRITORIO)          -->
+    <!-- ========================================================================= -->
+    <section class="w-full lg:w-1/2 xl:w-[46%] flex flex-col justify-between p-6 sm:p-10 md:p-14 lg:p-14 xl:p-16 bg-white lg:rounded-l-[3.5rem] shadow-2xl z-20 min-h-screen">
+        
+        <!-- Header Móvil & Tablet (< lg) -->
+        <div class="lg:hidden w-full max-w-md mx-auto pt-4 pb-8 text-center animate-fade-in">
+            <div class="inline-flex items-center justify-center p-3.5 bg-gradient-to-tr from-slate-900 to-slate-800 rounded-3xl shadow-xl shadow-blue-500/10 mb-3 border border-slate-700/50 tap-press">
+                <img src="img/logo_sincrm4.png" class="w-12 h-12 object-contain" alt="Logo SINCRM 4">
+            </div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center justify-center gap-1.5">
+                SINCRM <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">4</span>
+            </h1>
+            <p class="text-xs text-slate-400 font-medium">Acceso para Clubes, Jueces y Administradores</p>
+        </div>
+
+        <!-- Contenedor Central del Formulario -->
+        <div class="w-full max-w-md mx-auto my-auto animate-fade-in">
+            
+            <!-- Título & Subtítulo (Desktop) -->
+            <div class="hidden lg:block mb-8 text-left">
+                <span class="inline-block px-3 py-1 rounded-lg bg-blue-50 text-blue-700 text-[10px] font-black uppercase tracking-widest mb-3 border border-blue-100">
+                    Acceso Seguro
+                </span>
+                <h2 class="text-3xl xl:text-4xl font-black text-slate-900 tracking-tight">Bienvenido</h2>
+                <p class="text-slate-400 font-medium text-sm mt-1">Introduce tus credenciales para acceder al panel técnico.</p>
             </div>
 
-            <div class="mb-10 text-center lg:text-left">
-                <h2 class="text-3xl font-black text-slate-800 tracking-tight mb-2 uppercase italic tracking-tighter">Bienvenido</h2>
-                <p class="text-slate-400 font-medium italic text-sm">Introduce tus datos para acceder al panel.</p>
-            </div>
-
-            <div id="alert-container">
+            <!-- Contenedor de Alertas -->
+            <div id="alert-container" class="mb-4">
                 <?php include('includes/alertas_v4.php'); ?>
             </div>
 
-            <form id="loginForm" action="login_code.php" method="POST" class="space-y-6">
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest italic">Email de Usuario</label>
+            <!-- Formulario de Login -->
+            <form id="loginForm" action="login_code.php" method="POST" class="space-y-5">
+                
+                <!-- Campo: Email -->
+                <div class="space-y-1.5">
+                    <label for="inputEmail" class="text-[10px] font-black uppercase tracking-wider text-slate-500 px-1 flex items-center gap-1.5">
+                        <i class="fas fa-at text-slate-400 text-xs"></i>
+                        <span>Correo Electrónico</span>
+                    </label>
                     <div class="relative group">
-                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-envelope text-sm"></i></span>
-                        <input type="email" name="email" required autocomplete="username" placeholder="ejemplo@sincrm.com" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none">
+                            <i class="fas fa-envelope text-sm"></i>
+                        </span>
+                        <input type="email" 
+                               id="inputEmail"
+                               name="email" 
+                               required 
+                               autocomplete="username" 
+                               placeholder="tu-correo@sincrm.com" 
+                               class="w-full pl-11 pr-4 py-3.5 sm:py-4 bg-slate-50/70 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 placeholder:text-slate-400/80 input-glow">
                     </div>
                 </div>
 
-                <div class="space-y-2">
+                <!-- Campo: Contraseña con Toggle Ojo -->
+                <div class="space-y-1.5">
                     <div class="flex justify-between items-center px-1">
-                        <label class="text-[10px] font-black uppercase text-slate-400 tracking-widest italic">Contraseña</label>
-                        <a href="forgot_password.php" class="text-[10px] font-black text-blue-500 hover:underline tracking-tighter">¿Olvidaste la clave?</a>
+                        <label for="inputPassword" class="text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                            <i class="fas fa-key text-slate-400 text-xs"></i>
+                            <span>Contraseña</span>
+                        </label>
+                        <a href="forgot_password.php" class="text-[11px] font-bold text-blue-600 hover:text-blue-700 hover:underline tracking-tight transition-colors">
+                            ¿Olvidaste la clave?
+                        </a>
                     </div>
                     <div class="relative group">
-                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-blue-500 transition-colors"><i class="fas fa-lock text-sm"></i></span>
-                        <input type="password" name="password" required autocomplete="current-password" placeholder="••••••••" class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-100 rounded-[1.5rem] text-sm font-black text-slate-700 placeholder:text-slate-300 focus:bg-white focus:ring-8 focus:ring-blue-500/5 focus:border-blue-500 transition-all shadow-inner">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors pointer-events-none">
+                            <i class="fas fa-lock text-sm"></i>
+                        </span>
+                        <input type="password" 
+                               id="inputPassword"
+                               name="password" 
+                               required 
+                               autocomplete="current-password" 
+                               placeholder="••••••••••••" 
+                               class="w-full pl-11 pr-12 py-3.5 sm:py-4 bg-slate-50/70 border border-slate-200 rounded-2xl text-xs sm:text-sm font-bold text-slate-800 placeholder:text-slate-400/80 input-glow">
+                        <button type="button" 
+                                id="togglePasswordBtn" 
+                                onclick="togglePasswordVisibility()" 
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center transition-all tap-press focus:outline-none" 
+                                title="Mostrar / ocultar contraseña"
+                                aria-label="Mostrar u ocultar contraseña">
+                            <i id="togglePasswordIcon" class="fas fa-eye text-xs"></i>
+                        </button>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 px-2">
-                    <input type="checkbox" name="remember" id="remember" class="w-5 h-5 rounded-lg border-slate-200 text-blue-600 focus:ring-blue-500/20">
-                    <label for="remember" class="text-xs font-bold text-slate-400 italic">Mantener sesión iniciada</label>
+                <!-- Recordar Sesión -->
+                <div class="flex items-center justify-between pt-1 px-1">
+                    <label class="flex items-center gap-2.5 cursor-pointer select-none group">
+                        <input type="checkbox" 
+                               name="remember" 
+                               id="remember" 
+                               class="w-4 h-4 rounded-md border-slate-300 text-blue-600 focus:ring-blue-500/20 transition-all cursor-pointer">
+                        <span class="text-xs font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">Mantener sesión iniciada</span>
+                    </label>
+                    <span class="text-[10px] font-black uppercase text-slate-400/80 hidden sm:inline tracking-widest">30 DÍAS</span>
                 </div>
 
-                <button id="submitBtn" name="login_btn" type="submit" class="w-full py-5 px-6 bg-slate-900 text-white font-black uppercase text-xs tracking-[0.3em] rounded-[1.5rem] shadow-2xl hover:bg-blue-600 active:scale-95 transition-all flex items-center justify-center gap-4 group">
-                    <span id="btnText">Entrar al Sistema</span>
-                    <i id="btnIcon" class="fas fa-arrow-right-long text-[10px] group-hover:translate-x-1 transition-transform"></i>
-                    <div id="loader" class="hidden animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white"></div>
-                </button>
+                <!-- Botón de Envío -->
+                <div class="pt-2">
+                    <button id="submitBtn" 
+                            name="login_btn" 
+                            type="submit" 
+                            class="w-full py-4 sm:py-4.5 px-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-xl shadow-slate-900/15 hover:shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 tap-press transition-all flex items-center justify-center gap-3 group border border-slate-800">
+                        <span id="btnText">Entrar al Sistema</span>
+                        <i id="btnIcon" class="fas fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                        <div id="loader" class="hidden animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white"></div>
+                    </button>
+                </div>
             </form>
 
-            <div class="mt-12 pt-8 border-t border-slate-100 text-center">
-                <p class="text-sm font-medium text-slate-400 italic">
-                    ¿Aún no tienes acceso? 
-                    <a href="register.php" class="text-slate-800 font-black hover:text-blue-600 transition-colors ml-1 not-italic border-b-2 border-slate-100">Crea una cuenta</a>
+            <!-- Registro de Nuevos Usuarios -->
+            <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <p class="text-xs font-medium text-slate-500">
+                    ¿Aún no tienes acceso oficial? 
+                    <a href="register.php" class="text-blue-600 font-black hover:text-blue-700 transition-colors ml-1 hover:underline">
+                        Crear una cuenta
+                    </a>
                 </p>
             </div>
+        </div>
 
-            <div class="mt-12 flex flex-col items-center gap-6">
-                <div class="flex items-center justify-center gap-6 opacity-30 hover:opacity-100 transition-all">
-                    <a href="help/index.html" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline"><i class="fas fa-circle-question mr-1"></i>Ayuda</a>
-                    <a href="soporte.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Soporte</a>
-                    <a href="privacidad.php" class="text-[10px] font-black uppercase tracking-widest text-slate-900 no-underline">Privacidad</a>
-                </div>
-                <p class="text-[10px] font-bold text-slate-300 uppercase tracking-tighter italic">
-                    Made with <i class="fas fa-heart text-red-500/50 mx-1"></i> by Pedro Díaz
-                </p>
+        <!-- Footer Inferior -->
+        <div class="w-full max-w-md mx-auto pt-6 text-center text-slate-400">
+            <div class="flex items-center justify-center gap-5 text-[11px] font-bold text-slate-500 mb-3">
+                <a href="help/index.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+                    <i class="fas fa-circle-question text-[10px]"></i> Ayuda
+                </a>
+                <span class="text-slate-200">&bull;</span>
+                <a href="soporte.php" class="hover:text-blue-600 transition-colors">Soporte</a>
+                <span class="text-slate-200">&bull;</span>
+                <a href="privacidad.php" class="hover:text-blue-600 transition-colors">Privacidad</a>
             </div>
+            <p class="text-[10px] font-semibold text-slate-400 tracking-tight flex items-center justify-center gap-1">
+                <span>SINCRM 4</span>
+                <span>&bull;</span>
+                <span>Desarrollado con</span>
+                <i class="fas fa-heart text-red-500 text-[9px] animate-pulse"></i>
+                <span>por Pedro Díaz</span>
+            </p>
         </div>
     </section>
 </main>
@@ -178,14 +373,32 @@ $version = getVersion();
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="vendor/jquery/jquery.min.js"></script>
 <script>
+// Toggle de visibilidad de contraseña
+function togglePasswordVisibility() {
+    const input = document.getElementById('inputPassword');
+    const icon = document.getElementById('togglePasswordIcon');
+    if (!input || !icon) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash', 'text-blue-600');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash', 'text-blue-600');
+        icon.classList.add('fa-eye');
+    }
+}
+
 $(document).ready(function() {
     // Mostrar alertas de sesión mediante SweetAlert2 si existen
     <?php if(isset($_SESSION['correcto'])): ?>
         Swal.fire({
             icon: 'success',
             title: '<span class="swal2-title-v3">¡Éxito!</span>',
-            html: '<?php echo $_SESSION['correcto']; unset($_SESSION['correcto']); ?>',
-            confirmButtonColor: '#0f172a',
+            html: '<?php echo addslashes($_SESSION['correcto']); unset($_SESSION['correcto']); ?>',
+            confirmButtonColor: '#070b14',
+            confirmButtonText: 'CONTINUAR',
             customClass: { popup: 'swal2-popup-v3' }
         });
     <?php endif; ?>
@@ -194,8 +407,9 @@ $(document).ready(function() {
         Swal.fire({
             icon: 'error',
             title: '<span class="swal2-title-v3 text-red-500">Aviso</span>',
-            html: '<?php echo $_SESSION['estado']; unset($_SESSION['estado']); ?>',
-            confirmButtonColor: '#0f172a',
+            html: '<?php echo addslashes($_SESSION['estado']); unset($_SESSION['estado']); ?>',
+            confirmButtonColor: '#070b14',
+            confirmButtonText: 'ENTENDIDO',
             customClass: { popup: 'swal2-popup-v3' }
         });
     <?php endif; ?>
@@ -208,8 +422,8 @@ $(document).ready(function() {
         const btnIcon = $('#btnIcon');
         const loader = $('#loader');
 
-        submitBtn.prop('disabled', true).addClass('bg-blue-600');
-        btnText.text('Verificando...');
+        submitBtn.prop('disabled', true).addClass('opacity-90 pointer-events-none');
+        btnText.text('Verificando acceso...');
         btnIcon.addClass('hidden');
         loader.removeClass('hidden');
 
@@ -231,32 +445,40 @@ $(document).ready(function() {
                         html: `
                             <div class="font-lexend text-center">
                                 ${customIcon}
-                                <p class="text-3xl font-black text-slate-800 tracking-tighter italic leading-none mb-2">${response.message}</p>
-                                <p class="text-sm text-slate-400 font-medium italic">Sincronizando con tu club...</p>
+                                <p class="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-tight mb-2">${response.message}</p>
+                                <p class="text-xs sm:text-sm text-slate-400 font-medium">Sincronizando con tu club...</p>
                             </div>`,
-                        timer: 2500,
+                        timer: 2200,
                         showConfirmButton: false,
                         background: '#ffffff',
                         customClass: { popup: 'swal2-popup-v3' }
-                    }).then(() => { window.location.href = response.redirect; });
+                    }).then(() => { 
+                        window.location.href = response.redirect; 
+                    });
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: '<span class="swal2-title-v3 text-red-500">Error de Acceso</span>',
                         html: response.message,
-                        confirmButtonColor: '#0f172a',
+                        confirmButtonColor: '#070b14',
                         confirmButtonText: 'REINTENTAR',
                         customClass: { popup: 'swal2-popup-v3' }
                     });
-                    submitBtn.prop('disabled', false).removeClass('bg-blue-600');
+                    submitBtn.prop('disabled', false).removeClass('opacity-90 pointer-events-none');
                     btnText.text('Entrar al Sistema');
                     btnIcon.removeClass('hidden');
                     loader.addClass('hidden');
                 }
             },
             error: function() {
-                Swal.fire({ icon: 'error', title: 'Error', text: 'Servidor no responde.', customClass: { popup: 'swal2-popup-v3' } });
-                submitBtn.prop('disabled', false).removeClass('bg-blue-600');
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: '<span class="swal2-title-v3 text-red-500">Error</span>', 
+                    text: 'El servidor no responde. Por favor, revisa tu conexión e inténtalo de nuevo.', 
+                    confirmButtonColor: '#070b14',
+                    customClass: { popup: 'swal2-popup-v3' } 
+                });
+                submitBtn.prop('disabled', false).removeClass('opacity-90 pointer-events-none');
                 btnText.text('Entrar al Sistema');
                 btnIcon.removeClass('hidden');
                 loader.addClass('hidden');
@@ -268,7 +490,7 @@ $(document).ready(function() {
 function reenviarVerificacion(email) {
     Swal.fire({
         title: '<span class="swal2-title-v3">Enviando...</span>',
-        text: 'Estamos procesando tu solicitud.',
+        text: 'Estamos procesando tu solicitud de verificación.',
         allowOutsideClick: false,
         didOpen: () => { Swal.showLoading(); },
         customClass: { popup: 'swal2-popup-v3' }
@@ -285,7 +507,7 @@ function reenviarVerificacion(email) {
                     icon: 'success',
                     title: '<span class="swal2-title-v3">Email Enviado</span>',
                     html: response.message,
-                    confirmButtonColor: '#0f172a',
+                    confirmButtonColor: '#070b14',
                     customClass: { popup: 'swal2-popup-v3' }
                 });
             } else {
@@ -293,13 +515,19 @@ function reenviarVerificacion(email) {
                     icon: 'error',
                     title: '<span class="swal2-title-v3 text-red-500">Error</span>',
                     html: response.message,
-                    confirmButtonColor: '#0f172a',
+                    confirmButtonColor: '#070b14',
                     customClass: { popup: 'swal2-popup-v3' }
                 });
             }
         },
         error: function() {
-            Swal.fire({ icon: 'error', title: 'Error', text: 'Servidor no responde.', customClass: { popup: 'swal2-popup-v3' } });
+            Swal.fire({ 
+                icon: 'error', 
+                title: '<span class="swal2-title-v3 text-red-500">Error</span>', 
+                text: 'El servidor no responde. Inténtalo más tarde.',
+                confirmButtonColor: '#070b14',
+                customClass: { popup: 'swal2-popup-v3' } 
+            });
         }
     });
 }
