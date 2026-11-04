@@ -1,27 +1,15 @@
 === SESION SINCRM: FINALIZADA CON ÉXITO Y COMMIT REALIZADO ===
-Fecha: 2026-11-04 12:41 CET
-Commit: 96bce52 ("feat(admin): rediseño v4 dual-view para usuarios, páginas y roles con gestor de avatar")
+Fecha: 2026-11-04 12:47 CET
+Commit: bf3c9ff ("feat(topbar): avatar estilizado con iniciales sobre gradiente acuático cuando no hay foto")
 
 1. Resumen de Actuaciones Completadas:
-- Rediseño Estético y Dual-View de Administración v4:
-  * usuarios.php:
-    - Implementación del diseño dual-view oficial (tabla en desktop, tarjetas táctiles optimizadas en móvil).
-    - Buscador dinámico en tiempo real situado en cabecera con filtrado simultáneo de tabla y tarjetas móviles.
-    - Avatares reales con foto si el usuario tiene `usuarios.foto` o inicial en gradiente.
-    - Indicador de estado de email confirmado/no confirmado y badges estilizados de rol y club.
-    - KPIs con `tabular-nums` y bordes de acento de color.
-  * usuarios_edit.php:
-    - Nuevo gestor de avatar de usuario: visualización de foto actual o inicial, selector de archivo con previsualización reactiva inmediata mediante FileReader en JS, y opción para eliminar la foto.
-    - Backend usuarios_code.php actualizado con upload seguro en `images/users/` (JPG, PNG, GIF, WEBP) y sincronización con la sesión actual.
-    - Estructura limpia en tarjetas temáticas (Identidad, Permisos/Vinculaciones y Credenciales).
-  * paginas.php:
-    - Rediseño con arquitectura dual-view y KPIs técnicos de scripts, módulos y permisos activos.
-    - Buscador dinámico global en tiempo real en la cabecera.
-    - Modal de edición optimizado con diseño claro y campos tipográficos estilizados.
-  * roles.php y roles_edit.php:
-    - Rediseño completo con dual-view móvil, buscador dinámico en tiempo real y KPIs de jerarquía.
-    - roles_edit.php modernizado con cuadrícula de permisos agrupada por módulos, botón de invertir selección táctil y barra inferior de confirmación limpia.
+- Avatar de Iniciales con Gradiente Acuático en Topbar (includes/topbar.php):
+  * Se sustituyó el icono genérico (<i class="fas fa-user"></i>) por el avatar circular/cuadrado redondeado estilizado con las iniciales del usuario (ej: "PD") sobre gradiente acuático vibrante (from-blue-600 via-sky-500 to-cyan-400) cuando el usuario no dispone de foto de perfil.
+  * Si el usuario cuenta con foto (`$_SESSION['foto']`), se sigue mostrando su imagen de perfil con object-cover.
+  * Sincronización automática de `nombre_usuario` en sesiones existentes y en login_code.php para garantizar iniciales exactas basadas en el nombre y apellidos.
+  * Se ignoraron los avatares dinámicos subidos en .gitignore preservando el archivo .gitkeep.
 
 2. Verificación Técnica:
-- Sintaxis PHP validada con php -l en los 6 ficheros implicados (0 errores).
+- Sintaxis PHP validada con php -l en includes/topbar.php y login_code.php (0 errores).
+- Probada la renderización en CLI para casos con foto y sin foto (iniciales calculadas con éxito).
 - Permisos asignados a ubuntu:www-data (664).

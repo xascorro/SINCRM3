@@ -8,6 +8,9 @@ includes/config.php
 log/*.txt
 public/music/*
 public/zips/*
+images/users/*
+!images/users/.gitkeep
+!images/users/user_1_1793769506.png
 # database/backup/*
 !database/backup/.gitkeep
 

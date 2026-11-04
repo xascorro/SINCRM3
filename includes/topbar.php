@@ -1,5 +1,28 @@
 <?php
 include('security.php');
+
+// Obtener nombre e iniciales para avatar fallback
+if (!isset($_SESSION['nombre_usuario']) && !empty($_SESSION['id_usario'])) {
+    include_once('database/dbconfig.php');
+    $u_id_top = intval($_SESSION['id_usario']);
+    $q_u_top = mysqli_query($connection, "SELECT username, foto FROM usuarios WHERE id = $u_id_top");
+    if ($q_u_top && $u_top_data = mysqli_fetch_assoc($q_u_top)) {
+        $_SESSION['nombre_usuario'] = $u_top_data['username'];
+        if (!empty($u_top_data['foto'])) $_SESSION['foto'] = $u_top_data['foto'];
+    }
+}
+
+$user_display_name = !empty($_SESSION['nombre_usuario']) ? $_SESSION['nombre_usuario'] : ($_SESSION['username'] ?? 'Usuario');
+$clean_name = (strpos($user_display_name, '@') !== false) ? explode('@', $user_display_name)[0] : $user_display_name;
+$words = preg_split('/[\s._-]+/', trim($clean_name), -1, PREG_SPLIT_NO_EMPTY);
+$top_initials = '';
+if (count($words) >= 2) {
+    $top_initials = mb_strtoupper(mb_substr($words[0], 0, 1) . mb_substr($words[1], 0, 1));
+} elseif (count($words) === 1) {
+    $top_initials = mb_strtoupper(mb_substr($words[0], 0, 2));
+} else {
+    $top_initials = 'US';
+}
 ?>
 <!-- Topbar v4 (Prerelease) (Estética Refinada) -->
 <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 sticky top-0 z-40 font-lexend">
@@ -56,19 +79,19 @@ include('security.php');
     <!-- User Section -->
     <div class="flex items-center gap-3 ml-2">
         <div class="relative group" id="userMenuContainer">
-            <button onclick="toggleUserMenu()" class="flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100">
+            <button onclick="toggleUserMenu()" class="flex items-center gap-2 md:gap-3 px-2 md:px-3 py-2 rounded-2xl hover:bg-slate-50 transition-all border border-transparent hover:border-slate-100 tap-press">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-black text-primary leading-none mb-1"><?php echo $_SESSION['username'];?></p>
-                    <p class="text-[10px] font-bold text-secondary opacity-70 uppercase tracking-widest"><?php echo $_SESSION['rol'];?></p>
+                    <p class="text-sm font-black text-primary leading-none mb-1"><?php echo htmlspecialchars($user_display_name); ?></p>
+                    <p class="text-[10px] font-bold text-secondary opacity-70 uppercase tracking-widest"><?php echo htmlspecialchars($_SESSION['rol'] ?? ''); ?></p>
                 </div>
-                <div class="h-10 w-10 md:h-11 md:w-11 rounded-2xl oceanic-gradient flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-oceanic/20 border-2 border-white overflow-hidden transition-transform group-hover:scale-105">
+                <div class="h-10 w-10 md:h-11 md:w-11 rounded-2xl flex-shrink-0 flex items-center justify-center text-white shadow-lg shadow-blue-500/15 border-2 border-white overflow-hidden transition-transform group-hover:scale-105">
                     <?php 
                     if(!empty($_SESSION['foto']) && file_exists($_SESSION['foto'])) {
-                        echo '<img src="'.$_SESSION['foto'].'" alt="User" class="w-full h-full object-cover">';
-                    } elseif(!empty($_SESSION['icono']) && strpos($_SESSION['icono'], '<i') !== false) {
-                        echo str_replace('fa-2x', 'text-xl', $_SESSION['icono']);
+                        echo '<img src="'.htmlspecialchars($_SESSION['foto']).'" alt="User" class="w-full h-full object-cover">';
                     } else {
-                        echo '<i class="fas fa-user text-lg md:text-xl"></i>';
+                        echo '<div class="w-full h-full bg-gradient-to-tr from-blue-600 via-sky-500 to-cyan-400 flex items-center justify-center text-white font-black text-xs md:text-sm select-none tracking-wider">';
+                        echo htmlspecialchars($top_initials);
+                        echo '</div>';
                     }
                     ?>
                 </div>
@@ -77,8 +100,8 @@ include('security.php');
             <!-- Dropdown Menú Usuario -->
             <div id="user-dropdown-v3" class="hidden absolute right-0 mt-3 w-64 bg-white rounded-[2rem] shadow-2xl border border-slate-100 p-3 z-50 transform origin-top-right transition-all">
                 <div class="px-4 py-3 mb-2 border-b border-slate-50 sm:hidden">
-                    <p class="text-sm font-black text-primary leading-none mb-1"><?php echo $_SESSION['username'];?></p>
-                    <p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><?php echo $_SESSION['rol'];?></p>
+                    <p class="text-sm font-black text-primary leading-none mb-1"><?php echo htmlspecialchars($user_display_name); ?></p>
+                    <p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><?php echo htmlspecialchars($_SESSION['rol'] ?? ''); ?></p>
                 </div>
                 
                 <a href="perfil.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">

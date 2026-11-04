@@ -146,6 +146,7 @@ if(isset($_POST['login_btn'])){
             @session_start();
             
             $_SESSION['username'] = $login_email;
+            $_SESSION['nombre_usuario'] = $usuario['username'];
             setcookie('last_user', $login_email, time() + (86400 * 30), '/');
             $_SESSION['email'] = $login_email;
             $_SESSION['id_usario'] = $usuario['id_usuario'];
