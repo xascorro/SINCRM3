@@ -42,6 +42,7 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     // Usamos cURL para obtener el binario del PDF
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $report_url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ["Host: sincrm.pedrodiaz.eu"]);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $pdf_content = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);

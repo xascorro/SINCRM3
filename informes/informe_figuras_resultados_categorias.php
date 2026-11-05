@@ -13,8 +13,11 @@ if (!$connection) {
     die("Error de conexión a la base de datos. Por favor, revisa la configuración.");
 }
 
-// Verificación de sesión unificada v3.0
-if(!$_SESSION['email'] && !$_SESSION['username']){
+// Verificación de sesión unificada v3.0 o Token de Cron interno
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if ((!isset($_SESSION['email']) && !isset($_SESSION['username'])) && $cron_token_provided !== $cron_token_expected) {
     header('Location: login.php');
     exit();
 }

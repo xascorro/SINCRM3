@@ -4,7 +4,7 @@
  */
 function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug = false) {
     $token = "hub_mail_947d82b3c2e1";
-    $url = "https://pulse.pedrodiaz.eu/mail/api.php";
+    $url = "https://pulse.pedrodiaz.eu/mail/send_resend.php";
     $from = "SINCRM <sincrm@pedrodiaz.eu>";
 
     // Aplicar la plantilla visual en tonos claros con distribución horizontal equilibrada
@@ -29,7 +29,7 @@ function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug =
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 20);
     
     $response = curl_exec($ch);
     $error = curl_error($ch);
@@ -43,7 +43,12 @@ function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug =
     
     if ($http_code >= 400) {
         error_log("Error Pulse Hub HTTP $http_code: " . $response);
-        return "Error del servidor de correo ($http_code)";
+        return "Error del servidor de correo ($http_code): " . $response;
+    }
+
+    // send_resend.php devuelve texto con "éxito" o json
+    if (stripos($response, 'éxito') !== false || stripos($response, 'exito') !== false) {
+        return true;
     }
 
     $json = json_decode($response, true);

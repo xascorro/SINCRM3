@@ -6,8 +6,13 @@ require_once('../tcpdf/tcpdf.php');
 include('../database/dbconfig.php');
 include('../lib/my_functions.php');
 session_start();
-if(!$_SESSION['username']){
+
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if((!isset($_SESSION['username']) && !isset($_SESSION['email'])) && $cron_token_provided !== $cron_token_expected){
 	header('Location: login.php');
+    exit();
 }else{
 	$query = "SELECT id, nombre, color FROM competiciones WHERE activo = 'si'";
 	$query_run = mysqli_query($connection,$query);

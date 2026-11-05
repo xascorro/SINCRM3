@@ -252,9 +252,14 @@ $total_clubs = mysqli_fetch_assoc(mysqli_query($connection, $q_clubs_fig))['tota
                     <?php endif; ?>
                 </div>
 
+                <?php 
+                $txt_btn_insc = (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == 5) ? 'MIS INSCRIPCIONES' : 'INSCRIPCIONES';
+                $title_btn_insc = (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == 5) ? 'Descargar PDF de inscripciones de mi club (borrador privado)' : 'Ver listado de inscripciones en PDF';
+                ?>
                 <a href="./informes/informe_figuras.php?id_competicion=<?php echo $id_comp; ?>&titulo=Inscripciones" target="_blank" 
-                   class="px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-md">
-                    <i class="fas fa-file-pdf text-xs"></i> <span>INSCRIPCIONES</span>
+                   title="<?php echo $title_btn_insc; ?>"
+                   class="px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-md no-underline">
+                    <i class="fas fa-file-pdf text-xs"></i> <span><?php echo $txt_btn_insc; ?></span>
                 </a>
             </div>
         </div>

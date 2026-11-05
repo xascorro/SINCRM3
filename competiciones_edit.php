@@ -285,7 +285,10 @@ function get_gallery_images($prefix) {
                             <div class="flex items-center justify-between mb-4">
                                 <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest flex items-center gap-2"><i class="fas <?php echo $meta['icon']; ?>"></i> <?php echo $meta['label']; ?></label>
                                 <?php if($exists): ?>
-                                    <a href="<?php echo $file_path; ?>" target="_blank" class="text-[9px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md">VER ACTUAL</a>
+                                    <div class="flex items-center gap-1.5">
+                                        <a href="<?php echo $file_path; ?>" target="_blank" class="text-[9px] font-bold px-2 py-1 bg-emerald-100 text-emerald-700 hover:bg-emerald-200 rounded-md transition-colors flex items-center gap-1"><i class="fas fa-eye text-[8px]"></i> VER</a>
+                                        <button type="button" onclick="confirmarBorradoDoc('<?php echo $row['id']; ?>', '<?php echo $key; ?>', '<?php echo $meta['label']; ?>')" class="text-[9px] font-bold px-2 py-1 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded-md transition-colors flex items-center gap-1"><i class="fas fa-trash-alt text-[8px]"></i> BORRAR</button>
+                                    </div>
                                 <?php else: ?>
                                     <span class="text-[9px] font-bold px-2 py-1 bg-slate-200 text-slate-400 rounded-md">NO SUBIDO</span>
                                 <?php endif; ?>
@@ -353,6 +356,44 @@ function updateFileName(type) {
     if (input.files && input.files[0]) {
         label.textContent = "Listo para subir: " + input.files[0].name;
     }
+}
+
+function confirmarBorradoDoc(idComp, tipo, label) {
+    Swal.fire({
+        title: '¿Eliminar ' + label + '?',
+        text: 'El documento se despublicará y se eliminará físicamente del servidor.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Sí, borrar subida',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'informes_publicar_code.php';
+            
+            const inAct = document.createElement('input');
+            inAct.type = 'hidden'; inAct.name = 'action'; inAct.value = 'borrar';
+            form.appendChild(inAct);
+            
+            const inComp = document.createElement('input');
+            inComp.type = 'hidden'; inComp.name = 'id_competicion'; inComp.value = idComp;
+            form.appendChild(inComp);
+            
+            const inTipo = document.createElement('input');
+            inTipo.type = 'hidden'; inTipo.name = 'tipo'; inTipo.value = tipo;
+            form.appendChild(inTipo);
+            
+            const inRedir = document.createElement('input');
+            inRedir.type = 'hidden'; inRedir.name = 'redirect'; inRedir.value = 'competiciones_edit.php?id=' + idComp;
+            form.appendChild(inRedir);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
 }
 </script>
 

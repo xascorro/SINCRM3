@@ -1,33 +1,31 @@
-=== SESION SINCRM: REDISEÑO TOTAL DE MI_AUDITORIA.PHP ===
-Fecha: 2026-11-05 00:30 CET
-Archivos modificados:
-  - mi_auditoria.php (Rediseño total v4, modo claro, carta de rol, radar real, métricas AQUA, historial y sesgo de club)
-  - index.php (KPI de temporada activa, botón claro/compacto inscripciones, color corporativo en tarjetas de fecha)
-  - forgot_password.php (lenguaje cercano y humano, 6 casillas OTP con autovalidación reactiva)
-  - forgot_password_code.php (DATE_ADD SQL, caja OTP horizontal, +1pt tipografía y sanitización)
-  - includes/email_functions.php (maquetación en tonos claros, márgenes móviles compactos, +1pt tipografía)
-  - database/dbconfig.php (sincronización dinámica de timezone UTC+1/UTC+2)
+=== SESION SINCRM: SISTEMA DE PUBLICACIÓN, BORRADO DE SUBIDAS Y ENVÍO DE EMAILS ===
+Fecha: 2026-11-05 06:36 CET
+Archivos modificados / creados:
+  - informes_competicion.php (Panel oficial de publicación web en docs/, control de subidas y despublicación con SweetAlert2)
+  - informes_publicar_code.php (Controlador seguro de publicación oficial, generación de PDF, guardado en docs/ y borrado físico)
+  - competiciones_edit.php (Botón de borrar subidas de documentos existentes en docs/ con confirmación)
+  - inscripciones.php (Clarificación de botón 'MIS INSCRIPCIONES' privado para clubes, confirmación de no publicación)
+  - includes/email_functions.php (Soporte integral de adjuntos base64 vía servidor Blue Pulse Hub / send_resend.php)
+  - cron_cierres_inscripcion.php (Host header para generación interna cURL)
+  - informes/informe_figuras_resultados_categorias.php (Soporte de cron_token interno)
+  - informes/informe_figuras_liga_categorias.php (Soporte de cron_token interno)
 
-1. Rediseño Total de mi_auditoria.php (Portal del Juez y Autocontrol Arbitral):
-- Interfaz y Estética v4:
-  * Eliminado el bloque oscuro centralizado (`bg-slate-800/900`) y las estadísticas aleatorias `rand(60, 95)`.
-  * Diseño moderno en Modo Claro según directrices Emil Kowalski + Rauno Freiberg (sombras multicapa, bordes hairline, spring physics en botones y tarjetas).
-  * Estricta estabilidad numérica con `tabular-nums` en porcentajes, sesgos y notas.
-- Carta de Rol y Radar de Habilidades:
-  * Cálculo dinámico de métricas para el gráfico Radar (Severidad, Consistencia, Velocidad, Precisión AQUA, Experiencia).
-  * Clasificación de perfil con badge semántico (Juez Equilibrado, Severo o Generoso).
-  * Sub-KPIs de Alineación (%) y Estabilidad (%) tabulares.
-- Desglose de Participaciones Técnicas:
-  * Registro combinado de actuaciones oficiales (`puesto_juez`: Juez Árbitro, Secretario, etc.) y paneles de puntuación (`panel_jueces`).
-- KPIs Macro de Rendimiento:
-  * Precisión AQUA (±0.2 ptos margen normativo oficial), Sesgo Medio (Bias Score con desviación vs panel), Eventos y Notas emitidas.
-- Gráfico de Trayectoria:
-  * Evolución de precisión AQUA (%) a lo largo de las competiciones evaluadas en la temporada activa.
-- Auditoría de Sesgo por Club (Club Bias):
-  * Detección de neutralidad y sesgos hacia clubes evaluados, clasificando objetividad (Neutral, Generoso, Exigente).
-- Tabla de Historial de Competiciones:
-  * Listado con fecha, notas, precisión AQUA, sesgo, puesto en el evento (#X) y botón directo de análisis micro a `analisis_juez_detalle.php`.
-- Modo Supervisión para Administradores / Editores:
-  * Selector inteligente ("Zero-Gray Control") agrupado por jueces con auditoría activa y resto del censo para supervisión técnica.
-- Gestión de Estado Vacío:
-  * Vista amigable y didáctica si el juez aún no cuenta con notas de figuras evaluadas.
+1. Commit Solicitado:
+- Realizado commit 'feat(auditoria): rediseño v4 de mi_auditoria.php, optimización de forgot_password y correcciones en index'.
+
+2. Resolución de Publicación Involuntaria (81-inscripciones.pdf):
+- Se comprobó el origen del archivo docs/81-inscripciones.pdf (generado durante pruebas anteriores del cron de cierres del 04/11).
+- Se ha eliminado físicamente docs/81-inscripciones.pdf del servidor para que no figure publicado en el Dashboard público mientras los clubes continúan introduciendo inscripciones.
+- En inscripciones.php, para usuarios con rol Club (5), el botón se muestra como 'MIS INSCRIPCIONES' con tooltip aclaratorio de que es un borrador privado que no publica en la web.
+
+3. Panel de Publicación Oficial en informes_competicion.php:
+- Acceso restringido exclusivamente a Administradores y Secretarios (roles 1, 2, 3).
+- Panel interactivo con cada tipo de documento oficial (Inscripciones, Orden de Actuación, Resultados, Normativa, Liga):
+  * Estado en tiempo real: 'PUBLICADO EN LA WEB' (verde, con fecha y tamaño KB) o 'NO PUBLICADO' (gris).
+  * Botón 'Publicar en la Web': Genera el PDF oficial completo sin filtro de club y lo guarda en docs/{id}-{tipo}.pdf.
+  * Checkbox 'Enviar notificación por email': Remite el email oficial con el PDF adjunto al superadmin (xascorro@gmail.com para pruebas).
+  * Botón 'Borrar Subida / Despublicar': Retira físicamente el archivo del servidor docs/ para que no aparezca en el Dashboard público.
+  * Subida manual con validación para Normativa y documentos externos.
+
+4. Borrado de Subidas en competiciones_edit.php:
+- Incorporado botón 'BORRAR' junto a 'VER' para cada documento existente en docs/ con confirmación SweetAlert2.
