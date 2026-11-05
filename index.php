@@ -490,32 +490,35 @@ $meses_es = [
                                 $f_cc = date("Y-m-d", strtotime("-".$d_cc." days", strtotime($row['fecha'])));
                                 $f_cc_visible = date("Y-m-d", strtotime("-1 day", strtotime($f_cc)));
 
+                                // Plazos técnicos activos
+                                $cc_en_plazo = ($has_cc && ($hoy <= $f_cc_visible || $_SESSION['id_rol'] == 1));
+                                $musica_en_plazo = ($has_musica && ($hoy <= $f_musica_visible || $_SESSION['id_rol'] == 1));
+
                                 if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
                                     
-                                    <!-- ESTADO: INSCRIPCIONES ABIERTAS -->
-                                    <div class="flex flex-col items-center sm:items-start gap-2.5 w-full sm:w-auto">
+                                    <!-- ESTADO: INSCRIPCIONES ABIERTAS (Botón Integrado Sutil) -->
+                                    <div class="flex flex-col items-start gap-2 w-full sm:w-auto">
                                         
-                                        <!-- BOTÓN GESTIONAR INSCRIPCIONES (Estilo Pill Abierto con Fecha Dentro) -->
                                         <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-50 hover:bg-emerald-100/90 border border-emerald-200/90 hover:border-emerald-300 text-emerald-800 rounded-2xl shadow-xs transition-all flex flex-col items-center sm:items-start text-left group">
-                                                <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-700">
+                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-emerald-300 text-slate-800 rounded-2xl shadow-2xs transition-all flex flex-col items-start text-left group">
+                                                <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 group-hover:text-emerald-700 transition-colors">
                                                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
                                                     <span>Gestionar Inscripciones</span>
-                                                    <i class="fas fa-arrow-right text-[10px] text-emerald-500 group-hover:translate-x-1 transition-transform ml-0.5"></i>
+                                                    <i class="fas fa-arrow-right text-[10px] text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all ml-0.5"></i>
                                                 </span>
-                                                <span class="text-[10px] sm:text-[11px] font-bold text-emerald-600/90 tracking-tight tabular-nums mt-0.5 pl-4 sm:pl-4">
+                                                <span class="text-[10px] sm:text-[11px] font-medium text-slate-400 group-hover:text-emerald-600/90 tracking-tight tabular-nums mt-0.5 pl-4 transition-colors">
                                                     Hasta el <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
                                                 </span>
                                             </button>
                                         </form>
 
-                                        <!-- PILLS DE COACH CARD Y MÚSICA (Apilados y justificados a la izquierda con colores oficiales) -->
-                                        <?php if($has_cc || $has_musica): ?>
+                                        <!-- PILLS DE COACH CARD Y MÚSICA SI ESTÁN EN PLAZO -->
+                                        <?php if($cc_en_plazo || $musica_en_plazo): ?>
                                             <div class="flex flex-col items-start gap-1.5 w-full">
-                                                <?php if($has_cc): ?>
+                                                <?php if($cc_en_plazo): ?>
                                                     <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-amber-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
                                                         <i class="fas fa-puzzle-piece text-amber-500 text-xs shrink-0"></i>
                                                         <span class="text-slate-500 font-semibold">Coach Card:</span>
@@ -523,7 +526,7 @@ $meses_es = [
                                                     </div>
                                                 <?php endif; ?>
 
-                                                <?php if($has_musica): ?>
+                                                <?php if($musica_en_plazo): ?>
                                                     <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-purple-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
                                                         <i class="fas fa-file-zipper text-purple-600 text-xs shrink-0"></i>
                                                         <span class="text-slate-500 font-semibold">Música:</span>
@@ -538,29 +541,52 @@ $meses_es = [
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
                                     
                                     <!-- ESTADO: AÚN NO ABIERTAS -->
-                                    <div class="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider rounded-2xl border border-slate-200/80 text-center italic tabular-nums flex items-center justify-center gap-2">
-                                        <i class="fas fa-lock text-[11px] opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
+                                    <div class="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 bg-white text-slate-500 font-bold text-xs uppercase tracking-wider rounded-2xl border border-slate-200/80 text-center italic tabular-nums flex items-center justify-center gap-2 shadow-2xs">
+                                        <i class="fas fa-lock text-[11px] text-slate-400"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
 
                                 <?php else: ?>
                                     
-                                    <!-- ESTADO: INSCRIPCIONES CERRADAS (Solo Pill de Cerradas y Botón de Comprobación) -->
-                                    <div class="flex flex-col items-center sm:items-start gap-1.5 w-full sm:w-auto">
-                                        <div class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black text-rose-500 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 shadow-xs italic">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                                            <span>Inscripciones Cerradas</span>
-                                        </div>
-                                        <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums mt-0.5">
-                                            Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
-                                        </p>
-                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto mt-1">
+                                    <!-- ESTADO: INSCRIPCIONES CERRADAS (Botón Integrado Sutil que Sustituye al Pill) -->
+                                    <div class="flex flex-col items-start gap-2 w-full sm:w-auto">
+                                        
+                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2">
-                                                <i class="fas fa-eye text-slate-400 text-xs"></i> <span>Comprobar Inscripciones</span>
+                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-slate-300 text-slate-700 rounded-2xl shadow-2xs transition-all flex flex-col items-start text-left group">
+                                                <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-700 group-hover:text-slate-900 transition-colors">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
+                                                    <span>Comprobar Inscripciones</span>
+                                                    <i class="fas fa-eye text-[11px] text-slate-400 group-hover:text-slate-600 group-hover:scale-105 transition-all ml-0.5"></i>
+                                                </span>
+                                                <span class="text-[10px] sm:text-[11px] font-medium text-slate-400 tracking-tight tabular-nums mt-0.5 pl-3.5 transition-colors">
+                                                    Desde el <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
+                                                </span>
                                             </button>
                                         </form>
+
+                                        <!-- PILLS DE COACH CARD Y MÚSICA SI AÚN ESTÁN EN PLAZO AUNQUE LA INSCRIPCIÓN HAYA CERRADO -->
+                                        <?php if($cc_en_plazo || $musica_en_plazo): ?>
+                                            <div class="flex flex-col items-start gap-1.5 w-full">
+                                                <?php if($cc_en_plazo): ?>
+                                                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-amber-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
+                                                        <i class="fas fa-puzzle-piece text-amber-500 text-xs shrink-0"></i>
+                                                        <span class="text-slate-500 font-semibold">Coach Card:</span>
+                                                        <span class="font-black text-slate-800 tabular-nums"><?php echo dateAFecha($f_cc_visible); ?></span>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <?php if($musica_en_plazo): ?>
+                                                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-purple-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
+                                                        <i class="fas fa-file-zipper text-purple-600 text-xs shrink-0"></i>
+                                                        <span class="text-slate-500 font-semibold">Música:</span>
+                                                        <span class="font-black text-slate-800 tabular-nums"><?php echo dateAFecha($f_musica_visible); ?></span>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+
                                     </div>
 
                                 <?php endif; ?>

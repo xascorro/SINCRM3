@@ -1,18 +1,13 @@
-=== SESION SINCRM: AJUSTES VISUALES EN INDEX.PHP (PRÓXIMAS COMPETICIONES) ===
-Fecha: 2026-11-05 06:55 CET
+=== SESION SINCRM: BOTONES SUTILES DE INSCRIPCIÓN Y PLAZOS DINÁMICOS EN INDEX.PHP ===
+Fecha: 2026-11-05 07:05 CET
 Archivos modificados:
-  - index.php (Título 'Próximas Competiciones', botón unificado de gestión de inscripciones estilo pill abierto verde con fecha interna, pills apilados y justificados a la izquierda de Coach Card y Música con colores oficiales, ocultación de plazos técnicos al estar cerradas)
+  - index.php (Estilo sutil de botones, unificación de Comprobar Inscripciones con 'Desde el dd-mm-aaaa' interno sustituyendo al pill cerrado, plazos de Coach Card y Música visibles mientras estén en plazo activo)
 
 1. Ajustes en index.php:
-- Título de sección:
-  * Sustituido 'Competiciones en Activo y Próximas' por 'Próximas Competiciones'.
-- Botón Gestionar Inscripciones:
-  * Eliminado el antiguo pill superior independiente.
-  * El propio botón de 'Gestionar Inscripciones' adopta el estilo del pill abierto (fondo esmeralda suave bg-emerald-50, borde verde esmeralda border-emerald-200, texto verde esmeralda y punto pulsante).
-  * La fecha límite de cierre ('Hasta el DD-MM-AAAA') se ubica dentro del propio botón en la parte inferior con formato tabular.
-- Pills de Coach Card y Música:
-  * Se apilan verticalmente hacia abajo y justificados a la izquierda debajo del botón de inscripciones.
-  * Iconos con colores oficiales idénticos a los del panel de rutinas: Ámbar para Coach Card (fas fa-puzzle-piece text-amber-500) y Púrpura para Música (fas fa-file-zipper text-purple-600).
-- Estado de Inscripciones Cerradas:
-  * Cuando las inscripciones están cerradas, los plazos técnicos de Coach Card y Música se ocultan automáticamente.
-  * Se muestra únicamente el pill de 'Inscripciones Cerradas' en tono rosa/rojo, con la fecha de finalización y el botón secundario 'Comprobar Inscripciones'.
+- Estilo sutil de botones de inscripción:
+  * Sustituido el verde esmeralda y el rojo intensos por un acabado mucho más limpio, sutil y elegante en lienzo blanco (`bg-white` con sutiles halos de hover y bordes hairline `border-slate-200/90`).
+  * Botón 'Gestionar Inscripciones' (Abiertas): incluye punto verde pulsante sutil (`bg-emerald-500 animate-pulse`), texto `text-slate-800` y fecha límite interna `Hasta el DD-MM-AAAA`.
+  * Botón 'Comprobar Inscripciones' (Cerradas): sustituye totalmente al antiguo pill rojo separado. Todo queda integrado en un único botón sutil justificado a la izquierda, con indicador sutil (`bg-slate-400`), icono de ojo y fecha interna `Desde el DD-MM-AAAA`.
+- Plazos de Coach Card y Música dinámicos:
+  * Se comprueba si cada plazo técnico continúa activo (`$hoy <= $f_cc_visible` o `$hoy <= $f_musica_visible`).
+  * Si la inscripción ha cerrado pero el plazo de música o coach card sigue abierto, sus pills apilados correspondientes permanecen visibles con sus colores oficiales (ámbar y púrpura).
