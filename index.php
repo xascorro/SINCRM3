@@ -429,7 +429,7 @@ $meses_es = [
         <div class="space-y-8 sm:space-y-12 mb-12 sm:mb-20">
             <div class="flex items-center gap-3 sm:gap-4 border-l-[6px] sm:border-l-[8px] border-blue-600 pl-4 sm:pl-6 py-1.5 sm:py-2">
                 <h2 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 uppercase tracking-tighter italic">
-                    Competiciones en Activo y Próximas
+                    Próximas Competiciones
                 </h2>
             </div>
 
@@ -465,7 +465,7 @@ $meses_es = [
                                 </div>
                             </div>
 
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6 w-full lg:w-auto">
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-start gap-4 sm:gap-6 w-full lg:w-auto">
                                 <?php
                                 $fecha_inicio_inscripcion = date("Y-m-d", strtotime("-".$row['dias_inicio_inscripcion']." days", strtotime($row['fecha'])));
                                 $fecha_fin_inscripcion = date("Y-m-d", strtotime("-".($row['dias_fin_inscripcion'])." days", strtotime($row['fecha'])));
@@ -476,32 +476,84 @@ $meses_es = [
                                 $hoy = date("Y-m-d");
                                 $enlace_inscripcion = "./inscripciones.php";
 
+                                // Detección de fases técnicas (Coach Card y Música)
+                                $id_c_row = (int)$row['id'];
+                                $res_cc = mysqli_query($connection, "SELECT COUNT(*) as num FROM fases WHERE id_competicion = $id_c_row AND elementos_coach_card > 0");
+                                $has_cc = ($res_cc && ($row_cc = mysqli_fetch_assoc($res_cc)) && $row_cc['num'] > 0);
+                                $has_musica = ($row['figuras'] != 'si');
+
+                                $d_musica = !empty($row['dias_musica']) ? (int)$row['dias_musica'] : 0;
+                                $f_musica = date("Y-m-d", strtotime("-".$d_musica." days", strtotime($row['fecha'])));
+                                $f_musica_visible = date("Y-m-d", strtotime("-1 day", strtotime($f_musica)));
+
+                                $d_cc = !empty($row['dias_coach_card']) ? (int)$row['dias_coach_card'] : 7;
+                                $f_cc = date("Y-m-d", strtotime("-".$d_cc." days", strtotime($row['fecha'])));
+                                $f_cc_visible = date("Y-m-d", strtotime("-1 day", strtotime($f_cc)));
+
                                 if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
-                                    <div class="w-full sm:w-auto text-center sm:text-right">
-                                        <div class="mb-2 sm:mb-2.5 flex flex-col items-center sm:items-end gap-1">
-                                            <span class="text-[10px] sm:text-[11px] font-black text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 shadow-xs animate-pulse italic">Inscripciones Abiertas</span>
-                                            <p class="text-[9px] font-bold text-slate-400 uppercase italic tabular-nums">Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
-                                        </div>
-                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto inline-block">
+                                    
+                                    <!-- ESTADO: INSCRIPCIONES ABIERTAS -->
+                                    <div class="flex flex-col items-center sm:items-start gap-2.5 w-full sm:w-auto">
+                                        
+                                        <!-- BOTÓN GESTIONAR INSCRIPCIONES (Estilo Pill Abierto con Fecha Dentro) -->
+                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-blue-50/70 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2 group">
-                                                <i class="fas fa-user-plus text-blue-600 text-xs group-hover:scale-110 transition-transform"></i> <span>Gestionar Inscripciones</span>
+                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-50 hover:bg-emerald-100/90 border border-emerald-200/90 hover:border-emerald-300 text-emerald-800 rounded-2xl shadow-xs transition-all flex flex-col items-center sm:items-start text-left group">
+                                                <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-700">
+                                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                                    <span>Gestionar Inscripciones</span>
+                                                    <i class="fas fa-arrow-right text-[10px] text-emerald-500 group-hover:translate-x-1 transition-transform ml-0.5"></i>
+                                                </span>
+                                                <span class="text-[10px] sm:text-[11px] font-bold text-emerald-600/90 tracking-tight tabular-nums mt-0.5 pl-4 sm:pl-4">
+                                                    Hasta el <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
+                                                </span>
                                             </button>
                                         </form>
+
+                                        <!-- PILLS DE COACH CARD Y MÚSICA (Apilados y justificados a la izquierda con colores oficiales) -->
+                                        <?php if($has_cc || $has_musica): ?>
+                                            <div class="flex flex-col items-start gap-1.5 w-full">
+                                                <?php if($has_cc): ?>
+                                                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-amber-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
+                                                        <i class="fas fa-puzzle-piece text-amber-500 text-xs shrink-0"></i>
+                                                        <span class="text-slate-500 font-semibold">Coach Card:</span>
+                                                        <span class="font-black text-slate-800 tabular-nums"><?php echo dateAFecha($f_cc_visible); ?></span>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <?php if($has_musica): ?>
+                                                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white hover:bg-purple-50/40 rounded-xl border border-slate-200/80 shadow-2xs text-[11px] font-bold text-slate-700 transition-colors">
+                                                        <i class="fas fa-file-zipper text-purple-600 text-xs shrink-0"></i>
+                                                        <span class="text-slate-500 font-semibold">Música:</span>
+                                                        <span class="font-black text-slate-800 tabular-nums"><?php echo dateAFecha($f_musica_visible); ?></span>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endif; ?>
+
                                     </div>
+
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
-                                    <div class="w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl border border-slate-200/80 text-center italic tabular-nums flex items-center justify-center gap-2">
+                                    
+                                    <!-- ESTADO: AÚN NO ABIERTAS -->
+                                    <div class="w-full sm:w-auto px-4 py-2.5 sm:px-5 sm:py-3 bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider rounded-2xl border border-slate-200/80 text-center italic tabular-nums flex items-center justify-center gap-2">
                                         <i class="fas fa-lock text-[11px] opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
+
                                 <?php else: ?>
-                                    <div class="w-full sm:w-auto text-center sm:text-right">
-                                        <div class="mb-2 sm:mb-2.5 flex flex-col items-center sm:items-end gap-1">
-                                            <span class="text-[10px] sm:text-[11px] font-black text-rose-500 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 shadow-xs italic">Inscripciones Cerradas</span>
-                                            <p class="text-[9px] font-bold text-slate-400 uppercase italic tabular-nums">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                    
+                                    <!-- ESTADO: INSCRIPCIONES CERRADAS (Solo Pill de Cerradas y Botón de Comprobación) -->
+                                    <div class="flex flex-col items-center sm:items-start gap-1.5 w-full sm:w-auto">
+                                        <div class="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] font-black text-rose-500 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 shadow-xs italic">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                                            <span>Inscripciones Cerradas</span>
                                         </div>
-                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto inline-block">
+                                        <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums mt-0.5">
+                                            Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
+                                        </p>
+                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto mt-1">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
@@ -510,52 +562,13 @@ $meses_es = [
                                             </button>
                                         </form>
                                     </div>
-                                <?php endif; ?>
 
-                                <!-- Plazos Técnicos (Música y Coach Card) -->
-                                <?php 
-                                    $id_c_row = (int)$row['id'];
-                                    $res_cc = mysqli_query($connection, "SELECT COUNT(*) as num FROM fases WHERE id_competicion = $id_c_row AND elementos_coach_card > 0");
-                                    $has_cc = ($res_cc && ($row_cc = mysqli_fetch_assoc($res_cc)) && $row_cc['num'] > 0);
-                                    
-                                    // Determinar número de columnas
-                                    $cols = 0;
-                                    if ($row['figuras'] != 'si') $cols++; // Música
-                                    if ($has_cc) $cols++; // Coach Card
-                                ?>
-                                <?php if($cols > 0): ?>
-                                <div class="grid <?php echo ($cols == 1) ? 'grid-cols-1' : 'grid-cols-2'; ?> gap-2 sm:gap-4 w-full sm:w-auto">
-                                    <?php 
-                                    $f_musica = date("Y-m-d", strtotime("-".$row['dias_musica']." days", strtotime($row['fecha'])));
-                                    if($row['figuras'] == 'si') {
-                                        $f_cc = $fecha_fin_inscripcion;
-                                    } else {
-                                        $f_cc = date("Y-m-d", strtotime("-".$row['dias_coach_card']." days", strtotime($row['fecha'])));
-                                    }
-                                    ?>
-                                    
-                                    <?php if($row['figuras'] != 'si'): ?>
-                                    <div class="p-2.5 sm:p-4 rounded-xl sm:rounded-3xl border border-slate-100 bg-slate-50/70 flex flex-col items-center justify-center text-center">
-                                        <i class="fas fa-music text-slate-400 mb-1 text-xs sm:text-sm"></i>
-                                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Música</p>
-                                        <p class="text-[11px] sm:text-xs font-black text-slate-700 tabular-nums"><?php echo dateAFecha($f_musica); ?></p>
-                                    </div>
-                                    <?php endif; ?>
-
-                                    <?php if($has_cc): ?>
-                                    <div class="p-2.5 sm:p-4 rounded-xl sm:rounded-3xl border border-slate-100 bg-slate-50/70 flex flex-col items-center justify-center text-center">
-                                        <i class="fas fa-puzzle-piece text-slate-400 mb-1 text-xs sm:text-sm"></i>
-                                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-tighter">Coach Card</p>
-                                        <p class="text-[11px] sm:text-xs font-black text-slate-700 tabular-nums"><?php echo dateAFecha($f_cc); ?></p>
-                                    </div>
-                                    <?php endif; ?>
-                                </div>
                                 <?php endif; ?>
 
                                 <?php if(!empty($row['enlace_sorteo'])): ?>
-                                    <div class="text-center w-full sm:w-auto">
+                                    <div class="text-center sm:text-left w-full sm:w-auto self-center">
                                         <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2 tabular-nums">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
-                                        <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-blue-600 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                                        <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="w-full sm:w-auto px-6 py-3.5 sm:px-7 sm:py-3.5 bg-blue-600 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[1.5rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 no-underline">
                                             <i class="fa-solid fa-video text-base"></i> Unirse al Sorteo
                                         </a>
                                     </div>

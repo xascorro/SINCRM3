@@ -1,31 +1,18 @@
-=== SESION SINCRM: SISTEMA DE PUBLICACIÓN, BORRADO DE SUBIDAS Y ENVÍO DE EMAILS ===
-Fecha: 2026-11-05 06:36 CET
-Archivos modificados / creados:
-  - informes_competicion.php (Panel oficial de publicación web en docs/, control de subidas y despublicación con SweetAlert2)
-  - informes_publicar_code.php (Controlador seguro de publicación oficial, generación de PDF, guardado en docs/ y borrado físico)
-  - competiciones_edit.php (Botón de borrar subidas de documentos existentes en docs/ con confirmación)
-  - inscripciones.php (Clarificación de botón 'MIS INSCRIPCIONES' privado para clubes, confirmación de no publicación)
-  - includes/email_functions.php (Soporte integral de adjuntos base64 vía servidor Blue Pulse Hub / send_resend.php)
-  - cron_cierres_inscripcion.php (Host header para generación interna cURL)
-  - informes/informe_figuras_resultados_categorias.php (Soporte de cron_token interno)
-  - informes/informe_figuras_liga_categorias.php (Soporte de cron_token interno)
+=== SESION SINCRM: AJUSTES VISUALES EN INDEX.PHP (PRÓXIMAS COMPETICIONES) ===
+Fecha: 2026-11-05 06:55 CET
+Archivos modificados:
+  - index.php (Título 'Próximas Competiciones', botón unificado de gestión de inscripciones estilo pill abierto verde con fecha interna, pills apilados y justificados a la izquierda de Coach Card y Música con colores oficiales, ocultación de plazos técnicos al estar cerradas)
 
-1. Commit Solicitado:
-- Realizado commit 'feat(auditoria): rediseño v4 de mi_auditoria.php, optimización de forgot_password y correcciones en index'.
-
-2. Resolución de Publicación Involuntaria (81-inscripciones.pdf):
-- Se comprobó el origen del archivo docs/81-inscripciones.pdf (generado durante pruebas anteriores del cron de cierres del 04/11).
-- Se ha eliminado físicamente docs/81-inscripciones.pdf del servidor para que no figure publicado en el Dashboard público mientras los clubes continúan introduciendo inscripciones.
-- En inscripciones.php, para usuarios con rol Club (5), el botón se muestra como 'MIS INSCRIPCIONES' con tooltip aclaratorio de que es un borrador privado que no publica en la web.
-
-3. Panel de Publicación Oficial en informes_competicion.php:
-- Acceso restringido exclusivamente a Administradores y Secretarios (roles 1, 2, 3).
-- Panel interactivo con cada tipo de documento oficial (Inscripciones, Orden de Actuación, Resultados, Normativa, Liga):
-  * Estado en tiempo real: 'PUBLICADO EN LA WEB' (verde, con fecha y tamaño KB) o 'NO PUBLICADO' (gris).
-  * Botón 'Publicar en la Web': Genera el PDF oficial completo sin filtro de club y lo guarda en docs/{id}-{tipo}.pdf.
-  * Checkbox 'Enviar notificación por email': Remite el email oficial con el PDF adjunto al superadmin (xascorro@gmail.com para pruebas).
-  * Botón 'Borrar Subida / Despublicar': Retira físicamente el archivo del servidor docs/ para que no aparezca en el Dashboard público.
-  * Subida manual con validación para Normativa y documentos externos.
-
-4. Borrado de Subidas en competiciones_edit.php:
-- Incorporado botón 'BORRAR' junto a 'VER' para cada documento existente en docs/ con confirmación SweetAlert2.
+1. Ajustes en index.php:
+- Título de sección:
+  * Sustituido 'Competiciones en Activo y Próximas' por 'Próximas Competiciones'.
+- Botón Gestionar Inscripciones:
+  * Eliminado el antiguo pill superior independiente.
+  * El propio botón de 'Gestionar Inscripciones' adopta el estilo del pill abierto (fondo esmeralda suave bg-emerald-50, borde verde esmeralda border-emerald-200, texto verde esmeralda y punto pulsante).
+  * La fecha límite de cierre ('Hasta el DD-MM-AAAA') se ubica dentro del propio botón en la parte inferior con formato tabular.
+- Pills de Coach Card y Música:
+  * Se apilan verticalmente hacia abajo y justificados a la izquierda debajo del botón de inscripciones.
+  * Iconos con colores oficiales idénticos a los del panel de rutinas: Ámbar para Coach Card (fas fa-puzzle-piece text-amber-500) y Púrpura para Música (fas fa-file-zipper text-purple-600).
+- Estado de Inscripciones Cerradas:
+  * Cuando las inscripciones están cerradas, los plazos técnicos de Coach Card y Música se ocultan automáticamente.
+  * Se muestra únicamente el pill de 'Inscripciones Cerradas' en tono rosa/rojo, con la fecha de finalización y el botón secundario 'Comprobar Inscripciones'.
