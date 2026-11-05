@@ -1,13 +1,10 @@
-=== SESION SINCRM: BOTONES SUTILES DE INSCRIPCIÓN Y PLAZOS DINÁMICOS EN INDEX.PHP ===
-Fecha: 2026-11-05 07:05 CET
-Archivos modificados:
-  - index.php (Estilo sutil de botones, unificación de Comprobar Inscripciones con 'Desde el dd-mm-aaaa' interno sustituyendo al pill cerrado, plazos de Coach Card y Música visibles mientras estén en plazo activo)
+Última actualización: 05/11/2026 - Ajuste de botones simétricos de Inscripciones en Dashboard (index.php)
 
-1. Ajustes en index.php:
-- Estilo sutil de botones de inscripción:
-  * Sustituido el verde esmeralda y el rojo intensos por un acabado mucho más limpio, sutil y elegante en lienzo blanco (`bg-white` con sutiles halos de hover y bordes hairline `border-slate-200/90`).
-  * Botón 'Gestionar Inscripciones' (Abiertas): incluye punto verde pulsante sutil (`bg-emerald-500 animate-pulse`), texto `text-slate-800` y fecha límite interna `Hasta el DD-MM-AAAA`.
-  * Botón 'Comprobar Inscripciones' (Cerradas): sustituye totalmente al antiguo pill rojo separado. Todo queda integrado en un único botón sutil justificado a la izquierda, con indicador sutil (`bg-slate-400`), icono de ojo y fecha interna `Desde el DD-MM-AAAA`.
-- Plazos de Coach Card y Música dinámicos:
-  * Se comprueba si cada plazo técnico continúa activo (`$hoy <= $f_cc_visible` o `$hoy <= $f_musica_visible`).
-  * Si la inscripción ha cerrado pero el plazo de música o coach card sigue abierto, sus pills apilados correspondientes permanecen visibles con sus colores oficiales (ámbar y púrpura).
+Archivos modificados:
+- index.php:
+  - Título renombrado a "Próximas Competiciones".
+  - Ambos estados (abiertas y cerradas) unificados al texto "Inscripciones".
+  - Estilo sutil y limpio con fondo blanco y borde suave (sin saturación de color estridente).
+  - Estado Abiertas: Punto verde con pulso (`animate-pulse`), flecha derecha (`fa-arrow-right`) y fecha interior "Hasta el dd-mm-aaaa".
+  - Estado Cerradas: Punto neutro pizarra (sin pulso), icono de ojo (`fa-eye`) y fecha interior "Cerradas el dd-mm-aaaa".
+  - Apilado hacia abajo y justificado a la izquierda de los pills de Coach Card y Música, visibles mientras sus respectivos plazos técnicos sigan en vigor.

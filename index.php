@@ -506,7 +506,7 @@ $meses_es = [
                                             <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-emerald-300 text-slate-800 rounded-2xl shadow-2xs transition-all flex flex-col items-start text-left group">
                                                 <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-800 group-hover:text-emerald-700 transition-colors">
                                                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                                                    <span>Gestionar Inscripciones</span>
+                                                    <span>Inscripciones</span>
                                                     <i class="fas fa-arrow-right text-[10px] text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all ml-0.5"></i>
                                                 </span>
                                                 <span class="text-[10px] sm:text-[11px] font-medium text-slate-400 group-hover:text-emerald-600/90 tracking-tight tabular-nums mt-0.5 pl-4 transition-colors">
@@ -557,11 +557,11 @@ $meses_es = [
                                             <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200/90 hover:border-slate-300 text-slate-700 rounded-2xl shadow-2xs transition-all flex flex-col items-start text-left group">
                                                 <span class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-slate-700 group-hover:text-slate-900 transition-colors">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
-                                                    <span>Comprobar Inscripciones</span>
+                                                    <span>Inscripciones</span>
                                                     <i class="fas fa-eye text-[11px] text-slate-400 group-hover:text-slate-600 group-hover:scale-105 transition-all ml-0.5"></i>
                                                 </span>
                                                 <span class="text-[10px] sm:text-[11px] font-medium text-slate-400 tracking-tight tabular-nums mt-0.5 pl-3.5 transition-colors">
-                                                    Desde el <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
+                                                    Cerradas el <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?>
                                                 </span>
                                             </button>
                                         </form>
