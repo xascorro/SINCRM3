@@ -1,35 +1,33 @@
-=== SESION SINCRM: SOLAPAMIENTO OFICIAL RFEN/AQUA EN RUTINAS Y EDADES ===
-Fecha: 2026-11-04 23:33 CET
+=== SESION SINCRM: REDISEÑO TOTAL DE MI_AUDITORIA.PHP ===
+Fecha: 2026-11-05 00:30 CET
 Archivos modificados:
-  - includes/nadadoras_select_option.php
-  - rutinas_participantes_code.php
-  - rutinas_participantes.php
-  - nadadoras.php
-  - nadadoras_edit.php
-  - nadadoras_code.php
-  - inscripciones.php
-  - inscripciones_figuras.php
-  - inscripciones_figuras_ajax_nadadoras.php
-  - mi_equipo.php
+  - mi_auditoria.php (Rediseño total v4, modo claro, carta de rol, radar real, métricas AQUA, historial y sesgo de club)
+  - index.php (KPI de temporada activa, botón claro/compacto inscripciones, color corporativo en tarjetas de fecha)
+  - forgot_password.php (lenguaje cercano y humano, 6 casillas OTP con autovalidación reactiva)
+  - forgot_password_code.php (DATE_ADD SQL, caja OTP horizontal, +1pt tipografía y sanitización)
+  - includes/email_functions.php (maquetación en tonos claros, márgenes móviles compactos, +1pt tipografía)
+  - database/dbconfig.php (sincronización dinámica de timezone UTC+1/UTC+2)
 
-1. Resumen de Actuaciones Completadas:
-- Soporte de Solapamiento Oficial de Categorías en Natación Artística (RFEN / World Aquatics):
-  * Verificación normativa para la temporada 2026-2027 (año de cálculo 2027):
-    - Una nadadora nacida en 2009 cumple 18 años.
-    - Es de edad Junior (15-18 años) y a la vez cumple de sobra los requisitos para nadar en Absoluto (a partir de 15 años).
-  * Migración del motor de validación en rutinas:
-    - En lugar de escalones cerrados no solapables, la validación toma directamente `edad_minima` y `edad_maxima` configurados en la tabla `categorias`.
-    - Esto permite que cualquier cambio en `categorias.php` (ej. Junior 15-18 y Absoluto 15-99) aplique de inmediato sin tocar código.
-    - Respeta avisos elegantes `[DEMASIADO JOVEN: X años]` y `[DEMASIADO MAYOR: X años]`.
-- Reposicionamiento Automático y Destacado Visual (Scroll-to & Hash) en Nadadoras.
-- Conmutador Rápido de Estado (Activa / Baja) Directo vía AJAX.
-- Reactividad al teclear en TomSelect de búsqueda.
-
-2. Verificación Técnica:
-- Pruebas CLI ejecutadas con casos reales:
-  * 2009 (18 años) en Junior (15-18): PERMITIDA.
-  * 2009 (18 años) en Absoluto (15-99): PERMITIDA.
-  * 2016 (11 años) en Junior: BLOQUEADA (demasiado joven).
-  * 2000 (27 años) en Junior: BLOQUEADA (demasiado mayor).
-  * 2000 (27 años) en Absoluto: PERMITIDA.
-- `php -l` verificado con 0 errores de sintaxis en todos los ficheros.
+1. Rediseño Total de mi_auditoria.php (Portal del Juez y Autocontrol Arbitral):
+- Interfaz y Estética v4:
+  * Eliminado el bloque oscuro centralizado (`bg-slate-800/900`) y las estadísticas aleatorias `rand(60, 95)`.
+  * Diseño moderno en Modo Claro según directrices Emil Kowalski + Rauno Freiberg (sombras multicapa, bordes hairline, spring physics en botones y tarjetas).
+  * Estricta estabilidad numérica con `tabular-nums` en porcentajes, sesgos y notas.
+- Carta de Rol y Radar de Habilidades:
+  * Cálculo dinámico de métricas para el gráfico Radar (Severidad, Consistencia, Velocidad, Precisión AQUA, Experiencia).
+  * Clasificación de perfil con badge semántico (Juez Equilibrado, Severo o Generoso).
+  * Sub-KPIs de Alineación (%) y Estabilidad (%) tabulares.
+- Desglose de Participaciones Técnicas:
+  * Registro combinado de actuaciones oficiales (`puesto_juez`: Juez Árbitro, Secretario, etc.) y paneles de puntuación (`panel_jueces`).
+- KPIs Macro de Rendimiento:
+  * Precisión AQUA (±0.2 ptos margen normativo oficial), Sesgo Medio (Bias Score con desviación vs panel), Eventos y Notas emitidas.
+- Gráfico de Trayectoria:
+  * Evolución de precisión AQUA (%) a lo largo de las competiciones evaluadas en la temporada activa.
+- Auditoría de Sesgo por Club (Club Bias):
+  * Detección de neutralidad y sesgos hacia clubes evaluados, clasificando objetividad (Neutral, Generoso, Exigente).
+- Tabla de Historial de Competiciones:
+  * Listado con fecha, notas, precisión AQUA, sesgo, puesto en el evento (#X) y botón directo de análisis micro a `analisis_juez_detalle.php`.
+- Modo Supervisión para Administradores / Editores:
+  * Selector inteligente ("Zero-Gray Control") agrupado por jueces con auditoría activa y resto del censo para supervisión técnica.
+- Gestión de Estado Vacío:
+  * Vista amigable y didáctica si el juez aún no cuenta con notas de figuras evaluadas.

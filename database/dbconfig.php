@@ -45,8 +45,10 @@ if ($connection) {
     $dbconfig = true;
     $mysqli = new mysqli($servername, $db_username, $db_password, $db_name);
     $mysqli->set_charset("utf8mb4");
-    mysqli_query($connection, "SET time_zone = '+02:00'");
-    $mysqli->query("SET time_zone = '+02:00'");
+    $tz_now = new DateTime('now', new DateTimeZone('Europe/Madrid'));
+    $tz_offset = $tz_now->format('P');
+    mysqli_query($connection, "SET time_zone = '$tz_offset'");
+    $mysqli->query("SET time_zone = '$tz_offset'");
 } else {
     $dbconfig = false;
     if (php_sapi_name() !== 'cli') {

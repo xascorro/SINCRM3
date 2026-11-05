@@ -1,13 +1,13 @@
 <?php
 /**
- * Función universal para enviar emails vía Pulse Hub API (Reemplaza PHPMailer)
+ * Función universal para enviar emails vía Pulse Hub API (Servidor Blue)
  */
 function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug = false) {
     $token = "hub_mail_947d82b3c2e1";
     $url = "https://pulse.pedrodiaz.eu/mail/api.php";
     $from = "SINCRM <sincrm@pedrodiaz.eu>";
 
-    // Aplicar el diseño unificado de SINCRM
+    // Aplicar la plantilla visual en tonos claros con distribución horizontal equilibrada
     $html_final = wrap_email_template($asunto, $cuerpo);
 
     $ch = curl_init();
@@ -22,65 +22,107 @@ function enviar_email($destinatario, $asunto, $cuerpo, $adjunto = null, $debug =
         'html' => $html_final
     );
 
+    if (!empty($adjunto) && is_array($adjunto)) {
+        $fields['attachments'] = json_encode($adjunto);
+    }
+
     curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
     
     $response = curl_exec($ch);
     $error = curl_error($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
     
     if ($error) {
         error_log("Error Pulse Hub (enviar_email): " . $error);
-        return "Error: " . $error;
+        return "Error de conexión: " . $error;
+    }
+    
+    if ($http_code >= 400) {
+        error_log("Error Pulse Hub HTTP $http_code: " . $response);
+        return "Error del servidor de correo ($http_code)";
+    }
+
+    $json = json_decode($response, true);
+    if (isset($json['error'])) {
+        error_log("Error Pulse Hub API: " . $json['error']);
+        return "Error: " . $json['error'];
     }
     
     return true;
 }
 
 /**
- * Plantilla de diseño unificada para SINCRM
+ * Plantilla de diseño editorial y humana en tonos claros (sin estética IA)
+ * Optimización horizontal (640px de ancho, cabecera y pie balanceados)
  */
 function wrap_email_template($title, $content) {
+    $current_year = date('Y');
     return "
     <!DOCTYPE html>
-    <html>
+    <html lang='es'>
     <head>
         <meta charset='utf-8'>
-        <style>
-            body { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; }
-            .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-            .header { background: #0f172a; padding: 40px; text-align: center; }
-            .logo-text { font-size: 28px; font-weight: 900; color: #ffffff; letter-spacing: -1px; font-style: italic; }
-            .logo-accent { color: #3b82f6; }
-            .content { padding: 40px; color: #334155; line-height: 1.6; }
-            .content h2 { color: #0f172a; font-size: 24px; font-weight: 800; margin-top: 0; letter-spacing: -0.5px; }
-            .content p { font-size: 16px; margin-bottom: 20px; }
-            .footer { background: #f8fafc; padding: 30px; text-align: center; border-top: 1px solid #e2e8f0; }
-            .footer p { font-size: 12px; color: #94a3b8; margin: 0; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-            .btn { display: inline-block; padding: 16px 32px; background: #0f172a; color: #ffffff !important; text-decoration: none; border-radius: 16px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.3s; }
-            .otp-box { background: #f1f5f9; border-radius: 20px; padding: 30px; text-align: center; margin: 20px 0; border: 2px dashed #cbd5e1; }
-            .otp-code { font-size: 42px; font-weight: 900; color: #3b82f6; letter-spacing: 8px; margin: 0; }
-            .alert-box { padding: 20px; border-radius: 16px; margin: 20px 0; font-size: 14px; font-weight: 600; }
-            .alert-warning { background: #fff7ed; color: #9a3412; border-left: 6px solid #f97316; }
-            .alert-info { background: #eff6ff; color: #1e40af; border-left: 6px solid #3b82f6; }
-        </style>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+        <title>" . htmlspecialchars($title) . "</title>
     </head>
-    <body>
-        <div class='container'>
-            <div class='header'>
-                <div class='logo-text'>SINCRM</div>
-            </div>
-            <div class='content'>
-                $content
-            </div>
-            <div class='footer'>
-                <p>&copy; " . date('Y') . " SINCRM - Natación Artística</p>
-                <div style='margin-top: 10px;'>
-                    <a href='mailto:sincrm@pedrodiaz.eu' style='color: #3b82f6; font-size: 11px; text-decoration: none; font-weight: bold;'>sincrm@pedrodiaz.eu</a>
-                </div>
-            </div>
-        </div>
+    <body style='margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; color: #334155;'>
+        <table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='background-color: #f8fafc; padding: 16px 8px;'>
+            <tr>
+                <td align='center'>
+                    <table role='presentation' width='100%' cellpadding='0' cellspacing='0' style='max-width: 640px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05);'>
+                        
+                        <!-- CABECERA HORIZONTAL COMPACTA -->
+                        <tr>
+                            <td style='padding: 18px 20px; border-bottom: 1px solid #f1f5f9; background-color: #ffffff;'>
+                                <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+                                    <tr>
+                                        <td align='left' style='vertical-align: middle;'>
+                                            <span style='font-size: 21px; font-weight: 900; letter-spacing: 0.5px; color: #0f172a; display: inline-block; vertical-align: middle;'>SINCRM</span>
+                                            <span style='display: inline-block; vertical-align: middle; margin: 0 8px; color: #cbd5e1; font-weight: 300;'>|</span>
+                                            <span style='font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #0284c7; display: inline-block; vertical-align: middle;'>Natación Artística</span>
+                                        </td>
+                                        <td align='right' style='vertical-align: middle;'>
+                                            <span style='font-size: 13px; color: #94a3b8; font-weight: 500;'>sincrm.pedrodiaz.eu</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                        <!-- CUERPO PRINCIPAL CON MÁXIMO APROVECHAMIENTO (MÓVIL FRIENDLY) -->
+                        <tr>
+                            <td style='padding: 24px 20px; font-size: 16px; line-height: 1.6; color: #334155;'>
+                                $content
+                            </td>
+                        </tr>
+
+                        <!-- PIE DE MENSAJE -->
+                        <tr>
+                            <td style='padding: 16px 20px; background-color: #fafafa; border-top: 1px solid #f1f5f9;'>
+                                <table role='presentation' width='100%' cellpadding='0' cellspacing='0'>
+                                    <tr>
+                                        <td align='left' style='font-size: 13px; color: #94a3b8; line-height: 1.5; vertical-align: middle;'>
+                                            <span style='font-weight: 600; color: #64748b;'>SINCRM</span> &middot; Sistema de Gestión Deportiva
+                                            <span style='display: block; margin-top: 2px; font-size: 12px;'>
+                                                Contacto: <a href='mailto:sincrm@pedrodiaz.eu' style='color: #0284c7; text-decoration: none;'>sincrm@pedrodiaz.eu</a>
+                                            </span>
+                                        </td>
+                                        <td align='right' style='font-size: 12px; color: #cbd5e1; white-space: nowrap; vertical-align: middle;'>
+                                            &copy; {$current_year}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+
+                    </table>
+                </td>
+            </tr>
+        </table>
     </body>
     </html>";
 }

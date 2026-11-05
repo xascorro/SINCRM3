@@ -149,11 +149,16 @@ $meses_es = [
 
             <!-- Competiciones (TERCERA TARJETA PARA ADMINS / SECRETARIOS / DELEGADOS) -->
             <?php if(in_array($_SESSION['id_rol'], [1, 2, 3])): 
+                // Obtener temporada activa oficial de la competición activa o vigente
+                $q_temp_kpi = mysqli_query($connection, "SELECT temporada FROM competiciones WHERE activo = 'si' LIMIT 1");
+                $row_temp_kpi = ($q_temp_kpi) ? mysqli_fetch_assoc($q_temp_kpi) : null;
+                $temporada_kpi = !empty($row_temp_kpi['temporada']) ? $row_temp_kpi['temporada'] : '2026-2027';
+
                 $q_comp_kpi = "SELECT 
                     COUNT(*) as total, 
                     SUM(CASE WHEN fecha >= CURDATE() THEN 1 ELSE 0 END) as futuras,
                     SUM(CASE WHEN fecha < CURDATE() THEN 1 ELSE 0 END) as pasadas
-                FROM competiciones";
+                FROM competiciones WHERE temporada = '$temporada_kpi'";
                 $res_comp_kpi = mysqli_query($connection, $q_comp_kpi);
                 $comp_stats = mysqli_fetch_assoc($res_comp_kpi);
             ?>
@@ -472,36 +477,36 @@ $meses_es = [
                                 $enlace_inscripcion = "./inscripciones.php";
 
                                 if($hoy >= $fecha_inicio_inscripcion && $hoy <= $fecha_fin_inscripcion_visible): ?>
-                                    <div class="w-full sm:w-auto text-center">
-                                        <div class="mb-3 flex flex-col items-center gap-1">
-                                            <span class="text-[11px] sm:text-xs font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-4 py-1.5 rounded-full border border-emerald-100 shadow-xs animate-pulse italic">Inscripciones Abiertas</span>
-                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums">Plazo Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                    <div class="w-full sm:w-auto text-center sm:text-right">
+                                        <div class="mb-2 sm:mb-2.5 flex flex-col items-center sm:items-end gap-1">
+                                            <span class="text-[10px] sm:text-[11px] font-black text-emerald-600 uppercase tracking-wider bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100 shadow-xs animate-pulse italic">Inscripciones Abiertas</span>
+                                            <p class="text-[9px] font-bold text-slate-400 uppercase italic tabular-nums">Hasta: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
-                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
+                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto inline-block">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                            <button type="submit" name="inscripciones" class="w-full sm:w-auto px-6 py-3.5 sm:px-10 sm:py-4 bg-slate-800 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-lg hover:bg-black active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                                                <i class="fas fa-user-plus text-base"></i> Gestionar Inscripciones
+                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-blue-50/70 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-600 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2 group">
+                                                <i class="fas fa-user-plus text-blue-600 text-xs group-hover:scale-110 transition-transform"></i> <span>Gestionar Inscripciones</span>
                                             </button>
                                         </form>
                                     </div>
                                 <?php elseif($hoy < $fecha_inicio_inscripcion): ?>
-                                    <div class="w-full sm:w-auto px-6 py-3.5 sm:px-8 sm:py-4 bg-slate-50 text-slate-500 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] border border-slate-100 text-center italic tabular-nums">
-                                        <i class="fas fa-lock mr-2 opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
+                                    <div class="w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-slate-50 text-slate-500 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl border border-slate-200/80 text-center italic tabular-nums flex items-center justify-center gap-2">
+                                        <i class="fas fa-lock text-[11px] opacity-50"></i> Apertura: <?php echo dateAFecha($fecha_inicio_inscripcion); ?>
                                     </div>
                                 <?php else: ?>
-                                    <div class="w-full sm:w-auto text-center">
-                                        <div class="mb-3 flex flex-col items-center gap-1">
-                                            <span class="text-[11px] sm:text-xs font-black text-red-500 uppercase tracking-widest bg-red-50 px-4 py-1.5 rounded-full border border-red-100 shadow-xs italic">Inscripciones Cerradas</span>
-                                            <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase italic tabular-nums">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
+                                    <div class="w-full sm:w-auto text-center sm:text-right">
+                                        <div class="mb-2 sm:mb-2.5 flex flex-col items-center sm:items-end gap-1">
+                                            <span class="text-[10px] sm:text-[11px] font-black text-rose-500 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 shadow-xs italic">Inscripciones Cerradas</span>
+                                            <p class="text-[9px] font-bold text-slate-400 uppercase italic tabular-nums">Finalizó el: <?php echo dateAFecha($fecha_fin_inscripcion_visible); ?></p>
                                         </div>
-                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto">
+                                        <form action="<?php echo $enlace_inscripcion;?>" method="post" class="w-full sm:w-auto inline-block">
                                             <input type="hidden" name="id_competicion" value="<?php echo $row['id'];?>">
                                             <input type="hidden" name="nombre_competicion" value="<?php echo $row['nombre'];?>">
                                             <input type="hidden" name="competicion_figuras" value="<?php echo $row['figuras'];?>">
-                                            <button type="submit" name="inscripciones" class="w-full sm:w-auto px-6 py-3.5 sm:px-10 sm:py-4 bg-slate-100 text-slate-600 font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[2rem] shadow-xs hover:bg-slate-200 active:scale-[0.98] transition-all flex items-center justify-center gap-3 border border-slate-200">
-                                                <i class="fas fa-eye text-base"></i> Comprobar Inscripciones
+                                            <button type="submit" name="inscripciones" class="tap-press w-full sm:w-auto px-4 py-2 sm:px-5 sm:py-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl shadow-xs transition-all flex items-center justify-center gap-2">
+                                                <i class="fas fa-eye text-slate-400 text-xs"></i> <span>Comprobar Inscripciones</span>
                                             </button>
                                         </form>
                                     </div>
@@ -730,11 +735,12 @@ $meses_es = [
                     <?php
                     if($total_calendario > 0){
                         while ($row = mysqli_fetch_assoc($query_run_cal)):
+                            $color_cal = (!empty($row['color'])) ? $row['color'] : '#0284c7';
                     ?>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-lg transition-all group gap-4 sm:gap-8">
                             <div class="flex items-start sm:items-center gap-4 sm:gap-8">
-                                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl oceanic-gradient flex flex-col items-center justify-center text-white shadow-md shrink-0 tabular-nums">
-                                    <span class="text-[10px] sm:text-[11px] font-black uppercase opacity-75"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
+                                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex flex-col items-center justify-center text-white shadow-md shrink-0 tabular-nums p-1" style="background-color: <?php echo $color_cal; ?>;">
+                                    <span class="text-[10px] sm:text-[11px] font-black uppercase opacity-85"><?php echo $meses_es[date('M', strtotime($row['fecha']))]; ?></span>
                                     <span class="text-lg sm:text-xl font-black leading-none mt-0.5"><?php echo date('d', strtotime($row['fecha'])); ?></span>
                                 </div>
                                 <div class="min-w-0 flex-1">
@@ -785,15 +791,16 @@ $meses_es = [
                             $query = 'select * FROM competiciones WHERE fecha < (SELECT CURDATE()) ORDER BY fecha desc LIMIT 10';
                             $query_run = mysqli_query($connection,$query);
                             while ($row = mysqli_fetch_assoc($query_run)):
+                                $color_hist = (!empty($row['color'])) ? $row['color'] : '#475569';
                             ?>
                             <tr class="hover:bg-slate-50/50 transition-colors flex flex-col md:table-row p-4 sm:p-6 md:p-0 border-b border-slate-100 md:border-b-0">
                                 
                                 <!-- Columna 1: Fecha (Al principio) -->
                                 <td class="px-0 md:px-8 py-0 md:py-8 mb-4 md:mb-0">
-                                    <div class="flex flex-col items-center justify-center w-16 h-20 sm:w-20 sm:h-24 bg-slate-800 rounded-xl sm:rounded-[1.5rem] shadow-md border border-slate-700 tabular-nums">
-                                        <span class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase leading-none mb-1"><?php echo $meses_es[date("M", strtotime($row['fecha']))]; ?></span>
+                                    <div class="flex flex-col items-center justify-center w-16 h-20 sm:w-20 sm:h-24 rounded-xl sm:rounded-[1.5rem] shadow-md text-white tabular-nums p-2" style="background-color: <?php echo $color_hist; ?>;">
+                                        <span class="text-[9px] sm:text-[10px] font-black uppercase opacity-80 leading-none mb-1"><?php echo $meses_es[date("M", strtotime($row['fecha']))]; ?></span>
                                         <span class="text-2xl sm:text-3xl font-black text-white leading-tight"><?php echo date("d", strtotime($row['fecha'])); ?></span>
-                                        <span class="text-[10px] sm:text-xs font-black text-slate-500 tracking-widest leading-none mt-1 sm:mt-2"><?php echo date("Y", strtotime($row['fecha'])); ?></span>
+                                        <span class="text-[10px] sm:text-xs font-bold opacity-75 tracking-widest leading-none mt-1 sm:mt-1.5"><?php echo date("Y", strtotime($row['fecha'])); ?></span>
                                     </div>
                                 </td>
 
