@@ -69,11 +69,14 @@ if(isset($_POST['update_btn'])){
 	$password = $_POST['edit_password'];
 	$r_password = $_POST['edit_r_password'];
 
+    $raw_telefono = preg_replace('/[^0-9]/', '', $telefono);
+    $telefono_sql = !empty($raw_telefono) ? "'$raw_telefono'" : "NULL";
+
     // Lógica de actualización de contraseña
     $query_parts = [
         "username='$username'",
         "email='$email'",
-        "telefono='$telefono'",
+        "telefono=$telefono_sql",
         "comentario='$comentario'",
         "id_rol='$id_rol'",
         "id_juez_v3=" . ($id_juez_v3 != '' ? "'$id_juez_v3'" : "NULL"),

@@ -258,12 +258,13 @@ if(isset($_POST['login_btn'])){
 
 }elseif (isset($_POST['register_btn'])) {
     @session_start();
-	$register_username = mysqli_real_escape_string($connection, $_POST['username']);
-	$register_email = mysqli_real_escape_string($connection, $_POST['email']);
-	$register_telefono = mysqli_real_escape_string($connection, $_POST['telefono']);
-	$register_comentario = mysqli_real_escape_string($connection, $_POST['comentario']);
-	$register_password = $_POST['password'];
-	$register_password_r = $_POST['password_r'];
+	$register_username = mysqli_real_escape_string($connection, trim($_POST['username'] ?? ''));
+	$register_email = mysqli_real_escape_string($connection, trim($_POST['email'] ?? ''));
+	$raw_telefono = preg_replace('/[^0-9]/', '', $_POST['telefono'] ?? '');
+	$register_telefono_sql = !empty($raw_telefono) ? "'" . mysqli_real_escape_string($connection, $raw_telefono) . "'" : "NULL";
+	$register_comentario = mysqli_real_escape_string($connection, trim($_POST['comentario'] ?? ''));
+	$register_password = $_POST['password'] ?? '';
+	$register_password_r = $_POST['password_r'] ?? '';
 
 	$query = "SELECT * FROM usuarios WHERE email ='$register_email'";
 	$query_run = mysqli_query($connection,$query);
@@ -277,7 +278,7 @@ if(isset($_POST['login_btn'])){
 	$register_password_hash = password_hash($register_password, PASSWORD_DEFAULT);
     $token_verificacion = bin2hex(random_bytes(32));
 
-	$query = "INSERT INTO usuarios (username, email, telefono, hash, comentario, token_confirmacion, email_confirmado) values ('$register_username', '$register_email', '$register_telefono', '$register_password_hash', '$register_comentario', '$token_verificacion', 0)";
+	$query = "INSERT INTO usuarios (username, email, telefono, hash, comentario, token_confirmacion, email_confirmado) values ('$register_username', '$register_email', $register_telefono_sql, '$register_password_hash', '$register_comentario', '$token_verificacion', 0)";
 	if(!mysqli_query($connection, $query)){
 		sendResponse('error', "Ups!, ha ocurrido un error inesperado", 'register.php');
 	}else{

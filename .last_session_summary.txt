@@ -1,10 +1,14 @@
-Última actualización: 05/11/2026 - Ajuste de botones simétricos de Inscripciones en Dashboard (index.php)
+Última actualización: 05/11/2026 - Rediseño moderno v4 de register.php y robustecimiento de registro
 
 Archivos modificados:
-- index.php:
-  - Título renombrado a "Próximas Competiciones".
-  - Ambos estados (abiertas y cerradas) unificados al texto "Inscripciones".
-  - Estilo sutil y limpio con fondo blanco y borde suave (sin saturación de color estridente).
-  - Estado Abiertas: Punto verde con pulso (`animate-pulse`), flecha derecha (`fa-arrow-right`) y fecha interior "Hasta el dd-mm-aaaa".
-  - Estado Cerradas: Punto neutro pizarra (sin pulso), icono de ojo (`fa-eye`) y fecha interior "Cerradas el dd-mm-aaaa".
-  - Apilado hacia abajo y justificado a la izquierda de los pills de Coach Card y Música, visibles mientras sus respectivos plazos técnicos sigan en vigor.
+- register.php:
+  - Rediseño integral alineado con el nuevo sistema visual v4 de login.php y forgot_password.php.
+  - Panel izquierdo con identidad visual luminosa (gradiente azul-cyan, textura natación artística, tarjeta glassmorphism de 3 pasos y versión estable).
+  - Formulario derecho optimizado para móvil: márgenes compactos, campos limpios, tipografía legible y controles de cero gris plano.
+  - Incorporados botones para mostrar/ocultar contraseñas (ojos con toggle reactivo).
+  - Indicador dinámico en tiempo real de coincidencia de contraseñas.
+  - SweetAlert2 moderno, claro y con lenguaje cercano y accesible.
+- login_code.php:
+  - Robustecida la inserción de registro para evitar error fatal SQL por entero vacío en columna `telefono` (admite NULL o teléfono limpio de espacios/caracteres).
+- usuarios_code.php:
+  - Ajuste análogo en la actualización de usuarios para soportar teléfonos vacíos o NULL sin error SQL.
