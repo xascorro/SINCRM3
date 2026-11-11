@@ -188,7 +188,8 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                                     <?php foreach ($jueces1 as $j): 
                                         $q_jn = "SELECT id, nota, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_rutina=$id_rutina AND id_panel_juez=".$j['id']." AND id_elemento=".$el['elemento'];
                                         $jn = mysqli_fetch_assoc(mysqli_query($connection, $q_jn));
-                                        $tachado = ($jn['nota_menor'] == 'si' || $jn['nota_mayor'] == 'si') ? 'line-through text-slate-400 bg-slate-100' : 'text-slate-700 font-bold';
+                                        $es_descarte = (isset($jn['nota_menor']) && ($jn['nota_menor'] === 'si' || $jn['nota_menor'] === '1')) || (isset($jn['nota_mayor']) && ($jn['nota_mayor'] === 'si' || $jn['nota_mayor'] === '1'));
+                                        $tachado = $es_descarte ? 'line-through text-slate-400 bg-slate-100' : 'text-slate-700 font-bold';
                                         $media_class = ($j['id_juez'] == '108') ? 'juez-media bg-amber-50 border-amber-200' : '';
                                         $ti = $tab_index + ($j['numero_juez']*15);
                                     ?>
@@ -312,8 +313,9 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                                     <?php foreach ($jueces2 as $j): 
                                         $q_jn = "SELECT id, nota, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_rutina=$id_rutina AND id_panel_juez=".$j['id']." AND tipo_ia='$key'";
                                         $jn = mysqli_fetch_assoc(mysqli_query($connection, $q_jn));
-                                        $tachado = ($jn['nota_menor'] == 'si' || $jn['nota_mayor'] == 'si') ? 'line-through text-slate-400 bg-slate-100' : 'text-slate-700 font-bold';
-                                        if($jn['nota_menor'] != 'si' && $jn['nota_mayor'] != 'si') $sum_jueces += ($jn['nota'] ?? 0);
+                                        $es_descarte_ia = (isset($jn['nota_menor']) && ($jn['nota_menor'] === 'si' || $jn['nota_menor'] === '1')) || (isset($jn['nota_mayor']) && ($jn['nota_mayor'] === 'si' || $jn['nota_mayor'] === '1'));
+                                        $tachado = $es_descarte_ia ? 'line-through text-slate-400 bg-slate-100' : 'text-slate-700 font-bold';
+                                        if(!$es_descarte_ia) $sum_jueces += ($jn['nota'] ?? 0);
                                         $media_class = ($j['id_juez'] == '108') ? 'juez-media bg-amber-50 border-amber-200' : '';
                                         $ti = $tab_index_ia + ($j['numero_juez']*5);
                                     ?>

@@ -1,20 +1,33 @@
-Última Sesión: Implementación de Vista de Lista persistente en Competiciones (competiciones.php).
-Fecha: 2026-11-10
+# Resumen de Sesión - SINCRM v4
+Fecha: 2026-11-11
+Tarea: Auditoría y optimización del módulo de puntuaciones, motor de cálculo y rediseño de informes oficiales (Puntuaciones y Coach Card).
 
-Cambios realizados:
-1. Vista de Lista en competiciones.php:
-   - Implementado selector segmentado táctil (Zero-gray control) en la cabecera superior con iconos y etiquetas: "Mosaico" y "Lista".
-   - Creado contenedor `#compList` con diseño moderno v4:
-     - En escritorio (`hidden md:block`): Tabla completa con columnas Fecha/ID, Competición/Sede (con enlace a Maps), Modalidad (Badges inteligentes), Estado (Switch interactivo Activa/Pausada) y Acciones (Configurar y Eliminar).
-     - En móvil (`md:hidden`): Cards fluidas compactas con indicador de color y todas las acciones.
-2. Persistencia en LocalStorage:
-   - Clave `sincrm_competiciones_view` ('grid' o 'list').
-   - Sistema anti-parpadeo (FOUC) con estilo inline inmediato para carga ultra rápida y sin saltos visuales al refrescar.
-3. Buscador Global Unificado:
-   - `filterCompTable()` ahora filtra en tiempo real tanto en la vista Mosaico (`.comp-card`) como en la vista Lista (`.comp-list-row`).
-   - Soporte para avisos de "Sin resultados".
+## 1. Cambios Realizados
+- **Motor de Puntuaciones (`puntuaciones_rutina_code.php`)**:
+  - Refactorizado completamente eliminando 11 bloques repetitivos rígidos e implementando un bucle dinámico por elemento (`hibridos_rutina`).
+  - Normalizado el descarte de notas mínima y máxima con `'si'` asegurando descarte único incluso ante notas idénticas entre jueces.
+  - Soporte robusto de Basemark (`BM` vs `DD`) y factores técnicos.
+  - Panel de Impresión Artística auditado con descarte min/max, cálculo sobre 3 notas centrales y ponderación por factor oficial.
+  - Sincronización integrada con deducción de penalizaciones negativas.
+  - Recálculo automático instantáneo de ranking y diferencias respecto al líder en la fase tras guardar notas.
+- **Mesa de Puntuación (`puntuaciones_rutina.php`)**:
+  - Condición de notas tachadas ampliada a formato booleano compatible (`'si'` o `'1'`) tanto en panel de Elementos como en Impresión Artística.
+- **Informe Oficial de Puntuaciones (`informes/informe_puntuaciones.php`)**:
+  - Rediseño profesional bajo estética v4 y directrices Emil Kowalski (bloques estilizados protegidos con `nobr="true"`, bordes hairline, tipografía tabular).
+  - Desglose minucioso: badges por elemento, diferenciación destacada de `BM` en rojo, notas descartadas con tachado, deducciones de sincronización desglosadas, subtotales de paneles y penalizaciones de rutina.
+- **Generador Oficial de Coach Card (`informes/informe_coach_card.php`)**:
+  - Restaurada y formateada oficialmente la columna **`BONUS`** para los cambios de formación (`PC`..`6PC`) de la nueva normativa 2026-2027 (+0.20 c/u).
+  - Columnas oficiales World Aquatics completas: `EL`, `TIME`, `PART`, `BM`, `DIFICULTAD DECLARADA`, `BONUS`, `DD` y casilla `TC/DTC`.
+  - Ficha técnica completa de la rutina, temática, control de tiempo musical y caja destacada de Dificultad Total Declarada (`dd_total`).
+  - Control de privacidad por rol preservado (Club solo puede acceder a sus rutinas).
 
-Archivos modificados:
-- competiciones.php
+## 2. Archivos Modificados
+- `puntuaciones_rutina_code.php`
+- `puntuaciones_rutina.php`
+- `informes/informe_puntuaciones.php`
+- `informes/informe_coach_card.php`
+- `.last_session_summary.txt`
 
-Estado: Verificado y operativo.
+## 3. Estado del Proyecto
+- Validado con `php -l` (0 errores de sintaxis).
+- Generación de PDF verificada en entorno real (informe de puntuaciones y coach cards generados satisfactoriamente).
