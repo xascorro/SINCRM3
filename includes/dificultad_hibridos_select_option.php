@@ -11,15 +11,18 @@ if(isset($_GET['tipo_elemento']))
 if(isset($_GET['id_tipo_hibrido']))
 	$_POST['id_tipo_hibrido'] = $_GET['id_tipo_hibrido'];
 
+// Definir versión activa (por defecto '2425')
+$version_dif = isset($_REQUEST['version']) && !empty($_REQUEST['version']) ? mysqli_real_escape_string($connection, $_REQUEST['version']) : '2425';
+
 if($tipo_elemento == 'dd'){
 	if($_POST['id_tipo_hibrido']==1){
-        $query = "SELECT * FROM dificultad_hibridos WHERE (subagrupar is NULL or subagrupar not like 'no') and version = '2425' order by orden_select";
+        $query = "SELECT * FROM dificultad_hibridos WHERE (subagrupar is NULL or subagrupar not like 'no') and version = '$version_dif' order by orden_select";
 		$class = 'id_tipo_hibrido';
     }else if($_POST['id_tipo_hibrido']==2){
-        $query = "SELECT * from dificultad_tre  where version = '2425'";
+        $query = "SELECT * from dificultad_tre where version = '$version_dif'";
 		$class = 'id_tipo_hibrido';
     }else if($_POST['id_tipo_hibrido']==4 or isset($_GET['tipo_acro'])){
-		$where_clauses = ["(version = '2425' OR version IS NULL OR version = '')"];
+		$where_clauses = ["(version = '$version_dif' OR version IS NULL OR version = '')"];
 		if(isset($_GET['tipo_acro']) && $_GET['tipo_acro'] !== ''){
 			$tipo_acro = $_GET['tipo_acro'];
 			switch ($tipo_acro) {
@@ -79,7 +82,7 @@ if($tipo_elemento == 'Basemark'){
     $query = "SELECT * from dificultad_basemark WHERE codigo like '".$basemark."'";
 	$class = 'tipo_basemark';
 }elseif($tipo_elemento == 'bonus'){
-    $query = "SELECT * FROM dificultad_hibridos WHERE agrupar like 'Bonus' and version = '2425' ";
+    $query = "SELECT * FROM dificultad_hibridos WHERE agrupar like 'Bonus' and version = '$version_dif' ";
 	$class = 'bonus_tipo_hibrido';
 }
 $query_run2 = mysqli_query($connection,$query);
