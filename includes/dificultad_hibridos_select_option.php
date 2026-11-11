@@ -11,8 +11,10 @@ if(isset($_GET['tipo_elemento']))
 if(isset($_GET['id_tipo_hibrido']))
 	$_POST['id_tipo_hibrido'] = $_GET['id_tipo_hibrido'];
 
-// Definir versión activa (por defecto '2425')
-$version_dif = isset($_REQUEST['version']) && !empty($_REQUEST['version']) ? mysqli_real_escape_string($connection, $_REQUEST['version']) : '2425';
+// Definir versión activa (si viene definida en el scope padre, o por GET/POST, con fallback a '2627')
+if (!isset($version_dif) || empty($version_dif)) {
+    $version_dif = isset($_REQUEST['version']) && !empty($_REQUEST['version']) ? mysqli_real_escape_string($connection, $_REQUEST['version']) : '2627';
+}
 
 if($tipo_elemento == 'dd'){
 	if($_POST['id_tipo_hibrido']==1){

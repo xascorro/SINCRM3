@@ -30,4 +30,5 @@ Thumbs.db
 docs/*.pdf
 informes/*.pdf
 !informes/*.php
+normativa_2627/
 docker-compose.yaml

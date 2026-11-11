@@ -24,6 +24,18 @@ if (!isset($id_competicion) || empty($id_competicion)) {
     $id_competicion = (int)($_SESSION['id_competicion_usuario'] ?? ($_SESSION['id_competicion_activa'] ?? 0));
 }
 
+// Determinar versión de dificultad según la temporada de la competición (ej: 2026-2027 -> 2627)
+$version_dif = '2627';
+if ($id_competicion > 0) {
+    $q_comp = mysqli_query($connection, "SELECT temporada FROM competiciones WHERE id = '$id_competicion' LIMIT 1");
+    if ($q_comp && $r_c = mysqli_fetch_assoc($q_comp)) {
+        $temp = trim($r_c['temporada']);
+        if (preg_match('/20(\d{2})-20(\d{2})/', $temp, $matches)) {
+            $version_dif = $matches[1] . $matches[2];
+        }
+    }
+}
+
 // Obtener detalles de la rutina
 $routine_data = null;
 $nombres_atletas = '';
@@ -361,13 +373,15 @@ include('includes/scripts.php');
 
 <script>
 $(document).ready(function() {
+    var versionDif = '<?php echo $version_dif; ?>';
+
     // Cuando cambia el tipo de híbrido
     $('#id_tipo_hibrido').on('change', function() {
         var val = $(this).val();
         
-        // Recargar selectores de DD y Basemark mediante AJAX
-        $(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&id_tipo_hibrido=" + val);
-        $(".tipo_basemark").load("./includes/dificultad_hibridos_select_option.php?tipo_basemark=" + val);
+        // Recargar selectores de DD y Basemark mediante AJAX pasando la versión correspondiente
+        $(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&id_tipo_hibrido=" + val + "&version=" + versionDif);
+        $(".tipo_basemark").load("./includes/dificultad_hibridos_select_option.php?tipo_basemark=" + val + "&version=" + versionDif);
         
         if (val == 1 || val == 2) {
             $(".tipo_basemark").prop("disabled", false);
@@ -384,7 +398,7 @@ $(document).ready(function() {
         var val = $(this).val();
         if ($('#id_tipo_hibrido').val() == 4) {
             $(".id_tipo_hibrido").prop("disabled", false);
-            $(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro=" + val);
+            $(".id_tipo_hibrido").load("./includes/dificultad_hibridos_select_option.php?tipo_elemento=dd&tipo_acro=" + val + "&version=" + versionDif);
         }
     });
 
