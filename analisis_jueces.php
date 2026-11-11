@@ -28,15 +28,18 @@ $has_data = mysqli_fetch_assoc(mysqli_query($connection, $q_check))['total'] > 0
 
 $stats_jueces = [];
 
+$es_admin_audit = in_array($_SESSION['id_rol'] ?? 0, [1, 2, 3]);
+$es_usuario_juez = ($_SESSION['id_rol'] == 4 || (!empty($_SESSION['id_juez_v3']) && !$es_admin_audit));
+
 if ($has_data) {
     // CARGA RÁPIDA DESDE BD
     $q_saved = "SELECT * FROM auditoria_jueces_stats WHERE id_competicion = $competicion_id AND entidad_tipo = 'GLOBAL' ORDER BY nombre_entidad ASC";
     $res_saved = mysqli_query($connection, $q_saved);
     while ($s = mysqli_fetch_assoc($res_saved)) {
-        // LOGICA DE ANONIMIZACIÓN PARA EL ROL JUEZ (id_rol = 4)
-        $es_el_juez_logueado = ($_SESSION['id_rol'] == 4 && $s['id_juez'] == $_SESSION['id_juez_v3']);
+        // LOGICA DE ANONIMIZACIÓN PARA JUECES (Rol 4 o usuarios con id_juez_v3 que no sean Administradores)
+        $es_el_juez_logueado = ($es_usuario_juez && $s['id_juez'] == ($_SESSION['id_juez_v3'] ?? 0));
         $nombre_display = $s['nombre_entidad'];
-        if($_SESSION['id_rol'] == 4 && !$es_el_juez_logueado) {
+        if($es_usuario_juez && !$es_el_juez_logueado) {
             $nombre_display = "Juez Anónimo";
         }
 
@@ -62,8 +65,12 @@ if ($has_data) {
         $id_pj = $row['id_panel_juez']; $id_juez = $row['id_juez'] ?? 0;
         $group_key = ($id_juez > 0) ? "J_$id_juez" : "P_$id_pj";
         if (!isset($jueces_data[$group_key])) {
+            $es_el_juez_logueado = ($es_usuario_juez && $id_juez == ($_SESSION['id_juez_v3'] ?? 0));
             $nombre_display = ($id_juez > 0) ? ($row['nombre'] . ' ' . $row['apellidos']) : "Juez Desconocido (ID $id_pj)";
             if ($id_juez == 108) $nombre_display = "Juez MEDIA (Automático)";
+            if ($es_usuario_juez && !$es_el_juez_logueado) {
+                $nombre_display = "Juez Anónimo";
+            }
 
             $jueces_data[$group_key] = [
                 'nombre' => $nombre_display, 'is_orphan' => ($id_juez == 0), 'id_juez' => $id_juez, 'pjs' => [], 'total' => 0, 'bajas' => 0, 'altas' => 0, 'desv_sum' => 0, 'desv_count' => 0, 'precision_count' => 0];

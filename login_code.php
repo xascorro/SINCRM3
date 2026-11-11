@@ -213,7 +213,14 @@ if(isset($_POST['login_btn'])){
                 }
                 
                 // Asegurar páginas básicas siempre permitidas
-                $core_pages = ['login.php', 'login_code.php', 'index.php', 'security.php', 'perfil.php', 'perfil_code.php'];
+                $core_pages = ['login.php', 'login_code.php', 'index.php', 'security.php', 'perfil.php', 'perfil_code.php', 'log_usuario.php'];
+                
+                // Si el usuario tiene perfil de juez vinculado (ej: club + juez), conceder acceso a la suite BIAS Analizer
+                if (!empty($usuario['id_juez_v3'])) {
+                    $judge_pages = ['mi_auditoria.php', 'ranking_jueces.php', 'perfil_juez.php', 'analisis_jueces.php', 'analisis_juez_detalle.php'];
+                    $core_pages = array_merge($core_pages, $judge_pages);
+                }
+
                 $_SESSION['paginas_permitidas'] = array_unique(array_merge($permitidas, $core_pages));
 			}
 

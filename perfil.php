@@ -4,10 +4,11 @@ include('includes/header.php');
 include('includes/navbar.php');
 
 $user_id = intval($_SESSION['id_usario'] ?? 0);
-$query = "SELECT u.*, r.nombre as rol_nombre, c.nombre as club_nombre, c.nombre_corto as club_corto, c.logo as club_logo 
+$query = "SELECT u.*, r.nombre as rol_nombre, c.nombre as club_nombre, c.nombre_corto as club_corto, c.logo as club_logo, j.nombre as juez_nombre, j.apellidos as juez_apellidos 
           FROM usuarios u 
           LEFT JOIN roles r ON u.id_rol = r.id 
           LEFT JOIN clubes c ON u.club = c.id 
+          LEFT JOIN jueces j ON u.id_juez_v3 = j.id
           WHERE u.id = '$user_id' LIMIT 1";
 $query_run = mysqli_query($connection, $query);
 $user_data = mysqli_fetch_assoc($query_run) ?: [];
@@ -77,6 +78,11 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                                 <i class="fas fa-shield-halved text-[9px]"></i> <?php echo htmlspecialchars($user_data['club_corto']); ?>
                             </span>
                         <?php endif; ?>
+                        <?php if (!empty($user_data['id_juez_v3'])): ?>
+                            <a href="mi_auditoria.php" class="px-3 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-full border border-amber-200 flex items-center gap-1.5 transition-colors no-underline" title="Ver Mi Auditoría BIAS">
+                                <i class="fas fa-gavel text-[9px]"></i> Juez Vinculado
+                            </a>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Métricas de Cuenta -->
@@ -94,6 +100,27 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                             </span>
                         </div>
                     </div>
+
+                    <?php if (!empty($user_data['id_juez_v3'])): 
+                        $juez_full_name = trim(($user_data['juez_nombre'] ?? '') . ' ' . ($user_data['juez_apellidos'] ?? ''));
+                    ?>
+                    <div class="bg-gradient-to-br from-blue-50/80 to-indigo-50/50 rounded-2xl p-4 border border-blue-200/80 mt-4 text-left">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-1.5">
+                                <i class="fas fa-scale-balanced"></i> Perfil Oficial Juez
+                            </span>
+                            <span class="px-2 py-0.5 bg-blue-600 text-white rounded-md text-[9px] font-black uppercase tabular-nums">
+                                Juez #<?php echo $user_data['id_juez_v3']; ?>
+                            </span>
+                        </div>
+                        <p class="text-xs font-black text-slate-800 truncate mb-3">
+                            <?php echo htmlspecialchars($juez_full_name ?: 'Juez Asignado'); ?>
+                        </p>
+                        <a href="mi_auditoria.php" class="w-full py-2 px-3 bg-white hover:bg-blue-600 hover:text-white text-blue-600 border border-blue-200 text-xs font-black rounded-xl transition-all flex items-center justify-center gap-2 shadow-2xs no-underline">
+                            <i class="fas fa-magnifying-glass-chart"></i> Ver Mi Auditoría BIAS
+                        </a>
+                    </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Actividad Reciente del Usuario -->

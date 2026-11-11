@@ -41,9 +41,9 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-500 font-medium italic">Gestión del calendario y configuración de eventos regionales.</p>
             </div>
-            <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-4 items-stretch sm:items-center w-full md:w-auto">
+            <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3 items-stretch sm:items-center w-full md:w-auto">
                 <!-- Buscador Dinámico -->
-                <div class="relative w-full sm:w-72 md:w-80">
+                <div class="relative w-full sm:w-64 md:w-80">
                     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <i class="fas fa-search text-xs"></i>
                     </span>
@@ -51,9 +51,27 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                            class="w-full pl-9 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl sm:rounded-2xl text-xs font-bold text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all outline-none shadow-xs"
                            onkeyup="filterCompTable()">
                 </div>
-                <button onclick="toggleAddCompPanel()" class="px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                    <i class="fas fa-plus text-xs"></i> Crear Evento
-                </button>
+
+                <div class="flex items-center gap-2 sm:gap-3 justify-between sm:justify-start">
+                    <!-- Selector Segmentado de Vista (Mosaico / Lista) -->
+                    <div class="inline-flex p-1 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-200/80 shadow-2xs shrink-0" role="group" aria-label="Cambiar vista">
+                        <button type="button" id="viewBtnGrid" onclick="setCompView('grid')" title="Vista en Mosaico (Tarjetas)"
+                                class="px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] bg-white text-blue-600 shadow-xs border border-slate-200/80">
+                            <i class="fas fa-table-cells-large text-xs"></i>
+                            <span class="hidden md:inline">Mosaico</span>
+                        </button>
+                        <button type="button" id="viewBtnList" onclick="setCompView('list')" title="Vista en Lista"
+                                class="px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] text-slate-500 hover:text-slate-800 border border-transparent">
+                            <i class="fas fa-list-ul text-xs"></i>
+                            <span class="hidden md:inline">Lista</span>
+                        </button>
+                    </div>
+
+                    <!-- Botón Crear Evento -->
+                    <button onclick="toggleAddCompPanel()" class="flex-1 sm:flex-initial px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0">
+                        <i class="fas fa-plus text-xs"></i> Crear Evento
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -128,13 +146,36 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
             </div>
         </div>
 
+        <!-- Script y Estilos Anti-Parpadeo (FOUC) para Vista Persistente -->
+        <script>
+        (function() {
+            try {
+                var v = localStorage.getItem('sincrm_competiciones_view');
+                if (v === 'list') {
+                    document.documentElement.classList.add('comp-view-list');
+                }
+            } catch(e) {}
+        })();
+        </script>
+        <style>
+            html.comp-view-list #compGrid { display: none !important; }
+            html.comp-view-list #compList { display: block !important; }
+        </style>
+
+        <?php
+        $query = "SELECT * FROM competiciones ORDER BY fecha DESC, id DESC";
+        $query_run = mysqli_query($connection, $query); 
+        $meses_es = ['Jan'=>'ENE','Feb'=>'FEB','Mar'=>'MAR','Apr'=>'ABR','May'=>'MAY','Jun'=>'JUN','Jul'=>'JUL','Aug'=>'AGO','Sep'=>'SEP','Oct'=>'OCT','Nov'=>'NOV','Dec'=>'DIC'];
+        $competiciones = [];
+        while ($r = mysqli_fetch_assoc($query_run)) {
+            $competiciones[] = $r;
+        }
+        ?>
+
+        <!-- VISTA 1: CUADRÍCULA / MOSAICO DE TARJETAS -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8" id="compGrid">
             <?php
-            $query = "SELECT * FROM competiciones ORDER BY fecha DESC, id DESC";
-            $query_run = mysqli_query($connection, $query); 
-            $meses_es = ['Jan'=>'ENE','Feb'=>'FEB','Mar'=>'MAR','Apr'=>'ABR','May'=>'MAY','Jun'=>'JUN','Jul'=>'JUL','Aug'=>'AGO','Sep'=>'SEP','Oct'=>'OCT','Nov'=>'NOV','Dec'=>'DIC'];
-            
-            while ($row = mysqli_fetch_assoc($query_run)):
+            foreach ($competiciones as $row):
                 $is_active = ($row['activo'] == 'si');
                 $dia = date("d", strtotime($row['fecha']));
                 $mes_raw = date("M", strtotime($row['fecha']));
@@ -144,8 +185,12 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                 
                 // Lógica de detección de Pase de Nivel por nombre
                 $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
+                $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
+                $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
             ?>
-            <div class="comp-card bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200/80 group hover:shadow-lg transition-all relative flex flex-col border-t-[8px] sm:border-t-[10px] <?php echo !$is_active ? 'grayscale-[0.5] opacity-80' : ''; ?>" style="border-top-color: <?php echo $color; ?>;">
+            <div class="comp-card bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200/80 group hover:shadow-lg transition-all relative flex flex-col border-t-[8px] sm:border-t-[10px] <?php echo !$is_active ? 'grayscale-[0.5] opacity-80' : ''; ?>" 
+                 style="border-top-color: <?php echo $color; ?>;"
+                 data-search="<?php echo $search_text; ?>">
                 
                 <!-- ID Flotante -->
                 <div class="absolute top-3 right-4 sm:top-4 sm:right-8 text-[10px] font-black text-slate-300 italic tracking-wider uppercase tabular-nums">ID: #<?php echo $row['id']; ?></div>
@@ -198,7 +243,7 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                         <!-- Configuración -->
                         <form action="competiciones_edit.php" method="POST">
                             <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
-                            <button type="submit" name="edit_btn" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-[0.98] transition-all border border-amber-100 flex items-center justify-center shadow-xs">
+                            <button type="submit" name="edit_btn" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-[0.98] transition-all border border-amber-100 flex items-center justify-center shadow-xs" title="Configurar Competición">
                                 <i class="fas fa-sliders text-xs sm:text-sm"></i>
                             </button>
                         </form>
@@ -206,35 +251,314 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                         <!-- Eliminar -->
                         <form action="competiciones_code.php" method="POST" onsubmit="return confirm('¿Borrar permanentemente esta competición?');">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                            <button type="submit" name="delete_btn" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white active:scale-[0.98] transition-all border border-red-100 flex items-center justify-center shadow-xs">
+                            <button type="submit" name="delete_btn" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white active:scale-[0.98] transition-all border border-red-100 flex items-center justify-center shadow-xs" title="Eliminar Competición">
                                 <i class="fas fa-trash-can text-xs sm:text-sm"></i>
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
+            <div id="compGridNoResults" class="col-span-full p-12 text-center text-slate-400 font-bold italic hidden">No se encontraron competiciones que coincidan con la búsqueda.</div>
+        </div>
+
+        <!-- VISTA 2: LISTA DETALLADA (TABLA / FILAS) -->
+        <div id="compList" class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200/80 overflow-hidden hidden animate-fade-in">
+            
+            <!-- Vista Móvil: Cards en Lista Compacta (md:hidden) -->
+            <div class="md:hidden divide-y divide-slate-100" id="compListMobileContainer">
+                <?php
+                foreach ($competiciones as $row):
+                    $is_active = ($row['activo'] == 'si');
+                    $dia = date("d", strtotime($row['fecha']));
+                    $mes_raw = date("M", strtotime($row['fecha']));
+                    $mes = $meses_es[$mes_raw] ?? $mes_raw;
+                    $año = date("Y", strtotime($row['fecha']));
+                    $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
+                    $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
+                    $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
+                    $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
+                ?>
+                <div class="comp-list-row p-4 hover:bg-slate-50/70 transition-colors <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
+                     data-search="<?php echo $search_text; ?>">
+                    <div class="flex items-start justify-between gap-3 mb-2.5">
+                        <div class="flex items-start gap-3 min-w-0 flex-1">
+                            <!-- Barra Indicadora de Color -->
+                            <div class="w-1.5 self-stretch rounded-full shrink-0 my-0.5" style="background-color: <?php echo $color; ?>;"></div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest tabular-nums">#<?php echo $row['id']; ?></span>
+                                    <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider tabular-nums"><?php echo "$dia $mes $año"; ?></span>
+                                </div>
+                                <h4 class="text-xs sm:text-sm font-black text-slate-800 leading-snug uppercase italic truncate mt-0.5"><?php echo $row['nombre']; ?></h4>
+                                <p class="text-[11px] font-bold text-slate-400 flex items-center gap-1.5 mt-1 uppercase truncate">
+                                    <i class="fas fa-location-dot text-[9px]" style="color: <?php echo $color; ?>;"></i>
+                                    <span><?php echo $row['lugar']; ?></span>
+                                    <?php if(!empty($row['maps'])): ?>
+                                        <a href="<?php echo htmlspecialchars($row['maps']); ?>" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 ml-1" title="Ver en Google Maps"><i class="fas fa-arrow-up-right-from-square text-[9px]"></i></a>
+                                    <?php endif; ?>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <form action="competiciones_edit.php" method="POST" class="inline">
+                                <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                <button type="submit" name="edit_btn" class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 border border-amber-100 hover:bg-amber-500 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center shadow-2xs" title="Configurar">
+                                    <i class="fas fa-sliders text-xs"></i>
+                                </button>
+                            </form>
+                            <form action="competiciones_code.php" method="POST" onsubmit="return confirm('¿Borrar permanentemente esta competición?');" class="inline">
+                                <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                <button type="submit" name="delete_btn" class="w-8 h-8 rounded-xl bg-red-50 text-red-400 border border-red-100 hover:bg-red-500 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center shadow-2xs" title="Eliminar">
+                                    <i class="fas fa-trash-can text-xs"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Pie de Tarjeta Móvil: Badges + Toggle Estado -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 mt-2">
+                        <div class="flex flex-wrap gap-1.5">
+                            <?php if($es_pase_nivel): ?>
+                                <span class="px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic">Pase de Nivel</span> 
+                            <?php else: ?>
+                                <?php if($row['figuras'] == 'mixta'): ?>
+                                    <span class="px-2 py-0.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic">Mixta</span>
+                                <?php elseif($row['figuras'] == 'si'): ?> 
+                                    <span class="px-2 py-0.5 bg-blue-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic">Figuras</span> 
+                                <?php elseif($row['figuras'] == 'no' || $row['niveles'] == 'si'): ?> 
+                                    <span class="px-2 py-0.5 bg-purple-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic">Rutinas</span> 
+                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if($row['no_federado'] == 'si'): ?> 
+                                <span class="px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic">Escolar</span> 
+                            <?php endif; ?>
+                        </div>
+
+                        <form action="competiciones_code.php" method="POST">
+                            <input type="hidden" name="activar_id" value="<?php echo $row['id']; ?>">
+                            <button type="submit" name="activar_btn" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg <?php echo $is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500 border border-slate-200'; ?> active:scale-[0.98] transition-all text-[9px] font-black uppercase tracking-wider">
+                                <i class="fas <?php echo $is_active ? 'fa-toggle-on text-emerald-600' : 'fa-toggle-off text-slate-400'; ?>"></i>
+                                <span><?php echo $is_active ? 'Activa' : 'Pausada'; ?></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+
+            <!-- Vista Escritorio: Tabla Completa (hidden md:block) -->
+            <div class="hidden md:block overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse" id="compTable">
+                    <thead>
+                        <tr class="bg-slate-50/70 border-b border-slate-100 text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                            <th class="px-6 py-4">Fecha / ID</th>
+                            <th class="px-6 py-4">Competición y Sede</th>
+                            <th class="px-6 py-4">Modalidad</th>
+                            <th class="px-6 py-4 text-center w-36">Estado</th>
+                            <th class="px-6 py-4 text-center w-28">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs">
+                        <?php
+                        foreach ($competiciones as $row):
+                            $is_active = ($row['activo'] == 'si');
+                            $dia = date("d", strtotime($row['fecha']));
+                            $mes_raw = date("M", strtotime($row['fecha']));
+                            $mes = $meses_es[$mes_raw] ?? $mes_raw;
+                            $año = date("Y", strtotime($row['fecha']));
+                            $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
+                            $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
+                            $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
+                            $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
+                        ?>
+                        <tr class="comp-list-row hover:bg-slate-50/70 transition-colors group <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
+                            data-search="<?php echo $search_text; ?>">
+                            
+                            <!-- Columna Fecha e ID -->
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-1.5 h-10 rounded-full shrink-0 shadow-2xs" style="background-color: <?php echo $color; ?>;"></div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-black text-slate-800 tabular-nums leading-none"><?php echo "$dia $mes $año"; ?></span>
+                                        <span class="text-[9px] font-bold text-slate-400 tabular-nums uppercase mt-1">ID #<?php echo $row['id']; ?></span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Columna Competición y Lugar -->
+                            <td class="px-6 py-4">
+                                <div class="min-w-0 max-w-lg">
+                                    <h4 class="text-xs sm:text-sm font-black text-slate-800 leading-snug group-hover:text-blue-600 transition-colors uppercase italic truncate" title="<?php echo htmlspecialchars($row['nombre']); ?>">
+                                        <?php echo $row['nombre']; ?>
+                                    </h4>
+                                    <p class="text-[11px] font-bold text-slate-400 flex items-center gap-1.5 mt-1 uppercase tracking-tight truncate">
+                                        <i class="fas fa-location-dot text-[10px]" style="color: <?php echo $color; ?>;"></i>
+                                        <span><?php echo $row['lugar']; ?></span>
+                                        <?php if(!empty($row['maps'])): ?>
+                                            <a href="<?php echo htmlspecialchars($row['maps']); ?>" target="_blank" rel="noopener noreferrer" class="text-blue-500 hover:text-blue-700 ml-1 active:scale-95 transition-transform" title="Ver en Google Maps">
+                                                <i class="fas fa-arrow-up-right-from-square text-[9px]"></i>
+                                            </a>
+                                        <?php endif; ?>
+                                    </p>
+                                </div>
+                            </td>
+
+                            <!-- Columna Modalidad / Badges -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <?php if($es_pase_nivel): ?>
+                                        <span class="px-2.5 py-1 bg-amber-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic shadow-2xs">Pase de Nivel</span> 
+                                    <?php else: ?>
+                                        <?php if($row['figuras'] == 'mixta'): ?>
+                                            <span class="px-2.5 py-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic shadow-2xs">Mixta</span>
+                                        <?php elseif($row['figuras'] == 'si'): ?> 
+                                            <span class="px-2.5 py-1 bg-blue-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic shadow-2xs">Figuras</span> 
+                                        <?php elseif($row['figuras'] == 'no' || $row['niveles'] == 'si'): ?> 
+                                            <span class="px-2.5 py-1 bg-purple-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic shadow-2xs">Rutinas</span> 
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                    
+                                    <?php if($row['no_federado'] == 'si'): ?> 
+                                        <span class="px-2.5 py-1 bg-rose-500 text-white text-[8px] font-black rounded-lg uppercase tracking-wider italic shadow-2xs">Escolar</span> 
+                                    <?php endif; ?>
+                                </div>
+                            </td>
+
+                            <!-- Columna Estado -->
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                <form action="competiciones_code.php" method="POST" class="inline-block">
+                                    <input type="hidden" name="activar_id" value="<?php echo $row['id']; ?>">
+                                    <button type="submit" name="activar_btn" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl <?php echo $is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100' : 'bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200'; ?> active:scale-[0.98] transition-all text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                                        <i class="fas <?php echo $is_active ? 'fa-toggle-on text-emerald-600 text-sm' : 'fa-toggle-off text-slate-400 text-sm'; ?>"></i>
+                                        <span><?php echo $is_active ? 'Activa' : 'Pausada'; ?></span>
+                                    </button>
+                                </form>
+                            </td>
+
+                            <!-- Columna Acciones -->
+                            <td class="px-6 py-4 text-center whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-2">
+                                    <!-- Configuración -->
+                                    <form action="competiciones_edit.php" method="POST" class="inline-block">
+                                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" name="edit_btn" class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 hover:bg-amber-500 hover:text-white active:scale-[0.98] transition-all border border-amber-100 flex items-center justify-center shadow-2xs" title="Configurar Competición">
+                                            <i class="fas fa-sliders text-xs"></i>
+                                        </button>
+                                    </form>
+                                    
+                                    <!-- Eliminar -->
+                                    <form action="competiciones_code.php" method="POST" onsubmit="return confirm('¿Borrar permanentemente esta competición?');" class="inline-block">
+                                        <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                        <button type="submit" name="delete_btn" class="w-8 h-8 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white active:scale-[0.98] transition-all border border-red-100 flex items-center justify-center shadow-2xs" title="Eliminar Competición">
+                                            <i class="fas fa-trash-can text-xs"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div id="compListNoResults" class="p-12 text-center text-slate-400 font-bold italic hidden">No se encontraron competiciones que coincidan con la búsqueda.</div>
         </div>
     </div>
 </main>
 
 <script>
-function toggleAddCompPanel() { document.getElementById('addCompPanel').classList.toggle('hidden'); }
+const COMP_STORAGE_KEY = 'sincrm_competiciones_view';
+
+function toggleAddCompPanel() { 
+    document.getElementById('addCompPanel').classList.toggle('hidden'); 
+}
+
+function setCompView(view) {
+    const gridEl = document.getElementById('compGrid');
+    const listEl = document.getElementById('compList');
+    const btnGrid = document.getElementById('viewBtnGrid');
+    const btnList = document.getElementById('viewBtnList');
+
+    if (!gridEl || !listEl || !btnGrid || !btnList) return;
+
+    if (view === 'list') {
+        document.documentElement.classList.add('comp-view-list');
+        gridEl.classList.add('hidden');
+        listEl.classList.remove('hidden');
+
+        // Botón Lista Activo
+        btnList.className = 'px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] bg-white text-blue-600 shadow-xs border border-slate-200/80';
+        btnGrid.className = 'px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] text-slate-500 hover:text-slate-800 border border-transparent';
+
+        try { localStorage.setItem(COMP_STORAGE_KEY, 'list'); } catch(e) {}
+        filterCompTable();
+    } else {
+        document.documentElement.classList.remove('comp-view-list');
+        listEl.classList.add('hidden');
+        gridEl.classList.remove('hidden');
+
+        // Botón Mosaico Activo
+        btnGrid.className = 'px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] bg-white text-blue-600 shadow-xs border border-slate-200/80';
+        btnList.className = 'px-3 py-1.5 rounded-lg sm:rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all duration-200 active:scale-[0.98] text-slate-500 hover:text-slate-800 border border-transparent';
+
+        try { localStorage.setItem(COMP_STORAGE_KEY, 'grid'); } catch(e) {}
+        filterCompTable();
+    }
+}
 
 function filterCompTable() {
     const input = document.getElementById('compSearchInput');
-    const filter = input.value.toLowerCase();
-    const grid = document.getElementById('compGrid');
-    const cards = grid.getElementsByClassName('comp-card');
-
-    for (let i = 0; i < cards.length; i++) {
-        let textContent = cards[i].textContent.toLowerCase();
-        if (textContent.indexOf(filter) > -1) {
-            cards[i].style.display = "";
+    if (!input) return;
+    const filter = input.value.toLowerCase().trim();
+    
+    // 1. Filtrar tarjetas en vista Mosaico
+    const gridCards = document.querySelectorAll('#compGrid .comp-card');
+    let gridMatches = 0;
+    gridCards.forEach(card => {
+        const text = (card.getAttribute('data-search') || card.textContent).toLowerCase();
+        if (text.indexOf(filter) > -1) {
+            card.style.display = "";
+            gridMatches++;
         } else {
-            cards[i].style.display = "none";
+            card.style.display = "none";
         }
-    }
+    });
+
+    // 2. Filtrar filas en vista Lista (tanto móvil como tabla escritorio)
+    const listRows = document.querySelectorAll('#compList .comp-list-row');
+    let listMatches = 0;
+    listRows.forEach(row => {
+        const text = (row.getAttribute('data-search') || row.textContent).toLowerCase();
+        if (text.indexOf(filter) > -1) {
+            row.style.display = "";
+            listMatches++;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    // Mensaje de sin resultados
+    const noResultsGrid = document.getElementById('compGridNoResults');
+    if (noResultsGrid) noResultsGrid.classList.toggle('hidden', gridMatches > 0 || gridCards.length === 0);
+
+    const noResultsList = document.getElementById('compListNoResults');
+    if (noResultsList) noResultsList.classList.toggle('hidden', listMatches > 0 || listRows.length === 0);
+}
+
+function initCompView() {
+    let savedView = 'grid';
+    try {
+        savedView = localStorage.getItem(COMP_STORAGE_KEY) || 'grid';
+    } catch(e) {}
+    setCompView(savedView);
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCompView);
+} else {
+    initCompView();
 }
 </script>
 

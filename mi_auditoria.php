@@ -2,8 +2,9 @@
 include('security.php');
 
 $roles_permitidos = [1, 2, 3, 4]; // Admin, Editor, Consulta, Juez
-if (!in_array($_SESSION['id_rol'], $roles_permitidos)) {
-    header('Location: ranking_jueces.php');
+// Permitir también a usuarios con perfil de juez asignado (ej: Club + Juez)
+if (!in_array($_SESSION['id_rol'], $roles_permitidos) && empty($_SESSION['id_juez_v3'])) {
+    header('Location: index.php');
     exit();
 }
 

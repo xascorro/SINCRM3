@@ -298,6 +298,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
 if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
     $current_page = basename($_SERVER['PHP_SELF']);
     $group_club_comp = ['inscripciones.php', 'inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php'];
+    $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
 ?>
 <aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-white text-slate-700 flex flex-col shadow-xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-slate-200/80 font-lexend">
     
@@ -360,6 +361,35 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
                 </a>
             </div>
         </div>
+
+        <!-- 3. BIAS Analizer (Solo visible si el usuario tiene perfil de juez vinculado) -->
+        <?php if(!empty($_SESSION['id_juez_v3'])): ?>
+        <div class="space-y-1">
+            <div class="sidebar-text hidden px-3 text-[9px] font-black uppercase text-slate-400/90 mb-1.5 tracking-widest flex items-center gap-2">
+                <span>Evaluación</span>
+                <div class="h-px flex-1 bg-slate-200/80"></div>
+            </div>
+
+            <button onclick="toggleV3Submenu('sub-bias-club')" class="w-full flex items-center gap-3 p-2 rounded-2xl transition-all duration-200 hover:bg-slate-100/80 group <?php echo in_array($current_page, $group_bias) ? 'nav-item-active' : 'text-slate-600 hover:text-slate-900'; ?>" title="BIAS Analizer">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 <?php echo in_array($current_page, $group_bias) ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-500 group-hover:bg-slate-200/70 group-hover:text-slate-800'; ?> transition-all">
+                    <i class="fas fa-magnifying-glass-chart text-sm"></i>
+                </div>
+                <span class="sidebar-text hidden font-bold text-xs flex-1 text-left whitespace-nowrap">BIAS Analizer</span>
+                <i class="fas fa-chevron-right text-[9px] sidebar-text hidden text-slate-400 transition-transform duration-200 <?php echo in_array($current_page, $group_bias) ? 'rotate-90 text-blue-600' : ''; ?>" id="arrow-sub-bias-club"></i>
+            </button>
+            <div id="sub-bias-club" data-active="<?php echo in_array($current_page, $group_bias) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_bias) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l-2 border-slate-200/80">
+                <a href="mi_auditoria.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'mi_auditoria.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-user-check w-3.5 text-center text-[11px] opacity-70"></i> Mi Auditoría
+                </a>
+                <a href="ranking_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'ranking_jueces.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-ranking-star w-3.5 text-center text-[11px] opacity-70"></i> Ranking Calidad
+                </a>
+                <a href="analisis_jueces.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['analisis_jueces.php', 'analisis_juez_detalle.php']) ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-calendar-check w-3.5 text-center text-[11px] opacity-70"></i> Auditoría Evento
+                </a>
+            </div>
+        </div>
+        <?php endif; ?>
 
     </nav>
 <?php

@@ -74,21 +74,35 @@ if(!isset($_SESSION['email'])){
         $permitidas = is_array($_SESSION['paginas_permitidas'] ?? null) ? $_SESSION['paginas_permitidas'] : [];
 
         if(!in_array($current_page, $permitidas)){
-            $rol_id = (int)($_SESSION['id_rol'] ?? 0);
-            $safe_page = mysqli_real_escape_string($connection, $current_page);
-            
-            // Re-validar en caliente en la base de datos por si se añadió el permiso durante la sesión activa
-            $q_check = "SELECT 1 FROM permisos_roles pr 
-                        JOIN paginas_sistema p ON pr.id_pagina = p.id 
-                        WHERE pr.id_rol = '$rol_id' AND p.archivo = '$safe_page' LIMIT 1";
-            $res_check = mysqli_query($connection, $q_check);
+            // Páginas básicas de cuenta universales (cualquier usuario autenticado puede entrar a su perfil, actividad, etc.)
+            $universal_account_pages = ['index.php', 'perfil.php', 'perfil_code.php', 'log_usuario.php', 'login.php', 'login_code.php', 'security.php'];
+            if(in_array($current_page, $universal_account_pages)) {
+                $permitir = true;
+            } else {
+                $rol_id = (int)($_SESSION['id_rol'] ?? 0);
+                $safe_page = mysqli_real_escape_string($connection, $current_page);
+                
+                // Re-validar en caliente en la base de datos por si se añadió el permiso durante la sesión activa
+                $q_check = "SELECT 1 FROM permisos_roles pr 
+                            JOIN paginas_sistema p ON pr.id_pagina = p.id 
+                            WHERE pr.id_rol = '$rol_id' AND p.archivo = '$safe_page' LIMIT 1";
+                $res_check = mysqli_query($connection, $q_check);
 
-            $permitir = ($res_check && mysqli_num_rows($res_check) > 0);
+                $permitir = ($res_check && mysqli_num_rows($res_check) > 0);
 
-            // Compatibilidad para la transición a inscripciones.php
-            if(!$permitir && $current_page === 'inscripciones.php') {
-                if(in_array('rutinas.php', $permitidas) || in_array('inscripciones_figuras.php', $permitidas)) {
-                    $permitir = true;
+                // Compatibilidad para la transición a inscripciones.php
+                if(!$permitir && $current_page === 'inscripciones.php') {
+                    if(in_array('rutinas.php', $permitidas) || in_array('inscripciones_figuras.php', $permitidas)) {
+                        $permitir = true;
+                    }
+                }
+
+                // Acceso a suite BIAS Analizer para usuarios con perfil de juez vinculado (ej: club + juez)
+                if(!$permitir && !empty($_SESSION['id_juez_v3'])) {
+                    $judge_pages = ['mi_auditoria.php', 'ranking_jueces.php', 'perfil_juez.php', 'analisis_jueces.php', 'analisis_juez_detalle.php'];
+                    if(in_array($current_page, $judge_pages)) {
+                        $permitir = true;
+                    }
                 }
             }
 

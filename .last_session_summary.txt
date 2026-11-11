@@ -1,14 +1,20 @@
-Última actualización: 05/11/2026 - Rediseño moderno v4 de register.php y robustecimiento de registro
+Última Sesión: Implementación de Vista de Lista persistente en Competiciones (competiciones.php).
+Fecha: 2026-11-10
+
+Cambios realizados:
+1. Vista de Lista en competiciones.php:
+   - Implementado selector segmentado táctil (Zero-gray control) en la cabecera superior con iconos y etiquetas: "Mosaico" y "Lista".
+   - Creado contenedor `#compList` con diseño moderno v4:
+     - En escritorio (`hidden md:block`): Tabla completa con columnas Fecha/ID, Competición/Sede (con enlace a Maps), Modalidad (Badges inteligentes), Estado (Switch interactivo Activa/Pausada) y Acciones (Configurar y Eliminar).
+     - En móvil (`md:hidden`): Cards fluidas compactas con indicador de color y todas las acciones.
+2. Persistencia en LocalStorage:
+   - Clave `sincrm_competiciones_view` ('grid' o 'list').
+   - Sistema anti-parpadeo (FOUC) con estilo inline inmediato para carga ultra rápida y sin saltos visuales al refrescar.
+3. Buscador Global Unificado:
+   - `filterCompTable()` ahora filtra en tiempo real tanto en la vista Mosaico (`.comp-card`) como en la vista Lista (`.comp-list-row`).
+   - Soporte para avisos de "Sin resultados".
 
 Archivos modificados:
-- register.php:
-  - Rediseño integral alineado con el nuevo sistema visual v4 de login.php y forgot_password.php.
-  - Panel izquierdo con identidad visual luminosa (gradiente azul-cyan, textura natación artística, tarjeta glassmorphism de 3 pasos y versión estable).
-  - Formulario derecho optimizado para móvil: márgenes compactos, campos limpios, tipografía legible y controles de cero gris plano.
-  - Incorporados botones para mostrar/ocultar contraseñas (ojos con toggle reactivo).
-  - Indicador dinámico en tiempo real de coincidencia de contraseñas.
-  - SweetAlert2 moderno, claro y con lenguaje cercano y accesible.
-- login_code.php:
-  - Robustecida la inserción de registro para evitar error fatal SQL por entero vacío en columna `telefono` (admite NULL o teléfono limpio de espacios/caracteres).
-- usuarios_code.php:
-  - Ajuste análogo en la actualización de usuarios para soportar teléfonos vacíos o NULL sin error SQL.
+- competiciones.php
+
+Estado: Verificado y operativo.

@@ -9,10 +9,10 @@ if (!$group_key) {
     exit();
 }
 
-// SEGURIDAD: Los jueces solo pueden ver su propio perfil
-if($_SESSION['id_rol'] == 4){
+// SEGURIDAD: Los jueces o usuarios no-administradores solo pueden ver su propio perfil
+if(!in_array($_SESSION['id_rol'] ?? 0, [1, 2, 3])){
     // Obtener el key del juez logueado
-    $my_id_juez = $_SESSION['id_juez_v3'];
+    $my_id_juez = (int)($_SESSION['id_juez_v3'] ?? 0);
     $q_my_key = "SELECT group_key FROM auditoria_jueces_stats WHERE id_juez = '$my_id_juez' LIMIT 1";
     $my_key = mysqli_fetch_assoc(mysqli_query($connection, $q_my_key))['group_key'] ?? 'NONE';
     

@@ -172,8 +172,8 @@ $meses_es = [
             </a>
             <?php endif; ?>
 
-            <!-- BIAS Analizer (SÓLO PARA JUECES EN DASHBOARD) -->
-            <?php if($_SESSION['id_rol'] == 4): ?>
+            <!-- BIAS Analizer (PARA JUECES Y USUARIOS CON PERFIL DE JUEZ) -->
+            <?php if($_SESSION['id_rol'] == 4 || !empty($_SESSION['id_juez_v3'])): ?>
             <a href="mi_auditoria.php" class="bg-white p-5 sm:p-7 rounded-2xl sm:rounded-[2.5rem] shadow-sm border border-slate-200 border-t-[8px] sm:border-t-[10px] border-t-blue-600 group hover:shadow-xl active:scale-[0.99] transition-all no-underline block">
                 <div class="flex justify-between items-start mb-4 sm:mb-6">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 transition-all group-hover:scale-110 shadow-sm"><i class="fas fa-magnifying-glass-chart text-xl sm:text-2xl"></i></div>

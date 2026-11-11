@@ -111,6 +111,15 @@ if (count($words) >= 2) {
                     <span class="text-sm font-bold">Mi Perfil</span>
                 </a>
 
+                <?php if(!empty($_SESSION['id_juez_v3']) || $_SESSION['id_rol'] == 4): ?>
+                <a href="mi_auditoria.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-blue-600 hover:bg-blue-50 transition-all group">
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                        <i class="fas fa-magnifying-glass-chart text-lg"></i>
+                    </div>
+                    <span class="text-sm font-bold">Mi Auditoría BIAS</span>
+                </a>
+                <?php endif; ?>
+
                 <a href="log_usuario.php" class="flex items-center gap-3 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-secondary transition-all group">
                     <div class="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center group-hover:bg-white transition-colors">
                         <i class="fas fa-history text-lg"></i>

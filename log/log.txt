@@ -613,3 +613,296 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-11-04 23:24:18] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
 [2026-11-04 23:26:02] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Categoría ID#238 actualizada: ABSOLUTO [AB]
 [2026-11-04 23:26:26] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Categoría ID#246 actualizada: MIXTO ABSOLUTO [MA]
+[2026-11-04 23:39:22] [INFO] [xascorro@gmail.com] [10.0.2.20] Nadadora conmutada a BAJA (ID: 221): LEIRE ABENZA LOPEZ
+[2026-11-04 23:39:29] [INFO] [xascorro@gmail.com] [10.0.2.20] Nadadora conmutada a ACTIVA (ID: 221): LEIRE ABENZA LOPEZ
+[2026-11-04 23:39:53] [INFO] [xascorro@gmail.com] [10.0.2.20] Nadadora conmutada a BAJA (ID: 330): ERIKA MARIA AVRAM
+[2026-11-04 23:39:57] [INFO] [xascorro@gmail.com] [10.0.2.20] Nadadora conmutada a ACTIVA (ID: 330): ERIKA MARIA AVRAM
+[2026-11-04 23:42:53] [INFO] [SISTEMA] [0.0.0.0] OTP generado y enviado para xascorro@gmail.com
+[2026-11-04 23:42:57] [INFO] [SISTEMA] [0.0.0.0] OTP verificado correctamente para xascorro@gmail.com
+[2026-11-04 23:43:01] [SECURITY] [SISTEMA] [0.0.0.0] Intento de verificación de OTP fallido (código incorrecto) para xascorro@gmail.com
+[2026-11-04 23:48:28] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 23:48:38] [INFO] [SISTEMA] [10.0.2.20] OTP generado y enviado para xascorro@gmail.com
+[2026-11-04 23:49:11] [INFO] [SISTEMA] [10.0.2.20] OTP verificado correctamente para xascorro@gmail.com
+[2026-11-04 23:49:18] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 23:49:27] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-04 23:56:36] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-04 23:58:56] [INFO] [xascorro@gmail.com] [10.0.2.20] OTP generado y enviado para xascorro@gmail.com
+[2026-11-04 23:59:02] [SECURITY] [xascorro@gmail.com] [10.0.2.20] Intento de verificación de OTP fallido (código incorrecto) para xascorro@gmail.com
+[2026-11-04 23:59:33] [INFO] [xascorro@gmail.com] [10.0.2.20] OTP verificado correctamente para xascorro@gmail.com
+[2026-11-05 00:16:24] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Competición #68 establecida como activa y actualizada en sesión
+[2026-11-05 00:16:45] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Competición #83 establecida como activa y actualizada en sesión
+[2026-11-05 00:17:54] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #445 actualizada con todos sus parámetros técnicos
+[2026-11-05 00:19:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #446 actualizada con todos sus parámetros técnicos
+[2026-11-05 00:19:17] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #447 actualizada con todos sus parámetros técnicos
+[2026-11-05 00:19:28] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Fase #448 actualizada con todos sus parámetros técnicos
+[2026-11-05 00:21:01] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Competición #81 establecida como activa y actualizada en sesión
+[2026-11-05 00:27:35] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-05 00:27:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 05:59:50] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 06:10:07] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-05 06:10:11] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 06:36:05] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'inscripciones' publicado en la web para competición #81 por Pedro Díaz y notificación enviada a xascorro@gmail.com
+[2026-11-05 06:36:09] [WARNING] [Pedro Díaz] [0.0.0.0] Documento 'inscripciones' (#81) eliminado/despublicado de la web por Pedro Díaz
+[2026-11-05 07:22:09] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-05 07:38:22] [WARNING] [SISTEMA] [10.0.2.20] Intento de acceso sin verificar email: murciaswimming@gmail.com
+[2026-11-05 07:38:58] [SECURITY] [SISTEMA] [10.0.2.20] Intento de recuperación fallido: Email no encontrado o inactivo (lydia.padrisa@gmail.com)
+[2026-11-05 07:39:08] [WARNING] [SISTEMA] [10.0.2.20] Intento de acceso sin verificar email: murciaswimming@gmail.com
+[2026-11-05 09:08:11] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-05 09:08:14] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 10:04:05] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 11:12:34] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 16:18:05] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-05 16:18:06] [SECURITY] [SISTEMA] [10.0.2.20] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-05 19:41:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 19:46:33] [INFO] [xascorro@gmail.com] [10.0.2.20] Cierre de sesión: xascorro@gmail.com
+[2026-11-05 21:27:14] [SUCCESS] [xascorro@gmail.com] [10.0.2.20] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 21:28:25] [INFO] [xascorro@gmail.com] [10.0.2.20] Usuario actualizado (ID: 49): alaynemijangoschan@gmail.com
+[2026-11-05 21:28:26] [INFO] [xascorro@gmail.com] [10.0.2.20] Email de actualización enviado a alaynemijangoschan@gmail.com (Rol: Juez)
+[2026-11-05 21:47:41] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Elena Cerón  (Club) - Club: Club Sincro Alhama
+[2026-11-05 21:57:55] [SECURITY] [SISTEMA] [10.0.2.8] Fallo de autenticación: Contraseña incorrecta para el email artisticacnctct@gmail.com
+[2026-11-05 21:58:34] [SECURITY] [SISTEMA] [10.0.2.8] Fallo de autenticación: Contraseña incorrecta para el email artisticacnctct@gmail.com
+[2026-11-05 21:58:57] [INFO] [SISTEMA] [10.0.2.8] OTP generado y enviado para artisticacnctct@gmail.com
+[2026-11-05 21:59:13] [INFO] [SISTEMA] [10.0.2.8] OTP verificado correctamente para artisticacnctct@gmail.com
+[2026-11-05 21:59:47] [SUCCESS] [SISTEMA] [10.0.2.8] Contraseña restablecida con éxito para artisticacnctct@gmail.com
+[2026-11-05 22:00:00] [SECURITY] [SISTEMA] [10.0.2.8] Fallo de autenticación: Contraseña incorrecta para el email artisticacnctct@gmail.com
+[2026-11-05 22:00:13] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: deprecated username (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-05 22:00:54] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: IRIA BAFALLIU VARELA
+[2026-11-05 22:01:13] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: SOFIA ALCIVAR CANGA
+[2026-11-05 22:01:24] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: CLAUDIA CAPARROS LORCA
+[2026-11-05 22:01:33] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: LEIRE FERNANDEZ IZQUIERDO
+[2026-11-05 22:01:42] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: PAULA FERNANDEZ DIAZ
+[2026-11-05 22:01:56] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: HELENA GONZALEZ IZQUIERDO
+[2026-11-05 22:02:16] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: JULIA INES FLORES
+[2026-11-05 22:02:30] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: LUCIA MIRA CAMARA
+[2026-11-05 22:02:41] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: INMA ISABELLA MORALES ANDRADE
+[2026-11-05 22:02:58] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: ANELY URREA RODRIGUEZ 
+[2026-11-05 22:03:23] [WARNING] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora eliminada del sistema: LUCÍA CARRILLO RUÍZ
+[2026-11-05 22:53:32] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-05 22:53:35] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-05 23:03:37] [SECURITY] [SISTEMA] [10.0.2.8] Fallo de autenticación: Contraseña incorrecta para el email artisticacnctct@gmail.com
+[2026-11-05 23:04:09] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: deprecated username (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-05 23:06:11] [INFO] [artisticacnctct@gmail.com] [10.0.2.8] Perfil actualizado por el usuario
+[2026-11-05 23:06:24] [INFO] [artisticacnctct@gmail.com] [10.0.2.8] Cierre de sesión: artisticacnctct@gmail.com
+[2026-11-05 23:07:47] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 9): elenacerondiaz@gmail.com
+[2026-11-05 23:08:07] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Email verificado manualmente por admin (ID: 47)
+[2026-11-05 23:08:56] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 40): incasincro@gmail.com
+[2026-11-06 05:43:26] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-06 05:43:30] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-06 11:24:40] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-06 16:54:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-07 10:38:07] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-07 10:38:07] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-07 11:30:59] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-07 11:55:04] [INFO] [xascorro@gmail.com] [10.0.2.8] Cierre de sesión: xascorro@gmail.com
+[2026-11-07 11:55:07] [SUCCESS] [club@club.com] [10.0.2.8] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-07 11:55:38] [INFO] [club@club.com] [10.0.2.8] Cierre de sesión: club@club.com
+[2026-11-07 11:55:41] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-07 12:12:30] [WARNING] [SISTEMA] [10.0.2.8] Intento de acceso sin verificar email: murciaswimming@gmail.com
+[2026-11-07 12:42:37] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-07 13:04:06] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-07 13:04:28] [WARNING] [SISTEMA] [10.0.2.8] Intento de acceso sin verificar email: murciaswimming@gmail.com
+[2026-11-07 13:04:31] [INFO] [SISTEMA] [10.0.2.8] Reenvío de verificación solicitado para murciaswimming@gmail.com
+[2026-11-07 13:05:38] [SUCCESS] [SISTEMA] [10.0.2.8] Email verificado con éxito: murciaswimming@gmail.com
+[2026-11-07 13:08:02] [SUCCESS] [murciaswimming@gmail.com] [10.0.2.8] Inicio de sesión exitoso: deprecated username (Club) - Club: Club Deportivo MurciaSwim
+[2026-11-07 13:08:32] [SUCCESS] [murciaswimming@gmail.com] [10.0.2.8] Inscripción realizada para VIDAL CELDRÁN, ALEJANDRA en competición #81
+[2026-11-07 15:22:00] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-07 15:22:03] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-07 15:23:40] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 48): sincromorvedre@gmail.com
+[2026-11-07 15:23:52] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 46): info@canguadalajara.es
+[2026-11-07 15:24:06] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 38): sincroserradells@gmail.com
+[2026-11-07 15:24:16] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 37): clubdeportivoalquimia@gmail.com
+[2026-11-07 15:24:26] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 31): sincrosagra@hotmail.com
+[2026-11-07 15:24:42] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 26): quabeartistica@gmail.com
+[2026-11-07 15:24:52] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 25): n.sincronizada@stadioalicante.com
+[2026-11-07 15:25:02] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 24): clubsincroalba@gmail.com
+[2026-11-07 15:25:35] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 2): club@club.com
+[2026-11-07 15:25:38] [INFO] [xascorro@gmail.com] [10.0.2.8] Cierre de sesión: xascorro@gmail.com
+[2026-11-07 15:25:41] [SUCCESS] [club@club.com] [10.0.2.8] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-07 15:52:16] [INFO] [club@club.com] [10.0.2.8] Cierre de sesión: club@club.com
+[2026-11-07 15:52:20] [SUCCESS] [club@club.com] [10.0.2.8] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-07 15:53:02] [INFO] [club@club.com] [10.0.2.8] Consulta de Auditoría BIAS (Global) para: XIV Liga de Figuras (1ª Jornada)
+[2026-11-07 15:57:57] [INFO] [club@club.com] [10.0.2.8] Cierre de sesión: club@club.com
+[2026-11-07 15:57:59] [SUCCESS] [club@club.com] [10.0.2.8] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-07 16:57:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-08 09:40:43] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-08 09:40:44] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-08 09:57:07] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Susana  (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-08 15:45:24] [INFO] [SISTEMA] [10.0.2.8] Nueva solicitud de registro: albagalan@clubsincroalhama.com
+[2026-11-08 15:45:38] [SUCCESS] [SISTEMA] [10.0.2.8] Email verificado con éxito: albagalan@clubsincroalhama.com
+[2026-11-08 15:46:12] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Invitado)
+[2026-11-08 15:46:12] [SECURITY] [albagalan@clubsincroalhama.com] [10.0.2.8] Intento de acceso: Usuario invitado no aprobado (albagalan@clubsincroalhama.com)
+[2026-11-08 15:46:56] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Invitado)
+[2026-11-08 15:46:56] [SECURITY] [albagalan@clubsincroalhama.com] [10.0.2.8] Intento de acceso: Usuario invitado no aprobado (albagalan@clubsincroalhama.com)
+[2026-11-08 16:52:19] [SUCCESS] [juanidiaz78@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Juani Díaz (Administrador)
+[2026-11-08 17:00:00] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Invitado)
+[2026-11-08 17:00:00] [SECURITY] [albagalan@clubsincroalhama.com] [10.0.2.8] Intento de acceso: Usuario invitado no aprobado (albagalan@clubsincroalhama.com)
+[2026-11-08 17:10:38] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-08 17:11:44] [INFO] [xascorro@gmail.com] [10.0.2.8] Usuario actualizado (ID: 54): albagalan@clubsincroalhama.com
+[2026-11-08 17:11:44] [INFO] [xascorro@gmail.com] [10.0.2.8] Email de actualización enviado a albagalan@clubsincroalhama.com (Rol: Club)
+[2026-11-08 17:11:57] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Club) - Club: Club Sincro Alhama
+[2026-11-08 17:56:34] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/775.mp3 (Original: Solo Tecnico Junior B, Club Sincro Alhama.mp3.mp3)
+[2026-11-08 17:59:54] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/774.mp3 (Original: Solo tecnico Junior A , Club Sincro Alhama  .mp3.mpeg)
+[2026-11-08 18:04:37] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/778.mp3 (Original: Duo Tecnico Junior A, Club Sincro Alhama.mp3)
+[2026-11-08 18:05:09] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/779.mp3 (Original: Duo Tecnico Junior B, Club Sincro Alhama.mp3)
+[2026-11-08 18:11:08] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/780.mp3 (Original: Equipo Tecnico Junior, Club Sincro Alhama.mp3)
+[2026-11-08 18:16:18] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/776.mp3 (Original: Solo Tecnico Absoluto A, Club Sincro Alhama.mp3)
+[2026-11-08 18:16:36] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/777.mp3 (Original: Solo Tecnico Absoluto B, Club Sincro Alhama.mp3)
+[2026-11-08 18:36:29] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/774.mp3
+[2026-11-09 01:20:29] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-09 01:20:29] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-09 09:08:46] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 12:55:28] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Susana  (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-09 13:02:00] [INFO] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora actualizada (ID: 596): ITZIAR   MUÑOZ CORCUERA | Estado: ACTIVA
+[2026-11-09 13:02:37] [INFO] [artisticacnctct@gmail.com] [10.0.2.8] Nadadora actualizada (ID: 596): ITZIAR   MUÑOZ CORCUERA | Estado: ACTIVA
+[2026-11-09 13:04:38] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: CLAUDIA VICTORIA  MONROY VARGAS (Club ID: 40)
+[2026-11-09 13:06:02] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: AFRICA BONAQUE MAYOR (Club ID: 40)
+[2026-11-09 13:07:31] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: LOLA HERNANDEZ NAVARRO (Club ID: 40)
+[2026-11-09 13:08:08] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: AFRICA SANCHEZ ROS (Club ID: 40)
+[2026-11-09 13:09:27] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: ELENA  BERROCAL LLORET (Club ID: 40)
+[2026-11-09 13:10:08] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Nueva nadadora añadida: ALMA  TEVAR ZAULA (Club ID: 40)
+[2026-11-09 13:30:38] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Club) - Club: Club Sincro Alhama
+[2026-11-09 13:33:12] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/774.mp3 (Original: Junior- Solo Tecnico- Club Sincro Alhama- Rebeca Arroyo.mpeg)
+[2026-11-09 13:33:43] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/775.mp3
+[2026-11-09 13:34:13] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/775.mp3 (Original: Junior- Solo Tecnico- Club Sincro Alhama- Alba Sanchez.mp3)
+[2026-11-09 13:34:20] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/778.mp3
+[2026-11-09 13:34:38] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/778.mp3 (Original: Junior-Duo Tecnico- Club Sincro Alhama- Rebeca Arroyo y Pilar Jimenez.mp3)
+[2026-11-09 13:34:47] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/779.mp3
+[2026-11-09 13:35:12] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/779.mp3 (Original: Junior-Duo Tecnico- Club Sincro Alhama- Alba Sanchez y Denisa Patru.mp3)
+[2026-11-09 13:35:24] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/780.mp3
+[2026-11-09 13:35:51] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/780.mp3 (Original: Junior- Equipo Tecnico- Club Sincro Alhama- Rebeca Arroyo, Alba Sanchez, Pilar Jimenez y Denisa Patru.mp3)
+[2026-11-09 13:35:58] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/776.mp3
+[2026-11-09 13:36:18] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/776.mp3 (Original: Absoluto- Solo Tecnico- Club Sincro Alhama- Pilar Jimenez.mp3)
+[2026-11-09 13:36:25] [INFO] [albagalan@clubsincroalhama.com] [10.0.2.8] Música eliminada con éxito (Físico y DB): ./public/music/81/777.mp3
+[2026-11-09 13:36:44] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Música subida con éxito: ./public/music/81/777.mp3 (Original: Absoluto- Solo Tecnico- Club Sincro Alhama- Denisa Patru.mp3)
+[2026-11-09 14:15:52] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (clubsincrolorca@gmail.com) ha expirado por inactividad
+[2026-11-09 14:16:01] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 17:24:00] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (elenacerondiaz@gmail.com) ha expirado por inactividad
+[2026-11-09 17:24:04] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Elena Cerón  (Club) - Club: Club Sincro Alhama
+[2026-11-09 17:26:32] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inscripción realizada para IANCU, MARÍA ANGÉLICA en competición #83
+[2026-11-09 17:26:40] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inscripción realizada para SÁNCHEZ ALCARAZ, MAR en competición #83
+[2026-11-09 17:26:50] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inscripción realizada para LEIRA GRAÑA, CARLA en competición #83
+[2026-11-09 17:27:02] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inscripción realizada para TORNEL ALEDO, MARINA en competición #83
+[2026-11-09 17:27:12] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inscripción realizada para SORIA GARCÍA, MARTINA en competición #83
+[2026-11-09 17:50:44] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-09 17:51:15] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-09 17:54:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Competición #82 establecida como activa y actualizada en sesión
+[2026-11-09 17:58:40] [INFO] [elenacerondiaz@gmail.com] [10.0.2.8] Cierre de sesión: elenacerondiaz@gmail.com
+[2026-11-09 17:58:43] [SUCCESS] [elenacerondiaz@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Elena Cerón  (Club) - Club: Club Sincro Alhama
+[2026-11-09 21:35:38] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 22:14:05] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Nadadora actualizada (ID: 103): ELENA CAMPOY SEGURA | Estado: ACTIVA
+[2026-11-09 22:49:07] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 22:53:57] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Nadadora conmutada a BAJA (ID: 453): ANDRÉS LÓPEZ SÁNCHEZ
+[2026-11-09 22:53:59] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Nadadora conmutada a ACTIVA (ID: 453): ANDRÉS LÓPEZ SÁNCHEZ
+[2026-11-09 22:55:53] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Cierre de sesión: clubsincrolorca@gmail.com
+[2026-11-09 22:56:05] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 23:22:11] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para CAMPOY SEGURA, ELENA en competición #83
+[2026-11-09 23:22:53] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MARTÍNEZ ROS, NOA en competición #83
+[2026-11-09 23:23:58] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MÉNDEZ PÉREZ, MARÍA en competición #83
+[2026-11-09 23:24:26] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para SIDIBE BROU, MARÍA AMENAN en competición #83
+[2026-11-09 23:25:26] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para CANSECO SÁNCHEZ, MARIA en competición #83
+[2026-11-09 23:25:51] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GINER GIMÉNEZ, PAULA en competición #83
+[2026-11-09 23:26:21] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para QUIÑONERO SÁNCHEZ, OLAYA en competición #83
+[2026-11-09 23:27:15] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para LÓPEZ GOMEZ, BLANCA en competición #83
+[2026-11-09 23:29:06] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GONZÁLEZ SÁNCHEZ, LEIRE en competición #83
+[2026-11-09 23:30:37] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para LADEVESA ESTEBAN, LORENA en competición #83
+[2026-11-09 23:31:10] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MÉNDEZ PÉREZ, MERCEDES  en competición #83
+[2026-11-09 23:41:36] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Cierre de sesión: clubsincrolorca@gmail.com
+[2026-11-09 23:41:43] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-09 23:43:19] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Cierre de sesión: clubsincrolorca@gmail.com
+[2026-11-10 05:03:39] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-10 05:03:39] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-10 06:47:59] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 06:49:07] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GONZÁLEZ PONCE, ELENA en competición #83
+[2026-11-10 06:51:55] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 06:53:13] [WARNING] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción completa eliminada para CAMPOY SEGURA, ELENA en competición #83
+[2026-11-10 08:24:46] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 08:25:12] [INFO] [clubsincrolorca@gmail.com] [10.0.2.8] Cierre de sesión: clubsincrolorca@gmail.com
+[2026-11-10 08:48:32] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 08:48:53] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Competición #81 establecida como activa y actualizada en sesión
+[2026-11-10 08:49:06] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (clubsincrolorca@gmail.com) ha expirado por inactividad
+[2026-11-10 08:51:06] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-10 08:51:06] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (Desconocido) ha expirado por inactividad
+[2026-11-10 14:38:10] [SECURITY] [SISTEMA] [10.0.2.8] Fallo de autenticación: El email albagalan@sincroalhama.com no existe en el sistema
+[2026-11-10 14:38:23] [SUCCESS] [albagalan@clubsincroalhama.com] [10.0.2.8] Inicio de sesión exitoso: Alba Galán Solana (Club) - Club: Club Sincro Alhama
+[2026-11-10 16:28:58] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 18:31:33] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 18:32:23] [WARNING] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción completa eliminada para QUIÑONERO SÁNCHEZ, OLAYA en competición #83
+[2026-11-10 18:34:13] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 18:38:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 18:38:20] [INFO] [xascorro@gmail.com] [10.0.2.8] Cierre de sesión: xascorro@gmail.com
+[2026-11-10 18:38:22] [SUCCESS] [club@club.com] [10.0.2.8] Inicio de sesión exitoso: club (Club) - Club: Club Sincro Alhama
+[2026-11-10 20:27:35] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Susana  (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-10 20:29:20] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-10 20:29:30] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 20:30:20] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para TORIBIO CONESA, CANDELA en competición #81
+[2026-11-10 20:30:40] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para PARRADO RIZO, ABRIL en competición #81
+[2026-11-10 20:30:52] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para PATIÑO HERNANDEZ, NOELIA en competición #81
+[2026-11-10 20:31:11] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para   MUÑOZ CORCUERA, ITZIAR en competición #81
+[2026-11-10 20:31:21] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para CONTRERAS ORDINES, AITANA en competición #81
+[2026-11-10 20:31:28] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para FERNANDEZ PEREZ, AINHOA en competición #81
+[2026-11-10 20:31:42] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para RODRIGUEZ GARCIA, SARA en competición #81
+[2026-11-10 20:32:00] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para USEA BUITRAGO, BLANCA en competición #81
+[2026-11-10 20:32:11] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inscripción realizada para VERGARA VELASCO, ALEXIA en competición #81
+[2026-11-10 20:34:31] [INFO] [artisticacnctct@gmail.com] [10.0.2.8] Cierre de sesión: artisticacnctct@gmail.com
+[2026-11-10 20:34:47] [SUCCESS] [artisticacnctct@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Susana  (Club) - Club: Club Natación Cartagonova-Cartagena
+[2026-11-10 20:58:25] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 21:18:25] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-10 21:19:04] [SECURITY] [SISTEMA] [10.0.2.8] La sesión del usuario (xascorro@gmail.com) ha expirado por inactividad
+[2026-11-10 21:19:12] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inicio de sesión exitoso: Pedro Díaz (Administrador)
+[2026-11-10 21:20:29] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MARTÍNEZ ROS, NOA en competición #81
+[2026-11-10 21:21:01] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para SIDIBE BROU, MARÍA AMENAN en competición #81
+[2026-11-10 21:21:22] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GONZÁLEZ PONCE, ELENA en competición #81
+[2026-11-10 21:21:56] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para IBARRA NAVARRO, JARA en competición #81
+[2026-11-10 21:22:10] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para CANSECO SÁNCHEZ, MARIA en competición #81
+[2026-11-10 21:22:43] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MÉNDEZ PÉREZ, MARÍA en competición #81
+[2026-11-10 21:23:01] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:23:11] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MOLINA GARCÍA, VALERIA en competición #81
+[2026-11-10 21:23:21] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:23:25] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para LÓPEZ GOMEZ, BLANCA en competición #81
+[2026-11-10 21:23:43] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:23:50] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para MÉNDEZ PÉREZ, MERCEDES  en competición #81
+[2026-11-10 21:24:00] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:24:12] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GINER GIMÉNEZ, PAULA en competición #81
+[2026-11-10 21:24:17] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:24:28] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para LADEVESA ESTEBAN, LORENA en competición #81
+[2026-11-10 21:24:45] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:24:49] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GONZÁLEZ SÁNCHEZ, LEIRE en competición #81
+[2026-11-10 21:25:11] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para GUIRAO GARCIA, IRENE  en competición #81
+[2026-11-10 21:25:19] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #428 (1 jueces)
+[2026-11-10 21:25:23] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inscripción realizada para QUIÑONERO SÁNCHEZ, OLAYA en competición #81
+[2026-11-10 21:25:49] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #428 (1 jueces)
+[2026-11-10 21:26:16] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #428 (1 jueces)
+[2026-11-10 21:26:22] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Rutina #781 inscrita con éxito (Fase #435, Club #19, Comp #81)
+[2026-11-10 21:26:41] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #428 (1 jueces)
+[2026-11-10 21:27:00] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #428 (1 jueces)
+[2026-11-10 21:27:08] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Rutina #782 inscrita con éxito (Fase #437, Club #19, Comp #81)
+[2026-11-10 21:27:40] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Participante #102 añadida a rutina #781
+[2026-11-10 21:27:49] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 122 en Fase #435 (1 jueces)
+[2026-11-10 21:28:24] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 123 en Fase #435 (1 jueces)
+[2026-11-10 21:28:40] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Participante #101 añadida a rutina #782
+[2026-11-10 21:28:54] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Participante #268 añadida a rutina #782
+[2026-11-10 21:29:23] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 124 en Fase #435 (1 jueces)
+[2026-11-10 21:29:43] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 124 en Fase #435 (1 jueces)
+[2026-11-10 21:30:02] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 124 en Fase #435 (1 jueces)
+[2026-11-10 21:31:46] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 124 en Fase #435 (1 jueces)
+[2026-11-10 21:32:20] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 125 en Fase #435 (1 jueces)
+[2026-11-10 21:32:44] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 125 en Fase #435 (1 jueces)
+[2026-11-10 21:33:08] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 125 en Fase #435 (1 jueces)
+[2026-11-10 21:33:17] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Música subida con éxito: ./public/music/81/781.mp3 (Original: JUNIOR SOLO TECNICO SINCRO LORCA MARISA.mp3)
+[2026-11-10 21:33:31] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 125 en Fase #435 (1 jueces)
+[2026-11-10 21:33:51] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 123 en Fase #435 (1 jueces)
+[2026-11-10 21:34:03] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Música subida con éxito: ./public/music/81/782.mp3 (Original: JUNIOR DUO TECNICO SINCRO LORCA IRENE Y MARINA.mp3)
+[2026-11-10 21:34:17] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] ACTUALIZADO: Panel Técnico (ID: 124) - Nuevo Nombre: 'Elementos', Jueces: 4, Peso: 100%, Obsoleto: no, Puntua: si
+[2026-11-10 21:34:39] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] ACTUALIZADO: Panel Técnico (ID: 125) - Nuevo Nombre: 'Impresión Artística', Jueces: 4, Peso: 100%, Obsoleto: no, Puntua: si
+[2026-11-10 21:34:57] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] ACTUALIZADO: Panel Técnico (ID: 122) - Nuevo Nombre: 'CT', Jueces: 1, Peso: 0%, Obsoleto: no, Puntua: no
+[2026-11-10 21:37:19] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Nuevo juez creado: CARMEN MELERO ARENALES
+[2026-11-10 21:37:52] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 121 en Fase #424 (1 jueces)
+[2026-11-10 21:38:26] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Clonación de panel 121 desde fase 424 completada para 7 fases
+[2026-11-10 21:38:50] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] CONFIGURADO: Composición de Panel ID 125 en Fase #435 (1 jueces)
+[2026-11-10 21:39:26] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Clonación de panel 122 desde fase 435 completada para 9 fases
+[2026-11-10 21:39:51] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Clonación de panel 123 desde fase 435 completada para 9 fases
+[2026-11-10 21:40:15] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Clonación de panel 124 desde fase 435 completada para 9 fases
+[2026-11-10 21:40:41] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Clonación de panel 125 desde fase 435 completada para 9 fases
+[2026-11-10 21:41:49] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inscripción realizada para IBARRA NAVARRO, JARA en competición #82
+[2026-11-10 21:42:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inscripción realizada para CANSECO SÁNCHEZ, MARIA en competición #82
+[2026-11-10 21:52:20] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca

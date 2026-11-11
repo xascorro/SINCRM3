@@ -43,11 +43,13 @@ $stats_array = [];
 while ($row = mysqli_fetch_assoc($res_ranking)) {
     $total_notas_season += $row['total_notas_global'];
     
-    // LOGICA DE ANONIMIZACIÓN PARA EL ROL JUEZ (id_rol = 4)
-    $es_el_juez_logueado = ($_SESSION['id_rol'] == 4 && $row['id_juez'] == $_SESSION['id_juez_v3']);
+    // LOGICA DE ANONIMIZACIÓN PARA JUECES (Rol 4 o usuarios con id_juez_v3 que no sean Administradores)
+    $es_admin_audit = in_array($_SESSION['id_rol'] ?? 0, [1, 2, 3]);
+    $es_usuario_juez = ($_SESSION['id_rol'] == 4 || (!empty($_SESSION['id_juez_v3']) && !$es_admin_audit));
+    $es_el_juez_logueado = ($es_usuario_juez && $row['id_juez'] == ($_SESSION['id_juez_v3'] ?? 0));
     $nombre_display = $row['nombre'];
     
-    if($_SESSION['id_rol'] == 4 && !$es_el_juez_logueado) {
+    if($es_usuario_juez && !$es_el_juez_logueado) {
         $nombre_display = "Juez Anónimo";
         $row['group_key'] = 'ANON'; // Deshabilitar link a perfil si es anónimo
     }
