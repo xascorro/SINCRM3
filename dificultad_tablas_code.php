@@ -63,16 +63,20 @@ if (isset($_POST['btn_guardar_nuevo'])) {
         exit();
     }
 
-    // Verificar si la tabla admite subagrupar u orden_select
+    // Verificar columnas existentes en la tabla
     $cols_check = [];
     $res_cols = mysqli_query($connection, "SHOW COLUMNS FROM $tabla_post");
     while ($c = mysqli_fetch_assoc($res_cols)) {
         $cols_check[] = $c['Field'];
     }
 
-    $fields = ['codigo', 'valor', 'agrupar', 'descripcion', 'version', 'temporada'];
-    $values = ["'$codigo'", "'$valor'", "'$agrupar'", "'$descripcion'", "'$version'", "'$temporada'"];
+    $fields = ['codigo', 'valor', 'agrupar', 'descripcion', 'version'];
+    $values = ["'$codigo'", "'$valor'", "'$agrupar'", "'$descripcion'", "'$version'"];
 
+    if (in_array('temporada', $cols_check)) {
+        $fields[] = 'temporada';
+        $values[] = "'$temporada'";
+    }
     if (in_array('subagrupar', $cols_check)) {
         $fields[] = 'subagrupar';
         $values[] = "'$subagrupar'";
@@ -126,10 +130,12 @@ if (isset($_POST['btn_actualizar'])) {
         "valor = '$valor'",
         "agrupar = '$agrupar'",
         "descripcion = '$descripcion'",
-        "version = '$version'",
-        "temporada = '$temporada'"
+        "version = '$version'"
     ];
 
+    if (in_array('temporada', $cols_check)) {
+        $set_parts[] = "temporada = '$temporada'";
+    }
     if (in_array('subagrupar', $cols_check)) {
         $set_parts[] = "subagrupar = '$subagrupar'";
     }

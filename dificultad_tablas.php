@@ -44,14 +44,32 @@ if (!array_key_exists($tabla_activa, $tablas_disponibles)) {
     $tabla_activa = 'dificultad_hibridos';
 }
 
-// Obtener temporadas/versiones disponibles en esta tabla
-$q_vers = "SELECT version, temporada, COUNT(*) as total 
-           FROM $tabla_activa 
-           GROUP BY version, temporada 
-           ORDER BY version DESC";
+// Obtener temporadas/versiones disponibles en esta tabla (con verificación de columna temporada)
+$check_temp_col = mysqli_query($connection, "SHOW COLUMNS FROM $tabla_activa LIKE 'temporada'");
+$has_temporada = ($check_temp_col && mysqli_num_rows($check_temp_col) > 0);
+
+if ($has_temporada) {
+    $q_vers = "SELECT version, temporada, COUNT(*) as total 
+               FROM $tabla_activa 
+               GROUP BY version, temporada 
+               ORDER BY version DESC";
+} else {
+    $q_vers = "SELECT version, '' as temporada, COUNT(*) as total 
+               FROM $tabla_activa 
+               GROUP BY version 
+               ORDER BY version DESC";
+}
 $res_vers = mysqli_query($connection, $q_vers);
 $versiones = [];
 while ($v = mysqli_fetch_assoc($res_vers)) {
+    if (empty($v['temporada'])) {
+        $v['temporada'] = match($v['version']) {
+            '2627' => '2026-2027',
+            '2425' => '2024-2025',
+            '2324' => '2023-2024',
+            default => 'v' . $v['version']
+        };
+    }
     $versiones[] = $v;
 }
 
