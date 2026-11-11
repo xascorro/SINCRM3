@@ -256,7 +256,7 @@ $total_clubs = mysqli_fetch_assoc(mysqli_query($connection, $q_clubs_fig))['tota
                 $txt_btn_insc = (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == 5) ? 'MIS INSCRIPCIONES' : 'INSCRIPCIONES';
                 $title_btn_insc = (isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == 5) ? 'Descargar PDF de inscripciones de mi club (borrador privado)' : 'Ver listado de inscripciones en PDF';
                 ?>
-                <a href="./informes/informe_figuras.php?id_competicion=<?php echo $id_comp; ?>&titulo=Inscripciones" target="_blank" 
+                <a href="./informes/informe_figuras.php?id_competicion=<?php echo $id_comp; ?>&titulo=Inscripciones&v=<?php echo time(); ?>" target="_blank" 
                    title="<?php echo $title_btn_insc; ?>"
                    class="px-4 py-2.5 sm:px-5 sm:py-3 bg-emerald-600 text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-emerald-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-md no-underline">
                     <i class="fas fa-file-pdf text-xs"></i> <span><?php echo $txt_btn_insc; ?></span>
@@ -528,7 +528,7 @@ $total_clubs = mysqli_fetch_assoc(mysqli_query($connection, $q_clubs_fig))['tota
                             <i class="fas fa-file-zipper text-purple-600"></i> Músicas
                         </button>
                     </form>
-                    <a href="./informes/informe_coach_card.php?id_competicion=<?php echo $id_comp; ?>&titulo=Coach%20Card%20Composer" target="_blank" 
+                    <a href="./informes/informe_coach_card.php?id_competicion=<?php echo $id_comp; ?>&titulo=Coach%20Card%20Composer&v=<?php echo time(); ?>" target="_blank" 
                        class="px-3.5 py-2.5 sm:px-5 sm:py-3 bg-slate-100 text-slate-700 font-bold text-[11px] sm:text-xs uppercase tracking-wider rounded-xl sm:rounded-2xl hover:bg-slate-200 active:scale-[0.98] transition-all flex items-center gap-1.5 border border-slate-200">
                         <i class="fas fa-puzzle-piece text-amber-500"></i> Coach Cards
                     </a>

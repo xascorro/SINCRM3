@@ -39,8 +39,9 @@ function get_gallery_images($prefix) {
         </div>
 
         <?php
-        if(isset($_POST['edit_btn'])):
-            $id = mysqli_real_escape_string($connection, $_POST['edit_id']);
+        $id_param = !empty($_POST['edit_id']) ? intval($_POST['edit_id']) : (!empty($_GET['id']) ? intval($_GET['id']) : 0);
+        if($id_param > 0):
+            $id = mysqli_real_escape_string($connection, (string)$id_param);
             $query = "SELECT * FROM competiciones WHERE id = '$id'";
             $query_run = mysqli_query($connection, $query);
             foreach ($query_run as $row):

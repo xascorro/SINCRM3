@@ -12,8 +12,14 @@ if (!in_array($_SESSION['id_rol'] ?? 0, $roles_permitidos)) {
 include('includes/header.php');
 include('includes/navbar.php');
 
-// Obtener datos de la competición activa
-$id_competicion = (int)($_SESSION['id_competicion_usuario'] ?? ($_SESSION['id_competicion_activa'] ?? 0));
+// Obtener datos de la competición (soporte para $_GET['id_competicion'] o $_GET['id'] con persistencia en sesión)
+$id_comp_param = isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : (isset($_GET['id']) ? (int)$_GET['id'] : 0);
+if ($id_comp_param > 0) {
+    $_SESSION['id_competicion_usuario'] = $id_comp_param;
+    $id_competicion = $id_comp_param;
+} else {
+    $id_competicion = (int)($_SESSION['id_competicion_usuario'] ?? ($_SESSION['id_competicion_activa'] ?? 0));
+}
 
 $comp_data = null;
 $total_nadadoras = 0;
@@ -62,6 +68,7 @@ if ($id_competicion > 0) {
 }
 
 // Catálogo de Documentos Oficiales Publicables en la Web (docs/)
+$cache_buster = time();
 $docs_publicacion = [
     'inscripciones' => [
         'titulo' => 'Listado Oficial de Inscripciones',
@@ -69,7 +76,7 @@ $docs_publicacion = [
         'icono' => 'fa-file-pen',
         'color' => 'blue',
         'auto' => true,
-        'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=Inscripciones"
+        'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=Inscripciones&v={$cache_buster}"
     ],
     'orden' => [
         'titulo' => 'Orden de Actuación / Salida',
@@ -77,7 +84,7 @@ $docs_publicacion = [
         'icono' => 'fa-list-ol',
         'color' => 'purple',
         'auto' => true,
-        'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden"
+        'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden&v={$cache_buster}"
     ],
     'resultados' => [
         'titulo' => 'Resultados Finales Oficiales',
@@ -85,7 +92,7 @@ $docs_publicacion = [
         'icono' => 'fa-trophy',
         'color' => 'emerald',
         'auto' => true,
-        'preview_url' => "informes/informe_figuras_resultados_categorias.php?id_competicion={$id_competicion}&titulo=Resultados"
+        'preview_url' => "informes/informe_figuras_resultados_categorias.php?id_competicion={$id_competicion}&titulo=Resultados&v={$cache_buster}"
     ],
     'normativa' => [
         'titulo' => 'Normativa de Competición',
@@ -104,7 +111,7 @@ if (!empty($clave_liga_comp)) {
         'icono' => 'fa-ranking-star',
         'color' => 'amber',
         'auto' => true,
-        'preview_url' => "informes/informe_figuras_liga_categorias.php?id_competicion={$id_competicion}"
+        'preview_url' => "informes/informe_figuras_liga_categorias.php?id_competicion={$id_competicion}&v={$cache_buster}"
     ];
 }
 ?>
@@ -446,7 +453,7 @@ if (!empty($clave_liga_comp)) {
                     </h2>
                     
                     <div class="space-y-2.5">
-                        <a href="informes/informe_figuras.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Inscripciones" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
+                        <a href="informes/informe_figuras.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Inscripciones&v=<?php echo time(); ?>" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-2xs shrink-0">
                                     <i class="fas fa-signature text-sm"></i>
@@ -456,7 +463,7 @@ if (!empty($clave_liga_comp)) {
                             <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-emerald-600 shrink-0"></i>
                         </a>
 
-                        <a href="informes/informe_figuras.php?id_competicion=<?php echo $id_competicion; ?>&titulo=orden" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
+                        <a href="informes/informe_figuras.php?id_competicion=<?php echo $id_competicion; ?>&titulo=orden&v=<?php echo time(); ?>" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-2xs shrink-0">
                                     <i class="fas fa-list-ol text-sm"></i>

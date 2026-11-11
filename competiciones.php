@@ -303,6 +303,9 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
 
                         <!-- Botones de Acción -->
                         <div class="flex items-center gap-1.5 shrink-0">
+                            <a href="informes_competicion.php?id=<?php echo $row['id']; ?>" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center shadow-2xs" title="Informes y Documentación">
+                                <i class="fas fa-file-pdf text-xs"></i>
+                            </a>
                             <form action="competiciones_edit.php" method="POST" class="inline">
                                 <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                                 <button type="submit" name="edit_btn" class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 border border-amber-100 hover:bg-amber-500 hover:text-white active:scale-[0.98] transition-all flex items-center justify-center shadow-2xs" title="Configurar">
@@ -441,6 +444,11 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                             <!-- Columna Acciones -->
                             <td class="px-6 py-4 text-center whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-2">
+                                    <!-- Informes -->
+                                    <a href="informes_competicion.php?id=<?php echo $row['id']; ?>" class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white active:scale-[0.98] transition-all border border-blue-100 flex items-center justify-center shadow-2xs" title="Informes y Documentación">
+                                        <i class="fas fa-file-pdf text-xs"></i>
+                                    </a>
+
                                     <!-- Configuración -->
                                     <form action="competiciones_edit.php" method="POST" class="inline-block">
                                         <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">

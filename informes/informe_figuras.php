@@ -9,6 +9,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Cabeceras estrictas anti-caché para navegadores móviles y visualizadores PDF integrados
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: 0");
+
 // Validar acceso (Sesión o Token de Cron)
 $cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
 $cron_token_provided = $_GET['cron_token'] ?? '';
