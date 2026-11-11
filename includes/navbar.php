@@ -7,7 +7,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
     
     // Agrupación de páginas para estados activos
     $group_users = ['usuarios.php', 'roles.php', 'paginas.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
-    $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'modalidades.php', 'jueces.php', 'figuras.php', 'reglas_competicion.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'modalidades_edit.php', 'competiciones_edit.php'];
+    $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'modalidades.php', 'jueces.php', 'figuras.php', 'reglas_competicion.php', 'dificultad_tablas.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'modalidades_edit.php', 'competiciones_edit.php'];
     $group_operativa = ['fases.php', 'paneles_jueces.php', 'inscripciones.php', 'rutinas.php', 'sorteo.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
     $group_mantenimiento = ['estado_sistema.php', 'configuracion_sistema.php', 'diagnostico.php'];
@@ -74,6 +74,9 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 </a>
                 <a href="reglas_competicion.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'reglas_competicion.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
                     <i class="fas fa-stopwatch w-3.5 text-center text-[11px] opacity-70"></i> Reglamento
+                </a>
+                <a href="dificultad_tablas.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'dificultad_tablas.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-calculator w-3.5 text-center text-[11px] opacity-70"></i> Tablas Dificultad
                 </a>
             </div>
         </div>

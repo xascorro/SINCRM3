@@ -1,33 +1,38 @@
 # Resumen de Sesión - SINCRM v4
 Fecha: 2026-11-11
-Tarea: Auditoría y optimización del módulo de puntuaciones, motor de cálculo y rediseño de informes oficiales (Puntuaciones y Coach Card).
+Tarea: Nuevo módulo de gestión de Tablas de Dificultad (AQUA) en Datos Maestros.
 
 ## 1. Cambios Realizados
-- **Motor de Puntuaciones (`puntuaciones_rutina_code.php`)**:
-  - Refactorizado completamente eliminando 11 bloques repetitivos rígidos e implementando un bucle dinámico por elemento (`hibridos_rutina`).
-  - Normalizado el descarte de notas mínima y máxima con `'si'` asegurando descarte único incluso ante notas idénticas entre jueces.
-  - Soporte robusto de Basemark (`BM` vs `DD`) y factores técnicos.
-  - Panel de Impresión Artística auditado con descarte min/max, cálculo sobre 3 notas centrales y ponderación por factor oficial.
-  - Sincronización integrada con deducción de penalizaciones negativas.
-  - Recálculo automático instantáneo de ranking y diferencias respecto al líder en la fase tras guardar notas.
-- **Mesa de Puntuación (`puntuaciones_rutina.php`)**:
-  - Condición de notas tachadas ampliada a formato booleano compatible (`'si'` o `'1'`) tanto en panel de Elementos como en Impresión Artística.
-- **Informe Oficial de Puntuaciones (`informes/informe_puntuaciones.php`)**:
-  - Rediseño profesional bajo estética v4 y directrices Emil Kowalski (bloques estilizados protegidos con `nobr="true"`, bordes hairline, tipografía tabular).
-  - Desglose minucioso: badges por elemento, diferenciación destacada de `BM` en rojo, notas descartadas con tachado, deducciones de sincronización desglosadas, subtotales de paneles y penalizaciones de rutina.
-- **Generador Oficial de Coach Card (`informes/informe_coach_card.php`)**:
-  - Restaurada y formateada oficialmente la columna **`BONUS`** para los cambios de formación (`PC`..`6PC`) de la nueva normativa 2026-2027 (+0.20 c/u).
-  - Columnas oficiales World Aquatics completas: `EL`, `TIME`, `PART`, `BM`, `DIFICULTAD DECLARADA`, `BONUS`, `DD` y casilla `TC/DTC`.
-  - Ficha técnica completa de la rutina, temática, control de tiempo musical y caja destacada de Dificultad Total Declarada (`dd_total`).
-  - Control de privacidad por rol preservado (Club solo puede acceder a sus rutinas).
+- **Nueva Interfaz `dificultad_tablas.php`**:
+  - Creada en "Datos Maestros" con diseño moderno v4 (Tailwind + SB Admin 2).
+  - Selector de las 5 tablas oficiales de dificultad técnica:
+    1. `dificultad_hibridos` (Híbridos: Spins, Thrusts, Rotations, Flexibilidad, Airborne, Connectors y Bonus).
+    2. `dificultad_acrobacias` (Acrobacias Equipos: Grupos A, B, C, P + Addendum).
+    3. `dificultad_acropair` (Acrobacias Parejas / Dúo).
+    4. `dificultad_tre` (Elementos Técnicos Requeridos).
+    5. `dificultad_basemark` (Base Mark oficial).
+  - Selector rápido de temporada/versión (`2026-2027` [v`2627`], `2024-2025` [v`2425`], `2023-2024` [v`2324`]).
+  - KPIs dinámicos: Censo de elementos, Rango de DD (mínimo - máximo), Familias técnicas y Versión activa.
+  - Filtro interactivo por familias mediante chips (`T`, `S`, `R`, `A`, `F`, `BONUS`, `ACRO-A`, etc.).
+  - Buscador dinámico en tiempo real (`filterDificultadTable()`).
+  - Panel colapsable para añadir nuevos elementos y modal para editar elementos existentes.
+  - Herramienta para clonar temporadas completas a nuevos años (Solo Administrador).
+  - Integración con SweetAlert2 para confirmaciones de borrado.
+- **Backend CRUD `dificultad_tablas_code.php`**:
+  - Acciones para crear, editar y eliminar elementos con validación estricta y logs de seguridad (`write_log()`).
+  - Lógica de clonación masiva de temporadas entre versiones.
+- **Navegación y Permisos**:
+  - Enlace "Tablas Dificultad" agregado en el submenú de "Datos Maestros" en `includes/navbar.php` y `navbar.php`.
+  - Registrado en `paginas_sistema` y asignados permisos en `permisos_roles` para roles Administrador, Secretario, Delegado, Juez y Club en todas las bases de datos (local y beta).
 
-## 2. Archivos Modificados
-- `puntuaciones_rutina_code.php`
-- `puntuaciones_rutina.php`
-- `informes/informe_puntuaciones.php`
-- `informes/informe_coach_card.php`
-- `.last_session_summary.txt`
+## 2. Archivos Modificados / Creados
+- `dificultad_tablas.php` (Nuevo)
+- `dificultad_tablas_code.php` (Nuevo)
+- `includes/navbar.php` (Modificado)
+- `navbar.php` (Modificado)
+- `.last_session_summary.txt` (Modificado)
 
 ## 3. Estado del Proyecto
-- Validado con `php -l` (0 errores de sintaxis).
-- Generación de PDF verificada en entorno real (informe de puntuaciones y coach cards generados satisfactoriamente).
+- Sintaxis PHP validada con `php -l` (0 errores).
+- Probado el renderizado de todas las pestañas y temporadas en CLI.
+- Base de datos configurada y permisos sincronizados.
