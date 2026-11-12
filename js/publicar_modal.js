@@ -1,6 +1,7 @@
 /**
  * SINCRM v4 - Modal Inteligente de Publicación en la Web y Notificaciones
  * Diferencia entre: Modo Pruebas, Clubes Participantes, Oficiales y Jueces de Panel
+ * Actualización reactiva instantánea del desglose de correos según las opciones seleccionadas
  */
 
 function abrirModalPublicar(tipo, tituloDoc, esActualizacion, idCompeticionOverride) {
@@ -66,37 +67,6 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
 
     const totalJueces = data.jueces ? data.jueces.total_jueces : 0;
     const emailPrueba = data.prueba ? data.prueba.email : 'xascorro@gmail.com';
-
-    // Generar listas para el acordeón desplegable
-    let emailsClubesHtml = '';
-    if (data.clubes && data.clubes.destinatarios) {
-        emailsClubesHtml = data.clubes.destinatarios.map(d => 
-            `<li class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
-                <span class="font-semibold text-slate-700">${d.nombre} <span class="text-[10px] text-blue-600 font-bold">(${d.club_corto || d.club})</span></span>
-                <span class="font-mono text-slate-500">${d.email}</span>
-            </li>`
-        ).join('');
-    }
-
-    let emailsOficialesHtml = '';
-    if (data.oficiales && data.oficiales.destinatarios) {
-        emailsOficialesHtml = data.oficiales.destinatarios.map(o => 
-            `<li class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
-                <span class="font-semibold text-slate-700">${o.nombre} <span class="text-[10px] text-emerald-600 font-bold">(${o.cargo})</span></span>
-                <span class="font-mono text-slate-500">${o.email}</span>
-            </li>`
-        ).join('');
-    }
-
-    let emailsJuecesHtml = '';
-    if (data.jueces && data.jueces.destinatarios) {
-        emailsJuecesHtml = data.jueces.destinatarios.map(j => 
-            `<li class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
-                <span class="font-semibold text-slate-700">${j.nombre}</span>
-                <span class="font-mono text-slate-500">${j.email}</span>
-            </li>`
-        ).join('');
-    }
 
     Swal.fire({
         title: `<div class="text-left font-black text-slate-900 text-lg sm:text-xl flex items-center gap-2.5">
@@ -194,16 +164,14 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                     </label>
                 </div>
 
-                <!-- Acordeón Desplegable para transparencia -->
-                <details class="bg-white rounded-xl border border-slate-200 text-[11px]">
+                <!-- Acordeón Desplegable Dinámico: Se actualiza en tiempo real al marcar/desmarcar -->
+                <details id="details_emails_desglose" class="bg-white rounded-xl border border-slate-200 text-[11px] transition-all" open>
                     <summary class="px-3 py-2 font-bold text-slate-600 cursor-pointer hover:bg-slate-50 rounded-xl select-none flex items-center justify-between">
-                        <span><i class="fas fa-address-book text-slate-400 mr-1.5"></i> Ver desglose de emails destinatarios</span>
+                        <span id="summary_emails_title"><i class="fas fa-address-book text-slate-400 mr-1.5"></i> Destinatarios seleccionados</span>
                         <i class="fas fa-chevron-down text-[9px] text-slate-400"></i>
                     </summary>
-                    <div class="p-3 border-t border-slate-100 space-y-2 max-h-40 overflow-y-auto">
-                        ${emailsOficialesHtml ? `<div><span class="font-bold text-emerald-700 text-[10px] uppercase block mb-1">Oficiales:</span><ul class="space-y-0.5">${emailsOficialesHtml}</ul></div>` : ''}
-                        ${emailsClubesHtml ? `<div><span class="font-bold text-blue-700 text-[10px] uppercase block mb-1">Clubes:</span><ul class="space-y-0.5">${emailsClubesHtml}</ul></div>` : ''}
-                        ${emailsJuecesHtml ? `<div><span class="font-bold text-purple-700 text-[10px] uppercase block mb-1">Jueces de Panel:</span><ul class="space-y-0.5">${emailsJuecesHtml}</ul></div>` : ''}
+                    <div id="contenedor_emails_desglose" class="p-3 border-t border-slate-100 space-y-2.5 max-h-44 overflow-y-auto">
+                        <!-- Contenido inyectado dinámicamente por actualizarContadorDestinatarios() -->
                     </div>
                 </details>
 
@@ -319,33 +287,118 @@ function actualizarContadorDestinatarios() {
     const chkOficiales = document.getElementById('chk_dest_oficiales');
     const chkJueces = document.getElementById('chk_dest_jueces');
     const lbl = document.getElementById('lbl_dest_counter');
-    if (!lbl) return;
+    const summaryTitle = document.getElementById('summary_emails_title');
+    const contDesglose = document.getElementById('contenedor_emails_desglose');
+    if (!lbl || !contDesglose) return;
 
     let emailsSet = new Set();
+    let seccionesHtml = '';
 
+    // 1. Modo Prueba
     if (chkPrueba && chkPrueba.checked && data.prueba && data.prueba.email) {
-        emailsSet.add(data.prueba.email.toLowerCase());
+        const em = data.prueba.email.toLowerCase();
+        emailsSet.add(em);
+        seccionesHtml += `
+            <div class="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80">
+                <span class="font-bold text-amber-800 text-[10px] uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                    <i class="fas fa-flask text-[10px]"></i> Modo Prueba (1)
+                </span>
+                <div class="flex items-center justify-between py-0.5 text-xs">
+                    <span class="font-semibold text-slate-700">${data.prueba.nombre}</span>
+                    <span class="font-mono text-slate-600 text-[11px] font-semibold">${data.prueba.email}</span>
+                </div>
+            </div>
+        `;
     }
 
-    if (chkClubes && chkClubes.checked && data.clubes && data.clubes.destinatarios) {
-        data.clubes.destinatarios.forEach(d => {
-            if (d.email) emailsSet.add(d.email.toLowerCase());
-        });
-    }
-
-    if (chkOficiales && chkOficiales.checked && data.oficiales && data.oficiales.destinatarios) {
+    // 2. Oficiales (Juez Árbitro, Secretario...)
+    if (chkOficiales && chkOficiales.checked && data.oficiales && data.oficiales.destinatarios && data.oficiales.destinatarios.length > 0) {
+        let ofRows = '';
         data.oficiales.destinatarios.forEach(o => {
-            if (o.email) emailsSet.add(o.email.toLowerCase());
+            if (o.email) {
+                emailsSet.add(o.email.toLowerCase());
+                ofRows += `
+                    <li class="flex items-center justify-between py-1 border-b border-emerald-100/60 last:border-0">
+                        <span class="font-semibold text-slate-700">${o.nombre} <span class="text-[9px] px-1.5 py-0.2 bg-emerald-100 text-emerald-800 font-bold rounded">${o.cargo}</span></span>
+                        <span class="font-mono text-slate-600 font-semibold">${o.email}</span>
+                    </li>
+                `;
+            }
         });
+        seccionesHtml += `
+            <div class="p-2.5 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
+                <span class="font-bold text-emerald-800 text-[10px] uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                    <i class="fas fa-user-tie text-[10px]"></i> Oficiales de Competición (${data.oficiales.destinatarios.length})
+                </span>
+                <ul class="space-y-0.5">${ofRows}</ul>
+            </div>
+        `;
     }
 
-    if (chkJueces && chkJueces.checked && data.jueces && data.jueces.destinatarios) {
+    // 3. Clubes
+    if (chkClubes && chkClubes.checked && data.clubes && data.clubes.destinatarios && data.clubes.destinatarios.length > 0) {
+        let clubRows = '';
+        data.clubes.destinatarios.forEach(d => {
+            if (d.email) {
+                emailsSet.add(d.email.toLowerCase());
+                clubRows += `
+                    <li class="flex items-center justify-between py-1 border-b border-blue-100/60 last:border-0">
+                        <span class="font-semibold text-slate-700">${d.nombre} <span class="text-[9px] px-1.5 py-0.2 bg-blue-100 text-blue-800 font-bold rounded">${d.club_corto || d.club}</span></span>
+                        <span class="font-mono text-slate-600 font-semibold">${d.email}</span>
+                    </li>
+                `;
+            }
+        });
+        seccionesHtml += `
+            <div class="p-2.5 rounded-xl bg-blue-50/50 border border-blue-200/80">
+                <span class="font-bold text-blue-800 text-[10px] uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                    <i class="fas fa-users-line text-[10px]"></i> Clubes Participantes (${data.clubes.destinatarios.length})
+                </span>
+                <ul class="space-y-0.5">${clubRows}</ul>
+            </div>
+        `;
+    }
+
+    // 4. Jueces de panel
+    if (chkJueces && chkJueces.checked && data.jueces && data.jueces.destinatarios && data.jueces.destinatarios.length > 0) {
+        let jRows = '';
         data.jueces.destinatarios.forEach(j => {
-            if (j.email) emailsSet.add(j.email.toLowerCase());
+            if (j.email) {
+                emailsSet.add(j.email.toLowerCase());
+                jRows += `
+                    <li class="flex items-center justify-between py-1 border-b border-purple-100/60 last:border-0">
+                        <span class="font-semibold text-slate-700">${j.nombre}</span>
+                        <span class="font-mono text-slate-600 font-semibold">${j.email}</span>
+                    </li>
+                `;
+            }
         });
+        seccionesHtml += `
+            <div class="p-2.5 rounded-xl bg-purple-50/50 border border-purple-200/80">
+                <span class="font-bold text-purple-800 text-[10px] uppercase tracking-wider block mb-1.5 flex items-center gap-1.5">
+                    <i class="fas fa-gavel text-[10px]"></i> Jueces de Panel (${data.jueces.destinatarios.length})
+                </span>
+                <ul class="space-y-0.5">${jRows}</ul>
+            </div>
+        `;
     }
 
-    lbl.innerHTML = `Destinatarios: <strong>${emailsSet.size}</strong>`;
+    if (emailsSet.size === 0) {
+        contDesglose.innerHTML = `
+            <div class="p-3 text-center text-slate-400 italic">
+                <i class="fas fa-bell-slash text-base mb-1 block text-slate-300"></i>
+                No hay destinatarios seleccionados.<br>
+                <span class="text-[10px]">El documento se publicará en la web sin enviar notificaciones por correo.</span>
+            </div>
+        `;
+    } else {
+        contDesglose.innerHTML = seccionesHtml;
+    }
+
+    lbl.innerHTML = `Destinatarios: <strong class="text-blue-700 font-black">${emailsSet.size}</strong>`;
+    if (summaryTitle) {
+        summaryTitle.innerHTML = `<i class="fas fa-address-book text-slate-400 mr-1.5"></i> Destinatarios seleccionados (<strong class="text-blue-600 font-black">${emailsSet.size}</strong>)`;
+    }
 }
 
 // Para usar desde cualquier sitio pasando directamente tipo y título

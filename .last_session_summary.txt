@@ -1,10 +1,10 @@
-[2026-11-12 21:38] Resumen de sesión:
-1. Alta de Usuario Juez:
-   - Usuario: `Maria del Mar Martínez Sicilia`
-   - Email: `demar80@gmail.com`
-   - Contraseña: `holaguapa` (hasheada de forma segura con `password_hash` BCRYPT)
-   - Rol: 4 (Juez)
-   - Vinculado al juez oficial ID #85 (`MARIA DEL MAR MARTÍNEZ SICILIA`).
-   - Estado: `activo = 1`, `email_confirmado = 1`.
-   - Registrado tanto en base de datos local como en el servidor Beta (`beta.pedrodiaz.eu`).
-   - Verificado: Ahora el sistema lo reconoce automáticamente como "Juez Árbitro" en la lista de Oficiales al publicar documentos en competiciones donde ejerza dicho cargo (como en la Competición #81).
+[2026-11-12 21:45] Resumen de sesión:
+1. Modal de Publicación Dinámico y Reactivo:
+   - Archivo: `js/publicar_modal.js`
+   - El desglose de correos ahora es reactivo en tiempo real: al marcar o desmarcar "Modo Prueba", "Oficiales", "Clubes" o "Jueces de panel", el acordeón se actualiza al instante mostrando las tarjetas correspondientes con sus emails, nombres y roles (o el mensaje informativo de que se publicará sin notificaciones si no hay destinatarios seleccionados).
+   - Acordeón abierto por defecto con indicador numérico en el título y diseño diferenciado por colores (verde para oficiales, azul para clubes, morado para jueces).
+   - Desplegado en `beta.pedrodiaz.eu` y purgada la caché de Cloudflare en `pedrodiaz.eu`.
+
+2. Alta de Usuario Juez:
+   - Usuario: `Maria del Mar Martínez Sicilia` (`demar80@gmail.com`), contraseña `holaguapa`, Rol 4 (Juez), vinculado a juez ID #85.
+   - Sincronizado en local y Beta.
