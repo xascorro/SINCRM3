@@ -1,26 +1,20 @@
-[2026-11-12 19:58] Resumen de sesión:
-1. Modificación de Rutina 781 con BaseMark y Penalización:
-   - Rutina 781 (Solo Técnico Junior, Fase 435, Competición 81):
-     * Aplicado BaseMark (BM) al Elemento 1 (Híbrido):
-       - DD declarada: 8.250 -> DD reducida a BaseMark: 0.500.
-       - Puntuación Elemento 1 pasa de 13.8188 a 0.8375 (-12.9813 pts).
-       - Marcado visual de BM con checkbox y reflejo en desglose.
-       - Subtotal Elementos: 121.4375 (antes 134.4188).
-     * Aplicada Penalización de Rutina (Juez Árbitro):
-       - Tipo: AS 6.7.1 - Tiempo de marcha / entrada a la plataforma excedido (> 30s).
-       - Valor de deducción: -8.0000 pts.
-       - Registrado en tabla `penalizaciones_rutinas` y campo `rutinas.penalizaciones_rutina = -8.0000`.
-     * Recálculo matemático final:
-       - Elementos: 121.4375
-       - Impresión Artística: 102.0000
-       - Rutina: 223.4375
-       - Penalizaciones: -8.0000
-       - NOTA FINAL: 215.4375 (antes 236.4188).
-2. Base de Datos & Consistencia:
-   - Alineado esquema en Servidor Beta: `puntuaciones_elementos.factor` actualizado de `DECIMAL(1,1)` a `DECIMAL(5,2)` para soportar factores >= 1.0.
-   - Sincronizados y verificados valores en MariaDB Prod (`sincrm_prod_app`) y MariaDB Beta.
-3. Informe Oficial de Puntuaciones (PDF):
-   - Generación validada correctamente (HTTP 200, %PDF-1.7, 71.3 KB).
-   - Muestra fila de penalización [AS 6.7.1 (-8)] en panel rosa con -8.0000 y nota final oficial de 215.4375.
-4. Despliegue y CDN:
-   - Cloudflare purge verificado para `pedrodiaz.eu`.
+[2026-11-12 20:37] Resumen de sesión:
+1. Corrección y Modernización de Informes de Liga por Categorías:
+   - Archivos: `informes/informe_figuras_liga_categorias.php` e `informes/informe_figuras_liga_categorias_puntuaciones.php`.
+   - Problema detectado:
+     * Al consultar la liga para una competición donde aún no se han disputado/puntuado figuras (como la Competición 81 "XIV Liga de Figuras (1ª Jornada)"), la consulta devolvía 0 categorías.
+     * El bucle no generaba páginas y TCPDF ejecutaba `AddPage()` internamente al hacer `$pdf->Output()`.
+     * Se invocaba `Header()` sin haber inicializado `$GLOBALS['nombre_categoria']` ni `$GLOBALS['titulo_documento']`, provocando `Warning: Undefined global variable $nombre_categoria on line 62`.
+     * Dicho warning se volcaba al flujo HTTP, impidiendo el envío de cabeceras PDF ("headers already sent") y lanzando un `TCPDF ERROR: Some data has already been output to browser`.
+     * Además, el archivo ignoraba el parámetro `$_GET['id_competicion']` consultando únicamente `competiciones WHERE activo='si'`.
+   - Solución implementada:
+     * `ini_set('display_errors', 0)` en generación de PDFs para proteger la integridad del flujo binario.
+     * Soporte de autenticación unificado (sesión de usuario por username/email o cron_token interno).
+     * Detección y carga robusta de competición mediante `$_GET['id_competicion']` con fallback a activa.
+     * Estructura TCPDF moderna: Cabecera con imagen institucional landscape, título y subtítulo dinámico con temporada y clave de liga; pie de página con imagen a la izquierda y metadatos multilínea (Sede, Fecha, Página X de Y) a la derecha.
+     * Escenario sin resultados (p. ej. Jornada 1 antes de puntuar): En vez de fallar o dejar PDF vacío, genera una portada técnica oficial informando del estado de la liga, tabla con el calendario de todas las jornadas de la liga (fecha, sede y estado) y censo de inscripciones por categoría en la jornada activa.
+     * Escenario con resultados computados: Genera clasificaciones detalladas por categoría con el descarte de la peor jornada tachado según la normativa FNRM (Regla 9.2) y pie explicativo oficial.
+2. Despliegue & Sincronización:
+   - Verificado retorno HTTP 200 y cabecera `%PDF-1.7` en Competición 81 y Competición 77.
+   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
+   - Purgada caché de Cloudflare para `pedrodiaz.eu`.
