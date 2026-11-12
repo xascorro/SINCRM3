@@ -456,14 +456,17 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
             if ($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5) {
                 $q_sinc = mysqli_query($connection, "SELECT * FROM errores_sincronizacion WHERE id_rutina = $id_rutina");
                 $sinc = $q_sinc ? mysqli_fetch_assoc($q_sinc) : null;
-                $p_sinc = intval($sinc['errores_pequenos'] ?? 0);
-                $o_sinc = intval($sinc['errores_obvios'] ?? 0);
-                $m_sinc = intval($sinc['errores_mayores'] ?? 0);
+                $p_sinc = floatval($sinc['errores_pequenos'] ?? 0);
+                $o_sinc = floatval($sinc['errores_obvios'] ?? 0);
+                $m_sinc = floatval($sinc['errores_mayores'] ?? 0);
+                $p_sinc_txt = ($p_sinc == intval($p_sinc)) ? intval($p_sinc) : number_format($p_sinc, 1);
+                $o_sinc_txt = ($o_sinc == intval($o_sinc)) ? intval($o_sinc) : number_format($o_sinc, 1);
+                $m_sinc_txt = ($m_sinc == intval($m_sinc)) ? intval($m_sinc) : number_format($m_sinc, 1);
                 $ded_sinc = floatval($rutina['nota_panel_sincro'] ?? 0);
 
                 $html_r .= '<tr style="background-color:#fef2f2; border-bottom:1px solid #fee2e2;">';
                 $html_r .= '<td colspan="3"><b style="color:#b91c1c;">Sincronización</b></td>';
-                $html_r .= '<td style="color:#7f1d1d; font-size:6pt;">Pequeños: ' . $p_sinc . ' (' . $fase['error_xs'] . ') · Obvios: ' . $o_sinc . ' (' . $fase['error_ob'] . ') · Mayores: ' . $m_sinc . ' (' . $fase['error_xl'] . ')</td>';
+                $html_r .= '<td style="color:#7f1d1d; font-size:6pt;">Pequeños: ' . $p_sinc_txt . ' (' . $fase['error_xs'] . ') · Obvios: ' . $o_sinc_txt . ' (' . $fase['error_ob'] . ') · Mayores: ' . $m_sinc_txt . ' (' . $fase['error_xl'] . ')</td>';
                 $html_r .= '<td align="center" style="color:#b91c1c;">Deducción</td>';
                 $html_r .= '<td align="right" style="font-weight:bold; color:#b91c1c;">' . number_format($ded_sinc, 4) . '</td>';
                 $html_r .= '</tr>';

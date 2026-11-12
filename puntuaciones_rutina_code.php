@@ -138,22 +138,61 @@ if (isset($_POST['save_btn']) && $id_rutina > 0) {
     // 2. ERRORES DE SINCRONIZACIÓN
     mysqli_query($connection, "DELETE FROM errores_sincronizacion WHERE id_rutina = $id_rutina");
 
-    $errores_pequenos = intval($_POST['errores_pequenos'] ?? 0);
-    $errores_obvios = intval($_POST['errores_obvios'] ?? 0);
-    $errores_mayores = intval($_POST['errores_mayores'] ?? 0);
+    // Los solos NO tienen sincronización
+    $is_solo = in_array(intval($fase_info['id_modalidad'] ?? 0), [1, 5]);
+    if (!$is_solo && isset($fase_info['id_modalidad'])) {
+        $q_mod = mysqli_query($connection, "SELECT nombre, numero_participantes FROM modalidades WHERE id = " . intval($fase_info['id_modalidad']));
+        if ($r_mod = mysqli_fetch_assoc($q_mod)) {
+            if (intval($r_mod['numero_participantes']) <= 1 || stripos($r_mod['nombre'], 'solo') !== false) {
+                $is_solo = true;
+            }
+        }
+    }
 
-    $error_xs = floatval($fase_info['error_xs'] ?? -0.1);
-    $error_ob = floatval($fase_info['error_ob'] ?? -0.5);
-    $error_xl = floatval($fase_info['error_xl'] ?? -3.0);
+    if ($is_solo) {
+        $nota_errores_sincronizacion = 0.0000;
+    } else {
+        $peq_j1 = floatval($_POST['errores_pequenos_j1'] ?? 0);
+        $ob_j1  = floatval($_POST['errores_obvios_j1'] ?? 0);
+        $may_j1 = floatval($_POST['errores_mayores_j1'] ?? 0);
 
-    // Garantizar signo negativo para las deducciones
-    if ($error_xs > 0) $error_xs = -$error_xs;
-    if ($error_ob > 0) $error_ob = -$error_ob;
-    if ($error_xl > 0) $error_xl = -$error_xl;
+        $peq_j2 = floatval($_POST['errores_pequenos_j2'] ?? 0);
+        $ob_j2  = floatval($_POST['errores_obvios_j2'] ?? 0);
+        $may_j2 = floatval($_POST['errores_mayores_j2'] ?? 0);
 
-    $nota_errores_sincronizacion = round(($errores_pequenos * $error_xs) + ($errores_obvios * $error_ob) + ($errores_mayores * $error_xl), 4);
-    mysqli_query($connection, "INSERT INTO errores_sincronizacion (id_rutina, errores_pequenos, errores_obvios, errores_mayores, nota) 
-                               VALUES ($id_rutina, $errores_pequenos, $errores_obvios, $errores_mayores, $nota_errores_sincronizacion)");
+        // Calcular media con 1 decimal por cada tipo de error
+        $errores_pequenos = isset($_POST['errores_pequenos']) ? floatval($_POST['errores_pequenos']) : round(($peq_j1 + $peq_j2) / 2, 1);
+        $errores_obvios   = isset($_POST['errores_obvios']) ? floatval($_POST['errores_obvios']) : round(($ob_j1 + $ob_j2) / 2, 1);
+        $errores_mayores  = isset($_POST['errores_mayores']) ? floatval($_POST['errores_mayores']) : round(($may_j1 + $may_j2) / 2, 1);
+
+        // Compatibilidad legacy si vinieron errores directos sin desglose j1/j2
+        if ($peq_j1 == 0 && $peq_j2 == 0 && $errores_pequenos > 0) {
+            $peq_j1 = $errores_pequenos;
+            $peq_j2 = $errores_pequenos;
+        }
+        if ($ob_j1 == 0 && $ob_j2 == 0 && $errores_obvios > 0) {
+            $ob_j1 = $errores_obvios;
+            $ob_j2 = $errores_obvios;
+        }
+        if ($may_j1 == 0 && $may_j2 == 0 && $errores_mayores > 0) {
+            $may_j1 = $errores_mayores;
+            $may_j2 = $errores_mayores;
+        }
+
+        $error_xs = floatval($fase_info['error_xs'] ?? -0.1);
+        $error_ob = floatval($fase_info['error_ob'] ?? -0.5);
+        $error_xl = floatval($fase_info['error_xl'] ?? -3.0);
+
+        // Garantizar signo negativo para las deducciones
+        if ($error_xs > 0) $error_xs = -$error_xs;
+        if ($error_ob > 0) $error_ob = -$error_ob;
+        if ($error_xl > 0) $error_xl = -$error_xl;
+
+        $nota_errores_sincronizacion = round(($errores_pequenos * $error_xs) + ($errores_obvios * $error_ob) + ($errores_mayores * $error_xl), 4);
+        mysqli_query($connection, "INSERT INTO errores_sincronizacion 
+            (id_rutina, errores_pequenos_j1, errores_obvios_j1, errores_mayores_j1, errores_pequenos_j2, errores_obvios_j2, errores_mayores_j2, errores_pequenos, errores_obvios, errores_mayores, nota) 
+            VALUES ($id_rutina, $peq_j1, $ob_j1, $may_j1, $peq_j2, $ob_j2, $may_j2, $errores_pequenos, $errores_obvios, $errores_mayores, $nota_errores_sincronizacion)");
+    }
 
     // 3. PANEL 2: IMPRESIÓN ARTÍSTICA (ChoMu, Performance, Transitions)
     $q_jueces2 = "SELECT id, numero_juez FROM panel_jueces 

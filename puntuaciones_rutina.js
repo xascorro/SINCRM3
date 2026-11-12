@@ -12,7 +12,7 @@ $( document ).ready(function() {
 
 //coloreo input activo para destacarlo
 var estilo_input = '';
-$('input.form-control').focus(function() {
+$('input.form-control').not('.sincro-input').focus(function() {
 	estilo_input = $(this).attr('style');
     $(this).css({'background-color':'#fef3c7', 'border-color':'#f59e0b'}); // Tailwind amber-100/amber-500
     if(this.value == '0.0' || this.value == '0')
@@ -22,8 +22,13 @@ $('input.form-control').focus(function() {
     this.select();
 });
 
+// Resaltar sincro-input al entrar
+$('.sincro-input').focus(function() {
+    this.select();
+});
+
 //cuando un input tipo numero pierde el foco, saco media si esta vacio y es juez-media y ajusto colores,
-$('input.form-control').blur(function() {
+$('input.form-control').not('.sincro-input').blur(function() {
     $(this).attr("style",estilo_input);
     $(this).css({'background-color':'', 'color':'', 'border-color':''});
 
@@ -93,7 +98,7 @@ $('input.form-control').blur(function() {
 });
 
 // Navegación inteligente con Enter (respetando tabindex vertical)
-$('input.form-control').bind('keydown', function (e) {
+$('input.form-control, input.sincro-input').bind('keydown', function (e) {
     var keyCode = e.keyCode || e.which;
     if (keyCode === 13) {
         e.preventDefault(); 

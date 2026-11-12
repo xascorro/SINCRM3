@@ -39,6 +39,8 @@ $q_nombres = "SELECT GROUP_CONCAT(n.nombre SEPARATOR ', ') as nombres
 $nombres = mysqli_fetch_assoc(mysqli_query($connection, $q_nombres))['nombres'] ?? '';
 
 $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
+$is_solo = ((int)($rutina['numero_participantes'] ?? 0) === 1) || (stripos($rutina['nombre_modalidad'] ?? '', 'solo') !== false) || in_array((int)($rutina['id_modalidad'] ?? 0), [1, 5]);
+$tiene_sincro = !$is_solo;
 ?>
 
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
@@ -221,37 +223,154 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
                 </div>
 
                 <!-- ERRORES DE SINCRONIZACIÓN -->
-                <?php if ((isset($rutina['numero_participantes']) && $rutina['numero_participantes'] > 1) || (!isset($rutina['numero_participantes']) && !in_array($rutina['id_modalidad'], [1, 5, 12, 13]))): ?>
+                <?php if ($tiene_sincro): ?>
                 <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 mb-8 overflow-hidden">
-                    <div class="px-8 py-6 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                        <h2 class="text-lg font-black text-slate-800 uppercase tracking-tighter flex items-center gap-3">
+                    <div class="px-8 py-6 bg-slate-50 border-b border-slate-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                        <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center"><i class="fas fa-exclamation-triangle text-sm"></i></div>
-                            Errores de Sincronización
-                        </h2>
+                            <div>
+                                <h2 class="text-lg font-black text-slate-800 uppercase tracking-tighter">
+                                    Errores de Sincronización
+                                </h2>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Panel de dos jueces · Media calculada dinámicamente (1 decimal)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-1 bg-white rounded-lg border border-slate-200 text-slate-600 text-[10px] font-black uppercase shadow-xs">Pequeño: <?php echo $fase['error_xs']; ?></span>
+                            <span class="px-2.5 py-1 bg-white rounded-lg border border-slate-200 text-slate-600 text-[10px] font-black uppercase shadow-xs">Obvio: <?php echo $fase['error_ob']; ?></span>
+                            <span class="px-2.5 py-1 bg-white rounded-lg border border-slate-200 text-slate-600 text-[10px] font-black uppercase shadow-xs">Mayor: <?php echo $fase['error_xl']; ?></span>
+                        </div>
                     </div>
                     <?php
                     $q_err = "SELECT * FROM errores_sincronizacion WHERE id_rutina=$id_rutina";
-                    $err = mysqli_fetch_assoc(mysqli_query($connection, $q_err));
-                    $pen_sincro = ($err['errores_pequenos'] * $fase['error_xs']) + ($err['errores_obvios'] * $fase['error_ob']) + ($err['errores_mayores'] * $fase['error_xl']);
-                    $tab_sincro = 100;
+                    $err_res = mysqli_query($connection, $q_err);
+                    $err = $err_res ? mysqli_fetch_assoc($err_res) : null;
+
+                    $p_j1 = (float)($err['errores_pequenos_j1'] ?? ($err['errores_pequenos'] ?? 0));
+                    $o_j1 = (float)($err['errores_obvios_j1'] ?? ($err['errores_obvios'] ?? 0));
+                    $m_j1 = (float)($err['errores_mayores_j1'] ?? ($err['errores_mayores'] ?? 0));
+
+                    $p_j2 = (float)($err['errores_pequenos_j2'] ?? ($err['errores_pequenos'] ?? 0));
+                    $o_j2 = (float)($err['errores_obvios_j2'] ?? ($err['errores_obvios'] ?? 0));
+                    $m_j2 = (float)($err['errores_mayores_j2'] ?? ($err['errores_mayores'] ?? 0));
+
+                    $p_media = (float)($err['errores_pequenos'] ?? round(($p_j1 + $p_j2)/2, 1));
+                    $o_media = (float)($err['errores_obvios'] ?? round(($o_j1 + $o_j2)/2, 1));
+                    $m_media = (float)($err['errores_mayores'] ?? round(($m_j1 + $m_j2)/2, 1));
+
+                    $fxs = (float)($fase['error_xs'] ?? -0.1);
+                    $fob = (float)($fase['error_ob'] ?? -0.5);
+                    $fxl = (float)($fase['error_xl'] ?? -3.0);
+                    if ($fxs > 0) $fxs = -$fxs;
+                    if ($fob > 0) $fob = -$fob;
+                    if ($fxl > 0) $fxl = -$fxl;
+
+                    $sub_peq = $p_media * $fxs;
+                    $sub_ob  = $o_media * $fob;
+                    $sub_may = $m_media * $fxl;
+                    $pen_sincro = $sub_peq + $sub_ob + $sub_may;
                     ?>
-                    <div class="p-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1">Pequeños (<?php echo $fase['error_xs']; ?>)</label>
-                            <input type="text" inputmode="numeric" name="errores_pequenos" value="<?php echo $err['errores_pequenos'] ?? 0; ?>" tabindex="<?php echo $tab_sincro++; ?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-lg font-black text-slate-700 shadow-inner focus:ring-red-500 focus:border-red-500 form-control">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1">Obvios (<?php echo $fase['error_ob']; ?>)</label>
-                            <input type="text" inputmode="numeric" name="errores_obvios" value="<?php echo $err['errores_obvios'] ?? 0; ?>" tabindex="<?php echo $tab_sincro++; ?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-lg font-black text-slate-700 shadow-inner focus:ring-red-500 focus:border-red-500 form-control">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="text-[10px] font-black uppercase text-slate-400 px-1">Mayores (<?php echo $fase['error_xl']; ?>)</label>
-                            <input type="text" inputmode="numeric" name="errores_mayores" value="<?php echo $err['errores_mayores'] ?? 0; ?>" tabindex="<?php echo $tab_sincro++; ?>" class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-100 text-lg font-black text-slate-700 shadow-inner focus:ring-red-500 focus:border-red-500 form-control">
-                        </div>
-                    </div>
-                    <div class="px-8 py-4 bg-red-50 border-t border-red-100 flex justify-between items-center">
-                        <span class="text-xs font-black uppercase text-red-500 tracking-widest">Penalización Total Sincronización</span>
-                        <span class="text-2xl font-black text-red-700"><?php echo number_format($pen_sincro, 4); ?></span>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse whitespace-nowrap">
+                            <thead>
+                                <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-white">
+                                    <th class="px-6 py-4">Tipo de Error</th>
+                                    <th class="px-6 py-4 text-center">Deducción Unit.</th>
+                                    <th class="px-6 py-4 text-center text-red-600 bg-red-50/40">Juez 1</th>
+                                    <th class="px-6 py-4 text-center text-red-600 bg-red-50/40">Juez 2</th>
+                                    <th class="px-6 py-4 text-center text-slate-700 bg-slate-50 font-black">Media Aplicada</th>
+                                    <th class="px-6 py-4 text-right">Subtotal Deducción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <!-- Pequeños -->
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                                            <div>
+                                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight">Pequeños (Minor)</p>
+                                                <p class="text-[9px] font-bold text-slate-400">Desfase sutil / descoordinación breve</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-bold text-slate-600 tabular-nums"><?php echo $fxs; ?></td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_pequenos_j1" id="sincro_peq_j1" value="<?php echo (int)$p_j1; ?>" tabindex="101" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_pequenos_j2" id="sincro_peq_j2" value="<?php echo (int)$p_j2; ?>" tabindex="102" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-6 py-4 text-center bg-slate-50">
+                                        <input type="hidden" name="errores_pequenos" id="sincro_peq_media" value="<?php echo number_format($p_media, 1, '.', ''); ?>">
+                                        <span id="sincro_peq_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($p_media, 1, '.', ''); ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span id="sincro_peq_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_peq, 4); ?></span>
+                                    </td>
+                                </tr>
+
+                                <!-- Obvios -->
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>
+                                            <div>
+                                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight">Obvios (Obvious)</p>
+                                                <p class="text-[9px] font-bold text-slate-400">Desfase evidente y apreciable</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-bold text-slate-600 tabular-nums"><?php echo $fob; ?></td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_obvios_j1" id="sincro_ob_j1" value="<?php echo (int)$o_j1; ?>" tabindex="103" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_obvios_j2" id="sincro_ob_j2" value="<?php echo (int)$o_j2; ?>" tabindex="104" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-6 py-4 text-center bg-slate-50">
+                                        <input type="hidden" name="errores_obvios" id="sincro_ob_media" value="<?php echo number_format($o_media, 1, '.', ''); ?>">
+                                        <span id="sincro_ob_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($o_media, 1, '.', ''); ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span id="sincro_ob_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_ob, 4); ?></span>
+                                    </td>
+                                </tr>
+
+                                <!-- Mayores -->
+                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span>
+                                            <div>
+                                                <p class="text-xs font-black text-slate-800 uppercase tracking-tight">Mayores (Major)</p>
+                                                <p class="text-[9px] font-bold text-slate-400">Pérdida total del ritmo / caída</p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-center font-bold text-slate-600 tabular-nums"><?php echo $fxl; ?></td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_mayores_j1" id="sincro_may_j1" value="<?php echo (int)$m_j1; ?>" tabindex="105" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-4 py-3 text-center bg-red-50/15">
+                                        <input type="number" step="1" min="0" name="errores_mayores_j2" id="sincro_may_j2" value="<?php echo (int)$m_j2; ?>" tabindex="106" class="sincro-input w-24 px-3 py-2 text-center text-base font-black rounded-xl bg-white border border-slate-200 shadow-xs focus:ring-red-500 focus:border-red-500 text-slate-700">
+                                    </td>
+                                    <td class="px-6 py-4 text-center bg-slate-50">
+                                        <input type="hidden" name="errores_mayores" id="sincro_may_media" value="<?php echo number_format($m_media, 1, '.', ''); ?>">
+                                        <span id="sincro_may_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($m_media, 1, '.', ''); ?></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <span id="sincro_may_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_may, 4); ?></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr class="bg-red-50 border-t-2 border-red-100">
+                                    <td colspan="5" class="px-6 py-4 text-right text-xs font-black uppercase text-red-600 tracking-widest">Penalización Total Sincronización</td>
+                                    <td class="px-6 py-4 text-right text-2xl font-black text-red-700 tabular-nums" id="pen_sincro_display"><?php echo number_format($pen_sincro, 4); ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
                 <?php else: $pen_sincro = 0; endif; ?>
@@ -421,8 +540,45 @@ $orden_display = ($rutina['orden'] == -1) ? 'PS' : $rutina['orden'];
 <?php include('includes/scripts.php'); include('includes/footer.php'); ?>
 <script type="text/javascript" src="./puntuaciones_rutina.js?v=<?php echo time(); ?>"></script>
 <script type="text/javascript">
-    // Ajuste de selects para Tailwind si es necesario
     document.addEventListener("DOMContentLoaded", function() {
+        var fxs = <?php echo json_encode($fxs ?? -0.1); ?>;
+        var fob = <?php echo json_encode($fob ?? -0.5); ?>;
+        var fxl = <?php echo json_encode($fxl ?? -3.0); ?>;
+
+        function recalcularSincro() {
+            var pj1 = parseFloat($('#sincro_peq_j1').val()) || 0;
+            var pj2 = parseFloat($('#sincro_peq_j2').val()) || 0;
+            var pMedia = ((pj1 + pj2) / 2).toFixed(1);
+            $('#sincro_peq_media').val(pMedia);
+            $('#sincro_peq_media_disp').text(pMedia);
+            var subPeq = parseFloat(pMedia) * fxs;
+            $('#sincro_peq_subtotal').text(subPeq.toFixed(4));
+
+            var oj1 = parseFloat($('#sincro_ob_j1').val()) || 0;
+            var oj2 = parseFloat($('#sincro_ob_j2').val()) || 0;
+            var oMedia = ((oj1 + oj2) / 2).toFixed(1);
+            $('#sincro_ob_media').val(oMedia);
+            $('#sincro_ob_media_disp').text(oMedia);
+            var subOb = parseFloat(oMedia) * fob;
+            $('#sincro_ob_subtotal').text(subOb.toFixed(4));
+
+            var mj1 = parseFloat($('#sincro_may_j1').val()) || 0;
+            var mj2 = parseFloat($('#sincro_may_j2').val()) || 0;
+            var mMedia = ((mj1 + mj2) / 2).toFixed(1);
+            $('#sincro_may_media').val(mMedia);
+            $('#sincro_may_media_disp').text(mMedia);
+            var subMay = parseFloat(mMedia) * fxl;
+            $('#sincro_may_subtotal').text(subMay.toFixed(4));
+
+            var total = subPeq + subOb + subMay;
+            $('#pen_sincro_display').text(total.toFixed(4));
+        }
+
+        $(document).on('input change keyup', '.sincro-input', function() {
+            recalcularSincro();
+        });
+
+        // Ajuste de selects para Tailwind si es necesario
         const selects = document.querySelectorAll("select");
         selects.forEach(s => {
             s.classList.add("w-full", "px-5", "py-4", "rounded-2xl", "bg-white", "border", "border-slate-200", "text-sm", "font-bold", "text-slate-700", "shadow-sm", "focus:ring-blue-500", "focus:border-blue-500");
