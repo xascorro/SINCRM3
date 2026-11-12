@@ -1,16 +1,17 @@
-[2026-11-12 21:16] Resumen de sesión:
-1. Modal de Publicación Oficial en la Web y Envío Selectivo por Email:
-   - Archivos creados/modificados:
-     * `informes_publicar_code.php`: Añadida acción `get_destinatarios` para obtener dinámicamente clubes participantes y usuarios que los representan, así como jueces y modo prueba técnico. Añadida lógica para generar y publicar `clasificacion` (y `resultados`), guardar en `docs/{id_comp}-{tipo}.pdf`, nombrar el archivo adjunto en el email como `id-tipo.pdf` (ej: `81-clasificacion.pdf`, `81-orden.pdf`, `81-inscripciones.pdf`), remitente fijo `sincrm@pedrodiaz.eu` enviado vía Servidor Pulse Hub (`https://pulse.pedrodiaz.eu/mail/send_resend.php`).
-     * `js/publicar_modal.js`: Creado componente interactivo con SweetAlert2 y estética Tailwind v4 (física de muelles, selección elástica, números tabulares, cero grises). Configuración de destinatarios con tarjetas:
-       1) Modo Prueba: `xascorro@gmail.com` (activo por defecto).
-       2) Clubes que compiten: todos los usuarios activos que representan a los clubes participantes (activo por defecto con desglose).
-       3) Jueces que han participado: por defecto deshabilitado (unchecked).
-       Contador en tiempo real de destinatarios y desplegable transparente con lista completa de correos.
-     * `informes_competicion.php`: Actualizado catálogo de publicación oficial para `clasificacion` (`docs/{id}-clasificacion.pdf` / `docs/{id}-resultados.pdf`) e integrado el nuevo modal inteligente.
-     * `puntuaciones_lista_fases.php`: Añadido botón "Publicar en la Web" en la barra superior junto a "Global PDF" para publicar directamente la Clasificación Oficial al finalizar la mesa técnica.
-     * `index.php` & `competiciones_edit.php`: Soporte para reconocimiento y descarga directa de `docs/{id}-clasificacion.pdf`.
-2. Pruebas y Validación:
-   - Verificada acción `get_destinatarios` para Competición #81 (3 clubes, 4 usuarios, 2 jueces, superadmin).
-   - Verificada publicación real y envío de correo de prueba a `xascorro@gmail.com` con adjunto `81-clasificacion.pdf` vía Pulse Hub (código de éxito y log registrado).
-   - Desplegado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).
+[2026-11-12 21:20] Resumen de sesión:
+1. Corrección y Modernización de Hojas de Anotadores de Rutinas (Error 500 solucionado):
+   - Archivo corregido: `informes/informe_rutinas_notas_anotadores.php`.
+   - Causa raíz del Error 500:
+     * El script consultaba todas las fases de la competición sin filtrar las de rutinas (`id_modalidad IS NOT NULL`). En competiciones mixtas (como la #81 con fases de figuras 424-431), `$fase['id_modalidad']` era NULL, provocando un error fatal de sintaxis SQL en MariaDB (`... WHERE modalidades.id = `).
+     * El bloque `else` contenía código legacy copiado de figuras que consultaba tablas inexistentes para rutinas (`inscripciones_figuras`).
+     * Ignoraba el parámetro `$_GET['id_competicion']` consultando siempre la competición activa general.
+   - Mejoras implementadas:
+     * Filtrado estricto de fases de rutinas (`id_modalidad IS NOT NULL AND id_modalidad > 0`).
+     * Diseño adaptado a la identidad gráfica v4 (cabecera institucional superpuesta, línea divisoria, márgenes de 27mm).
+     * Tabla técnica completa para cada fase de rutina con orden (incluyendo `PS`/`EX`), atletas participantes y club, columnas para jueces (`J1..Jn`), penalizaciones y total.
+     * Soporte de autenticación unificada por sesión y cron token.
+   - Revisión adicional en `informes/informe_figuras_notas_anotadores.php` para asegurar sesión y parámetro `id_competicion`.
+2. Validación & Despliegue:
+   - Verificado con curl: HTTP 200 y PDF binario (%PDF-1.7, 76KB) generado limpiamente.
+   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
+   - Purgada caché de Cloudflare (`pedrodiaz.eu`).

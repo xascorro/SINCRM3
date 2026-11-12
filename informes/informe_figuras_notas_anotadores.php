@@ -1,34 +1,41 @@
 <?php
-require_once('../tcpdf/tcpdf.php');
-include('../database/dbconfig.php');
-include('../lib/my_functions.php');
+require_once(__DIR__ . '/../tcpdf/tcpdf.php');
+include_once(__DIR__ . '/../database/dbconfig.php');
+include_once(__DIR__ . '/../lib/my_functions.php');
 
-session_start();
-
-if(!$_SESSION['username']){
-	header('Location: login.php');
-}else{
-	$query = "SELECT id, nombre FROM competiciones WHERE activo = 'si'";
-	$query_run = mysqli_query($connection,$query);
-	$competicion = mysqli_fetch_assoc($query_run);
-	$_SESSION['id_competicion_activa'] = $competicion['id'];
-	$_SESSION['nombre_competicion_activa']= $competicion['nombre'];
-	$_SESSION['color_competicion_activa']= $competicion['color'];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-$GLOBALS["id_competicion_activa"] = 0;
-$GLOBALS["nombre_competicion_activa"] = "No hay competición activa";
-$query = "select * from competiciones where activo='si'";     // Esta linea hace la consulta
-$result = mysqli_query($connection,$query);
-    while ($registro = mysqli_fetch_array($result)){
-	    $GLOBALS["id_competicion_activa"] = $registro['id'];
-	    $GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
-	    $GLOBALS["lugar"] = $registro['lugar'];
-	    $GLOBALS["fecha"] = dateAFecha($registro['fecha']);
-	    $GLOBALS["organizador"] = $registro['organizador'];
-        $GLOBALS["header_image"] = "../".$registro['header_informe'];
-	    $GLOBALS["footer_image"] = "../".$registro['footer_informe'];
-	    $GLOBALS["enmascarar_licencia"] = $registro['enmascarar_licencia'];
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if (!isset($_SESSION['email']) && !isset($_SESSION['username']) && $cron_token_provided !== $cron_token_expected) {
+    header('Location: ../login.php');
+    exit();
+}
+
+$id_competicion = isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : (isset($_SESSION['id_competicion_usuario']) ? (int)$_SESSION['id_competicion_usuario'] : (isset($_SESSION['id_competicion_activa']) ? (int)$_SESSION['id_competicion_activa'] : 0));
+
+if ($id_competicion > 0) {
+    $q_comp = "SELECT * FROM competiciones WHERE id = '$id_competicion' LIMIT 1";
+} else {
+    $q_comp = "SELECT * FROM competiciones WHERE activo = 'si' LIMIT 1";
+}
+$result = mysqli_query($connection, $q_comp);
+$registro = ($result) ? mysqli_fetch_assoc($result) : null;
+
+if ($registro) {
+    $GLOBALS["id_competicion_activa"] = (int)$registro['id'];
+    $GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
+    $GLOBALS["lugar"] = !empty($registro['lugar']) ? $registro['lugar'] : 'Sede Oficial';
+    $GLOBALS["fecha"] = !empty($registro['fecha']) ? dateAFecha($registro['fecha']) : date('d/m/Y');
+    $GLOBALS["organizador"] = $registro['organizador'] ?? '';
+    $GLOBALS["header_image"] = !empty($registro['header_informe']) ? __DIR__ . '/../' . $registro['header_informe'] : '';
+    $GLOBALS["footer_image"] = !empty($registro['footer_informe']) ? __DIR__ . '/../' . $registro['footer_informe'] : '';
+    $GLOBALS["enmascarar_licencia"] = $registro['enmascarar_licencia'] ?? '';
+} else {
+    die("Competición no encontrada.");
 }
 //****************************//
 $titulo = $_GET['titulo'];
