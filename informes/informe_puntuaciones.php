@@ -264,7 +264,7 @@ if (isset($_GET['memorial']) && $_GET['memorial'] == 'si') {
 }
 
 // =============================================================================
-// SECCIÓN 3: RESULTADOS DETALLADOS POR FASE Y RUTINA
+// SECCIÓN 3: RESULTADOS DETALLADOS POR FASE, RUTINA Y FIGURA
 // =============================================================================
 $condicion_fase = "";
 if (isset($_GET['id_fase']) && intval($_GET['id_fase']) > 0) {
@@ -276,6 +276,9 @@ $q_fases = "SELECT f.*,
                    cat.id as id_categoria, 
                    m.nombre as nombre_modalidad, 
                    m.id as id_modalidad,
+                   fig.numero as fig_num,
+                   fig.nombre as fig_nom,
+                   fig.grado_dificultad as fig_gd,
                    COALESCE(NULLIF(f.f_chomu, 0), rc.f_chomu, 1.0) as f_chomu, 
                    COALESCE(NULLIF(f.f_performance, 0), rc.f_performance, 1.0) as f_performance, 
                    COALESCE(NULLIF(f.f_transitions, 0), rc.f_transitions, 1.0) as f_transitions, 
@@ -287,7 +290,8 @@ $q_fases = "SELECT f.*,
                    COALESCE(NULLIF(f.error_xl, 0), rc.error_xl, -3.0) as error_xl
             FROM fases f 
             JOIN categorias cat ON f.id_categoria = cat.id 
-            JOIN modalidades m ON f.id_modalidad = m.id 
+            LEFT JOIN modalidades m ON f.id_modalidad = m.id 
+            LEFT JOIN figuras fig ON f.id_figura = fig.id
             LEFT JOIN reglas_competicion rc ON (f.id_categoria = rc.id_categoria AND f.id_modalidad = rc.id_modalidad)
             WHERE f.id_competicion = '" . $GLOBALS['id_competicion_activa'] . "' $condicion_fase 
             ORDER BY f.orden ASC, f.id ASC";
@@ -295,59 +299,203 @@ $res_fases = mysqli_query($connection, $q_fases);
 
 while ($fase = mysqli_fetch_assoc($res_fases)) {
     $id_fase = intval($fase['id']);
-    $nombre_modalidad = $fase['nombre_modalidad'] . (($fase['genero'] ?? '') === 'masculino' ? ' Masc' : '');
+    $is_figura = (!empty($fase['id_figura']) && (int)$fase['id_figura'] > 0);
     $nombre_categoria = $fase['nombre_categoria'];
 
     $pdf->AddPage();
     $pdf->SetFont('helvetica', '', 8);
 
-    // Cabecera de la fase
-    $html_fase = '<table cellpadding="4" style="border:1px solid #cbd5e1; background-color:#f8fafc; border-collapse:collapse; width:100%; margin-bottom:6px;">';
-    $html_fase .= '<tr>';
-    $html_fase .= '<td width="70%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_modalidad . ' ' . $nombre_categoria, 'UTF-8') . '</b></td>';
-    $html_fase .= '<td width="30%" style="text-align:right; font-size:7pt; color:#64748b;">';
-    $html_fase .= 'Factores: H:' . $fase['f_hybrid'] . ' | A:' . $fase['f_acro'] . ' | CM:' . $fase['f_chomu'] . ' | P:' . $fase['f_performance'] . ' | T:' . $fase['f_transitions'];
-    $html_fase .= '</td>';
-    $html_fase .= '</tr>';
-    $html_fase .= '</table><br>';
+    if ($is_figura) {
+        // ---------------------------------------------------------------------
+        // FASE DE FIGURAS
+        // ---------------------------------------------------------------------
+        $num_fig = $fase['fig_num'] ?? '';
+        $nom_fig = $fase['fig_nom'] ?? '';
+        $gd_fig = !empty($fase['fig_gd']) ? number_format((float)$fase['fig_gd'], 1) : '0.0';
+        $nombre_figura_title = "FIGURA " . $num_fig . " - " . $nom_fig;
 
-    // Jueces del panel para esta fase
-    $q_j1 = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 1 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
-    $res_j1 = mysqli_query($connection, $q_j1);
-    $jueces1_names = [];
-    while ($j = mysqli_fetch_assoc($res_j1)) {
-        $jueces1_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
-    }
-
-    $q_j2 = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 2 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
-    $res_j2 = mysqli_query($connection, $q_j2);
-    $jueces2_names = [];
-    while ($j = mysqli_fetch_assoc($res_j2)) {
-        $jueces2_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
-    }
-
-    if (!empty($jueces1_names) || !empty($jueces2_names)) {
-        $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#64748b; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
-        if (!empty($jueces1_names)) {
-            $html_fase .= '<tr><td width="15%"><b style="color:#0284c7;">P1 (Elementos):</b></td><td width="85%">' . implode(' · ', $jueces1_names) . '</td></tr>';
-        }
-        if (!empty($jueces2_names)) {
-            $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' · ', $jueces2_names) . '</td></tr>';
-        }
+        // Cabecera de la fase de figuras
+        $html_fase = '<table cellpadding="4" style="border:1px solid #cbd5e1; background-color:#f8fafc; border-collapse:collapse; width:100%; margin-bottom:6px;">';
+        $html_fase .= '<tr>';
+        $html_fase .= '<td width="72%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_figura_title, 'UTF-8') . '</b><br><span style="font-size:8.5pt; color:#64748b; font-weight:bold;">CATEGORÍA: ' . mb_strtoupper($nombre_categoria, 'UTF-8') . '</span></td>';
+        $html_fase .= '<td width="28%" style="text-align:right; font-size:8pt; color:#64748b;">';
+        $html_fase .= '<b>Grado Dificultad (GD): <span style="color:#0284c7; font-size:11pt;">' . $gd_fig . '</span></b>';
+        $html_fase .= '</td>';
+        $html_fase .= '</tr>';
         $html_fase .= '</table><br>';
-    }
 
-    $pdf->writeHTML($html_fase, true, false, true, false, '');
+        // Jueces del panel para esta figura
+        $q_jf = "SELECT pj.id, pj.numero_juez, j.nombre, j.apellidos, f.nombre_corto as fed_nom 
+                 FROM panel_jueces pj 
+                 JOIN jueces j ON pj.id_juez = j.id 
+                 LEFT JOIN federaciones f ON j.federacion = f.id 
+                 WHERE pj.id_fase = $id_fase 
+                 ORDER BY pj.numero_juez ASC";
+        $res_jf = mysqli_query($connection, $q_jf);
+        $jueces_fig = [];
+        $jueces_fig_names = [];
+        while ($jf = mysqli_fetch_assoc($res_jf)) {
+            $jueces_fig[] = $jf;
+            $jueces_fig_names[] = 'J' . $jf['numero_juez'] . ': ' . $jf['nombre'] . ' ' . $jf['apellidos'];
+        }
+        $num_jueces = count($jueces_fig);
 
-    // Listado de rutinas ordenadas por nota final
-    $q_rutinas = "SELECT r.*, c.nombre_corto as nombre_club 
-                  FROM rutinas r 
-                  JOIN clubes c ON r.id_club = c.id 
-                  WHERE r.id_fase = $id_fase 
-                  ORDER BY (r.baja = 'si') ASC, (r.orden < 1) ASC, r.nota_final DESC, r.orden ASC";
-    $res_rutinas = mysqli_query($connection, $q_rutinas);
+        if (!empty($jueces_fig_names)) {
+            $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#64748b; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+            $html_fase .= '<tr><td width="15%"><b style="color:#e92662;">Panel Jueces:</b></td><td width="85%">' . implode(' · ', $jueces_fig_names) . '</td></tr>';
+            $html_fase .= '</table><br>';
+        }
 
-    while ($rutina = mysqli_fetch_assoc($res_rutinas)) {
+        $pdf->writeHTML($html_fase, true, false, true, false, '');
+
+        // Tabla de puntuaciones de la figura
+        $html_fig = '<table cellpadding="3" style="border:1px solid #cbd5e1; border-collapse:collapse; width:100%; font-size:7.5pt;">';
+        $html_fig .= '<thead><tr style="background-color:#0f172a; color:#ffffff; font-weight:bold;">';
+        $html_fig .= '<th width="5%" align="center">POS</th>';
+        $html_fig .= '<th width="5%" align="center">ORD</th>';
+        $html_fig .= '<th width="28%">NADADORA</th>';
+        $html_fig .= '<th width="14%">CLUB</th>';
+
+        $ancho_jueces_total = 24;
+        $ancho_j_col = ($num_jueces > 0) ? floor($ancho_jueces_total / $num_jueces) : 5;
+        foreach ($jueces_fig as $jf) {
+            $html_fig .= '<th width="' . $ancho_j_col . '%" align="center">J' . $jf['numero_juez'] . '</th>';
+        }
+        $ancho_jueces_usado = $ancho_j_col * $num_jueces;
+        $resto_ancho = $ancho_jueces_total - $ancho_jueces_usado;
+
+        $html_fig .= '<th width="' . (6 + $resto_ancho) . '%" align="center">SUM</th>';
+        $html_fig .= '<th width="6%" align="center">MEDIA</th>';
+        $html_fig .= '<th width="6%" align="center">GD</th>';
+        $html_fig .= '<th width="6%" align="right">FINAL</th>';
+        $html_fig .= '</tr></thead><tbody>';
+
+        $q_insc_fig = "SELECT i.*, n.nombre, n.apellidos, n.año_nacimiento, cl.nombre_corto as club_nom 
+                       FROM inscripciones_figuras i 
+                       JOIN nadadoras n ON i.id_nadadora = n.id 
+                       LEFT JOIN clubes cl ON n.club = cl.id 
+                       WHERE i.id_fase = $id_fase 
+                       ORDER BY (i.baja = 'si') ASC, (i.orden < 1) ASC, 
+                                (CASE WHEN i.posicion IS NULL OR i.posicion = 0 THEN 9999 ELSE i.posicion END) ASC, 
+                                (i.nota_final IS NULL OR i.nota_final = 0) ASC, 
+                                i.nota_final DESC, 
+                                i.orden ASC";
+        $res_insc_fig = mysqli_query($connection, $q_insc_fig);
+        $row_idx = 0;
+
+        while ($inf = mysqli_fetch_assoc($res_insc_fig)) {
+            $id_inf = (int)$inf['id'];
+            $is_baja = ($inf['baja'] == 'si');
+            $is_ps = ($inf['preswimmer'] == 'si' || (int)$inf['orden'] < 1);
+
+            $pos_badge = !empty($inf['posicion']) ? ($inf['posicion'] . 'º') : '-';
+            if ($is_baja) $pos_badge = '<span style="color:#ef4444; font-weight:bold;">BAJA</span>';
+            elseif ($is_ps) $pos_badge = '<span style="color:#3b82f6; font-weight:bold;">PS</span>';
+
+            $bg_row = ($row_idx % 2 == 0) ? '#ffffff' : '#f8fafc';
+            $html_fig .= '<tr style="background-color:' . $bg_row . '; border-bottom:1px solid #e2e8f0;">';
+            $html_fig .= '<td width="5%" align="center" style="font-weight:bold; color:#1e293b;">' . $pos_badge . '</td>';
+            $html_fig .= '<td width="5%" align="center" style="color:#64748b;">#' . $inf['orden'] . '</td>';
+            
+            $nom_swimmer = htmlspecialchars($inf['apellidos'] . ', ' . $inf['nombre']) . (!empty($inf['año_nacimiento']) ? ' (' . $inf['año_nacimiento'] . ')' : '');
+            $html_fig .= '<td width="28%" style="font-weight:bold; color:#1e293b;">' . $nom_swimmer . '</td>';
+            $html_fig .= '<td width="14%" style="color:#475569;">' . htmlspecialchars($inf['club_nom'] ?? '') . '</td>';
+
+            // Notas de jueces
+            foreach ($jueces_fig as $jf) {
+                $q_nj = "SELECT nota, nota_menor, nota_mayor FROM puntuaciones_jueces WHERE id_panel_juez = " . (int)$jf['id'] . " AND id_inscripcion_figuras = $id_inf LIMIT 1";
+                $r_nj = mysqli_query($connection, $q_nj);
+                $d_nj = $r_nj ? mysqli_fetch_assoc($r_nj) : null;
+
+                if ($d_nj && isset($d_nj['nota']) && $d_nj['nota'] !== '') {
+                    $nota_val = number_format((float)$d_nj['nota'], 1);
+                    $is_min = (!empty($d_nj['nota_menor']) && $d_nj['nota_menor'] != '0');
+                    $is_max = (!empty($d_nj['nota_mayor']) && $d_nj['nota_mayor'] != '0');
+
+                    if ($is_min || $is_max) {
+                        $cell_nota = '<span style="text-decoration:line-through; color:#94a3b8; font-weight:bold;">' . $nota_val . '</span>';
+                    } else {
+                        $cell_nota = '<span style="color:#0f172a; font-weight:bold;">' . $nota_val . '</span>';
+                    }
+                } else {
+                    $cell_nota = '<span style="color:#cbd5e1;">-</span>';
+                }
+                $html_fig .= '<td width="' . $ancho_j_col . '%" align="center">' . $cell_nota . '</td>';
+            }
+
+            $sum_val = (!empty($inf['nota_total']) && (float)$inf['nota_total'] > 0) ? number_format((float)$inf['nota_total'], 1) : '-';
+            $med_val = (!empty($inf['nota_media']) && (float)$inf['nota_media'] > 0) ? number_format((float)$inf['nota_media'], 4) : '-';
+            $fin_val = (!empty($inf['nota_final']) && (float)$inf['nota_final'] > 0) ? number_format((float)$inf['nota_final'], 4) : '-';
+
+            $html_fig .= '<td width="' . (6 + $resto_ancho) . '%" align="center" style="color:#64748b; font-size:7pt;">' . $sum_val . '</td>';
+            $html_fig .= '<td width="6%" align="center" style="color:#64748b; font-size:7pt;">' . $med_val . '</td>';
+            $html_fig .= '<td width="6%" align="center" style="color:#0284c7; font-weight:bold; font-size:7pt;">' . $gd_fig . '</td>';
+            $html_fig .= '<td width="6%" align="right" style="font-weight:bold; color:#059669; font-size:8.5pt;">' . $fin_val . '</td>';
+            $html_fig .= '</tr>';
+
+            $row_idx++;
+        }
+
+        if ($row_idx === 0) {
+            $html_fig .= '<tr><td colspan="' . (8 + $num_jueces) . '" align="center" style="color:#94a3b8; padding:12px;">Sin inscripciones registradas en esta fase de figuras.</td></tr>';
+        }
+
+        $html_fig .= '</tbody></table><br>';
+        $pdf->writeHTML($html_fig, true, false, true, false, '');
+
+    } else {
+        // ---------------------------------------------------------------------
+        // FASE DE RUTINAS
+        // ---------------------------------------------------------------------
+        $nombre_modalidad = ($fase['nombre_modalidad'] ?? 'Rutina') . (($fase['genero'] ?? '') === 'masculino' ? ' Masc' : '');
+
+        // Cabecera de la fase
+        $html_fase = '<table cellpadding="4" style="border:1px solid #cbd5e1; background-color:#f8fafc; border-collapse:collapse; width:100%; margin-bottom:6px;">';
+        $html_fase .= '<tr>';
+        $html_fase .= '<td width="70%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_modalidad . ' ' . $nombre_categoria, 'UTF-8') . '</b></td>';
+        $html_fase .= '<td width="30%" style="text-align:right; font-size:7pt; color:#64748b;">';
+        $html_fase .= 'Factores: H:' . $fase['f_hybrid'] . ' | A:' . $fase['f_acro'] . ' | CM:' . $fase['f_chomu'] . ' | P:' . $fase['f_performance'] . ' | T:' . $fase['f_transitions'];
+        $html_fase .= '</td>';
+        $html_fase .= '</tr>';
+        $html_fase .= '</table><br>';
+
+        // Jueces del panel para esta fase
+        $q_j1 = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 1 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
+        $res_j1 = mysqli_query($connection, $q_j1);
+        $jueces1_names = [];
+        while ($j = mysqli_fetch_assoc($res_j1)) {
+            $jueces1_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
+        }
+
+        $q_j2 = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 2 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
+        $res_j2 = mysqli_query($connection, $q_j2);
+        $jueces2_names = [];
+        while ($j = mysqli_fetch_assoc($res_j2)) {
+            $jueces2_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
+        }
+
+        if (!empty($jueces1_names) || !empty($jueces2_names)) {
+            $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#64748b; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+            if (!empty($jueces1_names)) {
+                $html_fase .= '<tr><td width="15%"><b style="color:#0284c7;">P1 (Elementos):</b></td><td width="85%">' . implode(' · ', $jueces1_names) . '</td></tr>';
+            }
+            if (!empty($jueces2_names)) {
+                $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' · ', $jueces2_names) . '</td></tr>';
+            }
+            $html_fase .= '</table><br>';
+        }
+
+        $pdf->writeHTML($html_fase, true, false, true, false, '');
+
+        // Listado de rutinas ordenadas por nota final
+        $q_rutinas = "SELECT r.*, c.nombre_corto as nombre_club 
+                      FROM rutinas r 
+                      JOIN clubes c ON r.id_club = c.id 
+                      WHERE r.id_fase = $id_fase 
+                      ORDER BY (r.baja = 'si') ASC, (r.orden < 1) ASC, r.nota_final DESC, r.orden ASC";
+        $res_rutinas = mysqli_query($connection, $q_rutinas);
+
+        while ($rutina = mysqli_fetch_assoc($res_rutinas)) {
         $id_rutina = intval($rutina['id']);
         $baja = ($rutina['baja'] == 'si');
 
@@ -582,6 +730,7 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         $html_r .= '</table><br>';
         $pdf->writeHTML($html_r, true, false, true, false, '');
     }
+}
 }
 
 $dest = $_GET['dest'] ?? 'I';
