@@ -264,7 +264,7 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
             foreach($chunk as $fig) {
                 $corte_label = ($num_figs > 1) ? ' <b style="color:#e92662;">[CORTE '.$fig['corte_num'].' · Desde nº '.$fig['inicio_orden'].']</b>' : '';
                 $html_figs .= '<td width="50%" style="border-bottom:0.1pt solid #f1f5f9;">';
-                $html_figs .= '<b style="font-size:9.5pt;">' . $fig['fase_orden'] . '.</b> <b style="font-size:9.5pt;">' . $fig['numero'] . '</b> ' . $fig['nombre'] . ' <b style="font-size:8pt; color:#475569;">(GD: ' . $fig['grado_dificultad'] . ')</b>' . $corte_label;
+                $html_figs .= '<b style="font-size:9pt; color:#e92662;">Evento ' . $fig['fase_orden'] . ':</b> <b style="font-size:9.5pt;">' . $fig['numero'] . '</b> ' . $fig['nombre'] . ' <b style="font-size:8pt; color:#475569;">(GD: ' . $fig['grado_dificultad'] . ')</b>' . $corte_label;
                 $html_figs .= '</td>';
             }
             if(count($chunk) == 1) {
@@ -391,21 +391,21 @@ if ($res_fases_rut && mysqli_num_rows($res_fases_rut) > 0) {
         $mod_full = $fase_rut['mod_nombre'] . (($fase_rut['genero'] === 'masculino') ? ' Masc' : '');
         $duracion_text = getReglamentaryDurationText($fase_rut['mod_nombre'], $fase_rut['cat_nombre']);
 
-        // Cabecera de Fase
-        $fase_num_txt = !empty($fase_rut['fase_orden']) ? ($fase_rut['fase_orden'] . ". ") : "";
+        // Cabecera de Evento
+        $evento_num_txt = !empty($fase_rut['fase_orden']) ? ("EVENTO " . $fase_rut['fase_orden'] . " · ") : "";
         $pdf->SetFont('helvetica', 'B', 13);
         $pdf->SetFillColor(248, 250, 252);
         $pdf->SetTextColor($primary_pink[0], $primary_pink[1], $primary_pink[2]);
-        $pdf->Cell(0, 11, "  " . $fase_num_txt . mb_strtoupper($fase_rut['cat_nombre']) . " · " . mb_strtoupper($mod_full), 0, 1, 'L', true);
+        $pdf->Cell(0, 11, "  " . $evento_num_txt . mb_strtoupper($fase_rut['cat_nombre']) . " · " . mb_strtoupper($mod_full), 0, 1, 'L', true);
 
-        // Fila de metadatos técnicos de la fase
+        // Fila de metadatos técnicos del evento
         $pdf->SetY($pdf->GetY() + 1);
         $pdf->SetFont('helvetica', '', 9);
         $pdf->SetTextColor(71, 85, 105);
         
         $meta_items = [];
         if (!empty($fase_rut['fase_orden'])) {
-            $meta_items[] = "<b>Fase:</b> " . $fase_rut['fase_orden'];
+            $meta_items[] = "<b>Evento:</b> " . $fase_rut['fase_orden'];
         }
         if (!empty($duracion_text)) {
             $meta_items[] = "<b>Duración Oficial:</b> " . $duracion_text;
@@ -536,7 +536,7 @@ if ($res_fases_rut && mysqli_num_rows($res_fases_rut) > 0) {
         $pdf->Ln(2);
         $pdf->SetFont('helvetica', 'B', 8);
         $pdf->SetTextColor(100, 116, 139);
-        $pdf->Cell(0, 5, "TOTAL RUTINAS EN ESTA FASE: " . $count_rut, 0, 1, 'R');
+        $pdf->Cell(0, 5, "TOTAL RUTINAS EN ESTE EVENTO: " . $count_rut, 0, 1, 'R');
     }
 }
 
