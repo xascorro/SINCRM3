@@ -412,7 +412,7 @@ $tiene_sincro = !$is_solo;
                                     'Transitions' => ['label' => 'Transitions', 'factor' => $fase['f_transitions']]
                                 ];
                                 $nota_ia = 0;
-                                $tab_index_ia = 100;
+                                $tab_index_ia = 200;
 
                                 foreach($componentes_ia as $key => $data):
                                     $q_notas = "SELECT nota_media, nota FROM puntuaciones_elementos WHERE tipo_ia = '$key' AND id_rutina=$id_rutina";
@@ -436,7 +436,7 @@ $tiene_sincro = !$is_solo;
                                         $tachado = $es_descarte_ia ? 'line-through text-slate-400 bg-slate-100' : 'text-slate-700 font-bold';
                                         if(!$es_descarte_ia) $sum_jueces += ($jn['nota'] ?? 0);
                                         $media_class = ($j['id_juez'] == '108') ? 'juez-media bg-amber-50 border-amber-200' : '';
-                                        $ti = $tab_index_ia + ($j['numero_juez']*5);
+                                        $ti = $tab_index_ia + ($j['numero_juez']*10);
                                     ?>
                                         <td class="px-2 py-3 bg-emerald-50/10">
                                             <input type="hidden" name="id_panel_juez_<?php echo $key.$j['numero_juez']; ?>" value="<?php echo $j['id']; ?>">
