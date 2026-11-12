@@ -1,15 +1,16 @@
-[2026-11-12 21:05] Resumen de sesión:
-1. Optimización Vertical y Estructuración de Jueces en informe_puntuaciones.php:
-   - Archivo modificado: `informes/informe_puntuaciones.php`.
-   - Reubicación de Cabecera:
-     * Los textos "CLASIFICACIÓN DETALLADA" y el subtítulo de la competición se colocan directamente en una capa superpuesta sobre el banner institucional superior (Y=6.5mm y Y=12.5mm).
-     * Línea de corte bajo cabecera a Y=24.5mm y margen superior del cuerpo reducido de 38mm a 27mm (`SetMargins(12, 27, 12)`), maximizando el espacio vertical útil (+11mm por página).
-   - Estructuración y Orden de Jueces:
-     * Orden estricto implementado: Oficiales (Juez Árbitro, Secretario...) -> CT (Controladores Técnicos) -> Sincro (Sincronización) -> Paneles (P1 Elementos, P2 Impresión Artística o Panel Jueces).
-     * Aplicado tanto en rutinas como en figuras.
-   - Limpieza Técnica:
-     * Retirada la leyenda redundante de factores ("Factores: H:... | A:... | CM:...").
-2. Despliegue & Validación:
-   - Verificado con curl en entorno local (Fase 435 Rutina, Fase 424 Figura y Global Competición 81) con generación limpia de PDF (HTTP 200).
-   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
-   - Purgada caché de Cloudflare para `pedrodiaz.eu`.
+[2026-11-12 21:16] Resumen de sesión:
+1. Modal de Publicación Oficial en la Web y Envío Selectivo por Email:
+   - Archivos creados/modificados:
+     * `informes_publicar_code.php`: Añadida acción `get_destinatarios` para obtener dinámicamente clubes participantes y usuarios que los representan, así como jueces y modo prueba técnico. Añadida lógica para generar y publicar `clasificacion` (y `resultados`), guardar en `docs/{id_comp}-{tipo}.pdf`, nombrar el archivo adjunto en el email como `id-tipo.pdf` (ej: `81-clasificacion.pdf`, `81-orden.pdf`, `81-inscripciones.pdf`), remitente fijo `sincrm@pedrodiaz.eu` enviado vía Servidor Pulse Hub (`https://pulse.pedrodiaz.eu/mail/send_resend.php`).
+     * `js/publicar_modal.js`: Creado componente interactivo con SweetAlert2 y estética Tailwind v4 (física de muelles, selección elástica, números tabulares, cero grises). Configuración de destinatarios con tarjetas:
+       1) Modo Prueba: `xascorro@gmail.com` (activo por defecto).
+       2) Clubes que compiten: todos los usuarios activos que representan a los clubes participantes (activo por defecto con desglose).
+       3) Jueces que han participado: por defecto deshabilitado (unchecked).
+       Contador en tiempo real de destinatarios y desplegable transparente con lista completa de correos.
+     * `informes_competicion.php`: Actualizado catálogo de publicación oficial para `clasificacion` (`docs/{id}-clasificacion.pdf` / `docs/{id}-resultados.pdf`) e integrado el nuevo modal inteligente.
+     * `puntuaciones_lista_fases.php`: Añadido botón "Publicar en la Web" en la barra superior junto a "Global PDF" para publicar directamente la Clasificación Oficial al finalizar la mesa técnica.
+     * `index.php` & `competiciones_edit.php`: Soporte para reconocimiento y descarga directa de `docs/{id}-clasificacion.pdf`.
+2. Pruebas y Validación:
+   - Verificada acción `get_destinatarios` para Competición #81 (3 clubes, 4 usuarios, 2 jueces, superadmin).
+   - Verificada publicación real y envío de correo de prueba a `xascorro@gmail.com` con adjunto `81-clasificacion.pdf` vía Pulse Hub (código de éxito y log registrado).
+   - Desplegado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).

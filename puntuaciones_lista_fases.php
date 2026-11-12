@@ -68,6 +68,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                 </div>
                 <button onclick="window.location.reload()" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-50 active:scale-[0.98] transition-all shadow-xs"><i class="fas fa-sync-alt text-xs sm:text-sm"></i></button>
                 <a href="./informes/informe_puntuaciones_global.php?id_competicion=<?php echo $id_comp; ?>" target="_blank" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md hover:bg-slate-900 active:scale-[0.98] transition-all flex items-center gap-2"><i class="fas fa-print text-xs"></i> Global PDF</a>
+                <button type="button" onclick="abrirModalPublicar('clasificacion', 'Clasificación Detallada', false, <?php echo (int)$id_comp; ?>)" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md active:scale-[0.98] transition-all flex items-center gap-2"><i class="fas fa-cloud-arrow-up text-xs"></i> Publicar en la Web</button>
             </div>
         </div>
 
@@ -439,3 +440,11 @@ function setVista(tipo) {
     }
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+const idCompeticionActiva = <?php echo (int)$id_comp; ?>;
+</script>
+<script src="js/publicar_modal.js?v=<?php echo time(); ?>"></script>
+<?php
+include('includes/footer.php');
+?>

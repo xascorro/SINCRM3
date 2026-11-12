@@ -86,13 +86,13 @@ $docs_publicacion = [
         'auto' => true,
         'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden&v={$cache_buster}"
     ],
-    'resultados' => [
-        'titulo' => 'Resultados Finales Oficiales',
-        'subtitulo' => 'Acta de clasificación por categorías con notas definitivas y firmas de paneles.',
+    'clasificacion' => [
+        'titulo' => 'Clasificación Final Oficial',
+        'subtitulo' => 'Acta de clasificación oficial con notas definitivas de figuras y rutinas y firmas reglamentarias.',
         'icono' => 'fa-trophy',
         'color' => 'emerald',
         'auto' => true,
-        'preview_url' => "informes/informe_figuras_resultados_categorias.php?id_competicion={$id_competicion}&titulo=Resultados&v={$cache_buster}"
+        'preview_url' => "informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo=Clasificación Detallada&v={$cache_buster}"
     ],
     'normativa' => [
         'titulo' => 'Normativa de Competición',
@@ -250,6 +250,9 @@ if (!empty($clave_liga_comp)) {
                 <?php 
                 foreach ($docs_publicacion as $key => $doc): 
                     $file_path = "./docs/{$id_competicion}-{$key}.pdf";
+                    if ($key === 'clasificacion' && !file_exists($file_path) && file_exists("./docs/{$id_competicion}-resultados.pdf")) {
+                        $file_path = "./docs/{$id_competicion}-resultados.pdf";
+                    }
                     $is_published = file_exists($file_path);
                     $file_size = $is_published ? round(filesize($file_path) / 1024, 1) . ' KB' : '';
                     $file_mtime = $is_published ? date('d/m/Y H:i', filemtime($file_path)) : '';
@@ -527,84 +530,10 @@ if (!empty($clave_liga_comp)) {
 </main>
 
 <script>
-// --- FUNCIÓN PARA ABRIR MODAL DE PUBLICACIÓN ---
-function abrirModalPublicar(tipo, tituloDoc, esActualizacion) {
-    const accionTexto = esActualizacion ? 'Actualizar y Re-publicar' : 'Publicar en la Web';
-    const subTexto = esActualizacion 
-        ? 'Se generará una versión actualizada del PDF oficial y se sobreescribirá en la web.' 
-        : 'El documento se generará oficialmente y estará visible de inmediato en el Dashboard.';
-
-    Swal.fire({
-        title: accionTexto + ': ' + tituloDoc,
-        html: `
-            <div class="text-left font-sans text-xs space-y-3 pt-2">
-                <p class="text-slate-600">${subTexto}</p>
-                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <label class="flex items-start gap-2.5 cursor-pointer select-none">
-                        <input type="checkbox" id="swal_enviar_email" checked class="w-4 h-4 mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
-                        <div>
-                            <span class="font-bold text-slate-800 text-xs block">Enviar notificación por email</span>
-                            <span class="text-[11px] text-slate-500 leading-tight block mt-0.5">
-                                Incluye el PDF oficial adjunto. En modo pruebas se remitirá a <strong>xascorro@gmail.com</strong>.
-                            </span>
-                        </div>
-                    </label>
-                </div>
-            </div>
-        `,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#2563eb',
-        cancelButtonColor: '#64748b',
-        confirmButtonText: '<i class="fas fa-cloud-arrow-up mr-1.5"></i> ' + accionTexto,
-        cancelButtonText: 'Cancelar',
-        showLoaderOnConfirm: true,
-        preConfirm: () => {
-            const enviarEmail = document.getElementById('swal_enviar_email').checked ? '1' : '0';
-            
-            const formData = new FormData();
-            formData.append('action', 'publicar');
-            formData.append('ajax', '1');
-            formData.append('id_competicion', '<?php echo $id_competicion; ?>');
-            formData.append('tipo', tipo);
-            formData.append('enviar_email', enviarEmail);
-
-            return fetch('informes_publicar_code.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Error de red o servidor HTTP ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.success) {
-                    throw new Error(data.error || 'Error desconocido al publicar.');
-                }
-                return data;
-            })
-            .catch(error => {
-                Swal.showValidationMessage(`Fallo en la publicación: ${error.message}`);
-            });
-        },
-        allowOutsideClick: () => !Swal.isLoading()
-    }).then((result) => {
-        if (result.isConfirmed && result.value) {
-            Swal.fire({
-                title: '¡Publicación Completada!',
-                text: result.value.message,
-                icon: 'success',
-                confirmButtonColor: '#2563eb',
-                confirmButtonText: 'Entendido'
-            }).then(() => {
-                window.location.reload();
-            });
-        }
-    });
-}
-
+const idCompeticionActiva = <?php echo (int)$id_competicion; ?>;
+</script>
+<script src="js/publicar_modal.js?v=<?php echo time(); ?>"></script>
+<script>
 // --- FUNCIÓN PARA CONFIRMAR BORRADO / DESPUBLICACIÓN ---
 function confirmarBorrado(tipo, tituloDoc) {
     Swal.fire({
@@ -660,6 +589,7 @@ function confirmarBorrado(tipo, tituloDoc) {
         }
     });
 }
+</script>
 </script>
 
 <style>

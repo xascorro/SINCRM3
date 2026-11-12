@@ -729,11 +729,19 @@ $meses_es = [
                                 'nadadoras' => ['label' => 'Nadadoras', 'icon' => 'fa-users-viewfinder'],
                                 'inscripciones' => ['label' => 'Inscripciones', 'icon' => 'fa-file-pen'],
                                 'orden' => ['label' => 'Orden Salida', 'icon' => 'fa-list-ol'],
+                                'clasificacion' => ['label' => 'Clasificación', 'icon' => 'fa-trophy'],
                                 'resultados' => ['label' => 'Resultados', 'icon' => 'fa-trophy'],
                                 'liga' => ['label' => 'Ranking Liga', 'icon' => 'fa-ranking-star']
                             ];
+                            $already_showed_clasif = false;
                             foreach($docs_map as $file_id => $meta):
                                 $filename = './docs/'.$row['id'].'-'.$file_id.'.pdf';
+                                if ($file_id === 'clasificacion' && file_exists($filename)) {
+                                    $already_showed_clasif = true;
+                                }
+                                if ($file_id === 'resultados' && $already_showed_clasif) {
+                                    continue;
+                                }
                                 if (file_exists($filename)):
                             ?>
                                 <a href="<?php echo $filename; ?>" target="_blank" class="px-3.5 py-2 sm:px-5 sm:py-2.5 bg-white text-slate-600 hover:bg-slate-800 hover:text-white rounded-xl sm:rounded-[1.25rem] border border-slate-200/80 text-[11px] sm:text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2 sm:gap-3 shadow-xs active:scale-[0.98] group/doc">
@@ -874,8 +882,10 @@ $meses_es = [
                                         <?php if(file_exists('./docs/'.$row['id'].'-orden.pdf')): ?>
                                             <a href="./docs/<?php echo $row['id']; ?>-orden.pdf" target="_blank" title="Orden de Salida" class="text-slate-600 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-list-ol text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
-                                        <?php if(file_exists('./docs/'.$row['id'].'-resultados.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-resultados.pdf" target="_blank" title="Resultados Finales" class="text-amber-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-trophy text-2xl sm:text-3xl"></i></a>
+                                        <?php 
+                                        $f_clasif = file_exists('./docs/'.$row['id'].'-clasificacion.pdf') ? './docs/'.$row['id'].'-clasificacion.pdf' : (file_exists('./docs/'.$row['id'].'-resultados.pdf') ? './docs/'.$row['id'].'-resultados.pdf' : null);
+                                        if($f_clasif): ?>
+                                            <a href="<?php echo $f_clasif; ?>" target="_blank" title="Clasificación / Resultados" class="text-amber-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-trophy text-2xl sm:text-3xl"></i></a>
                                         <?php endif; ?>
                                     </div>
                                 </td>

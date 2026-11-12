@@ -280,6 +280,9 @@ function get_gallery_images($prefix) {
                         ];
                         foreach($docs_fields as $key => $meta):
                             $file_path = './docs/'.$row['id'].'-'.$key.'.pdf';
+                            if ($key === 'resultados' && !file_exists($file_path) && file_exists('./docs/'.$row['id'].'-clasificacion.pdf')) {
+                                $file_path = './docs/'.$row['id'].'-clasificacion.pdf';
+                            }
                             $exists = file_exists($file_path);
                         ?>
                         <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100 flex flex-col justify-between">
