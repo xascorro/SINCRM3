@@ -1,13 +1,17 @@
-[2026-11-12 21:25] Resumen de sesión:
-1. Ajuste de Remitente Pulse Hub y Reenfoque de Textos:
-   - Remitente de Correo:
-     * En el servidor Blue (`/var/www/html/pulse/mail/send_resend.php`), se actualizó la variable `$from` para priorizar `$_REQUEST['from']` enviado por SINCRM (`sincrm@pedrodiaz.eu`), evitando que se sobreescriba con el valor por defecto de Pulse (`pulse@pedrodiaz.eu`).
-   - Redacción y Asuntos de Notificación:
-     * Sustituido "PUBLICACIÓN OFICIAL" por "Nuevo documento":
-       - Asunto: `📄 Nuevo documento: [Nombre Documento] - [Nombre Competición]`.
-       - Cabecera del correo: `Nuevo Documento Publicado`.
-       - Mensaje del correo: `Se ha publicado un nuevo documento: [Documento] para la competición...`.
-     * En interfaz web y modales (`informes_competicion.php` y `js/publicar_modal.js`), se suavizó la terminología de "Publicación Oficial" a "Publicación de Documentos" / "Documento".
+[2026-11-12 21:30] Resumen de sesión:
+1. Purga total del término "Oficial" en títulos de documentos y correos:
+   - Archivos modificados: `informes_publicar_code.php`, `informes_competicion.php`, `js/publicar_modal.js`.
+   - Modificación de nombres:
+     * `Listado Oficial de Inscripciones` -> `Listado de Inscripciones`
+     * `Orden de Actuación / Salida Oficial` -> `Orden de Salida`
+     * `Clasificación Final Oficial` -> `Clasificación Detallada`
+     * `Resultados Finales Oficiales` -> `Resultados Finales`
+     * `Normativa Oficial de Competición` -> `Normativa de Competición`
+     * `Ranking Oficial de Liga` -> `Ranking de Liga`
+   - Los asuntos de correo ahora son:
+     * `📄 Nuevo documento: Listado de Inscripciones - [Competición]`
+     * `📄 Nuevo documento: Orden de Salida - [Competición]`
+     * `📄 Nuevo documento: Clasificación Detallada - [Competición]`
 2. Validación & Despliegue:
-   - Envío de prueba realizado y verificado con éxito vía Pulse Hub API.
-   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).
+   - Verificado envío de `Orden de Salida` sin la palabra "oficial".
+   - Desplegado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).

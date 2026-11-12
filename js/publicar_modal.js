@@ -20,7 +20,7 @@ function abrirModalPublicar(tipo, tituloDoc, esActualizacion, idCompeticionOverr
 
     // 1. Mostrar pantalla de carga rápida mientras obtenemos los destinatarios
     Swal.fire({
-        title: 'Cargando censo oficial...',
+        title: 'Consultando participantes...',
         html: `
             <div class="flex flex-col items-center justify-center p-4">
                 <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
@@ -120,7 +120,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                                 <span class="px-1.5 py-0.2 bg-amber-100 text-amber-800 text-[9px] font-black uppercase rounded">Pruebas</span>
                             </div>
                             <span class="text-[11px] text-slate-600 block mt-0.5">
-                                Remite copia oficial al email técnico: <strong class="font-mono text-slate-800">${emailPrueba}</strong>
+                                Remite copia al email técnico: <strong class="font-mono text-slate-800">${emailPrueba}</strong>
                             </span>
                         </div>
                     </label>

@@ -210,13 +210,13 @@ $target_file = $docs_dir . "{$id_competicion}-{$tipo}.pdf";
 
 // Nombres legibles para emails y logs
 $labels = [
-    'inscripciones' => 'Listado Oficial de Inscripciones',
-    'orden' => 'Orden de Actuación / Salida Oficial',
-    'clasificacion' => 'Clasificación Detallada / Resultados Oficiales',
-    'resultados' => 'Resultados Finales Oficiales',
-    'normativa' => 'Normativa Oficial de Competición',
+    'inscripciones' => 'Listado de Inscripciones',
+    'orden' => 'Orden de Salida',
+    'clasificacion' => 'Clasificación Detallada',
+    'resultados' => 'Resultados Finales',
+    'normativa' => 'Normativa de Competición',
     'nadadoras' => 'Censo de Atletas Participantes',
-    'liga' => 'Ranking Oficial de Liga'
+    'liga' => 'Ranking de Liga'
 ];
 $tipo_label = $labels[$tipo] ?? ucfirst($tipo);
 
@@ -388,7 +388,7 @@ if ($action === 'publicar') {
     if (!empty($emails_finales)) {
         $asunto = "📄 Nuevo documento: {$tipo_label} - " . $comp['nombre'];
         $fecha_f = (!empty($comp['fecha'])) ? date('d/m/Y', strtotime($comp['fecha'])) : 'Fecha por determinar';
-        $lugar_f = !empty($comp['lugar']) ? $comp['lugar'] : 'Sede oficial';
+        $lugar_f = !empty($comp['lugar']) ? $comp['lugar'] : 'Sede de competición';
         $url_web = "https://sincrm.pedrodiaz.eu/docs/{$id_competicion}-{$tipo}.pdf";
 
         // Nombre de adjunto solicitado: {id}-{tipo}.pdf (ej: 81-orden.pdf, 81-clasificacion.pdf, 81-inscripciones.pdf)

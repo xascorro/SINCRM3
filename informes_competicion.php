@@ -67,28 +67,28 @@ if ($id_competicion > 0) {
     $porcentaje_fases = ($total_fases > 0) ? round(($fases_puntuadas / $total_fases) * 100) : 0;
 }
 
-// Catálogo de Documentos Oficiales Publicables en la Web (docs/)
+// Catálogo de Documentos Publicables en la Web (docs/)
 $cache_buster = time();
 $docs_publicacion = [
     'inscripciones' => [
-        'titulo' => 'Listado Oficial de Inscripciones',
-        'subtitulo' => 'Listado oficial con todas las inscripciones confirmadas de todos los clubes participantes.',
+        'titulo' => 'Listado de Inscripciones',
+        'subtitulo' => 'Listado con todas las inscripciones confirmadas de los clubes participantes.',
         'icono' => 'fa-file-pen',
         'color' => 'blue',
         'auto' => true,
         'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=Inscripciones&v={$cache_buster}"
     ],
     'orden' => [
-        'titulo' => 'Orden de Actuación / Salida',
-        'subtitulo' => 'Orden oficial de competición con sorteo aplicado para figuras y rutinas.',
+        'titulo' => 'Orden de Salida',
+        'subtitulo' => 'Orden de competición con sorteo aplicado para figuras y rutinas.',
         'icono' => 'fa-list-ol',
         'color' => 'purple',
         'auto' => true,
         'preview_url' => "informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden&v={$cache_buster}"
     ],
     'clasificacion' => [
-        'titulo' => 'Clasificación Final Oficial',
-        'subtitulo' => 'Acta de clasificación oficial con notas definitivas de figuras y rutinas y firmas reglamentarias.',
+        'titulo' => 'Clasificación Detallada',
+        'subtitulo' => 'Acta de clasificación con notas definitivas de figuras y rutinas.',
         'icono' => 'fa-trophy',
         'color' => 'emerald',
         'auto' => true,
@@ -96,7 +96,7 @@ $docs_publicacion = [
     ],
     'normativa' => [
         'titulo' => 'Normativa de Competición',
-        'subtitulo' => 'Convocatoria, horarios y reglamento técnico oficial de la jornada.',
+        'subtitulo' => 'Convocatoria, horarios y reglamento técnico de la jornada.',
         'icono' => 'fa-file-shield',
         'color' => 'indigo',
         'auto' => false,
@@ -106,8 +106,8 @@ $docs_publicacion = [
 
 if (!empty($clave_liga_comp)) {
     $docs_publicacion['liga'] = [
-        'titulo' => 'Clasificación General de Liga',
-        'subtitulo' => 'Ranking acumulado de la liga con las mejores puntuaciones de la temporada.',
+        'titulo' => 'Clasificación de Liga',
+        'subtitulo' => 'Ranking acumulado de la liga con las puntuaciones de la temporada.',
         'icono' => 'fa-ranking-star',
         'color' => 'amber',
         'auto' => true,
@@ -126,7 +126,7 @@ if (!empty($clave_liga_comp)) {
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200/80">
-                        <i class="fas fa-lock text-[9px]"></i> Gestión Oficial
+                        <i class="fas fa-file-pdf text-[9px]"></i> Documentación
                     </span>
                     <span class="text-[11px] text-slate-400 font-semibold">• Secretarios y Administradores</span>
                 </div>
@@ -134,13 +134,13 @@ if (!empty($clave_liga_comp)) {
                     <span class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center text-sm shadow-sm">
                         <i class="fas fa-file-pdf"></i>
                     </span>
-                    Informes y Documentación Oficial
+                    Informes y Documentación
                 </h1>
                 <p class="text-xs sm:text-sm text-slate-500 font-normal mt-0.5">
                     <?php if ($comp_data): ?>
                         Competición activa: <span class="font-bold text-slate-700"><?php echo htmlspecialchars($comp_data['nombre']); ?></span> (ID #<?php echo $id_competicion; ?>)
                     <?php else: ?>
-                        Selecciona una competición para gestionar su documentación oficial.
+                        Selecciona una competición para gestionar su documentación.
                     <?php endif; ?>
                 </p>
             </div>
