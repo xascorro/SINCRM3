@@ -209,7 +209,7 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
         $pdf->Cell(0, 11, "  " . mb_strtoupper($cat['cat_nombre']) . " · FIGURAS" . $edad_txt, 0, 1, 'L', true);
         
         // Obtener figuras de la categoría
-        $q_figs = "SELECT fi.numero, fi.nombre, fi.grado_dificultad, fa.corte, fa.orden as fase_orden 
+        $q_figs = "SELECT fi.numero, fi.nombre, fi.grado_dificultad, fa.id as id_fase, fa.corte, fa.orden as fase_orden 
                    FROM figuras fi 
                    JOIN fases fa ON fa.id_figura = fi.id 
                    WHERE fa.id_categoria = '$id_cat' AND fa.id_competicion = '$id_competicion' 
@@ -222,18 +222,47 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
         
         $html_figs = '<table cellpadding="3" style="width:100%;">';
         $res_figs_data = [];
-        $cortes_arr = [];
         while($fig = mysqli_fetch_assoc($res_figs)) {
             $res_figs_data[] = $fig;
-            if($fig['corte'] > 0) $cortes_arr[$fig['corte']] = $fig['corte'];
         }
+
+        $num_figs = count($res_figs_data);
+        $id_fase_base = ($num_figs > 0) ? ($res_figs_data[0]['id_fase'] ?? 0) : 0;
+        $cortes_arr = [];
+
+        // Calcular número de corte (1..N) y orden de inicio para cada figura
+        foreach($res_figs_data as $idx => &$fig) {
+            $corte_num = $idx + 1;
+            $fig_fase_id = $fig['id_fase'];
+            $inicio_orden = intval($fig['corte'] ?? 0);
+
+            // Si el corte en BD no está calculado o todas tienen 1, calcular dinámicamente según la nadadora que tiene orden=1 en esta fase
+            if ($inicio_orden <= 0 || ($idx > 0 && $inicio_orden == 1)) {
+                $q_first = mysqli_query($connection, "SELECT id_nadadora FROM inscripciones_figuras WHERE id_fase = '$fig_fase_id' AND orden = 1 LIMIT 1");
+                if ($q_first && $rf = mysqli_fetch_assoc($q_first)) {
+                    $id_nad_first = $rf['id_nadadora'];
+                    $q_base_ord = mysqli_query($connection, "SELECT orden FROM inscripciones_figuras WHERE id_fase = '$id_fase_base' AND id_nadadora = '$id_nad_first' LIMIT 1");
+                    if ($q_base_ord && $rb = mysqli_fetch_assoc($q_base_ord)) {
+                        $inicio_orden = intval($rb['orden'] ?? 1);
+                    }
+                }
+            }
+            if ($inicio_orden <= 0) $inicio_orden = 1;
+            $fig['corte_num'] = $corte_num;
+            $fig['inicio_orden'] = $inicio_orden;
+
+            if ($num_figs > 1) {
+                $cortes_arr[$inicio_orden] = $corte_num;
+            }
+        }
+        unset($fig);
         
         // Dividir figuras en 2 columnas para maximizar legibilidad
         $chunks = array_chunk($res_figs_data, 2);
         foreach($chunks as $chunk) {
             $html_figs .= '<tr>';
             foreach($chunk as $fig) {
-                $corte_label = ($fig['corte'] > 0) ? ' <b style="color:#e92662;">[CORTE '.$fig['corte'].']</b>' : '';
+                $corte_label = ($num_figs > 1) ? ' <b style="color:#e92662;">[CORTE '.$fig['corte_num'].' · Desde nº '.$fig['inicio_orden'].']</b>' : '';
                 $html_figs .= '<td width="50%" style="border-bottom:0.1pt solid #f1f5f9;">';
                 $html_figs .= '<b style="font-size:9.5pt;">' . $fig['fase_orden'] . '.</b> <b style="font-size:9.5pt;">' . $fig['numero'] . '</b> ' . $fig['nombre'] . ' <b style="font-size:8pt; color:#475569;">(GD: ' . $fig['grado_dificultad'] . ')</b>' . $corte_label;
                 $html_figs .= '</td>';
@@ -290,13 +319,17 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
             }
             
             // Resaltar inicio de corte en orden de salida
+            $corte_pill = '';
             if(!$is_inscripciones && isset($cortes_arr[$orden_real])) {
+                $num_c = $cortes_arr[$orden_real];
                 $text_color = 'color:rgb(233, 38, 98);';
                 $font_weight = 'font-weight:bold;';
+                $bg_color = 'background-color:rgb(254, 242, 242);';
+                $corte_pill = ' <span style="color:#e92662; font-size:7.5pt; font-weight:bold;">[C'.$num_c.']</span>';
             }
 
             $body_html .= '<tr style="' . $bg_color . $text_color . $font_weight . '">';
-            $body_html .= '<td width="8%" align="center" style="border-left:1px solid #e92662; border-right:1px solid #e92662;">' . $orden . '</td>';
+            $body_html .= '<td width="8%" align="center" style="border-left:1px solid #e92662; border-right:1px solid #e92662;">' . $orden . $corte_pill . '</td>';
             $body_html .= '<td width="57%" align="left" style="border-left:1px solid #e92662; border-right:1px solid #e92662;">' . $baja_marker . $nombre . '</td>';
             $body_html .= '<td width="10%" align="center" style="border-left:1px solid #e92662; border-right:1px solid #e92662;">' . $row['año_nacimiento'] . '</td>';
             $body_html .= '<td width="25%" align="center" style="border-left:1px solid #e92662; border-right:1px solid #e92662;">' . $row['nombre_corto'] . '</td>';

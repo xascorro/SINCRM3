@@ -45,7 +45,8 @@ if(isset($_POST['sorteo_completo_btn'])){
                 $q_upd = "UPDATE inscripciones_figuras SET orden = '$nuevo_orden' WHERE id_fase = '$id_fase' AND id_nadadora = '$id_nadadora'";
                 mysqli_query($connection, $q_upd);
             }
-            mysqli_query($connection, "UPDATE fases SET sorteado = 'si', corte = 1 WHERE id = '$id_fase'");
+            $corte_inicio = 1 + ($index_fase * $salto);
+            mysqli_query($connection, "UPDATE fases SET sorteado = 'si', corte = '$corte_inicio' WHERE id = '$id_fase'");
         }
     }
 
@@ -153,8 +154,9 @@ if(isset($_POST['save_btn'])){
                 mysqli_query($connection, $q_upd);
             }
 
-            // Marcar fase como sorteada
-            $q_fase_upd = "UPDATE fases SET sorteado = 'si', corte = 1 WHERE id = '$id_fase'";
+            // Marcar fase como sorteada con el orden de inicio del corte
+            $corte_inicio = 1 + ($index_fase * $salto);
+            $q_fase_upd = "UPDATE fases SET sorteado = 'si', corte = '$corte_inicio' WHERE id = '$id_fase'";
             mysqli_query($connection, $q_fase_upd);
         }
     }
