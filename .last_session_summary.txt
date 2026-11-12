@@ -1,7 +1,13 @@
-[2026-11-12 19:24] Resumen de sesión:
-1. Actualización integral de penalizaciones según normativa World Aquatics 2026:
-   - Base de datos (Prod y Beta): Actualizadas las 26 reglas en la tabla `penalizaciones` con las deducciones oficiales vigentes (AQUA Manual Feb 2026, sección 21). Excesos de tiempo (paseo, movimientos en seco, tiempo total) y uso de fondo actualizados a -8.0 pts; omisión de familias a -8.0 pts; exceso de elementos a -2.0 pts; preservando todos los IDs para mantener intacta la integridad histórica de competiciones pasadas.
-   - Selector UI renovado: `includes/penalizaciones_select_option.php` modernizado con Tailwind v4 y organizado en grupos semánticos (<optgroup>) por panel (Rutina, Elementos, Impresión Artística, Figuras) con indicación de puntos, códigos y eventos aplicables.
+[2026-11-12 19:52] Resumen de sesión:
+1. Verificación completa del módulo e informe de puntuaciones:
+   - Rutina 781 (Solo Técnico Junior, Fase 435, Competición 81):
+     * Simulación integral de entrada de puntuaciones para los 6 elementos técnicos/híbridos (DD 22.650) y los 3 componentes de Impresión Artística (ChoMu, Performance, Transitions).
+     * Comprobada la lógica de descarte de notas extremas (mínima y máxima) con tachado visual (`line-through`) en interfaz.
+     * Cálculo exacto y guardado en MariaDB: Nota Elementos (134.4188), Nota IA (102.0000) -> NOTA FINAL: 236.4188.
+     * Corregido warning PHP de clave indefinida en `includes/topbar.php` línea 155 (`id_usario` -> `id_usuario`).
+     * Añadido soporte de autenticación interna vía cron_token en `informes/informe_puntuaciones.php`.
+   - Informe oficial de puntuaciones:
+     * Generación validada en binario (%PDF-1.7, 71.2 KB) con desglose completo de jueces, factores, notas tachadas, subtotales por panel y pie de página multilínea a la derecha.
 2. Despliegue:
    - Sincronizado en Producción y Servidor Beta.
    - Purgada la caché de Cloudflare para `pedrodiaz.eu`.

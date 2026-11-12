@@ -152,7 +152,7 @@ if (count($words) >= 2) {
                 <!-- Opción para restablecer avisos silenciados (Solo si hay alguno temporal) -->
                 <?php
                 include_once('database/dbconfig.php');
-                $user_id_check = $_SESSION['id_usario'];
+                $user_id_check = (int)($_SESSION['id_usuario'] ?? ($_SESSION['id_usario'] ?? 0));
                 $q_has_sil = "SELECT COUNT(*) as total FROM avisos_silenciados WHERE id_usuario = '$user_id_check' AND silencio_hasta > NOW() AND es_descarte = 0";
                 $res_has_sil = mysqli_query($connection, $q_has_sil);
                 $has_sil = mysqli_fetch_assoc($res_has_sil)['total'] > 0;

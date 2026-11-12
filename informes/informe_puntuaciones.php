@@ -5,8 +5,19 @@ error_reporting(0);
 setlocale(LC_ALL, 'es_ES');
 
 require_once(__DIR__ . '/../tcpdf/tcpdf.php');
-include(__DIR__ . '/../security.php');
-include(__DIR__ . '/../database/dbconfig.php');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Validar acceso (Sesión o Token de Cron)
+$cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
+$cron_token_provided = $_GET['cron_token'] ?? '';
+
+if (!isset($_SESSION['email']) && !isset($_SESSION['username']) && $cron_token_provided !== $cron_token_expected) {
+    include(__DIR__ . '/../security.php');
+} else {
+    include_once(__DIR__ . '/../database/dbconfig.php');
+}
 include(__DIR__ . '/../lib/my_functions.php');
 
 mysqli_query($connection, "SET NAMES 'utf8'");
