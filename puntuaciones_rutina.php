@@ -522,13 +522,21 @@ $tiene_sincro = !$is_solo;
                 </div>
             </div>
 
-            <!-- ACTION BAR FIJA -->
-            <div class="sticky bottom-6 z-50 bg-slate-900/90 backdrop-blur-md border border-white/10 p-4 rounded-3xl shadow-2xl flex items-center justify-between">
-                <div class="px-4">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Penalizaciones</p>
-                    <p class="text-xl font-black text-red-400"><?php echo number_format(abs($total_pen), 4); ?></p>
+            <!-- PANEL DE CIERRE / ACCIÓN -->
+            <div class="mt-8 mb-10 bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-4 w-full sm:w-auto">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 border border-rose-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Total Penalizaciones</p>
+                        <p class="text-2xl font-black text-rose-600 tabular-nums leading-none">
+                            <?php echo number_format(abs($total_pen), 4); ?>
+                            <span class="text-xs font-bold text-slate-400">pts</span>
+                        </p>
+                    </div>
                 </div>
-                <button type="submit" name="save_btn" id="save_btn" tabindex="1000" class="px-8 py-4 bg-emerald-500 text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg hover:bg-emerald-400 hover:scale-105 transition-all flex items-center gap-3">
+                <button type="submit" name="save_btn" id="save_btn" tabindex="1000" class="w-full sm:w-auto px-10 py-4 bg-emerald-600 hover:bg-emerald-500 active:scale-[0.98] text-white font-black uppercase text-xs tracking-widest rounded-2xl shadow-lg shadow-emerald-600/20 hover:shadow-xl hover:shadow-emerald-600/30 transition-all flex items-center justify-center gap-3 tap-press cursor-pointer">
                     <i class="fa-solid fa-square-root-variable text-lg"></i> Calcular y Guardar Nota
                 </button>
             </div>

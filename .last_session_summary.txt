@@ -1,12 +1,9 @@
-[2026-11-12 19:08] Resumen de sesión:
-1. Ajuste del footer textual en informes oficiales:
-   - Archivos modificados: `informes/informe_coach_card.php`, `informes/informe_puntuaciones.php`, `informes/informe_puntuaciones_v2.php`.
-   - Cambio: Se reemplazó la fila horizontal única (que superponía la Sede sobre los logos del footer a la izquierda) por un bloque alineado a la derecha ('R') estructurado en 3 líneas limpias:
-     * Línea 1: Sede: [Lugar]
-     * Línea 2: Fecha: [Fecha en formato dd-mm-yyyy]
-     * Línea 3: Página X de Y
-   - Estilo: Tipografía Helvetica Bold 7pt con color Slate 600 (#475569) idéntico al estándar unificado de `informe_figuras.php`.
-2. Despliegue y validación:
-   - Verificada la generación binaria de PDF (HTTP 200, %PDF-1.7).
+[2026-11-12 19:10] Resumen de sesión:
+1. Rediseño de la barra de acción en puntuaciones_rutina.php:
+   - Eliminado el comportamiento flotante/sticky (`sticky bottom-6 z-50`).
+   - Reemplazado el fondo oscuro (`bg-slate-900/90`) por una tarjeta limpia, clara y moderna (`bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm`), perfectamente integrada al final del formulario/página (`mt-8 mb-10`).
+   - Total penalizaciones con icono en badge suave (`bg-rose-50 text-rose-500`) y números tabulares de alto contraste (`tabular-nums text-rose-600 text-2xl`).
+   - Botón "Calcular y Guardar Nota" con microinteracción elástica (`tap-press`, `active:scale-[0.98]`), sombra esmeralda suave y preservación de `tabindex="1000"`, `name="save_btn"` e `id="save_btn"`.
+2. Despliegue:
    - Sincronizado en Producción y Servidor Beta.
    - Purgada la caché de Cloudflare para `pedrodiaz.eu`.
