@@ -48,7 +48,7 @@ $GLOBALS["fecha"] = $competicion['fecha'];
 $GLOBALS["header_image"] = !empty($competicion['header_informe']) ? '../' . $competicion['header_informe'] : '';
 $GLOBALS["footer_image"] = !empty($competicion['footer_informe']) ? '../' . $competicion['footer_informe'] : '';
 $GLOBALS["footer_substring"] = "Sede: " . $GLOBALS['lugar'] . " · Fecha: " . dateAFecha($GLOBALS['fecha']);
-$GLOBALS["titulo_documento"] = "COACH CARD OFICIAL · WORLD AQUATICS";
+$GLOBALS["titulo_documento"] = "COACH CARD";
 
 $nombre_documento = ($id_rutina_get ? 'CC_' . $id_rutina_get . '_' : 'Coach_Cards_') . str_replace(' ', '_', $competicion['nombre']) . '.pdf';
 
@@ -109,7 +109,7 @@ class SINCRM_COACH_CARD_PDF extends TCPDF {
 $pdf = new SINCRM_COACH_CARD_PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator('SINCRM v4');
 $pdf->SetAuthor('Pedro Díaz');
-$pdf->SetTitle('Coach Card Oficial');
+$pdf->SetTitle('Coach Card');
 $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
 
 $pdf->SetMargins(12, 30, 12);
