@@ -1,9 +1,7 @@
-[2026-11-12 19:10] Resumen de sesión:
-1. Rediseño de la barra de acción en puntuaciones_rutina.php:
-   - Eliminado el comportamiento flotante/sticky (`sticky bottom-6 z-50`).
-   - Reemplazado el fondo oscuro (`bg-slate-900/90`) por una tarjeta limpia, clara y moderna (`bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-sm`), perfectamente integrada al final del formulario/página (`mt-8 mb-10`).
-   - Total penalizaciones con icono en badge suave (`bg-rose-50 text-rose-500`) y números tabulares de alto contraste (`tabular-nums text-rose-600 text-2xl`).
-   - Botón "Calcular y Guardar Nota" con microinteracción elástica (`tap-press`, `active:scale-[0.98]`), sombra esmeralda suave y preservación de `tabindex="1000"`, `name="save_btn"` e `id="save_btn"`.
+[2026-11-12 19:24] Resumen de sesión:
+1. Actualización integral de penalizaciones según normativa World Aquatics 2026:
+   - Base de datos (Prod y Beta): Actualizadas las 26 reglas en la tabla `penalizaciones` con las deducciones oficiales vigentes (AQUA Manual Feb 2026, sección 21). Excesos de tiempo (paseo, movimientos en seco, tiempo total) y uso de fondo actualizados a -8.0 pts; omisión de familias a -8.0 pts; exceso de elementos a -2.0 pts; preservando todos los IDs para mantener intacta la integridad histórica de competiciones pasadas.
+   - Selector UI renovado: `includes/penalizaciones_select_option.php` modernizado con Tailwind v4 y organizado en grupos semánticos (<optgroup>) por panel (Rutina, Elementos, Impresión Artística, Figuras) con indicación de puntos, códigos y eventos aplicables.
 2. Despliegue:
    - Sincronizado en Producción y Servidor Beta.
    - Purgada la caché de Cloudflare para `pedrodiaz.eu`.
