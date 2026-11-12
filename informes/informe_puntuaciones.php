@@ -66,23 +66,23 @@ class SINCRM_PUNTUACIONES_PDF extends TCPDF {
     public function Header() {
         if (!empty($GLOBALS['header_image']) && file_exists($GLOBALS['header_image'])) {
             $this->Image($GLOBALS['header_image'], 12, 5, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-            $this->SetY(24.5);
+            $this->SetY(6.5);
         } else {
-            $this->SetY(8);
+            $this->SetY(6.5);
         }
 
-        $this->SetFont('helvetica', 'B', 13);
+        $this->SetFont('helvetica', 'B', 14);
         $this->SetTextColor(233, 38, 98);
-        $this->Cell(0, 5, $GLOBALS['titulo_documento'], 0, 1, 'C');
+        $this->Cell(0, 6, $GLOBALS['titulo_documento'], 0, 1, 'C');
 
         $this->SetFont('helvetica', 'B', 8.5);
-        $this->SetTextColor(100, 116, 139);
-        $this->Cell(0, 3.5, mb_strtoupper($GLOBALS['subtitulo_documento'], 'UTF-8'), 0, 1, 'C');
+        $this->SetTextColor(71, 85, 105);
+        $this->Cell(0, 4, mb_strtoupper($GLOBALS['subtitulo_documento'], 'UTF-8'), 0, 1, 'C');
 
-        // Línea divisoria suave
+        // Línea divisoria suave bajo la cabecera
         $this->SetDrawColor(226, 232, 240);
         $this->SetLineWidth(0.3);
-        $this->Line(12, $this->GetY() + 1.2, 198, $this->GetY() + 1.2);
+        $this->Line(12, 24.5, 198, 24.5);
     }
 
     public function Footer() {
@@ -111,8 +111,8 @@ $pdf->SetAuthor('Pedro Díaz');
 $pdf->SetTitle($GLOBALS["titulo_documento"]);
 $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
 
-$pdf->SetMargins(12, 38, 12);
-$pdf->SetHeaderMargin(6);
+$pdf->SetMargins(12, 27, 12);
+$pdf->SetHeaderMargin(5);
 $pdf->SetFooterMargin(15);
 $pdf->SetAutoPagebreak(TRUE, 22);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
@@ -359,10 +359,21 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         }
         $num_jueces = count($jueces_fig);
 
-        if (!empty($jueces_fig_names) || !empty($puestos_oficiales_str)) {
-            $html_fase .= '<table cellpadding="2.5" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+        // Controladores Técnicos para figuras si los hubiera (id_paneles_tipo = 4)
+        $q_ct_fig = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 4 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
+        $res_ct_fig = mysqli_query($connection, $q_ct_fig);
+        $ct_fig_names = [];
+        while ($j = mysqli_fetch_assoc($res_ct_fig)) {
+            $ct_fig_names[$j['numero_juez']] = 'CT' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
+        }
+
+        if (!empty($jueces_fig_names) || !empty($puestos_oficiales_str) || !empty($ct_fig_names)) {
+            $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:6px;">';
             if (!empty($puestos_oficiales_str)) {
                 $html_fase .= '<tr><td width="15%"><b style="color:#0f172a;">Oficiales:</b></td><td width="85%">' . $puestos_oficiales_str . '</td></tr>';
+            }
+            if (!empty($ct_fig_names)) {
+                $html_fase .= '<tr><td width="15%"><b style="color:#d97706;">CT:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $ct_fig_names) . '</td></tr>';
             }
             if (!empty($jueces_fig_names)) {
                 $html_fase .= '<tr><td width="15%"><b style="color:#e92662;">Panel Jueces:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces_fig_names) . '</td></tr>';
@@ -473,13 +484,10 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         // ---------------------------------------------------------------------
         $nombre_modalidad = ($fase['nombre_modalidad'] ?? 'Rutina') . (($fase['genero'] ?? '') === 'masculino' ? ' Masc' : '');
 
-        // Cabecera de la fase
-        $html_fase = '<table cellpadding="4" style="border:1px solid #cbd5e1; background-color:#f8fafc; border-collapse:collapse; width:100%; margin-bottom:6px;">';
+        // Cabecera de la fase (sin factores)
+        $html_fase = '<table cellpadding="3" style="border:1px solid #cbd5e1; background-color:#f8fafc; border-collapse:collapse; width:100%; margin-bottom:5px;">';
         $html_fase .= '<tr>';
-        $html_fase .= '<td width="70%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_modalidad . ' ' . $nombre_categoria, 'UTF-8') . '</b></td>';
-        $html_fase .= '<td width="30%" style="text-align:right; font-size:7pt; color:#64748b;">';
-        $html_fase .= 'Factores: H:' . $fase['f_hybrid'] . ' | A:' . $fase['f_acro'] . ' | CM:' . $fase['f_chomu'] . ' | P:' . $fase['f_performance'] . ' | T:' . $fase['f_transitions'];
-        $html_fase .= '</td>';
+        $html_fase .= '<td width="100%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_modalidad . ' ' . $nombre_categoria, 'UTF-8') . '</b></td>';
         $html_fase .= '</tr>';
         $html_fase .= '</table><br>';
 
@@ -514,21 +522,22 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
             $ct_names[$j['numero_juez']] = 'CT' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
         }
 
-        $html_fase .= '<table cellpadding="2.5" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+        // Orden de jueces: Oficiales, CT, Sincro, Paneles
+        $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:6px;">';
         if (!empty($puestos_oficiales_str)) {
             $html_fase .= '<tr><td width="15%"><b style="color:#0f172a;">Oficiales:</b></td><td width="85%">' . $puestos_oficiales_str . '</td></tr>';
+        }
+        if (!empty($ct_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#d97706;">CT:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $ct_names) . '</td></tr>';
+        }
+        if (!empty($jueces_sinc_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#9333ea;">Sincro:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces_sinc_names) . '</td></tr>';
         }
         if (!empty($jueces1_names)) {
             $html_fase .= '<tr><td width="15%"><b style="color:#0284c7;">P1 (Elementos):</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces1_names) . '</td></tr>';
         }
         if (!empty($jueces2_names)) {
             $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces2_names) . '</td></tr>';
-        }
-        if (!empty($jueces_sinc_names)) {
-            $html_fase .= '<tr><td width="15%"><b style="color:#9333ea;">Sincronización:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces_sinc_names) . '</td></tr>';
-        }
-        if (!empty($ct_names)) {
-            $html_fase .= '<tr><td width="15%"><b style="color:#d97706;">Control Técnicos:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $ct_names) . '</td></tr>';
         }
         $html_fase .= '</table><br>';
 

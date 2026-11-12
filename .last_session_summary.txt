@@ -1,16 +1,15 @@
-[2026-11-12 20:55] Resumen de sesión:
-1. Ajuste de Cabecera y Enriquecimiento de Jueces en informe_puntuaciones.php:
+[2026-11-12 21:05] Resumen de sesión:
+1. Optimización Vertical y Estructuración de Jueces en informe_puntuaciones.php:
    - Archivo modificado: `informes/informe_puntuaciones.php`.
-   - Ajustes de diseño de cabecera:
-     * Se reubicó la cabecera institucional subiendo el título "CLASIFICACIÓN DETALLADA" a Y = 24.5mm y el subtítulo con la competición a Y = 29.3mm.
-     * La línea divisoria queda a Y = 34mm y el margen superior del cuerpo del documento se amplió a 38mm (`SetMargins(12, 38, 12)`).
-     * Se elimina por completo el solapamiento que cortaba el título con la tabla inicial en cada página.
-   - Panel de Oficiales y Jueces:
-     * Oficiales Generales: Se integran los cargos de `puesto_juez` (Juez Árbitro, Secretario, etc.) con sus federaciones tanto en fases de figuras como de rutinas.
-     * Jueces de Sincronización: Se añaden las asignaciones de `id_paneles_tipo = 3` (J1 y J2 de Sincronización) en las fases de rutinas.
-     * Controladores Técnicos: Se incorporan las asignaciones de `id_paneles_tipo = 4` (CT).
-     * Panel de Figuras: Muestra Oficiales y Panel Jueces (J1 a Jn) organizados con estilo limpio y badges identificativos.
+   - Reubicación de Cabecera:
+     * Los textos "CLASIFICACIÓN DETALLADA" y el subtítulo de la competición se colocan directamente en una capa superpuesta sobre el banner institucional superior (Y=6.5mm y Y=12.5mm).
+     * Línea de corte bajo cabecera a Y=24.5mm y margen superior del cuerpo reducido de 38mm a 27mm (`SetMargins(12, 27, 12)`), maximizando el espacio vertical útil (+11mm por página).
+   - Estructuración y Orden de Jueces:
+     * Orden estricto implementado: Oficiales (Juez Árbitro, Secretario...) -> CT (Controladores Técnicos) -> Sincro (Sincronización) -> Paneles (P1 Elementos, P2 Impresión Artística o Panel Jueces).
+     * Aplicado tanto en rutinas como en figuras.
+   - Limpieza Técnica:
+     * Retirada la leyenda redundante de factores ("Factores: H:... | A:... | CM:...").
 2. Despliegue & Validación:
-   - Probado individualmente para fases de rutina (Fase 435), figuras (Fase 424) y modo Global competición 81.
+   - Verificado con curl en entorno local (Fase 435 Rutina, Fase 424 Figura y Global Competición 81) con generación limpia de PDF (HTTP 200).
    - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
    - Purgada caché de Cloudflare para `pedrodiaz.eu`.
