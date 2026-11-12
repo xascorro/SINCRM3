@@ -386,7 +386,7 @@ if ($action === 'publicar') {
     $errores_envio = [];
 
     if (!empty($emails_finales)) {
-        $asunto = "📢 PUBLICACIÓN OFICIAL: {$tipo_label} - " . $comp['nombre'];
+        $asunto = "📄 Nuevo documento: {$tipo_label} - " . $comp['nombre'];
         $fecha_f = (!empty($comp['fecha'])) ? date('d/m/Y', strtotime($comp['fecha'])) : 'Fecha por determinar';
         $lugar_f = !empty($comp['lugar']) ? $comp['lugar'] : 'Sede oficial';
         $url_web = "https://sincrm.pedrodiaz.eu/docs/{$id_competicion}-{$tipo}.pdf";
@@ -395,9 +395,9 @@ if ($action === 'publicar') {
         $attachment_name = "{$id_competicion}-{$tipo}.pdf";
 
         $cuerpo = "
-            <h2 style='color:#0f172a; font-size:18px; font-weight:800; margin:0 0 12px 0;'>Publicación Oficial de Documentación</h2>
+            <h2 style='color:#0f172a; font-size:18px; font-weight:800; margin:0 0 12px 0;'>Nuevo Documento Publicado</h2>
             <p style='color:#334155; font-size:14px; line-height:1.6; margin:0 0 16px 0;'>
-                Se ha publicado oficialmente en la plataforma el documento <strong>{$tipo_label}</strong> para la competición <strong>{$comp['nombre']}</strong>.
+                Se ha publicado un nuevo documento: <strong>{$tipo_label}</strong> para la competición <strong>{$comp['nombre']}</strong>.
             </p>
             <div style='background-color:#f1f5f9; border-radius:12px; padding:16px; margin-bottom:20px; border-left:4px solid #2563eb;'>
                 <p style='margin:0 0 6px 0; font-size:13px; color:#1e293b;'><strong>Competición:</strong> #{$id_competicion} - {$comp['nombre']}</p>
@@ -407,11 +407,11 @@ if ($action === 'publicar') {
             </div>
             <p style='text-align:center; margin:24px 0;'>
                 <a href='{$url_web}' style='display:inline-block; background-color:#2563eb; color:#ffffff; font-weight:700; font-size:13px; padding:12px 24px; border-radius:10px; text-decoration:none;'>
-                    Ver Documento Publicado en la Web
+                    Ver Documento en la Web
                 </a>
             </p>
             <p style='color:#64748b; font-size:12px; margin:0;'>
-                Encontrarás adjunto el documento oficial con las notas y firmas reglamentarias emitidas por la mesa técnica.
+                Adjunto a este correo encontrarás el documento en formato PDF.
             </p>
         ";
 

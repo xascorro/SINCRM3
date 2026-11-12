@@ -97,7 +97,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                 <!-- Ficha del Documento -->
                 <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between">
                     <div>
-                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Documento Oficial</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">Documento</span>
                         <strong class="text-sm font-black text-slate-800">${tituloDoc}</strong>
                     </div>
                     <div class="text-right">
@@ -107,7 +107,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                 </div>
 
                 <p class="text-slate-600 font-medium leading-relaxed">
-                    Selecciona a quién deseas remitir la notificación oficial por correo electrónico junto con el PDF adjunto generado:
+                    Selecciona a quién deseas remitir la notificación por correo electrónico junto con el PDF adjunto generado:
                 </p>
 
                 <!-- Grupo 1: Modo Pruebas -->

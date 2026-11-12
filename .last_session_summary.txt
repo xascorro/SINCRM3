@@ -1,17 +1,13 @@
-[2026-11-12 21:20] Resumen de sesión:
-1. Corrección y Modernización de Hojas de Anotadores de Rutinas (Error 500 solucionado):
-   - Archivo corregido: `informes/informe_rutinas_notas_anotadores.php`.
-   - Causa raíz del Error 500:
-     * El script consultaba todas las fases de la competición sin filtrar las de rutinas (`id_modalidad IS NOT NULL`). En competiciones mixtas (como la #81 con fases de figuras 424-431), `$fase['id_modalidad']` era NULL, provocando un error fatal de sintaxis SQL en MariaDB (`... WHERE modalidades.id = `).
-     * El bloque `else` contenía código legacy copiado de figuras que consultaba tablas inexistentes para rutinas (`inscripciones_figuras`).
-     * Ignoraba el parámetro `$_GET['id_competicion']` consultando siempre la competición activa general.
-   - Mejoras implementadas:
-     * Filtrado estricto de fases de rutinas (`id_modalidad IS NOT NULL AND id_modalidad > 0`).
-     * Diseño adaptado a la identidad gráfica v4 (cabecera institucional superpuesta, línea divisoria, márgenes de 27mm).
-     * Tabla técnica completa para cada fase de rutina con orden (incluyendo `PS`/`EX`), atletas participantes y club, columnas para jueces (`J1..Jn`), penalizaciones y total.
-     * Soporte de autenticación unificada por sesión y cron token.
-   - Revisión adicional en `informes/informe_figuras_notas_anotadores.php` para asegurar sesión y parámetro `id_competicion`.
+[2026-11-12 21:25] Resumen de sesión:
+1. Ajuste de Remitente Pulse Hub y Reenfoque de Textos:
+   - Remitente de Correo:
+     * En el servidor Blue (`/var/www/html/pulse/mail/send_resend.php`), se actualizó la variable `$from` para priorizar `$_REQUEST['from']` enviado por SINCRM (`sincrm@pedrodiaz.eu`), evitando que se sobreescriba con el valor por defecto de Pulse (`pulse@pedrodiaz.eu`).
+   - Redacción y Asuntos de Notificación:
+     * Sustituido "PUBLICACIÓN OFICIAL" por "Nuevo documento":
+       - Asunto: `📄 Nuevo documento: [Nombre Documento] - [Nombre Competición]`.
+       - Cabecera del correo: `Nuevo Documento Publicado`.
+       - Mensaje del correo: `Se ha publicado un nuevo documento: [Documento] para la competición...`.
+     * En interfaz web y modales (`informes_competicion.php` y `js/publicar_modal.js`), se suavizó la terminología de "Publicación Oficial" a "Publicación de Documentos" / "Documento".
 2. Validación & Despliegue:
-   - Verificado con curl: HTTP 200 y PDF binario (%PDF-1.7, 76KB) generado limpiamente.
-   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
-   - Purgada caché de Cloudflare (`pedrodiaz.eu`).
+   - Envío de prueba realizado y verificado con éxito vía Pulse Hub API.
+   - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).

@@ -230,10 +230,10 @@ if (!empty($clave_liga_comp)) {
                     </div>
                     <div>
                         <h2 class="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight">
-                            Publicación Oficial en la Web y Notificaciones
+                            Publicación de Documentos y Notificaciones
                         </h2>
                         <p class="text-xs text-slate-500">
-                            Control de publicación en el Dashboard público (<span class="font-bold text-slate-600">carpeta docs/</span>) y envío automático de emails con PDF adjunto.
+                            Publicación en el Dashboard (<span class="font-bold text-slate-600">carpeta docs/</span>) y envío de avisos con PDF adjunto.
                         </p>
                     </div>
                 </div>
