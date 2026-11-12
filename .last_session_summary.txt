@@ -1,8 +1,12 @@
-[2026-11-12 18:56] Resumen de sesión:
-1. Nuevo footer sin logotipo de Sincro Nogalte para competiciones 81 y 82:
-   - Archivo creado: `images/footer_reg2025_sin_nogalte.jpg` (1370 x 130 px, fondo blanco puro #FFFFFF).
-   - Logos redistribuidos: Se eliminó el 2º logo (Sincro Nogalte) y se reacomodaron armónicamente los 4 logos restantes (FNM, Región de Murcia, Ayuntamiento y Sponsor) con espaciado equilibrado (~17-22 px entre logos), eliminando el hueco en blanco y manteniendo la zona derecha limpia para la información de sede/fecha/página de TCPDF.
-   - Base de datos (Prod y Beta): Columnas `header_informe` y `footer_informe` ampliadas a VARCHAR(150), y actualizado `footer_informe = 'images/footer_reg2025_sin_nogalte.jpg'` para competiciones #81 y #82.
-   - Sincronización: Copiado al contenedor de Beta (`app-qk8ivlm0dgd3553nuqblogjo-105953642285`), permisos ajustados (`ubuntu:www-data`, 664).
-   - Verificación: Generación de PDF verificada en HTTP 200 con TCPDF tanto para competición 81 como 82.
-   - Caché Cloudflare: Purgada para `pedrodiaz.eu`.
+[2026-11-12 19:08] Resumen de sesión:
+1. Ajuste del footer textual en informes oficiales:
+   - Archivos modificados: `informes/informe_coach_card.php`, `informes/informe_puntuaciones.php`, `informes/informe_puntuaciones_v2.php`.
+   - Cambio: Se reemplazó la fila horizontal única (que superponía la Sede sobre los logos del footer a la izquierda) por un bloque alineado a la derecha ('R') estructurado en 3 líneas limpias:
+     * Línea 1: Sede: [Lugar]
+     * Línea 2: Fecha: [Fecha en formato dd-mm-yyyy]
+     * Línea 3: Página X de Y
+   - Estilo: Tipografía Helvetica Bold 7pt con color Slate 600 (#475569) idéntico al estándar unificado de `informe_figuras.php`.
+2. Despliegue y validación:
+   - Verificada la generación binaria de PDF (HTTP 200, %PDF-1.7).
+   - Sincronizado en Producción y Servidor Beta.
+   - Purgada la caché de Cloudflare para `pedrodiaz.eu`.

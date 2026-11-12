@@ -78,12 +78,18 @@ class SINCRM_PUNTUACIONES_PDF extends TCPDF {
         if (!empty($GLOBALS['footer_image']) && file_exists($GLOBALS['footer_image'])) {
             $this->Image($GLOBALS['footer_image'], 12, 275, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         }
-        $this->SetY(277);
-        $this->SetFont('helvetica', '', 7);
-        $this->SetTextColor(100, 116, 139);
-        $pagenumtxt = 'Página ' . $this->getAliasNumPage() . ' de ' . $this->getAliasNbPages();
-        $this->Cell(120, 4, $GLOBALS['footer_substring'], 0, 0, 'L');
-        $this->Cell(66, 4, $pagenumtxt, 0, 0, 'R');
+        $this->SetY(276);
+        $this->SetFont('helvetica', 'B', 7);
+        $this->SetTextColor(71, 85, 105);
+        $this->setCellPaddings(0, 0, 0, 0);
+
+        $txt_sede = "Sede: " . trim($GLOBALS['lugar'] ?? '');
+        $txt_fecha = "Fecha: " . trim(dateAFecha($GLOBALS['fecha'] ?? ''));
+        $txt_pag = 'Página ' . $this->getAliasNumPage() . ' de ' . $this->getAliasNbPages();
+
+        $this->MultiCell(186, 3.8, $txt_sede, 0, 'R', false, 1, 12, '', true, 0, false, true, 3.8, 'M', true);
+        $this->MultiCell(186, 3.8, $txt_fecha, 0, 'R', false, 1, 12, '', true, 0, false, true, 3.8, 'M', true);
+        $this->MultiCell(186, 3.8, $txt_pag, 0, 'R', false, 1, 12, '', true, 0, false, true, 3.8, 'M', true);
     }
 }
 

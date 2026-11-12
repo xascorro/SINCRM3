@@ -51,10 +51,18 @@ class MYPDF extends TCPDF {
         if (!empty($GLOBALS['footer_image']) && file_exists($GLOBALS['footer_image'])) {
             $this->Image($GLOBALS['footer_image'], 15, 275, 180, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         }
-        $this->SetY(-15);
-        $this->SetFont('helvetica', 'I', 8);
-        $pagenumtxt = 'Página ' . $this->getAliasNumPage() . ' de ' . $this->getAliasNbPages();
-        $this->Cell(0, 10, $GLOBALS['footer_substring'] . ' | ' . $pagenumtxt, 0, false, 'R', 0, '', 0, false, 'T', 'M');
+        $this->SetY(276);
+        $this->SetFont('helvetica', 'B', 7);
+        $this->SetTextColor(71, 85, 105);
+        $this->setCellPaddings(0, 0, 0, 0);
+
+        $txt_sede = "Sede: " . trim($GLOBALS['lugar'] ?? '');
+        $txt_fecha = "Fecha: " . trim(dateAFecha($GLOBALS['fecha'] ?? ''));
+        $txt_pag = 'Página ' . $this->getAliasNumPage() . ' de ' . $this->getAliasNbPages();
+
+        $this->MultiCell(180, 3.8, $txt_sede, 0, 'R', false, 1, 15, '', true, 0, false, true, 3.8, 'M', true);
+        $this->MultiCell(180, 3.8, $txt_fecha, 0, 'R', false, 1, 15, '', true, 0, false, true, 3.8, 'M', true);
+        $this->MultiCell(180, 3.8, $txt_pag, 0, 'R', false, 1, 15, '', true, 0, false, true, 3.8, 'M', true);
     }
 }
 
