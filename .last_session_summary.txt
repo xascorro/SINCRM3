@@ -1,10 +1,14 @@
-[2026-11-12 21:45] Resumen de sesión:
-1. Modal de Publicación Dinámico y Reactivo:
-   - Archivo: `js/publicar_modal.js`
-   - El desglose de correos ahora es reactivo en tiempo real: al marcar o desmarcar "Modo Prueba", "Oficiales", "Clubes" o "Jueces de panel", el acordeón se actualiza al instante mostrando las tarjetas correspondientes con sus emails, nombres y roles (o el mensaje informativo de que se publicará sin notificaciones si no hay destinatarios seleccionados).
-   - Acordeón abierto por defecto con indicador numérico en el título y diseño diferenciado por colores (verde para oficiales, azul para clubes, morado para jueces).
-   - Desplegado en `beta.pedrodiaz.eu` y purgada la caché de Cloudflare en `pedrodiaz.eu`.
-
-2. Alta de Usuario Juez:
-   - Usuario: `Maria del Mar Martínez Sicilia` (`demar80@gmail.com`), contraseña `holaguapa`, Rol 4 (Juez), vinculado a juez ID #85.
-   - Sincronizado en local y Beta.
+[2026-11-12 22:05] Resumen de sesión:
+1. Auditor de Coach Cards adaptado a la Nueva Normativa World Aquatics (AQUA 2024-2026) y RFEN:
+   - Archivo: `coach_card_auditor.php`
+   - Reclasificación inteligente de Híbridos: Diferenciación nítida entre Híbridos Libres regulares y el Híbrido Creativo / ShoHY obligatorio (DD = 0.50) en categorías de formación (Alevín / Infantil), eliminando falsos positivos de exceso de híbridos.
+   - Categorización de Veredicto en 4 niveles claros:
+     * 🟢 100% Conforme.
+     * 🔵 Conforme con Observaciones de Mesa (secuencia TRE, apnea, ShoHY).
+     * 🟡 Alerta Técnica / Riesgo de Base Mark DTC (familias > 5, técnicas > 3, caps T5-T9/R5-R9, topes RFEN 12U).
+     * 🔴 No Conforme con Penalizaciones de Rutina aplicables (-2.0 pts por elemento extra según AS 6.7.8, -8.0 pts por falta de grupos en Acrobática según AS 6.15.13).
+   - Verificación de Secuencia de TRE (Appendix 2 / AS 6.7.10) detectando ejecuciones fuera de orden que suponen nota 0.0.
+   - Verificación de Grupos Acrobáticos en Rutina Acrobática (Appendix 4: ACRO-A, B, C, P).
+   - Verificación de Normativa de Seguridad RFEN Alevín (12U): Dificultad máxima de 4.0/5.0 pts y topes de niveles técnicos (máx T6, máx R2, máx F7).
+   - Filtros rápidos por estado en el directorio principal (Todas / Con Declaración / Pendientes) y buscador reactivo.
+   - Desplegado en `beta.pedrodiaz.eu` y caché purgada en Cloudflare.
