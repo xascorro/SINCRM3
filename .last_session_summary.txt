@@ -1,13 +1,26 @@
-[2026-11-12 19:52] Resumen de sesión:
-1. Verificación completa del módulo e informe de puntuaciones:
+[2026-11-12 19:58] Resumen de sesión:
+1. Modificación de Rutina 781 con BaseMark y Penalización:
    - Rutina 781 (Solo Técnico Junior, Fase 435, Competición 81):
-     * Simulación integral de entrada de puntuaciones para los 6 elementos técnicos/híbridos (DD 22.650) y los 3 componentes de Impresión Artística (ChoMu, Performance, Transitions).
-     * Comprobada la lógica de descarte de notas extremas (mínima y máxima) con tachado visual (`line-through`) en interfaz.
-     * Cálculo exacto y guardado en MariaDB: Nota Elementos (134.4188), Nota IA (102.0000) -> NOTA FINAL: 236.4188.
-     * Corregido warning PHP de clave indefinida en `includes/topbar.php` línea 155 (`id_usario` -> `id_usuario`).
-     * Añadido soporte de autenticación interna vía cron_token en `informes/informe_puntuaciones.php`.
-   - Informe oficial de puntuaciones:
-     * Generación validada en binario (%PDF-1.7, 71.2 KB) con desglose completo de jueces, factores, notas tachadas, subtotales por panel y pie de página multilínea a la derecha.
-2. Despliegue:
-   - Sincronizado en Producción y Servidor Beta.
-   - Purgada la caché de Cloudflare para `pedrodiaz.eu`.
+     * Aplicado BaseMark (BM) al Elemento 1 (Híbrido):
+       - DD declarada: 8.250 -> DD reducida a BaseMark: 0.500.
+       - Puntuación Elemento 1 pasa de 13.8188 a 0.8375 (-12.9813 pts).
+       - Marcado visual de BM con checkbox y reflejo en desglose.
+       - Subtotal Elementos: 121.4375 (antes 134.4188).
+     * Aplicada Penalización de Rutina (Juez Árbitro):
+       - Tipo: AS 6.7.1 - Tiempo de marcha / entrada a la plataforma excedido (> 30s).
+       - Valor de deducción: -8.0000 pts.
+       - Registrado en tabla `penalizaciones_rutinas` y campo `rutinas.penalizaciones_rutina = -8.0000`.
+     * Recálculo matemático final:
+       - Elementos: 121.4375
+       - Impresión Artística: 102.0000
+       - Rutina: 223.4375
+       - Penalizaciones: -8.0000
+       - NOTA FINAL: 215.4375 (antes 236.4188).
+2. Base de Datos & Consistencia:
+   - Alineado esquema en Servidor Beta: `puntuaciones_elementos.factor` actualizado de `DECIMAL(1,1)` a `DECIMAL(5,2)` para soportar factores >= 1.0.
+   - Sincronizados y verificados valores en MariaDB Prod (`sincrm_prod_app`) y MariaDB Beta.
+3. Informe Oficial de Puntuaciones (PDF):
+   - Generación validada correctamente (HTTP 200, %PDF-1.7, 71.3 KB).
+   - Muestra fila de penalización [AS 6.7.1 (-8)] en panel rosa con -8.0000 y nota final oficial de 215.4375.
+4. Despliegue y CDN:
+   - Cloudflare purge verificado para `pedrodiaz.eu`.
