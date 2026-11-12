@@ -163,8 +163,8 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
 
                             if ($is_phase_fig) {
                                 $target_page = $has_cc ? "puntuaciones_lista_figuras_rutinas_tecnicas.php" : "puntuaciones_lista_figuras.php";
-                                $item_title = $row['fig_nom'];
-                                $item_sub = "Fig. " . $row['fig_num'] . " · GD " . $row['fig_gd'];
+                                $item_title = "Figura " . $row['fig_num'] . " - " . $row['fig_nom'];
+                                $item_sub = "GD " . $row['fig_gd'] . ($has_cc ? " · Con CC" : "");
                                 $badge_sub = '<span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black rounded uppercase">Figura</span>';
                             } else {
                                 $target_page = "puntuaciones_lista_rutinas.php";
@@ -190,7 +190,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                 </div>
                             </div>
 
-                            <h2 class="text-sm sm:text-lg font-black text-slate-800 tracking-tight leading-snug mb-1 truncate" title="<?php echo $item_title; ?>">
+                            <h2 class="text-sm sm:text-base font-black text-slate-800 tracking-tight leading-snug mb-1 break-words min-h-[2.5rem]" title="<?php echo $item_title; ?>">
                                 <?php echo $item_title; ?>
                             </h2>
                             <div class="flex items-center gap-2 mb-4 sm:mb-8">
@@ -259,7 +259,7 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                         <?php endif; ?>
                     </div>
 
-                    <h2 class="text-base sm:text-xl font-black text-slate-800 tracking-tight leading-snug mb-1 truncate">
+                    <h2 class="text-base sm:text-xl font-black text-slate-800 tracking-tight leading-snug mb-1 break-words">
                         <?php echo $row['mod_nom'] . (($row['genero'] ?? '') === 'masculino' ? ' Masc' : ''); ?>
                     </h2>
                     <div class="flex items-center gap-2 mb-4 sm:mb-8">
@@ -298,14 +298,14 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
         <div id="view-container-list" class="<?php echo $vista_actual == 'list' ? '' : 'hidden'; ?>">
             <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-3.5 sm:p-8 shadow-sm border border-slate-200/80 overflow-hidden">
                 <div class="overflow-x-auto custom-scrollbar pb-4">
-                    <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-100">
-                                <th class="px-3 sm:px-6 py-3 sm:py-4 w-14 sm:w-16 text-center">Orden</th>
+                                <th class="px-3 sm:px-6 py-3 sm:py-4 w-14 sm:w-16 text-center whitespace-nowrap">Orden</th>
                                 <th class="px-3 sm:px-6 py-3 sm:py-4">Fase / Categoría</th>
-                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-center">Estado</th>
-                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-center">Reglamento</th>
-                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-right">Acciones</th>
+                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-center whitespace-nowrap">Estado</th>
+                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-center whitespace-nowrap">Reglamento</th>
+                                <th class="px-3 sm:px-6 py-3 sm:py-4 text-right whitespace-nowrap">Acciones</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
@@ -334,28 +334,28 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                                 }
                             ?>
                             <tr class="hover:bg-slate-50 transition-colors group">
-                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center">
+                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center whitespace-nowrap">
                                     <span class="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-black text-slate-700 shadow-inner group-hover:scale-105 transition-transform tabular-nums text-xs sm:text-sm"><?php echo $row['orden']; ?></span>
                                 </td>
-                                <td class="px-3 sm:px-6 py-3 sm:py-5">
-                                    <p class="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-tight leading-tight"><?php echo $label; ?></p>
+                                <td class="px-3 sm:px-6 py-3 sm:py-5 min-w-[200px]">
+                                    <p class="text-xs sm:text-sm font-black text-slate-800 uppercase tracking-tight leading-snug break-words"><?php echo $label; ?></p>
                                     <p class="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-0.5"><?php echo $row['cat_nom']; ?></p>
                                 </td>
-                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center">
+                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center whitespace-nowrap">
                                     <?php if($is_puntuada): ?>
                                         <span class="px-2.5 sm:px-3 py-1 bg-emerald-50 text-emerald-600 text-[8px] sm:text-[9px] font-black rounded-lg border border-emerald-100 uppercase tracking-wider">Cerrada</span>
                                     <?php else: ?>
                                         <span class="px-2.5 sm:px-3 py-1 bg-blue-50 text-blue-600 text-[8px] sm:text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-wider animate-pulse">Abierta</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center">
+                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-center whitespace-nowrap">
                                     <?php if($isOldSystem): ?>
                                         <span class="px-2.5 sm:px-3 py-1 bg-slate-100 text-slate-500 text-[8px] sm:text-[9px] font-black rounded-lg border border-slate-200 uppercase tracking-wider">OBSOLETO</span>
                                     <?php else: ?>
                                         <span class="px-2.5 sm:px-3 py-1 bg-blue-50 text-blue-600 text-[8px] sm:text-[9px] font-black rounded-lg border border-blue-100 uppercase tracking-wider">AQUA</span>
                                     <?php endif; ?>
                                 </td>
-                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-right">
+                                <td class="px-3 sm:px-6 py-3 sm:py-5 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-1.5 sm:gap-3">
                                         <form action="<?php echo $target_page; ?>" method="POST" target="_blank">
                                             <input type="hidden" name="id_fase" value="<?php echo $row['id']; ?>">
