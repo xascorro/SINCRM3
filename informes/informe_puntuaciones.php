@@ -65,28 +65,29 @@ $border_color = '#e2e8f0';
 class SINCRM_PUNTUACIONES_PDF extends TCPDF {
     public function Header() {
         if (!empty($GLOBALS['header_image']) && file_exists($GLOBALS['header_image'])) {
-            $this->Image($GLOBALS['header_image'], 12, 8, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
-            $this->SetY(24);
+            $this->Image($GLOBALS['header_image'], 12, 5, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+            $this->SetY(24.5);
         } else {
-            $this->SetY(12);
+            $this->SetY(8);
         }
 
-        $this->SetFont('helvetica', 'B', 14);
+        $this->SetFont('helvetica', 'B', 13);
         $this->SetTextColor(233, 38, 98);
-        $this->Cell(0, 7, $GLOBALS['titulo_documento'], 0, 1, 'C');
+        $this->Cell(0, 5, $GLOBALS['titulo_documento'], 0, 1, 'C');
 
-        $this->SetFont('helvetica', 'B', 9);
+        $this->SetFont('helvetica', 'B', 8.5);
         $this->SetTextColor(100, 116, 139);
-        $this->Cell(0, 4, mb_strtoupper($GLOBALS['subtitulo_documento'], 'UTF-8'), 0, 1, 'C');
+        $this->Cell(0, 3.5, mb_strtoupper($GLOBALS['subtitulo_documento'], 'UTF-8'), 0, 1, 'C');
 
         // Línea divisoria suave
         $this->SetDrawColor(226, 232, 240);
         $this->SetLineWidth(0.3);
-        $this->Line(12, $this->GetY() + 2, 198, $this->GetY() + 2);
+        $this->Line(12, $this->GetY() + 1.2, 198, $this->GetY() + 1.2);
     }
 
     public function Footer() {
         if (!empty($GLOBALS['footer_image']) && file_exists($GLOBALS['footer_image'])) {
+            $this->SetY(275);
             $this->Image($GLOBALS['footer_image'], 12, 275, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         }
         $this->SetY(276);
@@ -110,8 +111,8 @@ $pdf->SetAuthor('Pedro Díaz');
 $pdf->SetTitle($GLOBALS["titulo_documento"]);
 $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
 
-$pdf->SetMargins(12, 34, 12);
-$pdf->SetHeaderMargin(8);
+$pdf->SetMargins(12, 38, 12);
+$pdf->SetHeaderMargin(6);
 $pdf->SetFooterMargin(15);
 $pdf->SetAutoPagebreak(TRUE, 22);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
@@ -271,6 +272,24 @@ if (isset($_GET['id_fase']) && intval($_GET['id_fase']) > 0) {
     $condicion_fase = " AND f.id = " . intval($_GET['id_fase']);
 }
 
+// Obtener oficiales principales (Juez Árbitro, Secretario, etc.) desde puesto_juez
+$q_puestos_oficiales = "SELECT pj.*, pt.nombre as puesto_nombre, j.nombre, j.apellidos, f.nombre_corto as fed_nombre 
+                        FROM puesto_juez pj 
+                        JOIN puestos_juez pt ON pj.id_puestos_juez = pt.id 
+                        JOIN jueces j ON pj.id_juez = j.id 
+                        LEFT JOIN federaciones f ON j.federacion = f.id 
+                        WHERE pj.id_competicion = '" . $GLOBALS['id_competicion_activa'] . "' 
+                        ORDER BY pt.id ASC";
+$res_puestos_oficiales = mysqli_query($connection, $q_puestos_oficiales);
+$puestos_oficiales_arr = [];
+if ($res_puestos_oficiales) {
+    while ($po = mysqli_fetch_assoc($res_puestos_oficiales)) {
+        $fed_str = !empty($po['fed_nombre']) ? ' (' . htmlspecialchars($po['fed_nombre']) . ')' : '';
+        $puestos_oficiales_arr[] = '<b style="color:#0f172a;">' . htmlspecialchars($po['puesto_nombre']) . ':</b> ' . htmlspecialchars($po['nombre'] . ' ' . $po['apellidos']) . $fed_str;
+    }
+}
+$puestos_oficiales_str = implode(' &nbsp;·&nbsp; ', $puestos_oficiales_arr);
+
 $q_fases = "SELECT f.*, 
                    cat.nombre as nombre_categoria, 
                    cat.id as id_categoria, 
@@ -340,9 +359,14 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         }
         $num_jueces = count($jueces_fig);
 
-        if (!empty($jueces_fig_names)) {
-            $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#64748b; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
-            $html_fase .= '<tr><td width="15%"><b style="color:#e92662;">Panel Jueces:</b></td><td width="85%">' . implode(' · ', $jueces_fig_names) . '</td></tr>';
+        if (!empty($jueces_fig_names) || !empty($puestos_oficiales_str)) {
+            $html_fase .= '<table cellpadding="2.5" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+            if (!empty($puestos_oficiales_str)) {
+                $html_fase .= '<tr><td width="15%"><b style="color:#0f172a;">Oficiales:</b></td><td width="85%">' . $puestos_oficiales_str . '</td></tr>';
+            }
+            if (!empty($jueces_fig_names)) {
+                $html_fase .= '<tr><td width="15%"><b style="color:#e92662;">Panel Jueces:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces_fig_names) . '</td></tr>';
+            }
             $html_fase .= '</table><br>';
         }
 
@@ -474,16 +498,39 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
             $jueces2_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
         }
 
-        if (!empty($jueces1_names) || !empty($jueces2_names)) {
-            $html_fase .= '<table cellpadding="2" style="font-size:6.5pt; color:#64748b; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
-            if (!empty($jueces1_names)) {
-                $html_fase .= '<tr><td width="15%"><b style="color:#0284c7;">P1 (Elementos):</b></td><td width="85%">' . implode(' · ', $jueces1_names) . '</td></tr>';
-            }
-            if (!empty($jueces2_names)) {
-                $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' · ', $jueces2_names) . '</td></tr>';
-            }
-            $html_fase .= '</table><br>';
+        // Jueces de Sincronización (id_paneles_tipo = 3)
+        $q_js = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 3 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
+        $res_js = mysqli_query($connection, $q_js);
+        $jueces_sinc_names = [];
+        while ($j = mysqli_fetch_assoc($res_js)) {
+            $jueces_sinc_names[$j['numero_juez']] = 'J' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
         }
+
+        // Controladores Técnicos (id_paneles_tipo = 4)
+        $q_ct = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 4 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
+        $res_ct = mysqli_query($connection, $q_ct);
+        $ct_names = [];
+        while ($j = mysqli_fetch_assoc($res_ct)) {
+            $ct_names[$j['numero_juez']] = 'CT' . $j['numero_juez'] . ': ' . $j['nombre'] . ' ' . $j['apellidos'];
+        }
+
+        $html_fase .= '<table cellpadding="2.5" style="font-size:6.5pt; color:#475569; background-color:#ffffff; border:1px solid #e2e8f0; width:100%; margin-bottom:8px;">';
+        if (!empty($puestos_oficiales_str)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#0f172a;">Oficiales:</b></td><td width="85%">' . $puestos_oficiales_str . '</td></tr>';
+        }
+        if (!empty($jueces1_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#0284c7;">P1 (Elementos):</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces1_names) . '</td></tr>';
+        }
+        if (!empty($jueces2_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces2_names) . '</td></tr>';
+        }
+        if (!empty($jueces_sinc_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#9333ea;">Sincronización:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces_sinc_names) . '</td></tr>';
+        }
+        if (!empty($ct_names)) {
+            $html_fase .= '<tr><td width="15%"><b style="color:#d97706;">Control Técnicos:</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $ct_names) . '</td></tr>';
+        }
+        $html_fase .= '</table><br>';
 
         $pdf->writeHTML($html_fase, true, false, true, false, '');
 

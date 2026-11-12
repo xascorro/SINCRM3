@@ -1,22 +1,16 @@
-[2026-11-12 20:44] Resumen de sesión:
-1. Creación de informe_puntuaciones_global.php e Integración de Figuras en informe_puntuaciones.php:
-   - Archivos: `informes/informe_puntuaciones_global.php` e `informes/informe_puntuaciones.php`.
-   - Diagnóstico del problema:
-     * El botón "Global PDF" en `puntuaciones_lista_fases.php` enlazaba a `./informes/informe_puntuaciones_global.php?id_competicion=X`, archivo que no existía (404).
-     * En `informe_puntuaciones.php`, la consulta de fases utilizaba `JOIN modalidades m ON f.id_modalidad = m.id`. Al ser un INNER JOIN, todas las fases de figuras (cuyo `id_modalidad` es nulo/vacío) quedaban excluidas de la consulta.
-     * Si se abría una fase de figuras específica (`id_fase`), no devolvía filas.
-     * Al consultar la competición entera sin `id_fase`, el bucle iteraba exclusivamente sobre la tabla `rutinas`, por lo que las fases de figuras no mostraban nadadoras ni notas.
-   - Solución implementada:
-     * Creado `informes/informe_puntuaciones_global.php` como punto de entrada / wrapper global que invoca `informe_puntuaciones.php` con título "Clasificación Detallada Global".
-     * Modificada la consulta de fases en `informe_puntuaciones.php` con `LEFT JOIN modalidades` y `LEFT JOIN figuras fig ON f.id_figura = fig.id` para recuperar tanto fases de rutinas como de figuras con su número, nombre y grado de dificultad (GD).
-     * Soporte completo para fases de figuras en `informe_puntuaciones.php`:
-       - Cabecera con número, nombre de figura, categoría y GD.
-       - Panel de jueces de figuras dinámico (J1 a Jn).
-       - Tabla oficial de nadadoras (`inscripciones_figuras`): Posición, Orden (#), Nadadora (Año), Club, notas individuales de cada juez con tachado (`line-through`) en descarte de mínima y máxima, Sumatorio, Media, GD y Puntuación Final calculada.
-       - Muestra todas las inscripciones y orden de salida cuando aún no se han introducido notas, y todas las notas computadas cuando ya están calificadas.
-2. Despliegue & Sincronización:
-   - Verificado retorno HTTP 200 y PDF válido (%PDF-1.7):
-     * `informe_puntuaciones.php?id_fase=424` (71.5 KB con 16 nadadoras en figura Alevín).
-     * `informe_puntuaciones_global.php?id_competicion=81` (145.3 KB con las 12 fases completas: rutinas y figuras).
+[2026-11-12 20:55] Resumen de sesión:
+1. Ajuste de Cabecera y Enriquecimiento de Jueces en informe_puntuaciones.php:
+   - Archivo modificado: `informes/informe_puntuaciones.php`.
+   - Ajustes de diseño de cabecera:
+     * Se reubicó la cabecera institucional subiendo el título "CLASIFICACIÓN DETALLADA" a Y = 24.5mm y el subtítulo con la competición a Y = 29.3mm.
+     * La línea divisoria queda a Y = 34mm y el margen superior del cuerpo del documento se amplió a 38mm (`SetMargins(12, 38, 12)`).
+     * Se elimina por completo el solapamiento que cortaba el título con la tabla inicial en cada página.
+   - Panel de Oficiales y Jueces:
+     * Oficiales Generales: Se integran los cargos de `puesto_juez` (Juez Árbitro, Secretario, etc.) con sus federaciones tanto en fases de figuras como de rutinas.
+     * Jueces de Sincronización: Se añaden las asignaciones de `id_paneles_tipo = 3` (J1 y J2 de Sincronización) en las fases de rutinas.
+     * Controladores Técnicos: Se incorporan las asignaciones de `id_paneles_tipo = 4` (CT).
+     * Panel de Figuras: Muestra Oficiales y Panel Jueces (J1 a Jn) organizados con estilo limpio y badges identificativos.
+2. Despliegue & Validación:
+   - Probado individualmente para fases de rutina (Fase 435), figuras (Fase 424) y modo Global competición 81.
    - Sincronizado en Servidor Beta (`beta.pedrodiaz.eu`).
    - Purgada caché de Cloudflare para `pedrodiaz.eu`.
