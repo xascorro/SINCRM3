@@ -1,38 +1,8 @@
-# Resumen de Sesión - SINCRM v4
-Fecha: 2026-11-11
-Tarea: Nuevo módulo de gestión de Tablas de Dificultad (AQUA) en Datos Maestros.
-
-## 1. Cambios Realizados
-- **Nueva Interfaz `dificultad_tablas.php`**:
-  - Creada en "Datos Maestros" con diseño moderno v4 (Tailwind + SB Admin 2).
-  - Selector de las 5 tablas oficiales de dificultad técnica:
-    1. `dificultad_hibridos` (Híbridos: Spins, Thrusts, Rotations, Flexibilidad, Airborne, Connectors y Bonus).
-    2. `dificultad_acrobacias` (Acrobacias Equipos: Grupos A, B, C, P + Addendum).
-    3. `dificultad_acropair` (Acrobacias Parejas / Dúo).
-    4. `dificultad_tre` (Elementos Técnicos Requeridos).
-    5. `dificultad_basemark` (Base Mark oficial).
-  - Selector rápido de temporada/versión (`2026-2027` [v`2627`], `2024-2025` [v`2425`], `2023-2024` [v`2324`]).
-  - KPIs dinámicos: Censo de elementos, Rango de DD (mínimo - máximo), Familias técnicas y Versión activa.
-  - Filtro interactivo por familias mediante chips (`T`, `S`, `R`, `A`, `F`, `BONUS`, `ACRO-A`, etc.).
-  - Buscador dinámico en tiempo real (`filterDificultadTable()`).
-  - Panel colapsable para añadir nuevos elementos y modal para editar elementos existentes.
-  - Herramienta para clonar temporadas completas a nuevos años (Solo Administrador).
-  - Integración con SweetAlert2 para confirmaciones de borrado.
-- **Backend CRUD `dificultad_tablas_code.php`**:
-  - Acciones para crear, editar y eliminar elementos con validación estricta y logs de seguridad (`write_log()`).
-  - Lógica de clonación masiva de temporadas entre versiones.
-- **Navegación y Permisos**:
-  - Enlace "Tablas Dificultad" agregado en el submenú de "Datos Maestros" en `includes/navbar.php` y `navbar.php`.
-  - Registrado en `paginas_sistema` y asignados permisos en `permisos_roles` para roles Administrador, Secretario, Delegado, Juez y Club en todas las bases de datos (local y beta).
-
-## 2. Archivos Modificados / Creados
-- `dificultad_tablas.php` (Nuevo)
-- `dificultad_tablas_code.php` (Nuevo)
-- `includes/navbar.php` (Modificado)
-- `navbar.php` (Modificado)
-- `.last_session_summary.txt` (Modificado)
-
-## 3. Estado del Proyecto
-- Sintaxis PHP validada con `php -l` (0 errores).
-- Probado el renderizado de todas las pestañas y temporadas en CLI.
-- Base de datos configurada y permisos sincronizados.
+[2026-11-12 18:56] Resumen de sesión:
+1. Nuevo footer sin logotipo de Sincro Nogalte para competiciones 81 y 82:
+   - Archivo creado: `images/footer_reg2025_sin_nogalte.jpg` (1370 x 130 px, fondo blanco puro #FFFFFF).
+   - Logos redistribuidos: Se eliminó el 2º logo (Sincro Nogalte) y se reacomodaron armónicamente los 4 logos restantes (FNM, Región de Murcia, Ayuntamiento y Sponsor) con espaciado equilibrado (~17-22 px entre logos), eliminando el hueco en blanco y manteniendo la zona derecha limpia para la información de sede/fecha/página de TCPDF.
+   - Base de datos (Prod y Beta): Columnas `header_informe` y `footer_informe` ampliadas a VARCHAR(150), y actualizado `footer_informe = 'images/footer_reg2025_sin_nogalte.jpg'` para competiciones #81 y #82.
+   - Sincronización: Copiado al contenedor de Beta (`app-qk8ivlm0dgd3553nuqblogjo-105953642285`), permisos ajustados (`ubuntu:www-data`, 664).
+   - Verificación: Generación de PDF verificada en HTTP 200 con TCPDF tanto para competición 81 como 82.
+   - Caché Cloudflare: Purgada para `pedrodiaz.eu`.
