@@ -1,6 +1,6 @@
 /**
- * SINCRM v4 - Modal Inteligente de Publicación Oficial en la Web y Notificaciones
- * Soporta selección de destinatarios: Modo Pruebas, Clubes Participantes y Jueces
+ * SINCRM v4 - Modal Inteligente de Publicación en la Web y Notificaciones
+ * Diferencia entre: Modo Pruebas, Clubes Participantes, Oficiales y Jueces de Panel
  */
 
 function abrirModalPublicar(tipo, tituloDoc, esActualizacion, idCompeticionOverride) {
@@ -24,7 +24,7 @@ function abrirModalPublicar(tipo, tituloDoc, esActualizacion, idCompeticionOverr
         html: `
             <div class="flex flex-col items-center justify-center p-4">
                 <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                <p class="text-xs text-slate-500 font-medium">Consultando clubes participantes y jueces asignados...</p>
+                <p class="text-xs text-slate-500 font-medium">Consultando clubes, oficiales y jueces asignados...</p>
             </div>
         `,
         showConfirmButton: false,
@@ -60,17 +60,30 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
     const totalClubes = data.clubes ? data.clubes.total_clubes : 0;
     const totalUsuariosClubes = data.clubes ? data.clubes.total_usuarios : 0;
     const clubesNombres = (data.clubes && data.clubes.clubes_nombres) ? data.clubes.clubes_nombres.join(', ') : 'Ninguno';
-    const totalJueces = data.jueces ? data.jueces.total_jueces : 0;
+    
+    const totalOficiales = data.oficiales ? data.oficiales.total_oficiales : 0;
+    const cargosOficiales = (data.oficiales && data.oficiales.cargos && data.oficiales.cargos.length > 0) ? data.oficiales.cargos.join(', ') : 'Juez Árbitro, Secretario';
 
+    const totalJueces = data.jueces ? data.jueces.total_jueces : 0;
     const emailPrueba = data.prueba ? data.prueba.email : 'xascorro@gmail.com';
 
-    // Generar lista para el acordeón desplegable
+    // Generar listas para el acordeón desplegable
     let emailsClubesHtml = '';
     if (data.clubes && data.clubes.destinatarios) {
         emailsClubesHtml = data.clubes.destinatarios.map(d => 
             `<li class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
                 <span class="font-semibold text-slate-700">${d.nombre} <span class="text-[10px] text-blue-600 font-bold">(${d.club_corto || d.club})</span></span>
                 <span class="font-mono text-slate-500">${d.email}</span>
+            </li>`
+        ).join('');
+    }
+
+    let emailsOficialesHtml = '';
+    if (data.oficiales && data.oficiales.destinatarios) {
+        emailsOficialesHtml = data.oficiales.destinatarios.map(o => 
+            `<li class="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+                <span class="font-semibold text-slate-700">${o.nombre} <span class="text-[10px] text-emerald-600 font-bold">(${o.cargo})</span></span>
+                <span class="font-mono text-slate-500">${o.email}</span>
             </li>`
         ).join('');
     }
@@ -93,7 +106,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                     <span>${accionTexto}</span>
                 </div>`,
         html: `
-            <div class="text-left font-sans text-xs space-y-4 pt-1">
+            <div class="text-left font-sans text-xs space-y-3.5 pt-1">
                 <!-- Ficha del Documento -->
                 <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between">
                     <div>
@@ -107,11 +120,11 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                 </div>
 
                 <p class="text-slate-600 font-medium leading-relaxed">
-                    Selecciona a quién deseas remitir la notificación por correo electrónico junto con el PDF adjunto generado:
+                    Selecciona los destinatarios que recibirán la notificación con el PDF adjunto:
                 </p>
 
                 <!-- Grupo 1: Modo Pruebas -->
-                <div class="p-3.5 bg-amber-50/50 rounded-2xl border border-amber-200/90 transition-all hover:bg-amber-50">
+                <div class="p-3 bg-amber-50/50 rounded-2xl border border-amber-200/90 transition-all hover:bg-amber-50">
                     <label class="flex items-start gap-3 cursor-pointer select-none">
                         <input type="checkbox" id="chk_dest_prueba" checked onchange="actualizarContadorDestinatarios()" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-amber-600 focus:ring-amber-500 cursor-pointer">
                         <div class="flex-1">
@@ -127,7 +140,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                 </div>
 
                 <!-- Grupo 2: Clubes que compiten -->
-                <div class="p-3.5 bg-blue-50/40 rounded-2xl border border-blue-200/80 transition-all hover:bg-blue-50/70">
+                <div class="p-3 bg-blue-50/40 rounded-2xl border border-blue-200/80 transition-all hover:bg-blue-50/70">
                     <label class="flex items-start gap-3 cursor-pointer select-none">
                         <input type="checkbox" id="chk_dest_clubes" checked onchange="actualizarContadorDestinatarios()" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
                         <div class="flex-1">
@@ -136,27 +149,46 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                                 <span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-[10px] font-black rounded-full tabular-nums">${totalUsuariosClubes} usuarios (${totalClubes} clubes)</span>
                             </div>
                             <span class="text-[11px] text-slate-600 block mt-0.5">
-                                A todos los usuarios activos que representen a los clubes participantes en esta competición.
+                                A todos los usuarios activos que representen a los clubes participantes.
                             </span>
-                            <div class="mt-1 text-[10px] text-slate-400 font-semibold truncate">
+                            <div class="mt-0.5 text-[10px] text-slate-400 font-semibold truncate">
                                 Clubes: <span class="text-slate-600">${clubesNombres}</span>
                             </div>
                         </div>
                     </label>
                 </div>
 
-                <!-- Grupo 3: Jueces que han participado (DESHABILITADO POR DEFECTO) -->
-                <div class="p-3.5 bg-purple-50/40 rounded-2xl border border-purple-200/80 transition-all hover:bg-purple-50/70">
+                <!-- Grupo 3: Oficiales (Juez Árbitro, Secretario...) - MARCADO POR DEFECTO -->
+                <div class="p-3 bg-emerald-50/40 rounded-2xl border border-emerald-200/90 transition-all hover:bg-emerald-50/70">
+                    <label class="flex items-start gap-3 cursor-pointer select-none">
+                        <input type="checkbox" id="chk_dest_oficiales" checked onchange="actualizarContadorDestinatarios()" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-900 text-xs">Oficiales (Juez Árbitro, Secretario...)</span>
+                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded-full tabular-nums">${totalOficiales} con email</span>
+                            </div>
+                            <span class="text-[11px] text-slate-600 block mt-0.5">
+                                Reciben toda la documentación reglamentaria de la jornada.
+                            </span>
+                            <div class="mt-0.5 text-[10px] text-emerald-700 font-semibold truncate">
+                                Cargos: <span class="text-slate-700">${cargosOficiales}</span>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Grupo 4: Jueces de panel (Evaluadores) - DESMARCADO POR DEFECTO -->
+                <div class="p-3 bg-purple-50/40 rounded-2xl border border-purple-200/80 transition-all hover:bg-purple-50/70">
                     <label class="flex items-start gap-3 cursor-pointer select-none">
                         <input type="checkbox" id="chk_dest_jueces" onchange="actualizarContadorDestinatarios()" class="w-4 h-4 mt-0.5 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer">
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <span class="font-bold text-slate-900 text-xs">Jueces que han participado</span>
+                                <span class="font-bold text-slate-900 text-xs">Jueces de panel (Evaluadores)</span>
                                 <span class="px-2 py-0.5 bg-purple-100 text-purple-800 text-[10px] font-black rounded-full tabular-nums">${totalJueces} con email</span>
                                 <span class="text-[9px] text-slate-400 italic">(Desmarcado por defecto)</span>
                             </div>
                             <span class="text-[11px] text-slate-600 block mt-0.5">
-                                Jueces y controladores técnicos asignados a paneles u oficiales en esta competición.
+                                Jueces asignados a los paneles. Activar preferentemente al publicar resultados por si desean consultar sus notas.
                             </span>
                         </div>
                     </label>
@@ -169,8 +201,9 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                         <i class="fas fa-chevron-down text-[9px] text-slate-400"></i>
                     </summary>
                     <div class="p-3 border-t border-slate-100 space-y-2 max-h-40 overflow-y-auto">
+                        ${emailsOficialesHtml ? `<div><span class="font-bold text-emerald-700 text-[10px] uppercase block mb-1">Oficiales:</span><ul class="space-y-0.5">${emailsOficialesHtml}</ul></div>` : ''}
                         ${emailsClubesHtml ? `<div><span class="font-bold text-blue-700 text-[10px] uppercase block mb-1">Clubes:</span><ul class="space-y-0.5">${emailsClubesHtml}</ul></div>` : ''}
-                        ${emailsJuecesHtml ? `<div><span class="font-bold text-purple-700 text-[10px] uppercase block mb-1">Jueces:</span><ul class="space-y-0.5">${emailsJuecesHtml}</ul></div>` : ''}
+                        ${emailsJuecesHtml ? `<div><span class="font-bold text-purple-700 text-[10px] uppercase block mb-1">Jueces de Panel:</span><ul class="space-y-0.5">${emailsJuecesHtml}</ul></div>` : ''}
                     </div>
                 </details>
 
@@ -202,6 +235,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
         preConfirm: () => {
             const destPrueba = document.getElementById('chk_dest_prueba').checked ? '1' : '0';
             const destClubes = document.getElementById('chk_dest_clubes').checked ? '1' : '0';
+            const destOficiales = document.getElementById('chk_dest_oficiales').checked ? '1' : '0';
             const destJueces = document.getElementById('chk_dest_jueces').checked ? '1' : '0';
 
             const formData = new FormData();
@@ -211,6 +245,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
             formData.append('tipo', tipo);
             formData.append('dest_prueba', destPrueba);
             formData.append('dest_clubes', destClubes);
+            formData.append('dest_oficiales', destOficiales);
             formData.append('dest_jueces', destJueces);
 
             return fetch('informes_publicar_code.php', {
@@ -281,6 +316,7 @@ function actualizarContadorDestinatarios() {
 
     const chkPrueba = document.getElementById('chk_dest_prueba');
     const chkClubes = document.getElementById('chk_dest_clubes');
+    const chkOficiales = document.getElementById('chk_dest_oficiales');
     const chkJueces = document.getElementById('chk_dest_jueces');
     const lbl = document.getElementById('lbl_dest_counter');
     if (!lbl) return;
@@ -294,6 +330,12 @@ function actualizarContadorDestinatarios() {
     if (chkClubes && chkClubes.checked && data.clubes && data.clubes.destinatarios) {
         data.clubes.destinatarios.forEach(d => {
             if (d.email) emailsSet.add(d.email.toLowerCase());
+        });
+    }
+
+    if (chkOficiales && chkOficiales.checked && data.oficiales && data.oficiales.destinatarios) {
+        data.oficiales.destinatarios.forEach(o => {
+            if (o.email) emailsSet.add(o.email.toLowerCase());
         });
     }
 

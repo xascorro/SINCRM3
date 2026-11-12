@@ -1,17 +1,14 @@
-[2026-11-12 21:30] Resumen de sesión:
-1. Purga total del término "Oficial" en títulos de documentos y correos:
-   - Archivos modificados: `informes_publicar_code.php`, `informes_competicion.php`, `js/publicar_modal.js`.
-   - Modificación de nombres:
-     * `Listado Oficial de Inscripciones` -> `Listado de Inscripciones`
-     * `Orden de Actuación / Salida Oficial` -> `Orden de Salida`
-     * `Clasificación Final Oficial` -> `Clasificación Detallada`
-     * `Resultados Finales Oficiales` -> `Resultados Finales`
-     * `Normativa Oficial de Competición` -> `Normativa de Competición`
-     * `Ranking Oficial de Liga` -> `Ranking de Liga`
-   - Los asuntos de correo ahora son:
-     * `📄 Nuevo documento: Listado de Inscripciones - [Competición]`
-     * `📄 Nuevo documento: Orden de Salida - [Competición]`
-     * `📄 Nuevo documento: Clasificación Detallada - [Competición]`
+[2026-11-12 21:34] Resumen de sesión:
+1. Diferenciación de Oficiales y Jueces de Panel en Modal de Publicación:
+   - Archivos modificados: `informes_publicar_code.php`, `js/publicar_modal.js`.
+   - Lógica de segmentación implementada:
+     * **Oficiales de Competición** (Juez Árbitro, Secretario... de `puesto_juez`):
+       - Marcado por defecto (`checked = true`) para recibir toda la documentación reglamentaria (inscripciones, orden de salida, clasificaciones).
+       - Muestra el cargo de cada oficial (ej: `Secretario`, `Juez Árbitro`).
+     * **Jueces de Panel** (Evaluadores de `panel_jueces`):
+       - Desmarcado por defecto (`checked = false`) en listados de salida e inscripciones.
+       - Se orienta para activación selectiva cuando se publiquen resultados/clasificación para que puedan consultar sus notas.
+   - Acordeón de desglose transparente separado en: Oficiales, Clubes y Jueces de Panel.
 2. Validación & Despliegue:
-   - Verificado envío de `Orden de Salida` sin la palabra "oficial".
+   - Verificado con test CLI (envío a oficiales confirmado).
    - Desplegado en Servidor Beta (`beta.pedrodiaz.eu`) y purgada caché de Cloudflare (`pedrodiaz.eu`).

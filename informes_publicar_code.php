@@ -132,21 +132,51 @@ if ($action === 'get_destinatarios') {
         }
     }
 
-    // 3. Jueces participantes
-    $q_jueces = "
-        SELECT DISTINCT j.id as id_juez, j.nombre, j.apellidos, u.email, u.username
-        FROM jueces j
+    // 3. Oficiales de competición (Juez Árbitro, Secretario, etc. de puesto_juez)
+    $q_oficiales = "
+        SELECT DISTINCT j.id as id_juez, j.nombre, j.apellidos, pj.nombre as cargo, u.email, u.username
+        FROM puesto_juez pz
+        JOIN puestos_juez pj ON pz.id_puestos_juez = pj.id
+        JOIN jueces j ON pz.id_juez = j.id
         JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
         WHERE u.activo = 1 
           AND u.email IS NOT NULL 
           AND TRIM(u.email) != ''
-          AND j.id IN (
-            SELECT DISTINCT id_juez FROM panel_jueces WHERE id_competicion = '$id_competicion' AND id_juez IS NOT NULL
-            UNION
-            SELECT DISTINCT pj.id_juez FROM panel_jueces pj JOIN fases f ON pj.id_fase = f.id WHERE f.id_competicion = '$id_competicion' AND pj.id_juez IS NOT NULL
-            UNION
-            SELECT DISTINCT id_juez FROM puesto_juez WHERE id_competicion = '$id_competicion' AND id_juez IS NOT NULL
-          )
+          AND pz.id_competicion = '$id_competicion'
+        ORDER BY pj.id ASC, j.apellidos ASC
+    ";
+    $res_oficiales = mysqli_query($connection, $q_oficiales);
+    $oficiales_dest = [];
+    $cargos_nombres = [];
+    if ($res_oficiales) {
+        while ($o = mysqli_fetch_assoc($res_oficiales)) {
+            $email = strtolower(trim($o['email']));
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $cargo = $o['cargo'] ?? 'Oficial';
+                $oficiales_dest[$email] = [
+                    'id_juez' => (int)$o['id_juez'],
+                    'nombre' => trim($o['nombre'] . ' ' . $o['apellidos']),
+                    'cargo' => $cargo,
+                    'email' => $email,
+                    'username' => $o['username']
+                ];
+                if (!in_array($cargo, $cargos_nombres)) {
+                    $cargos_nombres[] = $cargo;
+                }
+            }
+        }
+    }
+
+    // 4. Jueces de panel (Evaluadores asignados a fases en panel_jueces)
+    $q_jueces = "
+        SELECT DISTINCT j.id as id_juez, j.nombre, j.apellidos, u.email, u.username
+        FROM panel_jueces pj
+        JOIN jueces j ON pj.id_juez = j.id
+        JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
+        WHERE u.activo = 1 
+          AND u.email IS NOT NULL 
+          AND TRIM(u.email) != ''
+          AND (pj.id_competicion = '$id_competicion' OR pj.id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_competicion'))
         ORDER BY j.apellidos ASC, j.nombre ASC
     ";
     $res_jueces = mysqli_query($connection, $q_jueces);
@@ -179,6 +209,11 @@ if ($action === 'get_destinatarios') {
             'total_usuarios' => count($usuarios_clubes),
             'clubes_nombres' => $clubes_nombres,
             'destinatarios' => array_values($usuarios_clubes)
+        ],
+        'oficiales' => [
+            'total_oficiales' => count($oficiales_dest),
+            'cargos' => $cargos_nombres,
+            'destinatarios' => array_values($oficiales_dest)
         ],
         'jueces' => [
             'total_jueces' => count($jueces_dest),
@@ -309,6 +344,7 @@ if ($action === 'publicar') {
     // Determinar destinatarios del correo según los switches recibidos
     $dest_prueba_active = isset($_POST['dest_prueba']) && in_array($_POST['dest_prueba'], ['1', 'true', 'on', 1], true);
     $dest_clubes_active = isset($_POST['dest_clubes']) && in_array($_POST['dest_clubes'], ['1', 'true', 'on', 1], true);
+    $dest_oficiales_active = isset($_POST['dest_oficiales']) && in_array($_POST['dest_oficiales'], ['1', 'true', 'on', 1], true);
     $dest_jueces_active = isset($_POST['dest_jueces']) && in_array($_POST['dest_jueces'], ['1', 'true', 'on', 1], true);
 
     $emails_finales = [];
@@ -354,22 +390,40 @@ if ($action === 'publicar') {
         }
     }
 
-    // 3. Añadir jueces participantes (por defecto deshabilitado salvo que se active explícitamente)
-    if ($dest_jueces_active) {
-        $q_j_mail = "
+    // 3. Añadir oficiales de competición (Juez Árbitro, Secretario...)
+    if ($dest_oficiales_active) {
+        $q_of_mail = "
             SELECT DISTINCT u.email
-            FROM jueces j
+            FROM puesto_juez pz
+            JOIN jueces j ON pz.id_juez = j.id
             JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
             WHERE u.activo = 1 
               AND u.email IS NOT NULL 
               AND TRIM(u.email) != ''
-              AND j.id IN (
-                SELECT DISTINCT id_juez FROM panel_jueces WHERE id_competicion = '$id_competicion' AND id_juez IS NOT NULL
-                UNION
-                SELECT DISTINCT pj.id_juez FROM panel_jueces pj JOIN fases f ON pj.id_fase = f.id WHERE f.id_competicion = '$id_competicion' AND pj.id_juez IS NOT NULL
-                UNION
-                SELECT DISTINCT id_juez FROM puesto_juez WHERE id_competicion = '$id_competicion' AND id_juez IS NOT NULL
-              )
+              AND pz.id_competicion = '$id_competicion'
+        ";
+        $res_of = mysqli_query($connection, $q_of_mail);
+        if ($res_of) {
+            while ($row_of = mysqli_fetch_assoc($res_of)) {
+                $em = strtolower(trim($row_of['email']));
+                if (filter_var($em, FILTER_VALIDATE_EMAIL)) {
+                    $emails_finales[$em] = $em;
+                }
+            }
+        }
+    }
+
+    // 4. Añadir jueces de panel (por defecto deshabilitado salvo activación expresa para resultados)
+    if ($dest_jueces_active) {
+        $q_j_mail = "
+            SELECT DISTINCT u.email
+            FROM panel_jueces pj
+            JOIN jueces j ON pj.id_juez = j.id
+            JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
+            WHERE u.activo = 1 
+              AND u.email IS NOT NULL 
+              AND TRIM(u.email) != ''
+              AND (pj.id_competicion = '$id_competicion' OR pj.id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_competicion'))
         ";
         $res_j = mysqli_query($connection, $q_j_mail);
         if ($res_j) {
