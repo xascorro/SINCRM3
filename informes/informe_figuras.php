@@ -183,8 +183,15 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
         $fase_ref = mysqli_fetch_assoc($fase_ref_res);
         $id_fase_ref = $fase_ref['id'] ?? 0;
 
-        // Consultar nadadoras inscritas
-        $order_clause_fig = $is_inscripciones ? "cl.nombre_corto ASC, n.apellidos ASC" : "i.orden ASC, n.apellidos ASC";
+        // Comprobar si existen órdenes asignados (> 0) en esta categoría
+        $has_orden_fig = false;
+        $q_chk_ord = mysqli_query($connection, "SELECT 1 FROM inscripciones_figuras WHERE id_fase = '$id_fase_ref' AND orden > 0 LIMIT 1");
+        if ($q_chk_ord && mysqli_num_rows($q_chk_ord) > 0) {
+            $has_orden_fig = true;
+        }
+
+        // Consultar nadadoras inscritas (si hay orden asignado, respetar orden de salida i.orden)
+        $order_clause_fig = $has_orden_fig ? "i.orden ASC, n.apellidos ASC" : "cl.nombre_corto ASC, n.apellidos ASC";
         $cond_club_fig = ($filtro_club_id > 0) ? " AND n.club = '$filtro_club_id'" : "";
         $q_insc = "SELECT i.*, n.nombre, n.apellidos, n.año_nacimiento, cl.nombre_corto 
                    FROM inscripciones_figuras i 
@@ -248,6 +255,10 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
                 }
             }
             if ($inicio_orden <= 0) $inicio_orden = 1;
+            // Ajustar inicio de corte si excede el número de inscritas (rotación modular)
+            if ($num_insc > 0 && $inicio_orden > $num_insc) {
+                $inicio_orden = (($inicio_orden - 1) % $num_insc) + 1;
+            }
             $fig['corte_num'] = $corte_num;
             $fig['inicio_orden'] = $inicio_orden;
 
@@ -297,14 +308,10 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
             $bg_color = $fill ? 'background-color:rgb(252, 228, 236);' : 'background-color:white;';
             
             $orden_real = $row['orden'];
-            if($is_inscripciones) {
-                $orden = "-";
-            } else {
-                if($orden_real <= -1 && $orden_real >= -9) $orden = "PS";
-                else if($orden_real <= -10) $orden = "EX";
-                else if($orden_real == 0 || $orden_real === null) $orden = "-";
-                else $orden = $orden_real;
-            }
+            if($orden_real <= -1 && $orden_real >= -9) $orden = "PS";
+            else if($orden_real <= -10) $orden = "EX";
+            else if($orden_real == 0 || $orden_real === null) $orden = "-";
+            else $orden = $orden_real;
 
             $text_color = 'color:rgb(30, 41, 59);';
             $font_weight = 'font-weight:normal;';
@@ -318,9 +325,9 @@ if ($res_cats_fig && mysqli_num_rows($res_cats_fig) > 0) {
                 $nombre = $row['apellidos'] . ", " . $row['nombre'];
             }
             
-            // Resaltar inicio de corte en orden de salida
+            // Resaltar inicio de corte
             $corte_pill = '';
-            if(!$is_inscripciones && isset($cortes_arr[$orden_real])) {
+            if($orden_real > 0 && isset($cortes_arr[$orden_real])) {
                 $num_c = $cortes_arr[$orden_real];
                 $text_color = 'color:rgb(233, 38, 98);';
                 $font_weight = 'font-weight:bold;';
@@ -370,8 +377,15 @@ if ($res_fases_rut && mysqli_num_rows($res_fases_rut) > 0) {
     while($fase_rut = mysqli_fetch_assoc($res_fases_rut)) {
         $id_fase = $fase_rut['id_fase'];
         
+        // Comprobar si existen órdenes asignados (> 0) en esta fase de rutinas
+        $has_orden_rut = false;
+        $q_chk_rord = mysqli_query($connection, "SELECT 1 FROM rutinas WHERE id_fase = '$id_fase' AND orden > 0 LIMIT 1");
+        if ($q_chk_rord && mysqli_num_rows($q_chk_rord) > 0) {
+            $has_orden_rut = true;
+        }
+
         // Consultar rutinas registradas en esta fase
-        $order_clause_rut = $is_inscripciones ? "cl.nombre_corto ASC, r.id ASC" : "r.orden ASC, r.id ASC";
+        $order_clause_rut = $has_orden_rut ? "r.orden ASC, r.id ASC" : "cl.nombre_corto ASC, r.id ASC";
         $cond_club_rut = ($filtro_club_id > 0) ? " AND r.id_club = '$filtro_club_id'" : "";
         $q_ruts = "SELECT r.*, cl.nombre as club_nombre, cl.nombre_corto as club_corto 
                    FROM rutinas r 
@@ -461,15 +475,11 @@ if ($res_fases_rut && mysqli_num_rows($res_fases_rut) > 0) {
             
             // Turno de actuación
             $orden_real = $rut['orden'];
-            if ($is_inscripciones) {
-                $orden = "-";
-            } else {
-                if ($orden_real == -1) $orden = "PS";
-                elseif ($orden_real == -2) $orden = "EX";
-                elseif ($orden_real <= -10) $orden = "EX";
-                elseif ($orden_real == 0 || $orden_real === null) $orden = "-";
-                else $orden = $orden_real;
-            }
+            if ($orden_real == -1) $orden = "PS";
+            elseif ($orden_real == -2) $orden = "EX";
+            elseif ($orden_real <= -10) $orden = "EX";
+            elseif ($orden_real == 0 || $orden_real === null) $orden = "-";
+            else $orden = $orden_real;
 
             // Consultar deportistas de la rutina
             $q_parts = "SELECT rp.reserva, n.nombre, n.apellidos, n.año_nacimiento 
