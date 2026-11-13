@@ -423,12 +423,12 @@ if (!empty($clave_liga_comp)) {
                                 <i class="fas fa-shapes text-indigo-600 text-xl"></i>
                                 <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Elementos</span>
                             </a>
-                            <a href="informes/hojas_puntuacion_rutinas_sincronizacion.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
-                                <i class="fas fa-file-pdf text-red-500 text-xl"></i>
+                            <a href="informes/hojas_puntuacion_rutinas_sincronizacion.php?id_competicion=<?php echo $id_competicion; ?>&_v=<?php echo time(); ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline" title="Hojas de Puntuación para Panel de Sincronización (A4 para guillotina)">
+                                <i class="fas fa-water text-cyan-600 text-xl"></i>
                                 <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Sincro</span>
                             </a>
-                            <a href="informes/hojas_puntuacion_rutinas_ia.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
-                                <i class="fas fa-file-pdf text-red-500 text-xl"></i>
+                            <a href="informes/hojas_puntuacion_rutinas_ia.php?id_competicion=<?php echo $id_competicion; ?>&_v=<?php echo time(); ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline" title="Hojas de Puntuación para Panel de Impresión Artística (A4 para guillotina)">
+                                <i class="fas fa-palette text-purple-600 text-xl"></i>
                                 <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Artística</span>
                             </a>
                             <a href="informes/informe_puntuaciones.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Árbitros&hoja_tecnica=si&id_fase=0" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
