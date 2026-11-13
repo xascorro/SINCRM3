@@ -1,21 +1,9 @@
-[2026-11-13 05:06] Resumen de sesión:
-1. Inserción por lote de las 5 Coach Cards recibidas por Telegram:
-   - Rutina #774 (Solo Técnico Junior - Rebeca Arroyo / SALHAMA):
-     * 6 elementos (5 TREs + 1 Híbrido Libre de 9 movimientos).
-     * Dificultad total declarada: 22.100.
-   - Rutina #775 (Solo Técnico Junior - Alba Sánchez / SALHAMA):
-     * 6 elementos (5 TREs + 1 Híbrido Libre de 11 movimientos).
-     * Dificultad total declarada: 21.550.
-   - Rutina #776 (Solo Técnico ABSOLUTO - Pilar Jiménez / SALHAMA):
-     * 6 elementos (5 TREs + 1 Híbrido Libre de 13 movimientos).
-     * Dificultad total declarada: 21.800.
-   - Rutina #777 (Solo Técnico ABSOLUTO - Denisa Nicoleta Patru / SALHAMA):
-     * Corregido ID: el usuario indicó 781 por errata, correspondiendo al Solo Técnico Absoluto de Denisa Patru (#777).
-     * 6 elementos (5 TREs + 1 Híbrido Libre de 9 movimientos).
-     * Dificultad total declarada: 21.850.
-   - Rutina #780 (Equipo Técnico Junior - Club Sincro Alhama):
-     * 8 elementos (2 Acrobacias + 1 Híbrido Libre de 8 movimientos + 5 TREs).
-     * Dificultad total declarada: 22.200.
-2. Todas las rutinas quedaron completamente pobladas en `hibridos_rutina` y actualizadas en `rutinas.dd_total` en producción (`sincrm_prod_db`).
-3. Verificada la generación oficial de PDF para cada una de las 5 rutinas en `informes/informe_coach_card.php`.
-4. Caché de Cloudflare purgada para `pedrodiaz.eu`.
+[2026-11-13 05:25] Resumen de sesión:
+1. Ajuste visual en el informe oficial de Coach Cards (`informes/informe_coach_card.php`):
+   - Elevación del pie de página / imagen de footer (de Y=280 a Y=270, texto a Y=271) para garantizar un margen inferior limpio y holgado de ~17 mm en la página A4.
+   - Ajuste de AutoPageBreak a 28 mm y margen inferior de footer a 15 mm.
+   - Reorganización de las cajas de resumen y firmas en el pie del informe:
+     * Izquierda (58%): Casillas de validación y firmas en orden Entrenador/a -> Controlador Técnico (DTC).
+     * Derecha (38%): Casilla destacada con la Dificultad Total Declarada (DD Total) en tipografía grande (16pt).
+2. Verificada la generación del PDF (`id_competicion=81`) comprobando que las 9 rutinas encajan perfectamente a 1 página por rutina sin desbordamientos.
+3. Caché purgada en Cloudflare para `pedrodiaz.eu`.

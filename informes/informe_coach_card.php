@@ -99,9 +99,9 @@ class SINCRM_COACH_CARD_PDF extends TCPDF {
 
     public function Footer() {
         if (!empty($GLOBALS['footer_image']) && file_exists($GLOBALS['footer_image'])) {
-            $this->Image($GLOBALS['footer_image'], 12, 280, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+            $this->Image($GLOBALS['footer_image'], 12, 270, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
         }
-        $this->SetY(281);
+        $this->SetY(271);
         $this->SetFont('helvetica', 'B', 7);
         $this->SetTextColor(71, 85, 105);
         $this->setCellPaddings(0, 0, 0, 0);
@@ -124,8 +124,8 @@ $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
 
 $pdf->SetMargins(12, 30, 12);
 $pdf->SetHeaderMargin(6);
-$pdf->SetFooterMargin(12);
-$pdf->SetAutoPagebreak(TRUE, 18);
+$pdf->SetFooterMargin(15);
+$pdf->SetAutoPagebreak(TRUE, 28);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
 // Control de privacidad por rol
@@ -368,23 +368,15 @@ while ($r_cc = mysqli_fetch_assoc($res_rutinas_cc)) {
 
     $html .= '</table>';
 
-    // PIE RESUMEN CON DIFICULTAD TOTAL DECLARADA Y FIRMAS
+    // PIE RESUMEN CON FIRMAS (IZQUIERDA) Y DIFICULTAD TOTAL DECLARADA (DERECHA)
     $dd_declarada_final = ($row['dd_total'] > 0) ? floatval($row['dd_total']) : $dd_total_acumulada;
 
     $html .= '<br>';
     $html .= '<table cellpadding="4" style="width:100%; border-collapse:collapse; margin-top:6px;">';
     $html .= '<tr>';
 
-    // Caja DD Total Declarada
-    $html .= '<td width="45%" style="border:1px solid #0f172a; background-color:#f8fafc; padding:6px;">';
-    $html .= '<div style="font-size:7pt; font-weight:bold; color:#64748b; text-transform:uppercase;">DIFICULTAD TOTAL DECLARADA (DD TOTAL):</div>';
-    $html .= '<div style="font-size:16pt; font-weight:bold; color:#0f172a; margin-top:2px;">' . number_format($dd_declarada_final, 3) . '</div>';
-    $html .= '</td>';
-
-    $html .= '<td width="5%"></td>';
-
-    // Casillas de Firma / Validación
-    $html .= '<td width="50%" style="border:1px solid #cbd5e1; background-color:#ffffff; font-size:6.5pt; color:#64748b; padding:6px;">';
+    // 1 y 2. Casillas de Firma / Validación (A la izquierda: Entrenador/a primero, luego DTC)
+    $html .= '<td width="58%" style="border:1px solid #cbd5e1; background-color:#ffffff; font-size:6.5pt; color:#64748b; padding:6px;">';
     $html .= '<table style="width:100%;">';
     $html .= '<tr>';
     $html .= '<td width="50%" align="center" style="border-right:1px solid #e2e8f0;">';
@@ -395,6 +387,14 @@ while ($r_cc = mysqli_fetch_assoc($res_rutinas_cc)) {
     $html .= '</td>';
     $html .= '</tr>';
     $html .= '</table>';
+    $html .= '</td>';
+
+    $html .= '<td width="4%"></td>';
+
+    // 3. Caja DD Total Declarada (A la derecha del todo)
+    $html .= '<td width="38%" style="border:1px solid #0f172a; background-color:#f8fafc; padding:6px; text-align:center;">';
+    $html .= '<div style="font-size:7pt; font-weight:bold; color:#64748b; text-transform:uppercase;">DIFICULTAD TOTAL DECLARADA (DD TOTAL):</div>';
+    $html .= '<div style="font-size:16pt; font-weight:bold; color:#0f172a; margin-top:2px;">' . number_format($dd_declarada_final, 3) . '</div>';
     $html .= '</td>';
 
     $html .= '</tr>';
