@@ -1,13 +1,9 @@
-[2026-11-13 05:29] Resumen de sesión:
-1. Generación y envío por Telegram del archivo unificado de Coach Cards del Club Sincro Alhama (Competición #81 - XIV Liga de Figuras):
-   - Documento generado con el filtro oficial de club (`id_competicion=81&id_club=1`).
-   - Contiene las 7 rutinas oficiales del club (7 páginas):
-     * #775: Solo Técnico Junior - Alba Sánchez (DD: 21.550)
-     * #774: Solo Técnico Junior - Rebeca Arroyo (DD: 22.100)
-     * #777: Solo Técnico ABSOLUTO - Denisa Patru (DD: 21.850)
-     * #776: Solo Técnico ABSOLUTO - Pilar Jiménez (DD: 21.800)
-     * #778: Dúo Técnico Junior - Rebeca Arroyo, Pilar Jiménez (DD: 22.600)
-     * #779: Dúo Técnico Junior - Alba Sánchez, Denisa Patru (DD: 22.000)
-     * #780: Equipo Técnico Junior - Alhama (DD: 22.200)
-   - Enviado mediante bot de Telegram al chat del usuario (Message ID 1409, `Coach_Cards_Club_Sincro_Alhama_XIV_Liga_de_Figuras.pdf`).
-2. Explicado el flujo de descarga web para clubes (`rutinas.php` -> botón Coach Card con `id_club=1`).
+[2026-11-13 05:37] Resumen de sesión:
+1. Generación y envío por Telegram del archivo unificado de Coach Cards del Club Sincronizada Lorca (Competición #81 - XIV Liga de Figuras):
+   - Documento generado con el filtro oficial de club (`id_competicion=81&id_club=19`).
+   - Contiene las 2 rutinas oficiales del club (2 páginas):
+     * #781: Solo Técnico Junior — Marisa Padilla Hernández ("Wakanda", DD: 22.650)
+     * #782: Dúo Técnico Junior — Marina Molina González e Irene Periago Pérez ("We found love", DD: 18.600)
+   - Eliminado el pie automático "Powered by TCPDF" mediante `$this->tcpdflink = false` en la subclase PDF.
+   - Enviado mediante bot de Telegram al chat del usuario (Message ID 1410, `Coach_Cards_Club_Sincronizada_Lorca_XIV_Liga_de_Figuras.pdf`).
+2. Caché de Cloudflare purgada para `pedrodiaz.eu`.

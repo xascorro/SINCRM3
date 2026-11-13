@@ -79,6 +79,11 @@ function getReglamentaryDurationCoachCard($mod_nombre, $cat_nombre) {
 
 // Clase PDF Coach Card
 class SINCRM_COACH_CARD_PDF extends TCPDF {
+    public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8', $diskcache=false, $pdfa=false) {
+        parent::__construct($orientation, $unit, $format, $unicode, $encoding, $diskcache, $pdfa);
+        $this->tcpdflink = false;
+    }
+
     public function Header() {
         if (!empty($GLOBALS['header_image']) && file_exists($GLOBALS['header_image'])) {
             $this->Image($GLOBALS['header_image'], 12, 6, 186, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
