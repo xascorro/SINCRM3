@@ -419,9 +419,9 @@ if (!empty($clave_liga_comp)) {
                     <div class="mt-6 pt-4 border-t border-slate-100">
                         <h4 class="text-[10px] font-black uppercase text-slate-400 tracking-wider mb-3 px-1">Hojas de Puntuación PDF para Paneles</h4>
                         <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                            <a href="informes/hojas_puntuacion_rutinas.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
-                                <i class="fas fa-file-pdf text-red-500 text-xl"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Ejecución</span>
+                            <a href="informes/hojas_puntuacion_rutinas_elementos.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline" title="Hojas de Puntuación para Panel de Elementos (A4 para guillotina)">
+                                <i class="fas fa-shapes text-indigo-600 text-xl"></i>
+                                <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Elementos</span>
                             </a>
                             <a href="informes/hojas_puntuacion_rutinas_sincronizacion.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
                                 <i class="fas fa-file-pdf text-red-500 text-xl"></i>
