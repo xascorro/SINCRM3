@@ -48,29 +48,31 @@ $pdf->setPrintFooter(false);
 $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false);
 
-/**
- * Dibuja las guías de corte y marcas de centrado para guillotina
- * Eje vertical central: X = 105.0 mm
- * Eje horizontal central: Y = 148.5 mm
- */
-function drawGuillotineGuides($pdf) {
-    // 1. Líneas centrales discontinuas
-    $pdf->SetLineStyle(array('width' => 0.15, 'cap' => 'butt', 'join' => 'miter', 'dash' => '2,3', 'color' => array(190, 200, 210)));
-    $pdf->Line(105, 0, 105, 297);
-    $pdf->Line(0, 148.5, 210, 148.5);
+if (!function_exists('drawGuillotineGuides')) {
+    /**
+     * Dibuja las guías de corte y marcas de centrado para guillotina
+     * Eje vertical central: X = 105.0 mm
+     * Eje horizontal central: Y = 148.5 mm
+     */
+    function drawGuillotineGuides($pdf) {
+        // 1. Líneas centrales discontinuas
+        $pdf->SetLineStyle(array('width' => 0.15, 'cap' => 'butt', 'join' => 'miter', 'dash' => '2,3', 'color' => array(190, 200, 210)));
+        $pdf->Line(105, 0, 105, 297);
+        $pdf->Line(0, 148.5, 210, 148.5);
 
-    // 2. Marcas de alineación sólidas en los 4 bordes exteriores del papel
-    $pdf->SetLineStyle(array('width' => 0.45, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(71, 85, 105)));
-    $pdf->Line(105, 0, 105, 4.0);
-    $pdf->Line(105, 293.0, 105, 297);
-    $pdf->Line(0, 148.5, 4.0, 148.5);
-    $pdf->Line(206.0, 148.5, 210, 148.5);
+        // 2. Marcas de alineación sólidas en los 4 bordes exteriores del papel
+        $pdf->SetLineStyle(array('width' => 0.45, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(71, 85, 105)));
+        $pdf->Line(105, 0, 105, 4.0);
+        $pdf->Line(105, 293.0, 105, 297);
+        $pdf->Line(0, 148.5, 4.0, 148.5);
+        $pdf->Line(206.0, 148.5, 210, 148.5);
 
-    // 3. Símbolos de tijera
-    $pdf->SetFont('helvetica', '', 7);
-    $pdf->SetTextColor(100, 116, 139);
-    $pdf->Text(106, 1.2, '✂');
-    $pdf->Text(1.2, 149.2, '✂');
+        // 3. Símbolos de tijera
+        $pdf->SetFont('helvetica', '', 7);
+        $pdf->SetTextColor(100, 116, 139);
+        $pdf->Text(106, 1.2, '✂');
+        $pdf->Text(1.2, 149.2, '✂');
+    }
 }
 
 /**
@@ -97,42 +99,30 @@ function buildSyncSlipHTML($comp_nombre, $juez_num, $juez_nombre, $modalidad, $c
     $html .= '</tr>';
     $html .= '</table>';
 
-    // Tabla de Errores y Conteo (Área maximizada para trazar palotes a mano)
+    // Tabla de Errores y Conteo (Área maximizada para trazar palotes a mano, sin mención a deducción)
     $html .= '<table cellpadding="2" cellspacing="0" style="width: 100%; margin-top: 3.5px; border: 1.2px solid #0f172a;">';
     $html .= '<thead>';
-    $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 7.5pt;">';
-    $html .= '<th style="width: 33.33%; text-align: center; border-right: 1px solid #475569; padding: 3px;">PEQUEÑOS<br><span style="font-size: 6.5pt; color: #38bdf8;">-0.1 pto</span></th>';
-    $html .= '<th style="width: 33.34%; text-align: center; border-right: 1px solid #475569; padding: 3px;">OBVIOS<br><span style="font-size: 6.5pt; color: #38bdf8;">-0.5 ptos</span></th>';
-    $html .= '<th style="width: 33.33%; text-align: center; padding: 3px;">MAYORES<br><span style="font-size: 6.5pt; color: #38bdf8;">-3.0 ptos</span></th>';
+    $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 8pt; height: 22px;">';
+    $html .= '<th style="width: 33.33%; text-align: center; border-right: 1px solid #475569; padding: 4px;">PEQUEÑOS</th>';
+    $html .= '<th style="width: 33.34%; text-align: center; border-right: 1px solid #475569; padding: 4px;">OBVIOS</th>';
+    $html .= '<th style="width: 33.33%; text-align: center; padding: 4px;">MAYORES</th>';
     $html .= '</tr>';
     $html .= '</thead>';
     $html .= '<tbody>';
 
-    // Gran caja de conteo (~68mm de altura libre)
-    $tally_height_px = 195;
+    // Gran caja de conteo (~85mm de altura libre)
+    $tally_height_px = 245;
     $html .= '<tr>';
-    $html .= '<td height="' . $tally_height_px . '" style="width: 33.33%; background-color: #ffffff; border-right: 1px solid #94a3b8; border-bottom: 1px solid #94a3b8; font-size: 6pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO PALOTES</td>';
-    $html .= '<td height="' . $tally_height_px . '" style="width: 33.34%; background-color: #ffffff; border-right: 1px solid #94a3b8; border-bottom: 1px solid #94a3b8; font-size: 6pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO PALOTES</td>';
-    $html .= '<td height="' . $tally_height_px . '" style="width: 33.33%; background-color: #ffffff; border-bottom: 1px solid #94a3b8; font-size: 6pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO PALOTES</td>';
+    $html .= '<td height="' . $tally_height_px . '" style="width: 33.33%; background-color: #ffffff; border-right: 1px solid #94a3b8; border-bottom: 1.2px solid #0f172a; font-size: 6.5pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO</td>';
+    $html .= '<td height="' . $tally_height_px . '" style="width: 33.34%; background-color: #ffffff; border-right: 1px solid #94a3b8; border-bottom: 1.2px solid #0f172a; font-size: 6.5pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO</td>';
+    $html .= '<td height="' . $tally_height_px . '" style="width: 33.33%; background-color: #ffffff; border-bottom: 1.2px solid #0f172a; font-size: 6.5pt; color: #cbd5e1; text-align: center; vertical-align: bottom;">CONTEO</td>';
     $html .= '</tr>';
 
-    // Fila de Recuento de Errores
-    $html .= '<tr style="background-color: #f8fafc;">';
-    $html .= '<td style="width: 33.33%; font-size: 7.5pt; font-weight: bold; color: #334155; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; text-align: center; padding: 3px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '<td style="width: 33.34%; font-size: 7.5pt; font-weight: bold; color: #334155; border-right: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; text-align: center; padding: 3px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '<td style="width: 33.33%; font-size: 7.5pt; font-weight: bold; color: #334155; border-bottom: 1px solid #cbd5e1; text-align: center; padding: 3px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '</tr>';
-
-    // Fila de Deducción por categoría
+    // Fila única de Total de Errores
     $html .= '<tr style="background-color: #f1f5f9;">';
-    $html .= '<td style="width: 33.33%; font-size: 7.5pt; color: #475569; border-right: 1px solid #cbd5e1; border-bottom: 1.5px solid #0f172a; text-align: center; padding: 3px;">Deduc:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '<td style="width: 33.34%; font-size: 7.5pt; color: #475569; border-right: 1px solid #cbd5e1; border-bottom: 1.5px solid #0f172a; text-align: center; padding: 3px;">Deduc:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '<td style="width: 33.33%; font-size: 7.5pt; color: #475569; border-bottom: 1.5px solid #0f172a; text-align: center; padding: 3px;">Deduc:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
-    $html .= '</tr>';
-
-    // Fila final de Penalización Total de Sincronización
-    $html .= '<tr style="background-color: #0f172a; color: #ffffff;">';
-    $html .= '<td colspan="3" style="text-align: center; font-size: 8.5pt; font-weight: bold; padding: 4px;">TOTAL PENALIZACIÓN SINCRONIZACIÓN:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+    $html .= '<td style="width: 33.33%; font-size: 8.5pt; font-weight: bold; color: #0f172a; border-right: 1px solid #cbd5e1; text-align: center; padding: 6px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+    $html .= '<td style="width: 33.34%; font-size: 8.5pt; font-weight: bold; color: #0f172a; border-right: 1px solid #cbd5e1; text-align: center; padding: 6px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
+    $html .= '<td style="width: 33.33%; font-size: 8.5pt; font-weight: bold; color: #0f172a; text-align: center; padding: 6px;">Total:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>';
     $html .= '</tr>';
 
     $html .= '</tbody>';

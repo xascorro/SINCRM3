@@ -47,29 +47,31 @@ $pdf->setPrintFooter(false);
 $pdf->SetMargins(0, 0, 0);
 $pdf->SetAutoPageBreak(false);
 
-/**
- * Dibuja las guías de corte y marcas de centrado para guillotina
- * Eje vertical central: X = 105.0 mm
- * Eje horizontal central: Y = 148.5 mm
- */
-function drawGuillotineGuides($pdf) {
-    // 1. Líneas centrales discontinuas
-    $pdf->SetLineStyle(array('width' => 0.15, 'cap' => 'butt', 'join' => 'miter', 'dash' => '2,3', 'color' => array(190, 200, 210)));
-    $pdf->Line(105, 0, 105, 297);
-    $pdf->Line(0, 148.5, 210, 148.5);
+if (!function_exists('drawGuillotineGuides')) {
+    /**
+     * Dibuja las guías de corte y marcas de centrado para guillotina
+     * Eje vertical central: X = 105.0 mm
+     * Eje horizontal central: Y = 148.5 mm
+     */
+    function drawGuillotineGuides($pdf) {
+        // 1. Líneas centrales discontinuas
+        $pdf->SetLineStyle(array('width' => 0.15, 'cap' => 'butt', 'join' => 'miter', 'dash' => '2,3', 'color' => array(190, 200, 210)));
+        $pdf->Line(105, 0, 105, 297);
+        $pdf->Line(0, 148.5, 210, 148.5);
 
-    // 2. Marcas de alineación sólidas en los 4 bordes exteriores del papel
-    $pdf->SetLineStyle(array('width' => 0.45, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(71, 85, 105)));
-    $pdf->Line(105, 0, 105, 4.0);
-    $pdf->Line(105, 293.0, 105, 297);
-    $pdf->Line(0, 148.5, 4.0, 148.5);
-    $pdf->Line(206.0, 148.5, 210, 148.5);
+        // 2. Marcas de alineación sólidas en los 4 bordes exteriores del papel
+        $pdf->SetLineStyle(array('width' => 0.45, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(71, 85, 105)));
+        $pdf->Line(105, 0, 105, 4.0);
+        $pdf->Line(105, 293.0, 105, 297);
+        $pdf->Line(0, 148.5, 4.0, 148.5);
+        $pdf->Line(206.0, 148.5, 210, 148.5);
 
-    // 3. Símbolos de tijera
-    $pdf->SetFont('helvetica', '', 7);
-    $pdf->SetTextColor(100, 116, 139);
-    $pdf->Text(106, 1.2, '✂');
-    $pdf->Text(1.2, 149.2, '✂');
+        // 3. Símbolos de tijera
+        $pdf->SetFont('helvetica', '', 7);
+        $pdf->SetTextColor(100, 116, 139);
+        $pdf->Text(106, 1.2, '✂');
+        $pdf->Text(1.2, 149.2, '✂');
+    }
 }
 
 /**
@@ -120,7 +122,7 @@ function buildArtisticSlipHTML($comp_nombre, $juez_num, $juez_nombre, $modalidad
     $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 8pt; height: 20px;">';
     $html .= '<th style="width: 9%; text-align: center; border-right: 1px solid #475569;">#</th>';
     $html .= '<th style="width: 53%; text-align: left; border-right: 1px solid #475569;">&nbsp;CRITERIO ARTÍSTICO</th>';
-    $html .= '<th style="width: 38%; text-align: center;">PUNTUACIÓN (0 - 10)</th>';
+    $html .= '<th style="width: 38%; text-align: center;">NOTA</th>';
     $html .= '</tr>';
     $html .= '</thead>';
     $html .= '<tbody>';
