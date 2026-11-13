@@ -1,8 +1,15 @@
-[2026-11-13 04:40] Resumen de sesión:
-1. Corrección Fatal Error en Composer (`coach_card_composer_code.php`):
-   - Error: `Data too long for column 'texto' at row 1 in coach_card_composer_code.php:136`.
-   - Causa: La columna `hibridos_rutina.texto` estaba tipada como `varchar(11)`. Al guardar acrobacias con códigos más largos de 11 caracteres (ej: `SL!fr0.5> or SL` de 15 chars, `SL!f2r0.5+r1>` de 13 chars, o acrobacias complejas), MariaDB en modo estricto arrojaba error fatal.
-   - Solución: 
-     * Se amplió `hibridos_rutina.texto` a `varchar(50)` y `hibridos_rutina.tipo` a `varchar(25)` en local y en el servidor Beta (`sincrm4` y `sincrm4beta`).
-     * Se protegieron con `mysqli_real_escape_string()` las variables `$texto_dd`, `$texto_bm` y `$texto_b` en `coach_card_composer_code.php`.
-   - Desplegado en `beta.pedrodiaz.eu` y caché purgada en Cloudflare.
+[2026-11-13 04:50] Resumen de sesión:
+1. Inserción de Coach Card para Rutina #779 (Dúo Técnico Junior - Alba Sánchez y Denisa Patru / C.N. Sincro Alhama):
+   - Descarga directa del PDF de Telegram (`COACH_CARD_DUO_TÉCNICO_JUNIOR_ALBA_SÁNCHEZ_Y_DENISA_PATRU.pdf`).
+   - Parseo y correspondencia con el catálogo técnico 2026-2027:
+     * Elem 1 (00:05-00:12) Part 2: D-TRE2a (DD: 2.500)
+     * Elem 2 (00:17-00:24) Part 4: ACROPAIR (BM: 0.100) + L!fr1 (DD: 1.200) -> Total: 1.300
+     * Elem 3 (00:36-00:51) Part 1: HYBRID (BM: 0.500) + 12 movimientos (F1b, F6c, 2R1, F1b, F6c, RC1, A10, A4b, A6, CB, C3, C3 = 5.900) -> Total: 6.400
+     * Elem 4 (01:01-01:09) Part 2: D-TRE3 (DD: 3.600)
+     * Elem 5 (01:22-01:32) Part 2: D-TRE4a (DD: 3.400)
+     * Elem 6 (01:55-02:02) Part 2: D-TRE5b (DD: 2.500)
+     * Elem 7 (02:06-02:17) Part 2: D-TRE1a (DD: 2.300)
+     * Dificultad Total Declarada: 22.000
+   - Población completa de `hibridos_rutina` y actualización de `rutinas.dd_total = 22.000` en producción (`sincrm_prod_db`).
+   - Verificación de auditoría técnica y generación de PDF oficial en `informes/informe_coach_card.php?id_rutina=779`.
+2. Corrección previa: Ampliación de columnas `texto` (varchar 50) y `tipo` (varchar 25) en `hibridos_rutina` para evitar desbordamientos con nombres de acrobacias compuestas.
