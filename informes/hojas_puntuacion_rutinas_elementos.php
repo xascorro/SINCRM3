@@ -270,5 +270,9 @@ while ($fase = mysqli_fetch_array($fases)) {
     }
 }
 
-// 5. Salida del PDF
+// 5. Salida del PDF con cabeceras anti-caché estrictas
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 $pdf->Output('hojas_puntuacion_elementos_' . $id_competicion_activa . '.pdf', 'I');
