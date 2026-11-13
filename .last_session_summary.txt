@@ -1,9 +1,13 @@
-[2026-11-13 05:25] Resumen de sesión:
-1. Ajuste visual en el informe oficial de Coach Cards (`informes/informe_coach_card.php`):
-   - Elevación del pie de página / imagen de footer (de Y=280 a Y=270, texto a Y=271) para garantizar un margen inferior limpio y holgado de ~17 mm en la página A4.
-   - Ajuste de AutoPageBreak a 28 mm y margen inferior de footer a 15 mm.
-   - Reorganización de las cajas de resumen y firmas en el pie del informe:
-     * Izquierda (58%): Casillas de validación y firmas en orden Entrenador/a -> Controlador Técnico (DTC).
-     * Derecha (38%): Casilla destacada con la Dificultad Total Declarada (DD Total) en tipografía grande (16pt).
-2. Verificada la generación del PDF (`id_competicion=81`) comprobando que las 9 rutinas encajan perfectamente a 1 página por rutina sin desbordamientos.
-3. Caché purgada en Cloudflare para `pedrodiaz.eu`.
+[2026-11-13 05:29] Resumen de sesión:
+1. Generación y envío por Telegram del archivo unificado de Coach Cards del Club Sincro Alhama (Competición #81 - XIV Liga de Figuras):
+   - Documento generado con el filtro oficial de club (`id_competicion=81&id_club=1`).
+   - Contiene las 7 rutinas oficiales del club (7 páginas):
+     * #775: Solo Técnico Junior - Alba Sánchez (DD: 21.550)
+     * #774: Solo Técnico Junior - Rebeca Arroyo (DD: 22.100)
+     * #777: Solo Técnico ABSOLUTO - Denisa Patru (DD: 21.850)
+     * #776: Solo Técnico ABSOLUTO - Pilar Jiménez (DD: 21.800)
+     * #778: Dúo Técnico Junior - Rebeca Arroyo, Pilar Jiménez (DD: 22.600)
+     * #779: Dúo Técnico Junior - Alba Sánchez, Denisa Patru (DD: 22.000)
+     * #780: Equipo Técnico Junior - Alhama (DD: 22.200)
+   - Enviado mediante bot de Telegram al chat del usuario (Message ID 1409, `Coach_Cards_Club_Sincro_Alhama_XIV_Liga_de_Figuras.pdf`).
+2. Explicado el flujo de descarga web para clubes (`rutinas.php` -> botón Coach Card con `id_club=1`).
