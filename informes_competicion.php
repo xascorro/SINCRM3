@@ -435,9 +435,9 @@ if (!empty($clave_liga_comp)) {
                                 <i class="fas fa-gavel text-slate-400 text-xl"></i>
                                 <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Árbitros</span>
                             </a>
-                            <a href="informes/informe_rutinas_notas_anotadores.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Anotadores" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
+                            <a href="informes/informe_rutinas_notas_anotadores.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Anotadores&_v=<?php echo time(); ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline" title="Hojas para Anotadores de Rutinas">
                                 <i class="fas fa-user-pen text-blue-500 text-xl"></i>
-                                <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Anotadores</span>
+                                <span class="text-[9px] font-black uppercase text-slate-600 truncate w-full">Anot. Rutinas</span>
                             </a>
                             <a href="informes/hojas_puntuacion_rutinas_no_cc.php?id_competicion=<?php echo $id_competicion; ?>" target="_blank" class="flex flex-col items-center gap-1.5 p-2.5 rounded-xl hover:bg-slate-50 active:scale-[0.98] border border-transparent hover:border-slate-100 transition-all text-center no-underline">
                                 <i class="fas fa-file-pdf text-amber-600 text-xl"></i>
@@ -486,7 +486,7 @@ if (!empty($clave_liga_comp)) {
                             <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-emerald-600 shrink-0"></i>
                         </a>
 
-                        <a href="informes/informe_figuras_notas_anotadores.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Anotadores" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
+                        <a href="informes/informe_figuras_notas_anotadores.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Anotadores&_v=<?php echo time(); ?>" target="_blank" class="p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100 flex items-center justify-between group hover:border-emerald-200 hover:bg-slate-50 active:scale-[0.98] transition-all no-underline">
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-slate-400 group-hover:text-emerald-500 transition-colors shadow-2xs shrink-0">
                                     <i class="fas fa-user-pen text-sm"></i>

@@ -1,4 +1,13 @@
 <?php
+//============================================================+
+// File name   : informe_figuras_notas_anotadores.php
+// Description : Hojas de puntuación para Anotadores / Secretarios
+//               de Panel en pruebas de Figuras (SINCRM v4).
+//               Diseñado para impresión A4 vertical (1 figura por hoja),
+//               máxima legibilidad y comodidad de escritura a mano.
+// Author      : Pedro Díaz / SINCRM
+//============================================================+
+
 require_once(__DIR__ . '/../tcpdf/tcpdf.php');
 include_once(__DIR__ . '/../database/dbconfig.php');
 include_once(__DIR__ . '/../lib/my_functions.php');
@@ -7,6 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// 1. Control de acceso (sesión activa o token cron)
 $cron_token_expected = "internal_cron_" . md5("SincrmInternalCron" . date('Y-m-d'));
 $cron_token_provided = $_GET['cron_token'] ?? '';
 
@@ -15,7 +25,10 @@ if (!isset($_SESSION['email']) && !isset($_SESSION['username']) && $cron_token_p
     exit();
 }
 
+// 2. Obtener parámetros de entrada
 $id_competicion = isset($_GET['id_competicion']) ? (int)$_GET['id_competicion'] : (isset($_SESSION['id_competicion_usuario']) ? (int)$_SESSION['id_competicion_usuario'] : (isset($_SESSION['id_competicion_activa']) ? (int)$_SESSION['id_competicion_activa'] : 0));
+$id_fase_filtro = isset($_GET['id_fase']) ? (int)$_GET['id_fase'] : 0;
+$id_categoria_filtro = isset($_GET['id_categoria']) ? (int)$_GET['id_categoria'] : 0;
 
 if ($id_competicion > 0) {
     $q_comp = "SELECT * FROM competiciones WHERE id = '$id_competicion' LIMIT 1";
@@ -23,277 +36,329 @@ if ($id_competicion > 0) {
     $q_comp = "SELECT * FROM competiciones WHERE activo = 'si' LIMIT 1";
 }
 $result = mysqli_query($connection, $q_comp);
-$registro = ($result) ? mysqli_fetch_assoc($result) : null;
+$comp = ($result) ? mysqli_fetch_assoc($result) : null;
 
-if ($registro) {
-    $GLOBALS["id_competicion_activa"] = (int)$registro['id'];
-    $GLOBALS["nombre_competicion_activa"] = $registro['nombre'];
-    $GLOBALS["lugar"] = !empty($registro['lugar']) ? $registro['lugar'] : 'Sede Oficial';
-    $GLOBALS["fecha"] = !empty($registro['fecha']) ? dateAFecha($registro['fecha']) : date('d/m/Y');
-    $GLOBALS["organizador"] = $registro['organizador'] ?? '';
-    $GLOBALS["header_image"] = !empty($registro['header_informe']) ? __DIR__ . '/../' . $registro['header_informe'] : '';
-    $GLOBALS["footer_image"] = !empty($registro['footer_informe']) ? __DIR__ . '/../' . $registro['footer_informe'] : '';
-    $GLOBALS["enmascarar_licencia"] = $registro['enmascarar_licencia'] ?? '';
-} else {
-    die("Competición no encontrada.");
+if (!$comp) {
+    die("Error: No se ha encontrado la competición solicitada.");
 }
-//****************************//
-$titulo = $_GET['titulo'];
-$titulo_documento = $GLOBALS['nombre_competicion_activa']."<br>$titulo";
-$nombre_documento = $titulo.' '.$GLOBALS['nombre_competicion_activa'];
-$GLOBALS['footer_substring'] = "Sede: ".$GLOBALS['lugar']."<br> Fecha: ".$GLOBALS['fecha'];
-$logo_header_width= 100;
-$last_page=1;
 
+$GLOBALS["id_competicion_activa"] = (int)$comp['id'];
+$GLOBALS["nombre_competicion_activa"] = $comp['nombre'];
+$GLOBALS["lugar"] = !empty($comp['lugar']) ? $comp['lugar'] : 'Sede Oficial';
+$GLOBALS["fecha"] = !empty($comp['fecha']) ? dateAFecha($comp['fecha']) : date('d/m/Y');
+$GLOBALS["header_image"] = !empty($comp['header_informe']) ? __DIR__ . '/../' . $comp['header_informe'] : '';
+$GLOBALS["footer_image"] = !empty($comp['footer_informe']) ? __DIR__ . '/../' . $comp['footer_informe'] : '';
 
-// Extend the TCPDF class to create custom Header and Footer
-class MYPDF extends TCPDF {
+$GLOBALS['titulo_documento'] = 'HOJA OFICIAL DE ANOTADOR · FIGURAS';
+$GLOBALS['subtitulo_documento'] = $GLOBALS['nombre_competicion_activa'];
+$GLOBALS['footer_substring'] = "Sede: " . $GLOBALS['lugar'] . " · Fecha: " . $GLOBALS['fecha'];
 
-    //Page header
+$nombre_documento = 'Anotadores_Figuras_' . preg_replace('/[^a-zA-Z0-9_-]/', '_', $GLOBALS['nombre_competicion_activa']);
+
+// 3. Clase personalizada TCPDF con cabecera y pie oficiales SINCRM v4
+class SINCRM_ANOTADORES_FIGURAS_PDF extends TCPDF {
+
     public function Header() {
-        // Logo
-        $this->SetFont('helvetica', 12);
-        $this->WriteHTML('<img style="border-bottom:1px #e92662;" src="'.$GLOBALS['header_image'].'">', false, false, false, false, '');
-        $this->SetXY(25,12);
-        $this->WriteHTML('<div style="text-align:center; font-size:large; font-weight:bold">'.$GLOBALS['titulo_documento'].'<em style="font-size:small">Con 3 jueces sacar el total, con 4 jueces sacar la media para obtener la nota faltante y sacar el total.</em></div>', false, false, false, false, '');
+        if (!empty($GLOBALS['header_image']) && file_exists($GLOBALS['header_image'])) {
+            $this->Image($GLOBALS['header_image'], 10, 4, 190, '', 'JPG', '', 'T', false, 300, '', false, false, 0, false, false, false);
+            $this->SetY(5.5);
+        } else {
+            $this->SetY(5.5);
+        }
 
+        $this->SetFont('helvetica', 'B', 12);
+        $this->SetTextColor(5, 150, 105); // Emerald-600
+        $this->Cell(0, 5, $GLOBALS['titulo_documento'], 0, 1, 'C');
+
+        $this->SetFont('helvetica', 'B', 8);
+        $this->SetTextColor(71, 85, 105); // Slate-600
+        $this->Cell(0, 4, mb_strtoupper($GLOBALS['subtitulo_documento'], 'UTF-8'), 0, 1, 'C');
+
+        // Línea divisoria suave bajo la cabecera
+        $this->SetDrawColor(203, 213, 225);
+        $this->SetLineWidth(0.3);
+        $this->Line(10, 22.5, 200, 22.5);
     }
 
-    //Page footer
     public function Footer() {
-        // Logo
-        $this->SetFont('helvetica', 12);
-$x = 15;
-$y = 275;
-$w = '180';
-$h = '';
-        $this->Image($GLOBALS['footer_image'], $x, $y, $w, $h, 'JPG', '', '', false, 300, '', false, false, 0, 'L', false, false);
-
-
-
-        $this->SetXY(25,278);
-		$pagenumtxt = $this->PageNo().' de '.($this->getAliasNbPages());
-        $this->WriteHTML('<div style="text-align:right; font-size:large; font-weight:bold">'.$GLOBALS['footer_substring'].'<br>Página '.$pagenumtxt.'</div>', false, false, false, false, '');
+        if (!empty($GLOBALS['footer_image']) && file_exists($GLOBALS['footer_image'])) {
+            $this->Image($GLOBALS['footer_image'], 10, 281, 190, '', 'JPG', '', '', false, 300, '', false, false, 0, false, false, false);
+        }
+        $this->SetY(284.5);
+        $this->SetFont('helvetica', 'B', 7.5);
+        $this->SetTextColor(100, 116, 139);
+        $pagenumtxt = 'Página ' . $this->PageNo() . ' de ' . $this->getAliasNbPages();
+        $this->Cell(0, 4, $GLOBALS['footer_substring'] . ' · ' . $pagenumtxt, 0, 0, 'R');
     }
 }
 
-
-// create new PDF document
-$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
-//define ('PDF_HEADER_LOGO', 'kki.jpg');
-// set document information
-$pdf->SetCreator(PDF_CREATOR);
+// 4. Instancia TCPDF
+$pdf = new SINCRM_ANOTADORES_FIGURAS_PDF('P', 'mm', 'A4', true, 'UTF-8', false);
+$pdf->SetCreator('SINCRM');
 $pdf->SetAuthor('Pedro Díaz');
-$pdf->SetTitle($titulo_documento);
+$pdf->SetTitle('Hojas de Anotador - Figuras - ' . $GLOBALS["nombre_competicion_activa"]);
 $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
-$pdf->SetKeywords('sincro, PDF, alhama, murcia, lorca');
 
-// set default header data
-//$pdf->SetHeaderData($logo_campeonato, $logo_header_width, $titulo_documento, $header_substring);
-
-// set header and footer fonts
-$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
-
-// set default monospaced font
-$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
-// set margins
-$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
-$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
-$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
-
-// set auto page eaks
-$pdf->SetAutoPagebreak(TRUE, PDF_MARGIN_BOTTOM);
-
-// set image scale factor
+$pdf->SetMargins(10, 24, 10);
+$pdf->SetHeaderMargin(4);
+$pdf->SetFooterMargin(12);
+$pdf->SetAutoPageBreak(TRUE, 12);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-// set some language-dependent strings (optional)
-if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-    require_once(dirname(__FILE__).'/lang/eng.php');
+if (@file_exists(__DIR__ . '/lang/spa.php')) {
+    require_once(__DIR__ . '/lang/spa.php');
     $pdf->setLanguageArray($l);
 }
 
-// ---------------------------------------------------------
+// 5. Consulta de fases exclusivas de FIGURAS
+$where_clauses = [
+    "f.id_competicion = " . $GLOBALS['id_competicion_activa'],
+    "f.id_figura > 0",
+    "(f.elementos_coach_card <= 0 OR f.elementos_coach_card IS NULL)"
+];
 
-// set font
-$pdf->SetFont('helvetica', 'B', 14);
+if ($id_fase_filtro > 0) {
+    $where_clauses[] = "f.id = $id_fase_filtro";
+}
+if ($id_categoria_filtro > 0) {
+    $where_clauses[] = "f.id_categoria = $id_categoria_filtro";
+}
 
-// -----------------------------------------------------------------------------
+$where_sql = implode(' AND ', $where_clauses);
 
-// add a page
-$pdf->AddPage();
+$q_fases = "
+    SELECT f.*, c.nombre as nombre_categoria, c.orden as orden_categoria,
+           fig.numero as figura_numero, fig.nombre as figura_nombre, 
+           fig.grado_dificultad as figura_gd
+    FROM fases f
+    INNER JOIN figuras fig ON f.id_figura = fig.id
+    LEFT JOIN categorias c ON f.id_categoria = c.id
+    WHERE $where_sql
+    ORDER BY c.orden ASC, f.orden ASC, f.id ASC
+";
+$res_fases = mysqli_query($connection, $q_fases);
+$total_fases = ($res_fases) ? mysqli_num_rows($res_fases) : 0;
 
-$error_color = "#E65B5E";
-$rutina_color_par = "#FCE4EC";
-$rutina_color_impar = "#FFFFFF";
+if ($total_fases === 0) {
+    $pdf->AddPage();
+    $pdf->SetFont('helvetica', 'B', 12);
+    $pdf->SetTextColor(100, 116, 139);
+    $html_vacio = '<div style="text-align:center; padding:50px 20px; color:#64748b;">
+        <h3 style="color:#0f172a;">No hay fases de figuras configuradas</h3>
+        <p>No se han encontrado pruebas de figuras con nadadoras para los filtros indicados.</p>
+    </div>';
+    $pdf->writeHTML($html_vacio, true, false, true, false, '');
+} else {
+    while ($fase = mysqli_fetch_assoc($res_fases)) {
+        $id_fase = (int)$fase['id'];
+        $nombre_categoria = trim($fase['nombre_categoria'] ?? 'Figuras');
+        $figura_numero = trim($fase['figura_numero'] ?? '');
+        $figura_nombre = trim($fase['figura_nombre'] ?? '');
+        $figura_gd = !empty($fase['figura_gd']) ? number_format((float)$fase['figura_gd'], 2, '.', '') : '0.00';
 
-
-$query = "SELECT * FROM fases WHERE id_competicion = '".$GLOBALS["id_competicion_activa"]."'";
-$fases = mysqli_query($connection,$query);
-while($fase = mysqli_fetch_array($fases)){
-	$query = "select nombre, id from categorias where id = '".$fase['id_categoria']."'";
-    $nombre_categoria=mysqli_result(mysqli_query($connection,$query),0);
-    $id_categoria=mysqli_result(mysqli_query($connection,$query),0,1);
-	$pdf->SetFont('helvetica', '', 13);
-        //segun titulo de documento
-        if($fase['elementos_coach_card'] <= 0){
-            $query = "SELECT numero, nombre, grado_dificultad, corte FROM figuras, fases WHERE fases.id_figura = figuras.id and id_categoria = ".$fase['id_categoria']." and id_competicion = ".$GLOBALS["id_competicion_activa"]." and fases.id = ".$fase['id'];
-            $numero_fases = mysqli_query($connection,$query)->num_rows;
-            $query_run = mysqli_query($connection,$query);
-            while($figura = mysqli_fetch_assoc($query_run)){
-                $figuras .= 'Figura '.$figura['numero'].' - '.$figura['nombre'].' GD:'.$figura['grado_dificultad'].'</h2>';
-
+        // 5.1 Consultar jueces asignados al panel de esta fase
+        $q_jueces = "
+            SELECT pj.numero_juez, j.nombre, j.apellidos 
+            FROM panel_jueces pj 
+            LEFT JOIN jueces j ON pj.id_juez = j.id 
+            WHERE pj.id_fase = $id_fase 
+            ORDER BY pj.numero_juez ASC
+        ";
+        $res_jueces = mysqli_query($connection, $q_jueces);
+        $jueces_panel = [];
+        $jueces_nombres_str = [];
+        if ($res_jueces) {
+            while ($jrow = mysqli_fetch_assoc($res_jueces)) {
+                $num_j = (int)$jrow['numero_juez'];
+                $nom_completo = trim(($jrow['nombre'] ?? '') . ' ' . ($jrow['apellidos'] ?? ''));
+                if (empty($nom_completo)) {
+                    $nom_completo = "Juez $num_j";
+                }
+                $jueces_panel[$num_j] = $nom_completo;
+                $jueces_nombres_str[] = "<strong>J$num_j:</strong> " . htmlspecialchars($nom_completo);
             }
-            $html = '<h2>'.$nombre_categoria.' - '.$figuras;
-            $html .= '<h2>Nombre y firma:</h2>';
-
-            $html .= '<table nobr="true" style="margin-top=10px" border="1px">';
-            $html .='<tr><td style="text-align:center">ORDEN</td>';
-
-            $query = "SELECT id FROM panel_jueces WHERE id_fase=".$fase['id'];
-            $jueces = mysqli_query($connection,$query);
-            $i = 0;
-            while($juez = mysqli_fetch_assoc($jueces)){
-                $i++;
-                $html .= '<td style="text-align:center">J'.$i.'</td>';
-            }
-
-            $html .= '<td style="text-align:center">TOTAL</td></tr>';
-
-            $figuras = '';
-
-        $par=1;
-        $query = "select id_nadadora, apellidos, nadadoras.nombre, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club order by orden";
-        $rutinas = mysqli_query($connection,$query);
-        while($rutina = mysqli_fetch_array($rutinas)){
-            $par++;
-            if($par%2==0)
-                $rutina_color = $rutina_color_par;
-            else
-                $rutina_color = $rutina_color_impar;
-
-                    $html .='<tr nobr="true" style="background-color:'.$rutina_color.'">';
-
-                          $query = "SELECT inscripciones_figuras.orden, corte FROM inscripciones_figuras, fases WHERE id_nadadora =".$rutina['id_nadadora']." and id_fase = fases.id and fases.id_competicion=".$GLOBALS["id_competicion_activa"]." limit 1";
-                          $orden_nadadora = mysqli_query($connection,$query);
-
-                          while($orden_n = mysqli_fetch_assoc($orden_nadadora)){
-                            $html .='<th style="text-align:center; background-color:'.$rutina_color.'" ><h1>'.$orden_n['orden'].'</h1></th>';
-                        }
-            $j=0;
-            while($j < $i){
-                $j++;
-                $html .= "<td></td>";
-            }
-            $html .= "<td></td>";
-            $html .= "</tr>";
-
-
-
-
         }
-        $html .= '</table>';
-        $pdf->writeHTML($html, true, false, false, false, '');
+
+        // Dimensionar columnas según número de jueces (mínimo 5)
+        $num_jueces_cols = max(5, count($jueces_panel));
+        if ($num_jueces_cols > 7) {
+            $num_jueces_cols = 7;
+        }
+
+        // 5.2 Consultar atletas inscritos en esta fase de figuras
+        $q_inscritos = "
+            SELECT ifig.*, n.nombre, n.apellidos, n.licencia, n.año_nacimiento,
+                   c.nombre as club_nombre, c.nombre_corto as club_corto 
+            FROM inscripciones_figuras ifig 
+            JOIN nadadoras n ON ifig.id_nadadora = n.id 
+            LEFT JOIN clubes c ON n.club = c.id 
+            WHERE ifig.id_fase = $id_fase 
+            ORDER BY ifig.orden ASC, ifig.id ASC
+        ";
+        $res_inscritos = mysqli_query($connection, $q_inscritos);
+        $num_inscritos = ($res_inscritos) ? mysqli_num_rows($res_inscritos) : 0;
+
+        // Iniciar página para esta fase
         $pdf->AddPage();
-        $pdf->setPage($pdf->getPage());
-        $last_page++;
-    }else{
-        $query = "SELECT numero, nombre, grado_dificultad, corte FROM figuras, fases WHERE fases.id_figura = figuras.id and id_categoria = ".$fase['id_categoria']." and id_competicion = ".$GLOBALS["id_competicion_activa"]." and fases.id = ".$fase['id'];
-            $numero_fases = mysqli_query($connection,$query)->num_rows;
-            $query_run = mysqli_query($connection,$query);
-            while($figura = mysqli_fetch_assoc($query_run)){
-                $figuras .= 'Figura '.$figura['numero'].' - '.$figura['nombre'].'</h2>';
 
-            }
-            $html = '<h2>'.$nombre_categoria.' - '.$figuras;
-            $html .= '<h2>Nombre y firma:</h2>';
-            $pdf->writeHTML($html, true, false, false, false, '');
-            $html .= '';
-                $pdf->setPage($pdf->getPage());
+        // 5.3 Tarjeta superior de la figura y panel de jueces
+        $html_fase = '<table cellpadding="2.5" style="border:1px solid #64748b; background-color:#f8fafc; width:100%;">';
+        $html_fase .= '<tr>';
+        $html_fase .= '<td width="74%">';
+        $html_fase .= '<span style="background-color:#059669; color:#ffffff; font-weight:bold; font-size:8pt; padding:2px 5px;">&nbsp;' . mb_strtoupper($nombre_categoria, 'UTF-8') . '&nbsp;</span>&nbsp;&nbsp;';
+        $html_fase .= '<strong style="font-size:10.5pt; color:#0f172a;">Figura ' . htmlspecialchars($figura_numero) . ' - ' . htmlspecialchars($figura_nombre) . '</strong>';
+        $html_fase .= '</td>';
+        $html_fase .= '<td width="26%" style="text-align:right;">';
+        $html_fase .= '<span style="font-size:11.5pt; color:#2563eb; font-weight:bold;">GD: ' . $figura_gd . '</span>';
+        $html_fase .= '</td>';
+        $html_fase .= '</tr>';
 
-            $encabezado = '<br><br><table nobr="true" style="margin-top=12px" border="1px">';
-            $encabezado .='<tr><td style="text-align:center">ORDEN</td>';
-            $encabezado .='<td style="text-align:center">TRE</td>';
-
-            $query = "SELECT id FROM panel_jueces WHERE id_fase=".$fase['id'];
-            $jueces = mysqli_query($connection,$query);
-            $i = 0;
-            while($juez = mysqli_fetch_assoc($jueces)){
-                $i++;
-                $encabezado .= '<td style="text-align:center">J'.$i.'</td>';
-            }
-
-            $encabezado .= '<td style="text-align:center">TOTAL</td></tr>';
-
-            $figuras = '';
-
-        $par=1;
-        $query = "select id_nadadora, apellidos, nadadoras.nombre, año_nacimiento, licencia, nombre_corto, inscripciones_figuras.id from inscripciones_figuras, nadadoras, clubes where id_fase = '".$fase['id']."' and id_nadadora = nadadoras.id and clubes.id = club order by orden";
-        $rutinas = mysqli_query($connection,$query);
-            $numero_rutinas=0;
-        while($rutina = mysqli_fetch_array($rutinas)){
-            $html = $encabezado;
-            $numero_rutinas++;
-            $par++;
-            if($par%2==0)
-                $rutina_color = $rutina_color_par;
-            else
-                $rutina_color = $rutina_color_impar;
-
-                $numero = $numero_rutinas.' - ';
-                    $html .='<tr nobr="true">';
-
-                          $query = "SELECT inscripciones_figuras.orden, corte FROM inscripciones_figuras, fases WHERE id_nadadora =".$rutina['id_nadadora']." and id_fase = fases.id and fases.id_competicion=".$GLOBALS["id_competicion_activa"]." limit 1";
-                          $orden_nadadora = mysqli_query($connection,$query);
-
-                          while($orden_n = mysqli_fetch_assoc($orden_nadadora)){
-                            $html .='<th nobr="true" style="background-color:'.$rutina_color.'; text-align:center" rowspan="'.$fase['elementos_coach_card'].'" ><h1>'.$orden_n['orden'].'</h1></th>';
-                        }
-                           unset($ju);
-
-            $query = "SELECT texto, valor FROM hibridos_rutina WHERE valor > 0 and tipo like 'dd' and id_rutina = ".$rutina['id'];
-            $query_run = mysqli_query($connection,$query);
-            while($tre = mysqli_fetch_assoc($query_run)){
-                if(isset($ju))
-                    $html .= '<tr nobr="true"><td style="background-color:'.$rutina_color.'; text-align:center">';
-                else
-                    $html .= '<td style="background-color:'.$rutina_color.'; text-align:center">';
-                $html .= '<h6>'.$tre['texto'].'</h6>';
-                $html .= '</td>';
-                $ju=0;
-            while($ju < $i){
-                $ju++;
-                $html .= "<td></td>";
-            }
-            $html .= "<td></td>";
-            $html .= "</tr>";
-
-
-
-            }
-
-
-            $html .= '</table>';
-            $pdf->writeHTML($html, true, false, false, false, '');
-            if($numero_rutinas==5 or $numero_rutinas==10){
-                $pdf->AddPage();
-                $pdf->setPage($pdf->getPage());
+        $html_fase .= '<tr>';
+        $html_fase .= '<td colspan="2" style="font-size:6.8pt; color:#334155; border-top:1px dashed #cbd5e1; background-color:#ffffff;">';
+        if (!empty($jueces_nombres_str)) {
+            $html_fase .= '<strong>Panel de Jueces:</strong> ' . implode(' &nbsp;|&nbsp; ', $jueces_nombres_str);
+        } else {
+            $html_fase .= '<strong>Panel de Jueces:</strong> J1 · J2 · J3 · J4 · J5 (No asignados nominativamente)';
         }
+        $html_fase .= '</td>';
+        $html_fase .= '</tr>';
+
+        $html_fase .= '<tr>';
+        $html_fase .= '<td colspan="2" style="font-size:7.2pt; color:#475569; background-color:#f8fafc; border-top:1px solid #e2e8f0;">';
+        $html_fase .= '<strong>Anotador/a de Panel:</strong> __________________________________________________ &nbsp;&nbsp;&nbsp;&nbsp; <strong>Firma:</strong> ______________________';
+        $html_fase .= '</td>';
+        $html_fase .= '</tr>';
+        $html_fase .= '</table>';
+
+        $html_fase .= '<div style="height:2px;"></div>';
+
+        // 5.4 Distribución de anchos de columna
+        $w_orden = 7;   // 7%
+        $w_total = 11;  // 11%
+        $w_cada_juez = 8;
+        $w_jueces_total = $num_jueces_cols * $w_cada_juez; // p.ej. 5 * 8 = 40%
+        $w_atleta = 100 - ($w_orden + $w_total + $w_jueces_total); // 42%
+
+        // Optimización de espaciado según número de nadadoras
+        if ($num_inscritos <= 16) {
+            $cp = '3.2';
+            $font_order_size = '10pt';
+            $font_atleta_size = '8.8pt';
+            $sub_size = '7pt';
+            $two_lines = true;
+        } elseif ($num_inscritos <= 24) {
+            $cp = '2.2';
+            $font_order_size = '9pt';
+            $font_atleta_size = '8pt';
+            $sub_size = '6.8pt';
+            $two_lines = false;
+        } else {
+            $cp = '1.6';
+            $font_order_size = '8.5pt';
+            $font_atleta_size = '7.5pt';
+            $sub_size = '6.5pt';
+            $two_lines = false;
         }
 
+        // 5.5 Tabla de Anotación
+        $html_fase .= '<table cellpadding="' . $cp . '" border="1" style="border-collapse:collapse; border:1px solid #64748b; width:100%;">';
+        $html_fase .= '<thead>';
+        $html_fase .= '<tr style="background-color:#0f172a; color:#ffffff; font-weight:bold; text-align:center; font-size:7.5pt;">';
+        $html_fase .= '<th width="' . $w_orden . '%">ORD.</th>';
+        $html_fase .= '<th width="' . $w_atleta . '%" style="text-align:left;">&nbsp;ATLETA / CLUB</th>';
+        for ($j = 1; $j <= $num_jueces_cols; $j++) {
+            $html_fase .= '<th width="' . $w_cada_juez . '%">J' . $j . '</th>';
+        }
+        $html_fase .= '<th width="' . $w_total . '%">TOTAL / OBS</th>';
+        $html_fase .= '</tr>';
+        $html_fase .= '</thead>';
+        $html_fase .= '<tbody>';
 
+        if ($num_inscritos > 0) {
+            $fila_i = 0;
+            while ($atleta = mysqli_fetch_assoc($res_inscritos)) {
+                $fila_i++;
+                $bg_color = ($fila_i % 2 === 0) ? '#f8fafc' : '#ffffff';
+
+                $orden_val = (int)$atleta['orden'];
+                $orden_str = (string)$orden_val;
+
+                $nombre_atleta = mb_strtoupper(trim(($atleta['apellidos'] ?? '') . ', ' . ($atleta['nombre'] ?? '')), 'UTF-8');
+                $club_str = !empty($atleta['club_corto']) ? $atleta['club_corto'] : (!empty($atleta['club_nombre']) ? $atleta['club_nombre'] : 'Sin Club');
+                $ano_str = !empty($atleta['año_nacimiento']) ? ' (' . $atleta['año_nacimiento'] . ')' : '';
+
+                $es_baja = (isset($atleta['baja']) && strtolower(trim($atleta['baja'])) === 'si');
+                $es_preswimmer = (isset($atleta['preswimmer']) && strtolower(trim($atleta['preswimmer'])) === 'si');
+
+                $html_fase .= '<tr style="background-color:' . $bg_color . ';" nobr="true">';
+
+                // Columna Orden
+                $html_fase .= '<td width="' . $w_orden . '%" style="text-align:center; font-weight:bold; font-size:' . $font_order_size . '; vertical-align:middle;">';
+                if ($es_preswimmer) {
+                    $html_fase .= '<span style="color:#d97706; font-size:7pt;">PS</span>';
+                } else {
+                    $html_fase .= $orden_str;
+                }
+                $html_fase .= '</td>';
+
+                // Columna Atleta / Club
+                $html_fase .= '<td width="' . $w_atleta . '%" style="vertical-align:middle;">';
+                $html_fase .= '<strong style="font-size:' . $font_atleta_size . '; color:' . ($es_baja ? '#dc2626' : '#0f172a') . ';">' . htmlspecialchars($nombre_atleta) . '</strong>';
+                if ($es_baja) {
+                    $html_fase .= ' <span style="color:#dc2626; font-weight:bold; font-size:6.5pt;">[BAJA]</span>';
+                }
+                if ($es_preswimmer) {
+                    $html_fase .= ' <span style="color:#d97706; font-weight:bold; font-size:6.5pt;">[PRE]</span>';
+                }
+
+                if ($two_lines) {
+                    $html_fase .= '<br><span style="color:#2563eb; font-weight:bold; font-size:' . $sub_size . ';">' . htmlspecialchars($club_str) . '</span> <span style="color:#64748b; font-size:' . $sub_size . ';">' . $ano_str . '</span>';
+                } else {
+                    $html_fase .= ' &nbsp;<span style="color:#2563eb; font-weight:bold; font-size:' . $sub_size . ';">· ' . htmlspecialchars($club_str) . '</span> <span style="color:#64748b; font-size:' . $sub_size . ';">' . $ano_str . '</span>';
+                }
+                $html_fase .= '</td>';
+
+                // Celdas de jueces vacías y amplias
+                if ($es_baja) {
+                    $html_fase .= '<td colspan="' . $num_jueces_cols . '" style="text-align:center; color:#dc2626; font-weight:bold; font-size:7.5pt; vertical-align:middle; background-color:#fee2e2;">--- BAJA ---</td>';
+                } else {
+                    for ($j = 1; $j <= $num_jueces_cols; $j++) {
+                        $html_fase .= '<td width="' . $w_cada_juez . '%" style="vertical-align:middle;"></td>';
+                    }
+                }
+
+                // Columna total / obs
+                $html_fase .= '<td width="' . $w_total . '%" style="vertical-align:middle; background-color:#f1f5f9;"></td>';
+
+                $html_fase .= '</tr>';
+            }
+        } else {
+            // Filas vacías de cortesía si no hay nadadoras registradas
+            for ($k = 1; $k <= 12; $k++) {
+                $bg_color = ($k % 2 === 0) ? '#f8fafc' : '#ffffff';
+                $html_fase .= '<tr style="background-color:' . $bg_color . ';" nobr="true">';
+                $html_fase .= '<td width="' . $w_orden . '%" style="text-align:center; font-weight:bold; height:22px; line-height:22px;">' . $k . '</td>';
+                $html_fase .= '<td width="' . $w_atleta . '%" style="color:#94a3b8; font-style:italic;">&nbsp;Disponible para anotación</td>';
+                for ($j = 1; $j <= $num_jueces_cols; $j++) {
+                    $html_fase .= '<td width="' . $w_cada_juez . '%" style="height:22px;"></td>';
+                }
+                $html_fase .= '<td width="' . $w_total . '%" style="height:22px; background-color:#f1f5f9;"></td>';
+                $html_fase .= '</tr>';
+            }
+        }
+
+        $html_fase .= '</tbody>';
+        $html_fase .= '</table>';
+
+        $pdf->writeHTML($html_fase, true, false, true, false, '');
     }
 }
-// Delete last page
-//$pdf->deletePage($last_page);
-// -----------------------------------------------------------------------------
 
-//Close and output PDF document
-$pdf->Output($nombre_documento.'.pdf', 'I');
+// 6. Cabeceras anti-caché y descarga del PDF
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
 
-//============================================================+
-// END OF FILE
-//============================================================+
+$pdf->Output($nombre_documento . '.pdf', 'I');
 ?>
