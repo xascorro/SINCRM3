@@ -75,7 +75,8 @@ if(isset($_POST['update_btn'])){
         }
     }
 
-	$query = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_bm, texto = '$texto_bm', valor = $valor_bm WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+    $texto_bm_esc = mysqli_real_escape_string($connection, $texto_bm);
+	$query = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_bm, texto = '$texto_bm_esc', valor = $valor_bm WHERE tipo='basemark' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
 	$query_run = mysqli_query($connection,$query);
 	if(mysqli_error($connection) == ''){
 		$_SESSION['correcto'] .= 'Basemark actualizado con éxito. ';
@@ -132,7 +133,8 @@ if(isset($_POST['update_btn'])){
             $res_row = mysqli_query($connection, $query_row);
             if($res_row && $row_target = mysqli_fetch_assoc($res_row)){
                 $target_id = (int)$row_target['id'];
-                $q_upd_dd = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_dd, texto = '$texto_dd', valor = $valor_dd WHERE id = '$target_id'";
+                $texto_dd_esc = mysqli_real_escape_string($connection, $texto_dd);
+                $q_upd_dd = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_dd, texto = '$texto_dd_esc', valor = $valor_dd WHERE id = '$target_id'";
                 mysqli_query($connection, $q_upd_dd);
             }
         }
@@ -170,7 +172,8 @@ if(isset($_POST['update_btn'])){
                 }
             }
 
-            $query = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_b, texto = '$texto_b', valor = $valor_b WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
+            $texto_b_esc = mysqli_real_escape_string($connection, $texto_b);
+            $query = "UPDATE hibridos_rutina SET id_dificultad = $id_dif_b, texto = '$texto_b_esc', valor = $valor_b WHERE tipo='bonus' and id_rutina ='$id_rutina' and elemento='$elemento' limit 1";
             @mysqli_query($connection, $query);
         }
         //actualizar TIPO DE HIBRIDO (TOTAL)

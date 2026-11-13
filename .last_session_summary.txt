@@ -1,14 +1,8 @@
-[2026-11-12 22:05] Resumen de sesión:
-1. Auditor de Coach Cards adaptado a la Nueva Normativa World Aquatics (AQUA 2024-2026) y RFEN:
-   - Archivo: `coach_card_auditor.php`
-   - Reclasificación inteligente de Híbridos: Diferenciación nítida entre Híbridos Libres regulares y el Híbrido Creativo / ShoHY obligatorio (DD = 0.50) en categorías de formación (Alevín / Infantil), eliminando falsos positivos de exceso de híbridos.
-   - Categorización de Veredicto en 4 niveles claros:
-     * 🟢 100% Conforme.
-     * 🔵 Conforme con Observaciones de Mesa (secuencia TRE, apnea, ShoHY).
-     * 🟡 Alerta Técnica / Riesgo de Base Mark DTC (familias > 5, técnicas > 3, caps T5-T9/R5-R9, topes RFEN 12U).
-     * 🔴 No Conforme con Penalizaciones de Rutina aplicables (-2.0 pts por elemento extra según AS 6.7.8, -8.0 pts por falta de grupos en Acrobática según AS 6.15.13).
-   - Verificación de Secuencia de TRE (Appendix 2 / AS 6.7.10) detectando ejecuciones fuera de orden que suponen nota 0.0.
-   - Verificación de Grupos Acrobáticos en Rutina Acrobática (Appendix 4: ACRO-A, B, C, P).
-   - Verificación de Normativa de Seguridad RFEN Alevín (12U): Dificultad máxima de 4.0/5.0 pts y topes de niveles técnicos (máx T6, máx R2, máx F7).
-   - Filtros rápidos por estado en el directorio principal (Todas / Con Declaración / Pendientes) y buscador reactivo.
+[2026-11-13 04:40] Resumen de sesión:
+1. Corrección Fatal Error en Composer (`coach_card_composer_code.php`):
+   - Error: `Data too long for column 'texto' at row 1 in coach_card_composer_code.php:136`.
+   - Causa: La columna `hibridos_rutina.texto` estaba tipada como `varchar(11)`. Al guardar acrobacias con códigos más largos de 11 caracteres (ej: `SL!fr0.5> or SL` de 15 chars, `SL!f2r0.5+r1>` de 13 chars, o acrobacias complejas), MariaDB en modo estricto arrojaba error fatal.
+   - Solución: 
+     * Se amplió `hibridos_rutina.texto` a `varchar(50)` y `hibridos_rutina.tipo` a `varchar(25)` en local y en el servidor Beta (`sincrm4` y `sincrm4beta`).
+     * Se protegieron con `mysqli_real_escape_string()` las variables `$texto_dd`, `$texto_bm` y `$texto_b` en `coach_card_composer_code.php`.
    - Desplegado en `beta.pedrodiaz.eu` y caché purgada en Cloudflare.
