@@ -4,6 +4,8 @@
 // Description : Hojas de puntuación para el Panel de Elementos
 //               Diseñado para impresión A4 (4 fichas por hoja en rejilla 2x2)
 //               y corte milimétrico con guillotina.
+//               Optimizado con casillas de nota maximizadas y
+//               nombre de juez asignado en pie de firma.
 // Author      : Pedro Díaz / SINCRM
 //============================================================+
 
@@ -52,12 +54,12 @@ $pdf->SetAutoPageBreak(false);
  * Eje horizontal central: Y = 148.5 mm
  */
 function drawGuillotineGuides($pdf) {
-    // 1. Líneas centrales discontinuas (muy sutiles para no ensuciar la ficha)
+    // 1. Líneas centrales discontinuas (muy sutiles para corte visual)
     $pdf->SetLineStyle(array('width' => 0.15, 'cap' => 'butt', 'join' => 'miter', 'dash' => '2,3', 'color' => array(190, 200, 210)));
     $pdf->Line(105, 0, 105, 297);
     $pdf->Line(0, 148.5, 210, 148.5);
 
-    // 2. Marcas de alineación sólidas en los 4 bordes del papel (para guillotina)
+    // 2. Marcas de alineación sólidas en los 4 bordes exteriores del papel (guías de tope)
     $pdf->SetLineStyle(array('width' => 0.45, 'cap' => 'square', 'join' => 'miter', 'dash' => 0, 'color' => array(71, 85, 105)));
     // Borde superior e inferior (X = 105mm)
     $pdf->Line(105, 0, 105, 4.0);
@@ -66,7 +68,7 @@ function drawGuillotineGuides($pdf) {
     $pdf->Line(0, 148.5, 4.0, 148.5);
     $pdf->Line(206.0, 148.5, 210, 148.5);
 
-    // 3. Símbolo sutil de corte en los extremos
+    // 3. Símbolos sutiles de corte en los bordes
     $pdf->SetFont('helvetica', '', 7);
     $pdf->SetTextColor(100, 116, 139);
     $pdf->Text(106, 1.2, '✂');
@@ -75,35 +77,40 @@ function drawGuillotineGuides($pdf) {
 
 /**
  * Genera el HTML de una ficha individual de puntuación
+ * Maximiza el tamaño vertical y horizontal del cajón de NOTA para escribir a mano
  */
-function buildElementSlipHTML($comp_nombre, $juez_num, $modalidad, $categoria, $orden, $orden_max, $elementos, $num_elementos) {
+function buildElementSlipHTML($comp_nombre, $juez_num, $juez_nombre, $modalidad, $categoria, $orden, $orden_max, $elementos, $num_elementos) {
     $orden_badge = ($orden === '-1' || $orden === 'PS') ? 'PRE-SWIMMER' : 'ORDEN ' . $orden . ' / ' . $orden_max;
-    $total_rows = max(8, intval($num_elementos));
 
-    $html = '<div style="border: 1.2px solid #64748b; padding: 4px; font-family: helvetica;">';
+    // Calcular la cantidad de filas y la altura en píxeles para aprovechar los 115mm disponibles de tabla
+    // En TCPDF: ~300px disponibles para filas de datos
+    $total_rows = max(6, min(9, intval($num_elementos)));
+    $row_height_px = floor(300 / $total_rows);
 
-    // Cabecera de la ficha
-    $html .= '<table cellpadding="1.5" cellspacing="0" style="width: 100%; border-bottom: 1.5px solid #0f172a;">';
+    $html = '<div style="border: 1.4px solid #334155; padding: 4px; font-family: helvetica;">';
+
+    // Cabecera compacta (ahorra espacio vertical para la tabla)
+    $html .= '<table cellpadding="1" cellspacing="0" style="width: 100%; border-bottom: 1.5px solid #0f172a;">';
     $html .= '<tr>';
-    $html .= '<td style="width: 68%; font-size: 7pt; font-weight: bold; color: #475569; text-transform: uppercase;">' . htmlspecialchars($comp_nombre) . '</td>';
-    $html .= '<td style="width: 32%; text-align: right; font-size: 7pt; font-weight: bold; color: #64748b;">PANEL ELEMENTOS</td>';
+    $html .= '<td style="width: 65%; font-size: 7pt; font-weight: bold; color: #475569; text-transform: uppercase;">' . htmlspecialchars($comp_nombre) . '</td>';
+    $html .= '<td style="width: 35%; text-align: right; font-size: 6.5pt; font-weight: bold; color: #64748b; text-transform: uppercase;">PANEL ELEMENTOS</td>';
     $html .= '</tr>';
     $html .= '<tr>';
-    $html .= '<td style="width: 58%; font-size: 9.5pt; font-weight: bold; color: #0f172a;">' . htmlspecialchars($modalidad . ' ' . $categoria) . '</td>';
-    $html .= '<td style="width: 42%; text-align: right;">';
+    $html .= '<td style="width: 55%; font-size: 9.5pt; font-weight: bold; color: #0f172a;">' . htmlspecialchars($modalidad . ' ' . $categoria) . '</td>';
+    $html .= '<td style="width: 45%; text-align: right;">';
     $html .= '<span style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 8.5pt; padding: 2px 5px;">&nbsp;JUEZ ' . $juez_num . '&nbsp;</span> ';
     $html .= '<span style="background-color: #e2e8f0; color: #0f172a; font-weight: bold; font-size: 8.5pt; padding: 2px 5px;">&nbsp;' . $orden_badge . '&nbsp;</span>';
     $html .= '</td>';
     $html .= '</tr>';
     $html .= '</table>';
 
-    // Tabla de elementos y puntuación
-    $html .= '<table cellpadding="2.8" cellspacing="0" style="width: 100%; margin-top: 3.5px; border: 1px solid #94a3b8;">';
+    // Tabla de elementos y puntuación (casillas de nota maximizadas)
+    $html .= '<table cellpadding="2" cellspacing="0" style="width: 100%; margin-top: 3px; border: 1.2px solid #334155;">';
     $html .= '<thead>';
-    $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 7.5pt;">';
-    $html .= '<th style="width: 10%; text-align: center; border-right: 1px solid #475569;">#</th>';
-    $html .= '<th style="width: 60%; text-align: left; border-right: 1px solid #475569;">&nbsp;ELEMENTO / TÉCNICA</th>';
-    $html .= '<th style="width: 30%; text-align: center;">NOTA</th>';
+    $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 8pt; height: 20px;">';
+    $html .= '<th style="width: 9%; text-align: center; border-right: 1px solid #475569;">#</th>';
+    $html .= '<th style="width: 53%; text-align: left; border-right: 1px solid #475569;">&nbsp;ELEMENTO / TÉCNICA</th>';
+    $html .= '<th style="width: 38%; text-align: center;">NOTA / PUNTUACIÓN</th>';
     $html .= '</tr>';
     $html .= '</thead>';
     $html .= '<tbody>';
@@ -114,20 +121,26 @@ function buildElementSlipHTML($comp_nombre, $juez_num, $modalidad, $categoria, $
         $border_b = ($i === $total_rows) ? '' : 'border-bottom: 1px solid #cbd5e1;';
 
         $html .= '<tr style="background-color: ' . $bg . ';">';
-        $html .= '<td style="width: 10%; text-align: center; font-size: 8.5pt; font-weight: bold; color: #475569; ' . $border_b . ' border-right: 1px solid #cbd5e1;">' . ($elem !== '' ? $i : '') . '</td>';
-        $html .= '<td style="width: 60%; font-size: 8.5pt; font-weight: bold; color: #0f172a; ' . $border_b . ' border-right: 1px solid #cbd5e1;">&nbsp;' . htmlspecialchars($elem) . '</td>';
-        $html .= '<td style="width: 30%; text-align: center; font-size: 11pt; ' . $border_b . '">&nbsp;</td>';
+        $html .= '<td height="' . $row_height_px . '" style="width: 9%; text-align: center; font-size: 9pt; font-weight: bold; color: #475569; ' . $border_b . ' border-right: 1px solid #cbd5e1; vertical-align: middle;">' . ($elem !== '' ? $i : '') . '</td>';
+        $html .= '<td height="' . $row_height_px . '" style="width: 53%; font-size: 9.5pt; font-weight: bold; color: #0f172a; ' . $border_b . ' border-right: 1.2px solid #334155; vertical-align: middle;">&nbsp;' . htmlspecialchars($elem) . '</td>';
+        // Casilla amplia y despejada para escribir la nota a mano
+        $html .= '<td height="' . $row_height_px . '" style="width: 38%; background-color: #ffffff; text-align: center; font-size: 14pt; ' . $border_b . ' vertical-align: middle;">&nbsp;</td>';
         $html .= '</tr>';
     }
 
     $html .= '</tbody>';
     $html .= '</table>';
 
-    // Pie de la ficha: Firma del juez y firma del sistema
+    // Pie de ficha: Nombre del juez asignado y línea de firma
     $html .= '<table cellpadding="2" cellspacing="0" style="width: 100%; margin-top: 4px;">';
     $html .= '<tr>';
-    $html .= '<td style="width: 70%; font-size: 7.5pt; color: #475569;">Firma Juez ' . $juez_num . ': ___________________________</td>';
-    $html .= '<td style="width: 30%; text-align: right; font-size: 6.5pt; font-weight: bold; color: #94a3b8;">SINCRM</td>';
+    if (!empty($juez_nombre)) {
+        $html .= '<td style="width: 54%; font-size: 7.5pt; color: #1e293b; vertical-align: bottom;">Juez: <b>' . htmlspecialchars($juez_nombre) . '</b></td>';
+        $html .= '<td style="width: 46%; text-align: right; font-size: 7.5pt; color: #475569; vertical-align: bottom;">Firma: ____________________</td>';
+    } else {
+        $html .= '<td style="width: 65%; font-size: 7.5pt; color: #475569; vertical-align: bottom;">Firma Juez ' . $juez_num . ': ___________________________</td>';
+        $html .= '<td style="width: 35%; text-align: right; font-size: 6.5pt; font-weight: bold; color: #94a3b8; vertical-align: bottom;">SINCRM</td>';
+    }
     $html .= '</tr>';
     $html .= '</table>';
 
@@ -168,18 +181,23 @@ while ($fase = mysqli_fetch_array($fases)) {
     $q_mod = "SELECT nombre FROM modalidades WHERE id = '" . $fase['id_modalidad'] . "'";
     $nombre_modalidad = mysqli_result(mysqli_query($connection, $q_mod), 0);
 
-    // Jueces del panel tipo 1 (Elementos) excluyendo Media
-    $q_jueces = "SELECT paneles.nombre, numero_juez 
-                 FROM panel_jueces, paneles, jueces 
-                 WHERE id_fase = '" . $fase['id'] . "' 
-                   AND id_panel = paneles.id 
+    // Jueces del panel tipo 1 (Elementos), extrayendo nombre y apellidos si están asignados
+    $q_jueces = "SELECT paneles.nombre as panel_nombre, panel_jueces.numero_juez, jueces.nombre as juez_nombre, jueces.apellidos as juez_apellidos 
+                 FROM panel_jueces 
+                 INNER JOIN paneles ON panel_jueces.id_panel = paneles.id 
+                 LEFT JOIN jueces ON panel_jueces.id_juez = jueces.id AND jueces.nombre NOT LIKE 'Media' 
+                 WHERE panel_jueces.id_fase = '" . $fase['id'] . "' 
                    AND paneles.id_paneles_tipo = 1 
-                   AND jueces.id = panel_jueces.id_juez 
-                   AND jueces.nombre NOT LIKE 'Media' 
-                 ORDER BY numero_juez";
+                 ORDER BY panel_jueces.numero_juez";
     $jueces = mysqli_query($connection, $q_jueces);
 
     while ($juez = mysqli_fetch_array($jueces)) {
+        // Construir nombre completo del juez asignado
+        $nombre_completo_juez = '';
+        if (!empty($juez['juez_nombre'])) {
+            $nombre_completo_juez = trim($juez['juez_nombre'] . ' ' . $juez['juez_apellidos']);
+        }
+
         // Rutinas de la fase ordenadas por orden de salida
         $q_ordenes = "SELECT orden, id FROM rutinas WHERE id_fase = '" . $fase['id'] . "' ORDER BY orden";
         $ordenes = mysqli_query($connection, $q_ordenes);
@@ -236,6 +254,7 @@ while ($fase = mysqli_fetch_array($fases)) {
             $slip_html = buildElementSlipHTML(
                 $nombre_competicion_activa,
                 $juez['numero_juez'],
+                $nombre_completo_juez,
                 $nombre_modalidad,
                 $nombre_categoria,
                 $orden_val,
