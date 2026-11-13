@@ -151,12 +151,27 @@ if ($total_fases === 0) {
 } else {
     while ($fase = mysqli_fetch_assoc($res_fases)) {
         $id_fase = (int)$fase['id'];
+        $id_cat_fase = (int)$fase['id_categoria'];
         $nombre_categoria = trim($fase['nombre_categoria'] ?? 'Figuras');
         $figura_numero = trim($fase['figura_numero'] ?? '');
         $figura_nombre = trim($fase['figura_nombre'] ?? '');
         $figura_gd = !empty($fase['figura_gd']) ? number_format((float)$fase['figura_gd'], 2, '.', '') : '0.00';
+        $corte_fase = (int)($fase['corte'] ?? 1);
+        if ($corte_fase <= 0) $corte_fase = 1;
 
-        // 5.1 Consultar jueces asignados al panel de esta fase
+        // 5.1 Encontrar la fase base de figuras de esta categoría (primera figura de la categoría)
+        $q_fase_base = "
+            SELECT id FROM fases 
+            WHERE id_competicion = " . $GLOBALS['id_competicion_activa'] . " 
+              AND id_categoria = $id_cat_fase 
+              AND id_figura > 0 
+            ORDER BY orden ASC, id ASC 
+            LIMIT 1
+        ";
+        $res_fase_base = mysqli_query($connection, $q_fase_base);
+        $id_fase_base = ($res_fase_base && $rfb = mysqli_fetch_assoc($res_fase_base)) ? (int)$rfb['id'] : $id_fase;
+
+        // 5.2 Consultar jueces asignados al panel de esta fase
         $q_jueces = "
             SELECT pj.numero_juez, j.nombre, j.apellidos 
             FROM panel_jueces pj 
@@ -185,10 +200,16 @@ if ($total_fases === 0) {
             $num_jueces_cols = 7;
         }
 
-        // 5.2 Consultar atletas inscritos en esta fase de figuras
+        // 5.3 Consultar atletas inscritos en esta fase de figuras
+        // Obtenemos también su orden_base en la categoría (dorsal oficial del sorteo general)
         $q_inscritos = "
             SELECT ifig.*, n.nombre, n.apellidos, n.licencia, n.año_nacimiento,
-                   c.nombre as club_nombre, c.nombre_corto as club_corto 
+                   c.nombre as club_nombre, c.nombre_corto as club_corto,
+                   COALESCE(
+                       (SELECT ifb.orden FROM inscripciones_figuras ifb WHERE ifb.id_fase = $id_fase_base AND ifb.id_nadadora = ifig.id_nadadora LIMIT 1),
+                       ifig.orden,
+                       0
+                   ) as orden_base
             FROM inscripciones_figuras ifig 
             JOIN nadadoras n ON ifig.id_nadadora = n.id 
             LEFT JOIN clubes c ON n.club = c.id 
@@ -196,19 +217,69 @@ if ($total_fases === 0) {
             ORDER BY ifig.orden ASC, ifig.id ASC
         ";
         $res_inscritos = mysqli_query($connection, $q_inscritos);
-        $num_inscritos = ($res_inscritos) ? mysqli_num_rows($res_inscritos) : 0;
+        $atletas_raw = [];
+        if ($res_inscritos) {
+            while ($at = mysqli_fetch_assoc($res_inscritos)) {
+                $atletas_raw[] = $at;
+            }
+        }
+        $num_inscritos = count($atletas_raw);
+
+        // Separar preswimmers de atletas regulares
+        $preswimmers = [];
+        $regulares = [];
+        foreach ($atletas_raw as $at) {
+            $es_pre = (isset($at['preswimmer']) && strtolower(trim($at['preswimmer'])) === 'si') || ((int)$at['orden'] < 0);
+            if ($es_pre) {
+                $preswimmers[] = $at;
+            } else {
+                $regulares[] = $at;
+            }
+        }
+
+        // Rotación de salida según el corte oficial de la figura
+        $total_regulares = count($regulares);
+        if ($total_regulares > 0 && $corte_fase > 1) {
+            $corte_target = (($corte_fase - 1) % $total_regulares) + 1;
+            $primer_ord_base = (int)($regulares[0]['orden_base'] ?? 0);
+
+            // Si el primer atleta actual no es el del corte, rotamos la lista
+            if ($primer_ord_base !== $corte_target) {
+                $found_idx = -1;
+                foreach ($regulares as $idx => $r_at) {
+                    if ((int)($r_at['orden_base'] ?? 0) === $corte_target) {
+                        $found_idx = $idx;
+                        break;
+                    }
+                }
+                if ($found_idx === -1 && isset($regulares[$corte_target - 1])) {
+                    $found_idx = $corte_target - 1;
+                }
+                if ($found_idx > 0) {
+                    $regulares = array_merge(array_slice($regulares, $found_idx), array_slice($regulares, 0, $found_idx));
+                }
+            }
+        }
+
+        $atletas_ordenados = array_merge($preswimmers, $regulares);
 
         // Iniciar página para esta fase
         $pdf->AddPage();
 
-        // 5.3 Tarjeta superior de la figura y panel de jueces
+        // 5.4 Tarjeta superior de la figura y panel de jueces
         $html_fase = '<table cellpadding="2.5" style="border:1px solid #64748b; background-color:#f8fafc; width:100%;">';
         $html_fase .= '<tr>';
-        $html_fase .= '<td width="74%">';
+        $html_fase .= '<td width="72%">';
         $html_fase .= '<span style="background-color:#059669; color:#ffffff; font-weight:bold; font-size:8pt; padding:2px 5px;">&nbsp;' . mb_strtoupper($nombre_categoria, 'UTF-8') . '&nbsp;</span>&nbsp;&nbsp;';
         $html_fase .= '<strong style="font-size:10.5pt; color:#0f172a;">Figura ' . htmlspecialchars($figura_numero) . ' - ' . htmlspecialchars($figura_nombre) . '</strong>';
+        if ($corte_fase > 1) {
+            $html_fase .= '&nbsp;&nbsp;<span style="background-color:#eff6ff; color:#1d4ed8; font-weight:bold; font-size:7.5pt; padding:1px 4px; border:1px solid #bfdbfe;">&nbsp;CORTE: DESDE Nº ' . $corte_fase . '&nbsp;</span>';
+        }
         $html_fase .= '</td>';
-        $html_fase .= '<td width="26%" style="text-align:right;">';
+        $html_fase .= '<td width="28%" style="text-align:right;">';
+        if (!empty($fase['orden'])) {
+            $html_fase .= '<span style="font-size:8pt; color:#64748b; font-weight:bold;">Evento ' . $fase['orden'] . ' &nbsp;|&nbsp; </span>';
+        }
         $html_fase .= '<span style="font-size:11.5pt; color:#2563eb; font-weight:bold;">GD: ' . $figura_gd . '</span>';
         $html_fase .= '</td>';
         $html_fase .= '</tr>';
@@ -276,19 +347,24 @@ if ($total_fases === 0) {
 
         if ($num_inscritos > 0) {
             $fila_i = 0;
-            while ($atleta = mysqli_fetch_assoc($res_inscritos)) {
+            foreach ($atletas_ordenados as $atleta) {
                 $fila_i++;
                 $bg_color = ($fila_i % 2 === 0) ? '#f8fafc' : '#ffffff';
 
-                $orden_val = (int)$atleta['orden'];
-                $orden_str = (string)$orden_val;
+                $es_baja = (isset($atleta['baja']) && strtolower(trim($atleta['baja'])) === 'si');
+                $es_preswimmer = (isset($atleta['preswimmer']) && strtolower(trim($atleta['preswimmer'])) === 'si') || ((int)$atleta['orden'] < 0);
+
+                // El orden visible oficial para el anotador es su dorsal oficial / orden de salida general de la categoría
+                if ($es_preswimmer) {
+                    $orden_str = 'PS';
+                } else {
+                    $ord_b = (int)($atleta['orden_base'] ?? 0);
+                    $orden_str = ($ord_b > 0) ? (string)$ord_b : (string)$fila_i;
+                }
 
                 $nombre_atleta = mb_strtoupper(trim(($atleta['apellidos'] ?? '') . ', ' . ($atleta['nombre'] ?? '')), 'UTF-8');
                 $club_str = !empty($atleta['club_corto']) ? $atleta['club_corto'] : (!empty($atleta['club_nombre']) ? $atleta['club_nombre'] : 'Sin Club');
                 $ano_str = !empty($atleta['año_nacimiento']) ? ' (' . $atleta['año_nacimiento'] . ')' : '';
-
-                $es_baja = (isset($atleta['baja']) && strtolower(trim($atleta['baja'])) === 'si');
-                $es_preswimmer = (isset($atleta['preswimmer']) && strtolower(trim($atleta['preswimmer'])) === 'si');
 
                 $html_fase .= '<tr style="background-color:' . $bg_color . ';" nobr="true">';
 
