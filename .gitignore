@@ -11,7 +11,7 @@ public/zips/*
 images/users/*
 !images/users/.gitkeep
 !images/users/user_1_1793769506.png
-# database/backup/*
+database/backup/*
 !database/backup/.gitkeep
 
 # Dependencias (si se usaran en el futuro)

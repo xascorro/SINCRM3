@@ -911,3 +911,4 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-11-12 21:30:21] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'orden' (#81) publicado en docs/81-orden.pdf por Pedro Díaz y enviado por email a 1 destinatario(s)
 [2026-11-12 21:33:53] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'inscripciones' (#81) publicado en docs/81-inscripciones.pdf por Pedro Díaz y enviado por email a 2 destinatario(s)
 [2026-11-12 21:37:55] [SUCCESS] [SISTEMA] [0.0.0.0] Usuario creado: demar80@gmail.com (Maria del Mar Martínez Sicilia) vinculado a juez #85
+[2026-11-14 12:41:30] [SUCCESS] [SISTEMA] [0.0.0.0] Copia de seguridad sincrm4_20261114_124128.sql.gz enviada por email a xascorro@gmail.com
