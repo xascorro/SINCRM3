@@ -906,3 +906,8 @@ ERROR 1050 (42S01) at line 31: Table 'calculos_clasificacion' already exists
 [2026-11-10 21:41:49] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inscripción realizada para IBARRA NAVARRO, JARA en competición #82
 [2026-11-10 21:42:10] [SUCCESS] [xascorro@gmail.com] [10.0.2.8] Inscripción realizada para CANSECO SÁNCHEZ, MARIA en competición #82
 [2026-11-10 21:52:20] [SUCCESS] [clubsincrolorca@gmail.com] [10.0.2.8] Inicio de sesión exitoso: club sincro lorca  (Club) - Club: Club Sincronizada Lorca
+[2026-11-11 15:30:14] [INFO] [SISTEMA] [0.0.0.0] TEST ENTRY FROM DOCKER
+[2026-11-12 21:15:59] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'clasificacion' (#81) publicado en docs/81-clasificacion.pdf por Pedro Díaz y enviado por email a 1 destinatario(s)
+[2026-11-12 21:30:21] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'orden' (#81) publicado en docs/81-orden.pdf por Pedro Díaz y enviado por email a 1 destinatario(s)
+[2026-11-12 21:33:53] [SUCCESS] [Pedro Díaz] [0.0.0.0] Documento oficial 'inscripciones' (#81) publicado en docs/81-inscripciones.pdf por Pedro Díaz y enviado por email a 2 destinatario(s)
+[2026-11-12 21:37:55] [SUCCESS] [SISTEMA] [0.0.0.0] Usuario creado: demar80@gmail.com (Maria del Mar Martínez Sicilia) vinculado a juez #85
