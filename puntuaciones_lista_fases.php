@@ -12,8 +12,9 @@ $is_figuras = ($comp_figuras == 'si');
 $vista_actual = $_COOKIE['pref_vista_fases'] ?? 'cards';
 
 // 1. Datos de Contexto y KPIs
-$q_comp = "SELECT nombre, lugar, fecha FROM competiciones WHERE id = '$id_comp'";
+$q_comp = "SELECT nombre, lugar, fecha, clave_liga FROM competiciones WHERE id = '$id_comp'";
 $comp_info = mysqli_fetch_assoc(mysqli_query($connection, $q_comp));
+$clave_liga_fases = !empty($comp_info['clave_liga']) ? $comp_info['clave_liga'] : '';
 
 // 1.1 Fases y Progreso
 $q_fases_stats = "SELECT COUNT(*) as total, SUM(CASE WHEN puntuada = 'si' THEN 1 ELSE 0 END) as puntuadas FROM fases WHERE id_competicion = '$id_comp'";
@@ -68,6 +69,11 @@ $total_inscripciones = mysqli_fetch_assoc(mysqli_query($connection, $q_ins))['to
                 </div>
                 <button onclick="window.location.reload()" class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-white border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-50 active:scale-[0.98] transition-all shadow-xs"><i class="fas fa-sync-alt text-xs sm:text-sm"></i></button>
                 <a href="./informes/informe_puntuaciones_global.php?id_competicion=<?php echo $id_comp; ?>" target="_blank" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md hover:bg-slate-900 active:scale-[0.98] transition-all flex items-center gap-2"><i class="fas fa-print text-xs"></i> Global PDF</a>
+                <?php if (!empty($clave_liga_fases)): ?>
+                <button type="button" onclick="calcularLiga(<?php echo (int)$id_comp; ?>)" id="btn_calcular_liga_fases" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-amber-500 hover:bg-amber-600 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md shadow-amber-500/20 active:scale-[0.98] transition-all flex items-center gap-2 cursor-pointer tap-press">
+                    <i class="fas fa-calculator text-xs"></i> Calcular Liga
+                </button>
+                <?php endif; ?>
                 <button type="button" onclick="abrirModalPublicar('clasificacion', 'Clasificación Detallada', false, <?php echo (int)$id_comp; ?>)" class="px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase text-[11px] sm:text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-md active:scale-[0.98] transition-all flex items-center gap-2"><i class="fas fa-cloud-arrow-up text-xs"></i> Publicar en la Web</button>
             </div>
         </div>

@@ -6,7 +6,10 @@ include('security.php');
 include('./lib/my_functions.php');
 
 session_start();
-$id_competicion = $_SESSION['id_competicion_activa'];
+$id_competicion = isset($_GET['id_competicion']) ? intval($_GET['id_competicion']) : (isset($_POST['id_competicion']) ? intval($_POST['id_competicion']) : (int)($_SESSION['id_competicion_activa'] ?? 0));
+if ($id_competicion > 0) {
+    $_SESSION['id_competicion_activa'] = $id_competicion;
+}
 mysqli_query($connection,"delete from resultados_figuras where id_competicion='".$id_competicion."'");
 //variables
 $posicion = 1;
@@ -29,11 +32,16 @@ while($fase_figuras = mysqli_fetch_array($fases)){
 	$resultados_nadadoras = mysqli_query($connection,$query);
 	while($resultado_nadadora = mysqli_fetch_array($resultados_nadadoras)){
 		$anio_nadadora = mysqli_result(mysqli_query($connection,"select año_nacimiento from nadadoras where id='".$resultado_nadadora['id_nadadora']."'"),0);
-		$query = "select sum(puntos) from penalizaciones where id in (select id_penalizacion from penalizaciones_rutinas where id_inscripcion_figuras in (select id from inscripciones_figuras where id_nadadora='".$resultado_nadadora['id_nadadora']."' and id_competicion='".$id_competicion."'))";
-		$puntos_penalizacion = mysqli_result(mysqli_query($connection,$query),0);
+		$query = "SELECT COALESCE(SUM(ABS(p.puntos)), 0) 
+                  FROM penalizaciones p 
+                  JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id 
+                  JOIN inscripciones_figuras ifig ON pr.id_inscripcion_figuras = ifig.id 
+                  WHERE ifig.id_nadadora='".$resultado_nadadora['id_nadadora']."' AND ifig.id_competicion='$id_competicion'";
+		$puntos_penalizacion = abs(floatval(mysqli_result(mysqli_query($connection,$query),0)));
         
         if($gd_acumulado > 0){
 		    $nota_final_calculada = (($resultado_nadadora['sum_nota_final']/$gd_acumulado)*10) - $puntos_penalizacion;
+            if ($nota_final_calculada < 0) $nota_final_calculada = 0;
         } else {
             $nota_final_calculada = 0;
         }

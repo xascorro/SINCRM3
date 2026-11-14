@@ -49,7 +49,13 @@ if ($query_run_pen && mysqli_num_rows($query_run_pen) > 0) {
                         <?php foreach ($grupo['items'] as $item): ?>
                             <?php 
                                 $pts = floatval($item['puntos']);
-                                $pts_str = $pts == 0 ? 'Nota 0' : ($pts > 0 ? "+$pts pts" : "$pts pts");
+                                if ($pts == 0) {
+                                    $pts_str = 'Nota 0';
+                                } elseif ($item['id'] == 21) {
+                                    $pts_str = "+$pts pts";
+                                } else {
+                                    $pts_str = '-' . abs($pts) . ' pts';
+                                }
                                 $aplic = !empty($item['aplicable_a']) ? ' [' . $item['aplicable_a'] . ']' : '';
                             ?>
                             <option value="<?php echo $item['id']; ?>" class="bg-white text-slate-800 font-medium py-1">

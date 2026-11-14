@@ -293,11 +293,13 @@ if(isset($_POST['save_btn'])){
 		mysqli_query($connection,$query);
 	}
 
-    //penalizaciones
-    $query = "SELECT sum(puntos) FROM penalizaciones, penalizaciones_rutinas WHERE penalizaciones_rutinas.id_penalizacion = penalizaciones.id and penalizaciones_rutinas.id_inscripcion_figuras=$id_inscripcion_figuras";
-    $penalizaciones = mysqli_fetch_assoc(mysqli_query($connection,$query))['sum(puntos)'];
-    if($penalizaciones == '')
-        $penalizaciones = 0;
+    //penalizaciones (siempre restan)
+    $query = "SELECT COALESCE(SUM(ABS(p.puntos)), 0) as tot_pen 
+              FROM penalizaciones p 
+              JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id 
+              WHERE pr.id_inscripcion_figuras = $id_inscripcion_figuras";
+    $pen_row = mysqli_fetch_assoc(mysqli_query($connection, $query));
+    $penalizaciones = abs(floatval($pen_row['tot_pen'] ?? 0));
     //nota final
     $query = "SELECT sum(nota) - $penalizaciones FROM puntuaciones_elementos WHERE id_rutina=$id_inscripcion_figuras";
     $nota_elementos = mysqli_fetch_assoc(mysqli_query($connection,$query))['sum(nota)'];

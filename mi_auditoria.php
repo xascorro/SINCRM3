@@ -140,26 +140,78 @@ if ($total_scoring_panels > 0) {
     $total_roles += $total_scoring_panels;
 }
 
-// --- 5. PERFIL DE SEVERIDAD Y RADAR ---
+// --- 5. SESGO POR CLUB Y CÁLCULO DE NEUTRALIDAD ---
+$q_club_bias = "
+    SELECT 
+        nombre_entidad,
+        SUM(total_notas) as notas,
+        AVG(bias_score) as bias_club,
+        SUM(altas) as altas,
+        SUM(bajas) as bajas
+    FROM auditoria_jueces_stats
+    WHERE (group_key = '$group_key' OR id_juez = '$selected_juez_id') 
+      AND entidad_tipo = 'CLUB'
+    GROUP BY nombre_entidad
+    HAVING notas >= 4
+    ORDER BY notas DESC
+    LIMIT 8
+";
+$res_club_bias = mysqli_query($connection, $q_club_bias);
+$clubs_bias_data = [];
+$avg_club_bias_abs = 0;
+while($cb = mysqli_fetch_assoc($res_club_bias)) {
+    $clubs_bias_data[] = $cb;
+}
+if (!empty($clubs_bias_data)) {
+    $sum_c_bias = 0;
+    foreach ($clubs_bias_data as $cb) {
+        $sum_c_bias += abs((float)$cb['bias_club']);
+    }
+    $avg_club_bias_abs = $sum_c_bias / count($clubs_bias_data);
+}
+
+// --- 6. TOP FIGURAS Y ELEMENTOS EVALUADOS EN LA TEMPORADA ---
+$q_top_figures = "
+    SELECT 
+        nombre_entidad,
+        SUM(total_notas) as total_notas,
+        ROUND(AVG(precision_aqua), 1) as precision_media,
+        ROUND(AVG(bias_score), 3) as bias_medio,
+        SUM(bajas) as total_bajas,
+        SUM(altas) as total_altas
+    FROM auditoria_jueces_stats
+    WHERE (group_key = '$group_key' OR id_juez = '$selected_juez_id')
+      AND entidad_tipo = 'FIGURA'
+    GROUP BY nombre_entidad
+    ORDER BY total_notas DESC
+    LIMIT 6
+";
+$res_top_figures = mysqli_query($connection, $q_top_figures);
+$season_figures = [];
+while($sf = mysqli_fetch_assoc($res_top_figures)) {
+    $season_figures[] = $sf;
+}
+
+// --- 7. PERFIL DE SEVERIDAD Y RADAR 100% DINÁMICO ---
 $inconsistencias = (int)$macro['total_bajas'] + (int)$macro['total_altas'];
 $total_notas = max(1, (int)$macro['total_notas']);
 $estabilidad_val = ($has_audit_data) ? max(0, min(100, 100 - (($inconsistencias / $total_notas) * 100))) : 85;
 
-$radar_severidad = ($has_audit_data) ? min(100, max(25, round(100 - abs($macro['bias_medio'] * 100)))) : 85;
-$radar_consistencia = ($has_audit_data) ? min(100, max(25, round(100 - ($inconsistencias / $total_notas) * 300))) : 85;
-$radar_velocidad = 88;
+$radar_severidad = ($has_audit_data) ? min(100, max(25, round(100 - abs($macro['bias_medio'] * 120)))) : 85;
+$radar_consistencia = ($has_audit_data) ? min(100, max(25, round(100 - ($inconsistencias / $total_notas) * 250))) : 85;
+$radar_neutralidad = ($has_audit_data && !empty($clubs_bias_data)) ? max(40, min(100, round(100 - ($avg_club_bias_abs * 120)))) : 90;
 $radar_precision = ($has_audit_data) ? round($macro['precision_media']) : 75;
 $radar_experiencia = min(100, max(25, round(($macro['total_eventos'] * 12) + ($total_roles * 2))));
 
 $radar_stats = [
-    'Severidad' => $radar_severidad,
+    'Equilibrio' => $radar_severidad,
     'Consistencia' => $radar_consistencia,
-    'Velocidad' => $radar_velocidad,
+    'Neutralidad' => $radar_neutralidad,
     'Precisión AQUA' => $radar_precision,
     'Experiencia' => $radar_experiencia
 ];
 
-$severity_label = "Equilibrado";
+$severity_label = "Criterio Equilibrado";
 $severity_desc = "Criterio alineado con el consenso normativo del panel (±0.2 ptos).";
 $severity_badge = "text-blue-700 bg-blue-50 border-blue-200";
 $severity_dot = "bg-blue-500";
@@ -169,19 +221,47 @@ if (!$has_audit_data) {
     $severity_desc = "Sin notas de figuras registradas en la temporada activa.";
     $severity_badge = "text-slate-600 bg-slate-100 border-slate-200";
     $severity_dot = "bg-slate-400";
-} elseif ($macro['bias_medio'] <= -0.30) {
-    $severity_label = "Severo";
-    $severity_desc = "Tendencia a calificar con mayor exigencia que la mediana del panel.";
+} elseif ($macro['bias_medio'] <= -0.18) {
+    $severity_label = "Criterio Exigente";
+    $severity_desc = "Tendencia a calificar con mayor rigurosidad técnica que la mediana del panel.";
     $severity_badge = "text-rose-700 bg-rose-50 border-rose-200";
     $severity_dot = "bg-rose-500";
-} elseif ($macro['bias_medio'] >= 0.30) {
-    $severity_label = "Generoso";
-    $severity_desc = "Tendencia a premiar elementos por encima de la mediana del panel.";
+} elseif ($macro['bias_medio'] >= 0.18) {
+    $severity_label = "Criterio Benévolo";
+    $severity_desc = "Tendencia a valorar elementos por encima de la mediana del panel.";
     $severity_badge = "text-emerald-700 bg-emerald-50 border-emerald-200";
     $severity_dot = "bg-emerald-500";
 }
 
-// --- 6. HISTORIAL DE EVENTOS Y TRAYECTORIA ---
+// Generación de Smart Insights de la Temporada
+$season_insights = [];
+if ($has_audit_data) {
+    $prec_m = (float)$macro['precision_media'];
+    if ($prec_m >= 65) {
+        $season_insights[] = ['icon' => 'fa-circle-check', 'color' => 'text-emerald-600', 'bg' => 'bg-emerald-50 border-emerald-100', 'title' => 'Excelente Precisión AQUA', 'desc' => "Concordancia media del " . number_format($prec_m, 1) . "% dentro del margen reglamentario oficial (±0.2 ptos)."];
+    } elseif ($prec_m >= 50) {
+        $season_insights[] = ['icon' => 'fa-circle-info', 'color' => 'text-blue-600', 'bg' => 'bg-blue-50 border-blue-100', 'title' => 'Nivel Sólido de Consistencia', 'desc' => "Precisión media del " . number_format($prec_m, 1) . "%. Se recomienda unificar criterios en figuras de transición con giros."];
+    } else {
+        $season_insights[] = ['icon' => 'fa-triangle-exclamation', 'color' => 'text-amber-600', 'bg' => 'bg-amber-50 border-amber-100', 'title' => 'Calibración Recomendada', 'desc' => "Concordancia del " . number_format($prec_m, 1) . "%. Útil para contraste en reuniones clínicas de jueces."];
+    }
+
+    $b_medio = (float)$macro['bias_medio'];
+    if (abs($b_medio) <= 0.12) {
+        $season_insights[] = ['icon' => 'fa-scale-balanced', 'color' => 'text-indigo-600', 'bg' => 'bg-indigo-50 border-indigo-100', 'title' => 'Criterio Muy Homogéneo', 'desc' => "Sesgo acumulado de " . ($b_medio >= 0 ? '+' : '') . number_format($b_medio, 3) . " puntos, demostrando excelente neutralidad."];
+    } elseif ($b_medio < -0.12) {
+        $season_insights[] = ['icon' => 'fa-arrow-down-wide-short', 'color' => 'text-rose-600', 'bg' => 'bg-rose-50 border-rose-100', 'title' => 'Perfil Riguroso / Estricto', 'desc' => "Tus notas se sitúan en promedio " . number_format($b_medio, 3) . " puntos por debajo del panel."];
+    } else {
+        $season_insights[] = ['icon' => 'fa-arrow-up-wide-short', 'color' => 'text-emerald-600', 'bg' => 'bg-emerald-50 border-emerald-100', 'title' => 'Perfil Abierto / Generoso', 'desc' => "Tus notas se sitúan en promedio +" . number_format($b_medio, 3) . " puntos por encima del panel."];
+    }
+
+    if ($avg_club_bias_abs <= 0.15) {
+        $season_insights[] = ['icon' => 'fa-shield-halved', 'color' => 'text-emerald-600', 'bg' => 'bg-emerald-50 border-emerald-100', 'title' => 'Neutralidad de Club Ejemplar', 'desc' => "No se observa sesgo hacia ningún club en particular (desviación media inter-club ≤ 0.15 ptos)."];
+    } else {
+        $season_insights[] = ['icon' => 'fa-building-flag', 'color' => 'text-amber-600', 'bg' => 'bg-amber-50 border-amber-100', 'title' => 'Variación por Entidad', 'desc' => "Se aprecia una variación media de ±" . number_format($avg_club_bias_abs, 3) . " puntos según el club evaluado."];
+    }
+}
+
+// --- 8. HISTORIAL DE EVENTOS Y TRAYECTORIA ---
 $q_history = "
     SELECT 
         s.id_competicion,
@@ -220,31 +300,48 @@ $chart_labels = array_reverse(array_column($history, 'comp_nombre'));
 $chart_precision = array_reverse(array_column($history, 'precision_aqua'));
 $chart_positions = array_reverse(array_column($history, 'posicion_evento'));
 
-// --- 7. SESGO POR CLUB (Club Bias) ---
-$q_club_bias = "
-    SELECT 
-        nombre_entidad,
-        SUM(total_notas) as notas,
-        AVG(bias_score) as bias_club,
-        SUM(altas) as altas,
-        SUM(bajas) as bajas
-    FROM auditoria_jueces_stats
-    WHERE (group_key = '$group_key' OR id_juez = '$selected_juez_id') 
-      AND entidad_tipo = 'CLUB'
-    GROUP BY nombre_entidad
-    HAVING notas >= 4
-    ORDER BY notas DESC
-    LIMIT 8
-";
-$res_club_bias = mysqli_query($connection, $q_club_bias);
-$clubs_bias_data = [];
-while($cb = mysqli_fetch_assoc($res_club_bias)) {
-    $clubs_bias_data[] = $cb;
-}
-
 include('includes/header.php');
 include('includes/navbar.php');
 ?>
+
+<style>
+@media print {
+    .no-print, header, nav, #sidebar, #topbar, .topbar { display: none !important; }
+    body, main { background: #ffffff !important; padding: 0 !important; margin: 0 !important; }
+    .max-w-7xl { max-width: 100% !important; padding: 0 !important; }
+    .card-hover, .shadow-sm { box-shadow: none !important; border: 1px solid #e2e8f0 !important; }
+    .print-break { page-break-before: always; }
+
+    /* Impresión aislada del Pasaporte Oficial */
+    body.printing-pasaporte * {
+        visibility: hidden !important;
+    }
+    body.printing-pasaporte #modalPasaporte,
+    body.printing-pasaporte #modalPasaporte #pasaportePrintArea,
+    body.printing-pasaporte #modalPasaporte #pasaportePrintArea * {
+        visibility: visible !important;
+    }
+    body.printing-pasaporte #modalPasaporte {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+    }
+    body.printing-pasaporte #modalPasaporte > div {
+        box-shadow: none !important;
+        border: none !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+}
+</style>
 
 <main class="flex-1 flex flex-col min-w-0 bg-surface">
     <?php include('includes/topbar.php'); ?>
@@ -272,7 +369,15 @@ include('includes/navbar.php');
             </div>
 
             <!-- BOTONES DE ACCESO RÁPIDO -->
-            <div class="flex items-center gap-2.5 flex-wrap">
+            <div class="flex items-center gap-2.5 flex-wrap no-print">
+                <button onclick="openPasaporteModal()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold shadow-sm hover:from-blue-700 hover:to-indigo-700 spring-press">
+                    <i class="fas fa-passport text-xs"></i>
+                    Pasaporte Técnico
+                </button>
+                <button onclick="window.print()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 text-xs font-bold shadow-sm hover:bg-slate-50 spring-press">
+                    <i class="fas fa-print text-blue-600 text-xs"></i>
+                    Imprimir Ficha
+                </button>
                 <a href="ranking_jueces.php" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white border border-slate-200/90 text-slate-700 text-xs font-bold shadow-sm hover:bg-slate-50 hover:border-slate-300 spring-press no-underline">
                     <i class="fas fa-trophy text-amber-500 text-xs"></i>
                     Ranking de Jueces
@@ -557,6 +662,77 @@ include('includes/navbar.php');
 
                 </div>
 
+                <!-- RECOMENDACIONES TÉCNICAS INTELIGENTES (SMART INSIGHTS TEMPORADA) -->
+                <?php if(!empty($season_insights)): ?>
+                <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm card-hover">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xs">
+                                <i class="fas fa-lightbulb"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-tight">Recomendaciones Pedagógicas de Autocontrol</h3>
+                                <p class="text-[10px] text-slate-400 font-medium">Diagnóstico cualitativo para optimización arbitral y clinics técnicos</p>
+                            </div>
+                        </div>
+                        <span class="text-[9px] font-black uppercase text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">AQUA Mentor</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <?php foreach($season_insights as $si): ?>
+                            <div class="p-3.5 rounded-2xl border <?php echo $si['bg']; ?> flex items-start gap-2.5">
+                                <i class="fas <?php echo $si['icon']; ?> <?php echo $si['color']; ?> text-xs mt-0.5 shrink-0"></i>
+                                <div class="min-w-0">
+                                    <h4 class="text-xs font-black text-slate-800 mb-0.5"><?php echo $si['title']; ?></h4>
+                                    <p class="text-[11px] text-slate-600 leading-relaxed"><?php echo $si['desc']; ?></p>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <!-- TOP FIGURAS Y ELEMENTOS EVALUADOS -->
+                <?php if(!empty($season_figures)): ?>
+                <div class="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200/80 shadow-sm card-hover">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                                <i class="fas fa-person-swimming"></i>
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-tight">Ejercicios Más Evaluados (Histórico)</h3>
+                                <p class="text-[10px] text-slate-400 font-medium">Concordancia AQUA específica por figura y elemento técnico</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider tabular-nums"><?php echo count($season_figures); ?> ejercicios</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <?php foreach($season_figures as $sf): 
+                            $f_prec = (float)$sf['precision_media'];
+                            $f_bias = (float)$sf['bias_medio'];
+                            $f_badge = ($f_prec >= 70) ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : (($f_prec >= 50) ? 'text-blue-700 bg-blue-50 border-blue-200' : 'text-amber-700 bg-amber-50 border-amber-200');
+                        ?>
+                            <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-100 flex flex-col justify-between">
+                                <div class="mb-2">
+                                    <span class="text-xs font-black text-slate-800 line-clamp-1 block"><?php echo htmlspecialchars($sf['nombre_entidad']); ?></span>
+                                    <span class="text-[9px] font-bold text-slate-400 tabular-nums uppercase"><?php echo $sf['total_notas']; ?> notas</span>
+                                </div>
+                                <div class="flex items-center justify-between text-[10px] pt-1.5 border-t border-slate-200/50">
+                                    <span class="px-2 py-0.5 rounded-md font-black border <?php echo $f_badge; ?> tabular-nums">
+                                        <?php echo number_format($f_prec, 1); ?>% AQUA
+                                    </span>
+                                    <span class="font-black <?php echo ($f_bias >= 0 ? 'text-emerald-600' : 'text-rose-600'); ?> tabular-nums">
+                                        Bias: <?php echo ($f_bias >= 0 ? '+' : '') . number_format($f_bias, 3); ?>
+                                    </span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <!-- TRAYECTORIA Y EVOLUCIÓN TEMPORAL -->
                 <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm card-hover">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
@@ -637,7 +813,17 @@ include('includes/navbar.php');
                                             <?php echo $cb['notas']; ?> notas
                                         </span>
                                     </div>
-                                    <span class="text-[9px] font-semibold text-slate-500 mt-1"><?php echo $c_desc; ?></span>
+                                    <div class="flex items-center justify-between text-[9px] text-slate-500 font-bold mt-1 pt-1 border-t border-slate-200/50">
+                                        <span>B/A: <span class="text-rose-500"><?php echo $cb['bajas']; ?></span> / <span class="text-emerald-500"><?php echo $cb['altas']; ?></span></span>
+                                        <?php 
+                                        $ratio_cb = ($cb['bajas'] > 0) ? round($cb['altas'] / $cb['bajas'], 1) : (float)$cb['altas'];
+                                        if ((int)$cb['notas'] >= 4 && ((int)$cb['altas'] >= 4 || (int)$cb['bajas'] >= 4) && ($ratio_cb >= 2.5 || $ratio_cb <= 0.4)): 
+                                        ?>
+                                            <span class="text-amber-600 font-black" title="Asimetría detectada">Asim. <?php echo $ratio_cb; ?>x</span>
+                                        <?php else: ?>
+                                            <span class="text-slate-400 font-semibold"><?php echo $c_desc; ?></span>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             <?php endforeach; ?>
                         </div>
@@ -735,8 +921,196 @@ include('includes/navbar.php');
 
         </div>
 
-    </div>
-</main>
+        <!-- ========================================== -->
+        <!-- MODAL PASAPORTE TÉCNICO ARBITRAL (Mejora 5) -->
+        <!-- ========================================== -->
+        <div id="modalPasaporte" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm overflow-y-auto p-4 sm:p-6 md:p-10 flex items-center justify-center">
+            <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto transform transition-all duration-300">
+                
+                <!-- Modal Header (no print) -->
+                <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between no-print">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs shadow-sm">
+                            <i class="fas fa-passport"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-black text-slate-800 uppercase tracking-tight">Pasaporte Técnico Arbitral</h3>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Acreditación Oficial • Normativa World Aquatics</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="printPasaporte()" class="px-3 py-1.5 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-sm spring-press">
+                            <i class="fas fa-print text-xs"></i> Imprimir Pasaporte
+                        </button>
+                        <button type="button" onclick="closePasaporteModal()" class="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 hover:bg-slate-300 flex items-center justify-center transition-all text-xs">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PASAPORTE DOCUMENT (Imprimible oficial) -->
+                <div id="pasaportePrintArea" class="p-6 sm:p-10 font-lexend space-y-8 bg-white text-slate-800">
+                    
+                    <!-- Encabezado Oficial Federativo -->
+                    <div class="border-b-2 border-slate-900 pb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-slate-900 text-white p-2.5 flex items-center justify-center shrink-0 shadow-md">
+                                <img src="./img/logo_sincrm_icon.png" class="w-full h-full object-contain filter invert brightness-200" alt="FNRM">
+                            </div>
+                            <div>
+                                <span class="text-[9px] font-black tracking-[0.25em] text-blue-600 uppercase block">Comité Técnico de Natación Artística</span>
+                                <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight uppercase leading-tight">Pasaporte Técnico de Acreditación Arbitral</h2>
+                                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">World Aquatics (AQUA) Protocol • Ficha Técnica Oficial de Desempeño</p>
+                            </div>
+                        </div>
+                        <div class="text-right sm:border-l sm:border-slate-200 sm:pl-6 shrink-0">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block">Identificador Digital</span>
+                            <span class="font-mono text-xs font-black text-slate-900 tracking-wider tabular-nums">
+                                AQUA-<?php echo str_pad($selected_juez_id, 4, '0', STR_PAD_LEFT); ?>-<?php echo strtoupper(substr(md5('SINCRM-'.$selected_juez_id.'-'.$macro['total_notas']), 0, 6)); ?>
+                            </span>
+                            <span class="text-[9px] font-semibold text-emerald-600 block mt-0.5">● Certificado Homologado</span>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta de Identificación del Juez -->
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 grid grid-cols-1 sm:grid-cols-12 gap-5 items-center">
+                        <div class="sm:col-span-8 space-y-2">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-slate-900 text-white">
+                                    Temporada 2026/2027
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider bg-blue-100 text-blue-800">
+                                    <?php echo !empty($juez_data['nacional']) && $juez_data['nacional'] == 'si' ? 'Juez Nacional RFEN' : 'Juez Territorial'; ?>
+                                </span>
+                                <span class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border <?php echo $severity_badge; ?>">
+                                    <?php echo $severity_label; ?>
+                                </span>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight uppercase">
+                                <?php echo $nombre_display; ?>
+                            </h3>
+                            <div class="grid grid-cols-2 gap-3 pt-1 text-xs text-slate-600">
+                                <div>
+                                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Licencia Federativa</span>
+                                    <span class="font-bold text-slate-800 tabular-nums"><?php echo !empty($juez_data['licencia']) ? htmlspecialchars($juez_data['licencia']) : 'LIC-FNRM-' . str_pad($selected_juez_id, 4, '0', STR_PAD_LEFT); ?></span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] font-black uppercase text-slate-400 block tracking-wider">Federación Territorial</span>
+                                    <span class="font-bold text-slate-800 truncate block"><?php echo htmlspecialchars($juez_data['federacion_nombre'] ?? 'Fed. Natación Región de Murcia (FNRM)'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="sm:col-span-4 bg-white rounded-xl p-4 border border-slate-200/80 text-center shadow-xs">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-1">Calificación AQUA</span>
+                            <div class="text-3xl font-black text-blue-600 tabular-nums leading-none mb-1">
+                                <?php echo number_format($macro['precision_media'], 1); ?>%
+                            </div>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                                Precisión Oficial (±0.2 ptos)
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Cuadrícula de Métricas Oficiales de Arbitraje -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200 text-center shadow-xs">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-1">Eventos Auditados</span>
+                            <span class="text-2xl font-black text-slate-800 tabular-nums"><?php echo $macro['total_eventos']; ?></span>
+                            <span class="text-[9px] text-slate-400 block mt-0.5">Competiciones oficiales</span>
+                        </div>
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200 text-center shadow-xs">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-1">Puntuaciones Emitidas</span>
+                            <span class="text-2xl font-black text-slate-800 tabular-nums"><?php echo $macro['total_notas']; ?></span>
+                            <span class="text-[9px] text-slate-400 block mt-0.5">Notas registradas</span>
+                        </div>
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200 text-center shadow-xs">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-1">Sesgo Sistemático (Bias)</span>
+                            <span class="text-2xl font-black <?php echo abs($macro['bias_medio']) >= 0.25 ? 'text-rose-600' : 'text-blue-600'; ?> tabular-nums">
+                                <?php echo ($macro['bias_medio'] >= 0 ? '+' : '') . number_format($macro['bias_medio'], 3); ?>
+                            </span>
+                            <span class="text-[9px] text-slate-400 block mt-0.5">Desviación del panel</span>
+                        </div>
+                        <div class="p-4 bg-white rounded-2xl border border-slate-200 text-center shadow-xs">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-slate-400 block mb-1">Índice de Estabilidad</span>
+                            <span class="text-2xl font-black text-emerald-600 tabular-nums"><?php echo round($estabilidad_val, 1); ?>%</span>
+                            <span class="text-[9px] text-slate-400 block mt-0.5">Consistencia en campana</span>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Pentágono + Resumen de Puestos -->
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                        <div class="md:col-span-6 bg-slate-50 p-5 rounded-2xl border border-slate-200 flex flex-col items-center">
+                            <h4 class="text-xs font-black uppercase tracking-wider text-slate-700 mb-3 flex items-center gap-2">
+                                <i class="fas fa-radar text-blue-600"></i> Pentágono de Competencias Arbitrales
+                            </h4>
+                            <div class="relative w-full max-w-[280px] h-[220px]">
+                                <canvas id="pasaporteRadarChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="md:col-span-6 space-y-4">
+                            <div>
+                                <h4 class="text-xs font-black uppercase tracking-wider text-slate-700 mb-2">Desglose de Desempeño por Panel</h4>
+                                <div class="space-y-1.5 text-xs">
+                                    <?php foreach($puestos_stats as $p): ?>
+                                        <div class="flex items-center justify-between p-2 rounded-xl bg-white border border-slate-100 shadow-xs">
+                                            <span class="font-bold text-slate-700"><?php echo htmlspecialchars($p['puesto']); ?></span>
+                                            <span class="font-black text-slate-900 tabular-nums bg-slate-100 px-2.5 py-0.5 rounded-lg text-[11px]"><?php echo $p['cantidad']; ?> act.</span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                            <div class="p-3.5 bg-blue-50/70 rounded-xl border border-blue-100 text-[11px] text-slate-600 leading-relaxed">
+                                <p class="font-bold text-blue-900 mb-1 flex items-center gap-1.5">
+                                    <i class="fas fa-info-circle text-blue-600"></i> Dictamen de Homologación:
+                                </p>
+                                <?php echo $severity_desc; ?> El evaluado cumple con los estándares exigidos para designación en fases eliminatorias y finales territoriales.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloque de Firmas y Validación Digital -->
+                    <div class="pt-6 border-t-2 border-slate-900 grid grid-cols-3 gap-6 text-center items-end">
+                        <div>
+                            <div class="h-16 flex items-center justify-center">
+                                <span class="font-serif italic text-slate-400 text-xs">Firma Validada Digitalmente</span>
+                            </div>
+                            <div class="border-t border-slate-300 pt-2">
+                                <p class="text-xs font-black text-slate-800 uppercase leading-none"><?php echo $nombre_display; ?></p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Juez Colegiado Evaluado</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="h-16 flex flex-col items-center justify-center">
+                                <span class="text-[10px] font-black text-blue-700 uppercase tracking-widest">SELLO OFICIAL</span>
+                                <span class="text-[8px] font-bold text-slate-400 uppercase tracking-wider">FNRM • SINCRM v4</span>
+                                <span class="font-mono text-[9px] text-slate-500 tabular-nums mt-0.5">AQUA PROTOCOL V4.1</span>
+                            </div>
+                            <div class="border-t border-slate-300 pt-2">
+                                <p class="text-xs font-black text-slate-800 uppercase leading-none">Validación Técnica</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sistema Integrado SINCRM</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="h-16 flex items-center justify-center">
+                                <span class="font-serif italic text-slate-400 text-xs">Comité Técnico de Jueces</span>
+                            </div>
+                            <div class="border-t border-slate-300 pt-2">
+                                <p class="text-xs font-black text-slate-800 uppercase leading-none">Vº Bº Juez Árbitro</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Director Técnico FNRM</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-wider pt-2">
+                        Documento expedido oficialmente el <?php echo date('d/m/Y H:i'); ?> • Validez reglamentaria para el censo de la temporada vigente (Temporada 2026/2027).
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -748,13 +1122,13 @@ document.addEventListener("DOMContentLoaded", function() {
         new Chart(ctxRadar.getContext('2d'), {
             type: 'radar',
             data: {
-                labels: ['Severidad', 'Consistencia', 'Velocidad', 'Precisión', 'Experiencia'],
+                labels: ['Equilibrio', 'Consistencia', 'Neutralidad', 'Precisión AQUA', 'Experiencia'],
                 datasets: [{
                     label: 'Puntuación Técnica',
                     data: [
-                        <?php echo $radar_stats['Severidad']; ?>, 
+                        <?php echo $radar_stats['Equilibrio']; ?>, 
                         <?php echo $radar_stats['Consistencia']; ?>, 
-                        <?php echo $radar_stats['Velocidad']; ?>, 
+                        <?php echo $radar_stats['Neutralidad']; ?>, 
                         <?php echo $radar_stats['Precisión AQUA']; ?>, 
                         <?php echo $radar_stats['Experiencia']; ?>
                     ],
@@ -867,6 +1241,72 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+let pasaporteRadarInstance = null;
+
+function openPasaporteModal() {
+    const modal = document.getElementById('modalPasaporte');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    if (!pasaporteRadarInstance) {
+        const ctxP = document.getElementById('pasaporteRadarChart');
+        if (ctxP) {
+            pasaporteRadarInstance = new Chart(ctxP.getContext('2d'), {
+                type: 'radar',
+                data: {
+                    labels: ['Equilibrio', 'Consistencia', 'Neutralidad', 'Precisión AQUA', 'Experiencia'],
+                    datasets: [{
+                        label: 'Competencia Arbitral',
+                        data: [
+                            <?php echo $radar_stats['Equilibrio']; ?>, 
+                            <?php echo $radar_stats['Consistencia']; ?>, 
+                            <?php echo $radar_stats['Neutralidad']; ?>, 
+                            <?php echo $radar_stats['Precisión AQUA']; ?>, 
+                            <?php echo $radar_stats['Experiencia']; ?>
+                        ],
+                        backgroundColor: 'rgba(37, 99, 235, 0.18)',
+                        borderColor: '#2563eb',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#2563eb',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5,
+                        pointRadius: 3.5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(0, 0, 0, 0.08)' },
+                            grid: { color: 'rgba(0, 0, 0, 0.08)' },
+                            pointLabels: { color: '#334155', font: { size: 9, family: "'Lexend', sans-serif", weight: 'bold' } },
+                            ticks: { display: false, min: 0, max: 100 }
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+
+function closePasaporteModal() {
+    const modal = document.getElementById('modalPasaporte');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+}
+
+function printPasaporte() {
+    document.body.classList.add('printing-pasaporte');
+    window.print();
+    setTimeout(() => {
+        document.body.classList.remove('printing-pasaporte');
+    }, 600);
+}
 </script>
 
 <style>

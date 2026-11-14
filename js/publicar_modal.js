@@ -405,3 +405,100 @@ function actualizarContadorDestinatarios() {
 function abrirModalPublicarWeb(tipo, tituloDoc) {
     abrirModalPublicar(tipo, tituloDoc, false);
 }
+
+// =========================================================================
+// CÁLCULO OFICIAL DE LIGA (RFEN / FNRM)
+// =========================================================================
+function calcularLiga(idCompeticionOverride) {
+    const idComp = idCompeticionOverride || (typeof idCompeticionActiva !== 'undefined' ? idCompeticionActiva : null);
+    
+    if (!idComp) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se ha detectado el identificador de la competición.'
+            });
+        } else {
+            alert('No se ha detectado el identificador de la competición.');
+        }
+        return;
+    }
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: '¿Calcular Resultados de Liga?',
+            html: `
+                <div class="text-left text-xs text-slate-600 space-y-2 mt-2">
+                    <p>Se consolidarán todas las notas de figuras con la <b>fórmula oficial RFEN</b> (Base 100 ponderada por GD de categoría).</p>
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-[11px] font-bold">
+                        <i class="fas fa-info-circle mr-1 text-amber-600"></i> Se computarán los puestos y puntos de esta jornada para el <b>Ranking Acumulado de la Liga</b>.
+                    </div>
+                </div>
+            `,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: '<i class="fas fa-calculator mr-1.5"></i> Sí, calcular Liga',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#d97706',
+            cancelButtonColor: '#64748b'
+        }).then(result => {
+            if (!result.isConfirmed) return;
+
+            Swal.fire({
+                title: 'Calculando Liga...',
+                html: `
+                    <div class="flex flex-col items-center justify-center p-4">
+                        <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+                        <p class="text-xs text-slate-500 font-medium">Procesando notas RFEN, GD acumulado y clasificaciones...</p>
+                    </div>
+                `,
+                showConfirmButton: false,
+                allowOutsideClick: false
+            });
+
+            fetch(`puntuaciones_fases_figuras_puntuar_categorias.php?id_competicion=${idComp}&ajax=1`)
+                .then(res => {
+                    if (!res.ok) throw new Error('Error de servidor HTTP ' + res.status);
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data.ok) {
+                        throw new Error(data.message || 'Error al procesar el cálculo de liga.');
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: '¡Cálculo de Liga Completado!',
+                        html: `
+                            <p class="text-sm text-slate-600 mb-3">${data.message}</p>
+                            <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-bold">
+                                <i class="fas fa-check-circle mr-1 text-emerald-600"></i> <b>${data.total_calculados || 0} resultados consolidados</b> listos en la Liga.
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="fas fa-file-pdf mr-1.5"></i> Ver Ranking de Liga',
+                        cancelButtonText: 'Aceptar',
+                        confirmButtonColor: '#059669',
+                        cancelButtonColor: '#64748b'
+                    }).then(subRes => {
+                        if (subRes.isConfirmed) {
+                            window.open(`informes/informe_figuras_liga_categorias.php?id_competicion=${idComp}&titulo=Clasificación General Liga`, '_blank');
+                        }
+                    });
+                })
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al calcular Liga',
+                        text: err.message,
+                        confirmButtonColor: '#d97706'
+                    });
+                });
+        });
+    } else {
+        if (confirm('¿Deseas calcular los resultados oficiales de la Liga con la normativa RFEN?')) {
+            window.location.href = `puntuaciones_fases_figuras_puntuar_categorias.php?id_competicion=${idComp}`;
+        }
+    }
+}

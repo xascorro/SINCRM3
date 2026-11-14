@@ -4,31 +4,93 @@ include('includes/header.php');
 include('includes/navbar.php');
 
 /**
+ * FILTROS DE TEMPORADA Y ESPECIALIDAD (Mejora 3)
+ */
+// Temporada actual del sistema (ej: Noviembre 2026 -> 2026-2027 / 2026/2027)
+$curr_year = (int)date('Y');
+$curr_month = (int)date('m');
+$temporada_actual_db = ($curr_month >= 9) ? $curr_year . '-' . ($curr_year + 1) : ($curr_year - 1) . '-' . $curr_year;
+
+// Si no se especifica parámetro, por defecto se carga la temporada vigente
+if (isset($_GET['temporada'])) {
+    $selected_temporada = str_replace('/', '-', trim($_GET['temporada']));
+} else {
+    $selected_temporada = $temporada_actual_db;
+}
+$selected_tipo = isset($_GET['tipo']) ? trim($_GET['tipo']) : 'ALL';
+
+// Obtener temporadas disponibles
+$q_seasons = "
+    SELECT DISTINCT 
+        CASE 
+            WHEN c.temporada IS NOT NULL AND c.temporada != '' THEN c.temporada
+            WHEN MONTH(c.fecha) >= 9 THEN CONCAT(YEAR(c.fecha), '-', YEAR(c.fecha) + 1)
+            ELSE CONCAT(YEAR(c.fecha) - 1, '-', YEAR(c.fecha))
+        END AS temp_calc
+    FROM auditoria_jueces_stats a
+    JOIN competiciones c ON a.id_competicion = c.id
+    WHERE a.entidad_tipo = 'GLOBAL'
+    ORDER BY temp_calc DESC
+";
+$res_seasons = mysqli_query($connection, $q_seasons);
+$available_seasons = [];
+while($s = mysqli_fetch_assoc($res_seasons)) {
+    if (!empty($s['temp_calc'])) $available_seasons[] = $s['temp_calc'];
+}
+
+// Asegurar que la temporada vigente esté presente en la lista
+if (!in_array($temporada_actual_db, $available_seasons)) {
+    array_unshift($available_seasons, $temporada_actual_db);
+}
+
+// Construir condiciones WHERE para filtrado dinámico
+$where_clauses = ["a.entidad_tipo = 'GLOBAL'"];
+if ($selected_temporada !== '' && $selected_temporada !== 'ALL') {
+    $safe_temp = mysqli_real_escape_string($connection, $selected_temporada);
+    $where_clauses[] = "(CASE 
+        WHEN c.temporada IS NOT NULL AND c.temporada != '' THEN c.temporada
+        WHEN MONTH(c.fecha) >= 9 THEN CONCAT(YEAR(c.fecha), '-', YEAR(c.fecha) + 1)
+        ELSE CONCAT(YEAR(c.fecha) - 1, '-', YEAR(c.fecha))
+    END) = '$safe_temp'";
+}
+
+if ($selected_tipo === 'FIGURAS') {
+    $where_clauses[] = "c.figuras IN ('si', 'mixta')";
+} elseif ($selected_tipo === 'RUTINAS') {
+    $where_clauses[] = "(c.figuras = 'no' OR c.figuras = 'mixta')";
+}
+
+$where_sql = implode(' AND ', $where_clauses);
+
+/**
  * LÓGICA DE AGREGACIÓN MACRO
  */
 $q_ranking = "
     SELECT 
-        nombre_entidad as nombre,
-        id_juez,
-        group_key,
-        SUM(total_notas) as total_notas_global,
-        AVG(precision_aqua) as precision_media,
-        AVG(bias_score) as bias_medio,
-        COUNT(DISTINCT id_competicion) as total_eventos,
-        SUM(bajas) as total_bajas,
-        SUM(altas) as total_altas
-    FROM auditoria_jueces_stats
-    WHERE entidad_tipo = 'GLOBAL'
-    GROUP BY group_key
+        a.nombre_entidad as nombre,
+        a.id_juez,
+        a.group_key,
+        SUM(a.total_notas) as total_notas_global,
+        AVG(a.precision_aqua) as precision_media,
+        AVG(a.bias_score) as bias_medio,
+        COUNT(DISTINCT a.id_competicion) as total_eventos,
+        SUM(a.bajas) as total_bajas,
+        SUM(a.altas) as total_altas
+    FROM auditoria_jueces_stats a
+    JOIN competiciones c ON a.id_competicion = c.id
+    WHERE $where_sql
+    GROUP BY a.group_key
     HAVING total_notas_global > 0
-    ORDER BY precision_media DESC, ABS(AVG(bias_score)) ASC
+    ORDER BY precision_media DESC, ABS(AVG(a.bias_score)) ASC
 ";
 $res_ranking = mysqli_query($connection, $q_ranking);
 
-// Obtener nombres e IDs de competiciones auditadas
-$q_comps = "SELECT DISTINCT c.id, c.nombre 
+// Obtener nombres e IDs de competiciones auditadas según el filtro activo
+$q_comps = "SELECT DISTINCT c.id, c.nombre, c.fecha 
             FROM auditoria_jueces_stats a 
-            JOIN competiciones c ON a.id_competicion = c.id";
+            JOIN competiciones c ON a.id_competicion = c.id
+            WHERE $where_sql
+            ORDER BY c.fecha DESC";
 $res_comps = mysqli_query($connection, $q_comps);
 $audited_comps = [];
 while($c = mysqli_fetch_assoc($res_comps)) $audited_comps[] = ['id' => $c['id'], 'nombre' => $c['nombre']];
@@ -77,7 +139,7 @@ $top3 = array_slice($stats_array, 0, 3);
     <div class="px-3 py-4 sm:p-6 md:p-10 max-w-7xl mx-auto w-full font-lexend">
 
         <!-- Header de Sección -->
-        <div class="mb-6 sm:mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+        <div class="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
             <div>
                 <h1 class="text-2xl sm:text-4xl font-black text-slate-800 tracking-tighter mb-1 sm:mb-2 flex items-center gap-2.5 sm:gap-3">
                     <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-100 flex items-center justify-center text-primary shadow-sm border border-slate-200">
@@ -85,17 +147,85 @@ $top3 = array_slice($stats_array, 0, 3);
                     </span>
                     BIAS Analizer
                 </h1>
-                <p class="text-xs sm:text-sm text-slate-500 font-medium">Ranking de excelencia técnica y precisión AQUA — Temporada Vigente.</p>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                    Ranking de excelencia técnica y precisión AQUA — 
+                    <span class="font-bold text-slate-700"><?php echo ($selected_temporada !== 'ALL' && !empty($selected_temporada)) ? "Temporada " . str_replace('-', '/', $selected_temporada) : "Histórico Global"; ?></span>
+                    <span class="text-slate-400"><?php echo ($selected_tipo === 'FIGURAS' ? '• Figuras' : ($selected_tipo === 'RUTINAS' ? '• Rutinas' : '• Todas las Especialidades')); ?></span>.
+                </p>
             </div>
-            
-            <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-4 items-stretch sm:items-center">
+        </div>
+
+        <!-- Filtros de Temporada y Especialidad (Mejora 3) -->
+        <div class="bg-white p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl shadow-sm border border-slate-200 mb-6 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <form action="ranking_jueces.php" method="GET" class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                <div class="flex items-center gap-2 text-slate-500 text-xs font-bold shrink-0">
+                    <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                        <i class="fas fa-filter text-[11px]"></i>
+                    </span>
+                    <span class="text-slate-700">Filtrar:</span>
+                </div>
+
+                <!-- Temporada Selector (Zero-Gray Control) -->
+                <div class="relative min-w-[200px]">
+                    <select name="temporada" onchange="this.form.submit()" 
+                            class="w-full bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-800 font-bold rounded-xl pl-3 pr-8 py-2 text-xs focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
+                        <option value="<?php echo $temporada_actual_db; ?>" <?php echo ($selected_temporada === $temporada_actual_db) ? 'selected' : ''; ?>>
+                            ⭐ Temporada <?php echo str_replace('-', '/', $temporada_actual_db); ?> (Vigente)
+                        </option>
+                        <option value="ALL" <?php echo ($selected_temporada === 'ALL') ? 'selected' : ''; ?>>
+                            📅 Todas las Temporadas (Histórico)
+                        </option>
+                        <?php foreach($available_seasons as $temp): 
+                            if ($temp === $temporada_actual_db) continue;
+                        ?>
+                            <option value="<?php echo $temp; ?>" <?php echo ($selected_temporada === $temp) ? 'selected' : ''; ?>>
+                                Temporada <?php echo str_replace('-', '/', $temp); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                        <i class="fas fa-chevron-down text-[10px]"></i>
+                    </div>
+                </div>
+
+                <!-- Especialidad Selector (Zero-Gray Control) -->
+                <div class="relative min-w-[165px]">
+                    <select name="tipo" onchange="this.form.submit()" 
+                            class="w-full bg-slate-50 hover:bg-slate-100/80 border border-slate-200 text-slate-800 font-bold rounded-xl pl-3 pr-8 py-2 text-xs focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all appearance-none cursor-pointer">
+                        <option value="ALL" <?php echo ($selected_tipo === 'ALL') ? 'selected' : ''; ?>>🏊 Todas las Especialidades</option>
+                        <option value="FIGURAS" <?php echo ($selected_tipo === 'FIGURAS') ? 'selected' : ''; ?>>🎯 Solo Figuras</option>
+                        <option value="RUTINAS" <?php echo ($selected_tipo === 'RUTINAS') ? 'selected' : ''; ?>>🎵 Solo Rutinas</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                        <i class="fas fa-chevron-down text-[10px]"></i>
+                    </div>
+                </div>
+
+                <?php if ($selected_temporada !== 'ALL' || $selected_tipo !== 'ALL'): ?>
+                    <a href="ranking_jueces.php" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 text-xs font-bold transition-all no-underline flex items-center gap-1.5" title="Restablecer filtros">
+                        <i class="fas fa-times text-[10px]"></i> Limpiar Filtros
+                    </a>
+                <?php endif; ?>
+            </form>
+
+            <!-- Indicadores Activos y Buscador -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 justify-between lg:justify-end w-full lg:w-auto">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-black uppercase tracking-wider tabular-nums">
+                        <?php echo count($stats_array); ?> Jueces
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-black uppercase tracking-wider tabular-nums">
+                        <?php echo count($audited_comps); ?> Eventos
+                    </span>
+                </div>
+
                 <!-- Buscador Dinámico -->
-                <div class="relative w-full sm:w-72">
+                <div class="relative w-full sm:w-64">
                     <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
                         <i class="fas fa-search text-xs"></i>
                     </span>
-                    <input type="text" id="rankingSearchInput" placeholder="Buscar juez en el ranking..." 
-                           class="w-full pl-9 pr-3.5 py-2.5 sm:py-3 bg-white border border-slate-200 rounded-xl sm:rounded-2xl text-xs font-bold text-slate-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/5 transition-all outline-none shadow-sm"
+                    <input type="text" id="rankingSearchInput" placeholder="Buscar en resultados..." 
+                           class="w-full pl-9 pr-3.5 py-2 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5 transition-all outline-none shadow-sm"
                            onkeyup="filterRankingList()">
                 </div>
             </div>

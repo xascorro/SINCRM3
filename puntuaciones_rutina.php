@@ -268,7 +268,7 @@ $tiene_sincro = !$is_solo;
                     $sub_peq = $p_media * $fxs;
                     $sub_ob  = $o_media * $fob;
                     $sub_may = $m_media * $fxl;
-                    $pen_sincro = $sub_peq + $sub_ob + $sub_may;
+                    $pen_sincro = round($sub_peq + $sub_ob + $sub_may, 2);
                     ?>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -306,7 +306,7 @@ $tiene_sincro = !$is_solo;
                                         <span id="sincro_peq_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($p_media, 1, '.', ''); ?></span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <span id="sincro_peq_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_peq, 4); ?></span>
+                                        <span id="sincro_peq_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_peq, 2); ?></span>
                                     </td>
                                 </tr>
 
@@ -333,7 +333,7 @@ $tiene_sincro = !$is_solo;
                                         <span id="sincro_ob_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($o_media, 1, '.', ''); ?></span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <span id="sincro_ob_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_ob, 4); ?></span>
+                                        <span id="sincro_ob_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_ob, 2); ?></span>
                                     </td>
                                 </tr>
 
@@ -360,14 +360,14 @@ $tiene_sincro = !$is_solo;
                                         <span id="sincro_may_media_disp" class="text-base font-black text-slate-800 tabular-nums px-3 py-1 rounded-lg bg-white border border-slate-200 shadow-2xs"><?php echo number_format($m_media, 1, '.', ''); ?></span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <span id="sincro_may_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_may, 4); ?></span>
+                                        <span id="sincro_may_subtotal" class="text-base font-black text-red-600 tabular-nums"><?php echo number_format($sub_may, 2); ?></span>
                                     </td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr class="bg-red-50 border-t-2 border-red-100">
                                     <td colspan="5" class="px-6 py-4 text-right text-xs font-black uppercase text-red-600 tracking-widest">Penalización Total Sincronización</td>
-                                    <td class="px-6 py-4 text-right text-2xl font-black text-red-700 tabular-nums" id="pen_sincro_display"><?php echo number_format($pen_sincro, 4); ?></td>
+                                    <td class="px-6 py-4 text-right text-2xl font-black text-red-700 tabular-nums" id="pen_sincro_display"><?php echo number_format($pen_sincro, 2); ?></td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -488,7 +488,7 @@ $tiene_sincro = !$is_solo;
                             $total_pen = 0;
                             if (mysqli_num_rows($res_pen) > 0) {
                                 while($pen = mysqli_fetch_assoc($res_pen)) {
-                                    $total_pen += $pen['puntos'];
+                                    $total_pen += abs(floatval($pen['puntos']));
                             ?>
                                 <div class="p-4 bg-red-50 border border-red-100 rounded-2xl flex items-center justify-between group">
                                     <div class="flex-1 pr-4">
@@ -499,7 +499,7 @@ $tiene_sincro = !$is_solo;
                                         <p class="text-xs font-bold text-slate-700 leading-tight"><?php echo $pen['resumen']; ?></p>
                                     </div>
                                     <div class="flex items-center gap-4">
-                                        <span class="text-lg font-black text-red-600"><?php echo abs($pen['puntos']); ?></span>
+                                        <span class="text-lg font-black text-red-600">-<?php echo abs($pen['puntos']); ?> pts</span>
                                         <a href="./puntuaciones_rutina_code.php?id_rutina=<?php echo $id_rutina; ?>&id_fase=<?php echo $id_fase; ?>&id_penalizaciones_rutinas=<?php echo $pen['id_pr']; ?>" class="w-8 h-8 rounded-lg bg-white text-slate-300 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all flex items-center justify-center border border-slate-200 shadow-sm"><i class="fas fa-trash-alt text-xs"></i></a>
                                     </div>
                                 </div>
@@ -560,7 +560,7 @@ $tiene_sincro = !$is_solo;
             $('#sincro_peq_media').val(pMedia);
             $('#sincro_peq_media_disp').text(pMedia);
             var subPeq = parseFloat(pMedia) * fxs;
-            $('#sincro_peq_subtotal').text(subPeq.toFixed(4));
+            $('#sincro_peq_subtotal').text(subPeq.toFixed(2));
 
             var oj1 = parseFloat($('#sincro_ob_j1').val()) || 0;
             var oj2 = parseFloat($('#sincro_ob_j2').val()) || 0;
@@ -568,7 +568,7 @@ $tiene_sincro = !$is_solo;
             $('#sincro_ob_media').val(oMedia);
             $('#sincro_ob_media_disp').text(oMedia);
             var subOb = parseFloat(oMedia) * fob;
-            $('#sincro_ob_subtotal').text(subOb.toFixed(4));
+            $('#sincro_ob_subtotal').text(subOb.toFixed(2));
 
             var mj1 = parseFloat($('#sincro_may_j1').val()) || 0;
             var mj2 = parseFloat($('#sincro_may_j2').val()) || 0;
@@ -576,10 +576,10 @@ $tiene_sincro = !$is_solo;
             $('#sincro_may_media').val(mMedia);
             $('#sincro_may_media_disp').text(mMedia);
             var subMay = parseFloat(mMedia) * fxl;
-            $('#sincro_may_subtotal').text(subMay.toFixed(4));
+            $('#sincro_may_subtotal').text(subMay.toFixed(2));
 
             var total = subPeq + subOb + subMay;
-            $('#pen_sincro_display').text(total.toFixed(4));
+            $('#pen_sincro_display').text(total.toFixed(2));
         }
 
         $(document).on('input change keyup', '.sincro-input', function() {

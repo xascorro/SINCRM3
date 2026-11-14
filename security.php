@@ -74,9 +74,19 @@ if(!isset($_SESSION['email'])){
         $permitidas = is_array($_SESSION['paginas_permitidas'] ?? null) ? $_SESSION['paginas_permitidas'] : [];
 
         if(!in_array($current_page, $permitidas)){
+            // Si es un script de acción _code.php, heredar permiso de la página principal si está permitida
+            if(substr($current_page, -9) === '_code.php') {
+                $parent_page = substr($current_page, 0, -9) . '.php';
+                if(in_array($parent_page, $permitidas)) {
+                    $permitir = true;
+                }
+            }
+
             // Páginas básicas de cuenta universales (cualquier usuario autenticado puede entrar a su perfil, actividad, etc.)
             $universal_account_pages = ['index.php', 'perfil.php', 'perfil_code.php', 'log_usuario.php', 'login.php', 'login_code.php', 'security.php'];
-            if(in_array($current_page, $universal_account_pages)) {
+            if(!empty($permitir)) {
+                // ya permitido
+            } elseif(in_array($current_page, $universal_account_pages)) {
                 $permitir = true;
             } else {
                 $rol_id = (int)($_SESSION['id_rol'] ?? 0);

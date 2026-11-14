@@ -387,54 +387,117 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         $html_fig = '<table cellpadding="3" style="border:1px solid #cbd5e1; border-collapse:collapse; width:100%; font-size:7.5pt;">';
         $html_fig .= '<thead><tr style="background-color:#0f172a; color:#ffffff; font-weight:bold;">';
         $html_fig .= '<th width="5%" align="center">POS</th>';
-        $html_fig .= '<th width="5%" align="center">ORD</th>';
-        $html_fig .= '<th width="28%">NADADORA</th>';
-        $html_fig .= '<th width="14%">CLUB</th>';
+        $html_fig .= '<th width="32%">NADADORA</th>';
+        $html_fig .= '<th width="16%">CLUB</th>';
 
-        $ancho_jueces_total = 24;
-        $ancho_j_col = ($num_jueces > 0) ? floor($ancho_jueces_total / $num_jueces) : 5;
+        $ancho_jueces_total = 22;
+        $ancho_j_col = ($num_jueces > 0) ? floor($ancho_jueces_total / $num_jueces) : 4;
         foreach ($jueces_fig as $jf) {
             $html_fig .= '<th width="' . $ancho_j_col . '%" align="center">J' . $jf['numero_juez'] . '</th>';
         }
         $ancho_jueces_usado = $ancho_j_col * $num_jueces;
         $resto_ancho = $ancho_jueces_total - $ancho_jueces_usado;
 
-        $html_fig .= '<th width="' . (6 + $resto_ancho) . '%" align="center">SUM</th>';
         $html_fig .= '<th width="6%" align="center">MEDIA</th>';
-        $html_fig .= '<th width="6%" align="center">GD</th>';
-        $html_fig .= '<th width="6%" align="right">FINAL</th>';
+        $html_fig .= '<th width="6%" align="center">PEN.</th>';
+        $html_fig .= '<th width="7%" align="right">FINAL</th>';
+        $html_fig .= '<th width="' . (6 + $resto_ancho) . '%" align="right">DIF</th>';
         $html_fig .= '</tr></thead><tbody>';
 
-        $q_insc_fig = "SELECT i.*, n.nombre, n.apellidos, n.año_nacimiento, cl.nombre_corto as club_nom 
+        // Obtener fase base de la categoría para mostrar dorsal de sorteo oficial
+        $q_fase_base = "SELECT id FROM fases 
+                        WHERE id_competicion = (SELECT id_competicion FROM fases WHERE id = $id_fase) 
+                          AND id_categoria = (SELECT id_categoria FROM fases WHERE id = $id_fase) 
+                          AND id_figura > 0 
+                        ORDER BY orden ASC LIMIT 1";
+        $res_fase_base = mysqli_query($connection, $q_fase_base);
+        $id_fase_base = $res_fase_base ? (int)mysqli_fetch_assoc($res_fase_base)['id'] : $id_fase;
+
+        $q_insc_fig = "SELECT i.*, n.nombre, n.apellidos, n.año_nacimiento, cl.nombre_corto as club_nom,
+                              COALESCE(
+                                  (SELECT ifb.orden FROM inscripciones_figuras ifb WHERE ifb.id_fase = $id_fase_base AND ifb.id_nadadora = i.id_nadadora LIMIT 1),
+                                  i.orden
+                              ) as dorsal_base,
+                              COALESCE(
+                                  (SELECT SUM(ABS(p.puntos)) 
+                                   FROM penalizaciones_rutinas pr 
+                                   JOIN penalizaciones p ON pr.id_penalizacion = p.id 
+                                   WHERE pr.id_inscripcion_figuras = i.id), 
+                                  0
+                              ) as penalizacion_puntos,
+                              (SELECT GROUP_CONCAT(p.codigo SEPARATOR ' ') 
+                               FROM penalizaciones_rutinas pr 
+                               JOIN penalizaciones p ON pr.id_penalizacion = p.id 
+                               WHERE pr.id_inscripcion_figuras = i.id) as penalizacion_codigos
                        FROM inscripciones_figuras i 
                        JOIN nadadoras n ON i.id_nadadora = n.id 
                        LEFT JOIN clubes cl ON n.club = cl.id 
                        WHERE i.id_fase = $id_fase 
                        ORDER BY (i.baja = 'si') ASC, (i.orden < 1) ASC, 
-                                (CASE WHEN i.posicion IS NULL OR i.posicion = 0 THEN 9999 ELSE i.posicion END) ASC, 
                                 (i.nota_final IS NULL OR i.nota_final = 0) ASC, 
-                                i.nota_final DESC, 
+                                (i.nota_final - COALESCE((SELECT SUM(ABS(p.puntos)) FROM penalizaciones_rutinas pr JOIN penalizaciones p ON pr.id_penalizacion = p.id WHERE pr.id_inscripcion_figuras = i.id), 0)) DESC, 
                                 i.orden ASC";
         $res_insc_fig = mysqli_query($connection, $q_insc_fig);
         $row_idx = 0;
+        $top_nota = null;
+        $rank_pos = 0;
+        $prev_fin_float = null;
+        $actual_pos = 0;
 
         while ($inf = mysqli_fetch_assoc($res_insc_fig)) {
             $id_inf = (int)$inf['id'];
             $is_baja = ($inf['baja'] == 'si');
             $is_ps = ($inf['preswimmer'] == 'si' || (int)$inf['orden'] < 1);
+            $has_nota = ($inf['nota_final'] !== null && $inf['nota_final'] !== '') || ($inf['nota_total'] !== null && $inf['nota_total'] !== '');
+            $pen_pts = floatval($inf['penalizacion_puntos'] ?? 0);
+            $pen_cods = trim($inf['penalizacion_codigos'] ?? '');
 
-            $pos_badge = !empty($inf['posicion']) ? ($inf['posicion'] . 'º') : '-';
-            if ($is_baja) $pos_badge = '<span style="color:#ef4444; font-weight:bold;">BAJA</span>';
-            elseif ($is_ps) $pos_badge = '<span style="color:#3b82f6; font-weight:bold;">PS</span>';
+            if ($has_nota) {
+                $med_val = ((float)$inf['nota_media'] == 0) ? '0' : number_format((float)$inf['nota_media'], 4);
+                $fin_float = max(0, (float)$inf['nota_final'] - $pen_pts);
+                $fin_val = ($fin_float == 0) ? '0' : number_format($fin_float, 4);
+
+                if (!$is_baja && !$is_ps) {
+                    if ($prev_fin_float !== null && abs($fin_float - $prev_fin_float) < 0.0001) {
+                        // Empate (clasificación densa correlativa): mantiene la misma posición
+                    } else {
+                        $actual_pos++;
+                    }
+                    $prev_fin_float = $fin_float;
+
+                    if ($top_nota === null) {
+                        $top_nota = $fin_float;
+                    }
+                    $dif = max(0, $top_nota - $fin_float);
+                    $dif_val = number_format($dif, 4);
+                    $pos_badge = $actual_pos;
+                } else {
+                    $dif_val = '-';
+                    $pos_badge = $is_baja ? '<span style="color:#ef4444; font-weight:bold;">BAJA</span>' : '<span style="color:#3b82f6; font-weight:bold;">PS</span>';
+                }
+            } else {
+                $med_val = '-';
+                $fin_val = '-';
+                $dif_val = '-';
+                $pos_badge = $is_baja ? '<span style="color:#ef4444; font-weight:bold;">BAJA</span>' : ($is_ps ? '<span style="color:#3b82f6; font-weight:bold;">PS</span>' : '-');
+            }
+
+            if ($pen_pts > 0) {
+                $pen_cell = '<b style="color:#e11d48;">-' . number_format($pen_pts, 1) . '</b>';
+                if (!empty($pen_cods)) {
+                    $pen_cell .= '<br><span style="font-size:6pt; color:#be123c;">' . htmlspecialchars($pen_cods) . '</span>';
+                }
+            } else {
+                $pen_cell = '<span style="color:#94a3b8;">-</span>';
+            }
 
             $bg_row = ($row_idx % 2 == 0) ? '#ffffff' : '#f8fafc';
             $html_fig .= '<tr style="background-color:' . $bg_row . '; border-bottom:1px solid #e2e8f0;">';
             $html_fig .= '<td width="5%" align="center" style="font-weight:bold; color:#1e293b;">' . $pos_badge . '</td>';
-            $html_fig .= '<td width="5%" align="center" style="color:#64748b;">#' . $inf['orden'] . '</td>';
             
             $nom_swimmer = htmlspecialchars($inf['apellidos'] . ', ' . $inf['nombre']) . (!empty($inf['año_nacimiento']) ? ' (' . $inf['año_nacimiento'] . ')' : '');
-            $html_fig .= '<td width="28%" style="font-weight:bold; color:#1e293b;">' . $nom_swimmer . '</td>';
-            $html_fig .= '<td width="14%" style="color:#475569;">' . htmlspecialchars($inf['club_nom'] ?? '') . '</td>';
+            $html_fig .= '<td width="32%" style="font-weight:bold; color:#1e293b;">' . $nom_swimmer . '</td>';
+            $html_fig .= '<td width="16%" style="color:#475569;">' . htmlspecialchars($inf['club_nom'] ?? '') . '</td>';
 
             // Notas de jueces
             foreach ($jueces_fig as $jf) {
@@ -458,21 +521,17 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
                 $html_fig .= '<td width="' . $ancho_j_col . '%" align="center">' . $cell_nota . '</td>';
             }
 
-            $sum_val = (!empty($inf['nota_total']) && (float)$inf['nota_total'] > 0) ? number_format((float)$inf['nota_total'], 1) : '-';
-            $med_val = (!empty($inf['nota_media']) && (float)$inf['nota_media'] > 0) ? number_format((float)$inf['nota_media'], 4) : '-';
-            $fin_val = (!empty($inf['nota_final']) && (float)$inf['nota_final'] > 0) ? number_format((float)$inf['nota_final'], 4) : '-';
-
-            $html_fig .= '<td width="' . (6 + $resto_ancho) . '%" align="center" style="color:#64748b; font-size:7pt;">' . $sum_val . '</td>';
             $html_fig .= '<td width="6%" align="center" style="color:#64748b; font-size:7pt;">' . $med_val . '</td>';
-            $html_fig .= '<td width="6%" align="center" style="color:#0284c7; font-weight:bold; font-size:7pt;">' . $gd_fig . '</td>';
-            $html_fig .= '<td width="6%" align="right" style="font-weight:bold; color:#059669; font-size:8.5pt;">' . $fin_val . '</td>';
+            $html_fig .= '<td width="6%" align="center" style="font-size:7pt;">' . $pen_cell . '</td>';
+            $html_fig .= '<td width="7%" align="right" style="font-weight:bold; color:#059669; font-size:8.5pt;">' . $fin_val . '</td>';
+            $html_fig .= '<td width="' . (6 + $resto_ancho) . '%" align="right" style="color:#64748b; font-size:7pt;">' . $dif_val . '</td>';
             $html_fig .= '</tr>';
 
             $row_idx++;
         }
 
         if ($row_idx === 0) {
-            $html_fig .= '<tr><td colspan="' . (8 + $num_jueces) . '" align="center" style="color:#94a3b8; padding:12px;">Sin inscripciones registradas en esta fase de figuras.</td></tr>';
+            $html_fig .= '<tr><td colspan="' . (7 + $num_jueces) . '" align="center" style="color:#94a3b8; padding:12px;">Sin inscripciones registradas en esta fase de figuras.</td></tr>';
         }
 
         $html_fig .= '</tbody></table><br>';
@@ -683,13 +742,13 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
                 $p_sinc_txt = ($p_sinc == intval($p_sinc)) ? intval($p_sinc) : number_format($p_sinc, 1);
                 $o_sinc_txt = ($o_sinc == intval($o_sinc)) ? intval($o_sinc) : number_format($o_sinc, 1);
                 $m_sinc_txt = ($m_sinc == intval($m_sinc)) ? intval($m_sinc) : number_format($m_sinc, 1);
-                $ded_sinc = floatval($rutina['nota_panel_sincro'] ?? 0);
+                $ded_sinc = isset($sinc['nota']) ? floatval($sinc['nota']) : floatval($rutina['nota_panel_sincro'] ?? 0);
 
                 $html_r .= '<tr style="background-color:#fef2f2; border-bottom:1px solid #fee2e2;">';
                 $html_r .= '<td colspan="3"><b style="color:#b91c1c;">Sincronización</b></td>';
                 $html_r .= '<td style="color:#7f1d1d; font-size:6pt;">Pequeños: ' . $p_sinc_txt . ' (' . $fase['error_xs'] . ') · Obvios: ' . $o_sinc_txt . ' (' . $fase['error_ob'] . ') · Mayores: ' . $m_sinc_txt . ' (' . $fase['error_xl'] . ')</td>';
                 $html_r .= '<td align="center" style="color:#b91c1c;">Deducción</td>';
-                $html_r .= '<td align="right" style="font-weight:bold; color:#b91c1c;">' . number_format($ded_sinc, 4) . '</td>';
+                $html_r .= '<td align="right" style="font-weight:bold; color:#b91c1c;">' . number_format($ded_sinc, 2) . '</td>';
                 $html_r .= '</tr>';
             }
 

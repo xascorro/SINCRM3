@@ -154,7 +154,7 @@ if ($res_fases) {
                     if ($fase['id_modalidad'] != 1 && $fase['id_modalidad'] != 5) {
                         $col_paneles .= '<span class="item-label">Sincronización</span><br>';
                         $col_notas_j .= '<span class="nadadoras-lista">(Sincro)</span><br>';
-                        $col_puntos_p .= '<span class="nota-valor">'.$rutina['nota_panel_sincro'].'</span><br>';
+                        $col_puntos_p .= '<span class="nota-valor">'.number_format((float)$rutina['nota_panel_sincro'], 2).'</span><br>';
                     }
                     $col_paneles .= '<b>Total Elementos</b><br>';
                     $col_notas_j .= '<br>';

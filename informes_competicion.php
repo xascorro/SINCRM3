@@ -507,18 +507,25 @@ if (!empty($clave_liga_comp)) {
                         </a>
 
                         <?php if (!empty($clave_liga_comp)): ?>
-                            <a href="informes/informe_figuras_liga_categorias.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Clasificación General Liga" target="_blank" class="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 flex items-center justify-between group hover:border-amber-400 hover:bg-amber-100/50 active:scale-[0.98] transition-all no-underline">
+                            <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-2xs shrink-0">
-                                        <i class="fas fa-ranking-star text-sm"></i>
+                                    <div class="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-xs shrink-0">
+                                        <i class="fas fa-ranking-star text-base"></i>
                                     </div>
                                     <div class="min-w-0">
-                                        <span class="text-xs font-bold text-slate-900 block truncate">Ranking Acumulado de Liga</span>
+                                        <span class="text-xs font-black text-slate-900 block truncate">Ranking Acumulado de Liga</span>
                                         <span class="text-[10px] text-amber-700 font-bold uppercase tracking-wider block truncate">Liga <?php echo htmlspecialchars($clave_liga_comp); ?></span>
                                     </div>
                                 </div>
-                                <i class="fas fa-arrow-up-right-from-square text-[10px] text-amber-600 shrink-0"></i>
-                            </a>
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <button type="button" onclick="calcularLiga(<?php echo (int)$id_competicion; ?>)" id="btn_calcular_liga_informes" class="px-3.5 py-2 bg-amber-600 hover:bg-amber-500 active:scale-95 text-white font-black uppercase text-[10px] tracking-wider rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer tap-press">
+                                        <i class="fas fa-calculator text-xs"></i> Calcular Liga
+                                    </button>
+                                    <a href="informes/informe_figuras_liga_categorias.php?id_competicion=<?php echo $id_competicion; ?>&titulo=Clasificación General Liga" target="_blank" class="px-3.5 py-2 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 border border-amber-300 font-black uppercase text-[10px] tracking-wider rounded-xl shadow-2xs transition-all flex items-center gap-1.5 no-underline">
+                                        <i class="fas fa-file-pdf text-red-500"></i> Ver PDF
+                                    </a>
+                                </div>
+                            </div>
                         <?php endif; ?>
                     </div>
                 </div>

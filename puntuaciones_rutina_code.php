@@ -13,6 +13,42 @@ if (isset($_GET['id_penalizaciones_rutinas'])) {
     $id_pr = intval($_GET['id_penalizaciones_rutinas']);
     $query = "DELETE FROM penalizaciones_rutinas WHERE id = $id_pr";
     mysqli_query($connection, $query);
+
+    // Recalcular penalizaciones de la rutina inmediatamente
+    if ($id_rutina > 0) {
+        $pen_elem_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id WHERE pr.id_rutina = $id_rutina AND p.id_paneles_tipo = 1"))['sum_puntos'] ?? 0);
+        $penalizaciones_elementos = -$pen_elem_abs;
+
+        $pen_ia_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id WHERE pr.id_rutina = $id_rutina AND p.id_paneles_tipo = 2"))['sum_puntos'] ?? 0);
+        $penalizaciones_ia = -$pen_ia_abs;
+
+        $pen_rut_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id WHERE pr.id_rutina = $id_rutina AND (p.id_paneles_tipo = 0 OR p.id_paneles_tipo IS NULL)"))['sum_puntos'] ?? 0);
+        $penalizaciones_rutina = -$pen_rut_abs;
+
+        $r_cur = mysqli_fetch_assoc(mysqli_query($connection, "SELECT nota_panel_elementos, nota_panel_sincro, nota_panel_ia FROM rutinas WHERE id = $id_rutina"));
+        if ($r_cur) {
+            $nota_p_elem = floatval($r_cur['nota_panel_elementos'] ?? 0);
+            $nota_p_sinc = floatval($r_cur['nota_panel_sincro'] ?? 0);
+            $nota_fin_p_elem = max(0, round($nota_p_elem + $nota_p_sinc + $penalizaciones_elementos, 4));
+
+            $nota_p_ia = floatval($r_cur['nota_panel_ia'] ?? 0);
+            $nota_fin_p_ia = max(0, round($nota_p_ia + $penalizaciones_ia, 4));
+
+            $nota_rut = round($nota_fin_p_elem + $nota_fin_p_ia, 4);
+            $nota_fin = max(0, round($nota_rut + $penalizaciones_rutina, 4));
+
+            mysqli_query($connection, "UPDATE rutinas SET 
+                penalizaciones_elementos = '$penalizaciones_elementos',
+                nota_final_panel_elementos = '$nota_fin_p_elem',
+                penalizaciones_ia = '$penalizaciones_ia',
+                nota_final_panel_ia = '$nota_fin_p_ia',
+                nota_rutina = '$nota_rut',
+                penalizaciones_rutina = '$penalizaciones_rutina',
+                nota_final = '$nota_fin'
+                WHERE id = $id_rutina");
+        }
+    }
+
     $reload = 'si';
     header("Location: puntuaciones_rutina.php?id_rutina=$id_rutina&id_fase=$id_fase&reload=$reload");
     exit();
@@ -188,7 +224,7 @@ if (isset($_POST['save_btn']) && $id_rutina > 0) {
         if ($error_ob > 0) $error_ob = -$error_ob;
         if ($error_xl > 0) $error_xl = -$error_xl;
 
-        $nota_errores_sincronizacion = round(($errores_pequenos * $error_xs) + ($errores_obvios * $error_ob) + ($errores_mayores * $error_xl), 4);
+        $nota_errores_sincronizacion = round(($errores_pequenos * $error_xs) + ($errores_obvios * $error_ob) + ($errores_mayores * $error_xl), 2);
         mysqli_query($connection, "INSERT INTO errores_sincronizacion 
             (id_rutina, errores_pequenos_j1, errores_obvios_j1, errores_mayores_j1, errores_pequenos_j2, errores_obvios_j2, errores_mayores_j2, errores_pequenos, errores_obvios, errores_mayores, nota) 
             VALUES ($id_rutina, $peq_j1, $ob_j1, $may_j1, $peq_j2, $ob_j2, $may_j2, $errores_pequenos, $errores_obvios, $errores_mayores, $nota_errores_sincronizacion)");
@@ -272,27 +308,27 @@ if (isset($_POST['save_btn']) && $id_rutina > 0) {
                                    VALUES ($id_rutina, NULL, '$tipo_ia', $media_ia, $factor_ia, $nota_ia_componente, 'no')");
     }
 
-    // 4. PENALIZACIONES
+    // 4. PENALIZACIONES (SIEMPRE RESTAN)
     // Penalizaciones de Elementos (Panel 1)
-    $q_pen_elem = "SELECT SUM(puntos) as sum_puntos FROM penalizaciones p 
+    $q_pen_elem = "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p 
                    JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id 
                    WHERE pr.id_rutina = $id_rutina AND p.id_paneles_tipo = 1";
-    $penalizaciones_elementos = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_elem))['sum_puntos'] ?? 0);
-    if ($penalizaciones_elementos > 0) $penalizaciones_elementos = -$penalizaciones_elementos;
+    $pen_elem_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_elem))['sum_puntos'] ?? 0);
+    $penalizaciones_elementos = -$pen_elem_abs;
 
     // Penalizaciones de Impresión Artística (Panel 2)
-    $q_pen_ia = "SELECT SUM(puntos) as sum_puntos FROM penalizaciones p 
+    $q_pen_ia = "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p 
                  JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id 
                  WHERE pr.id_rutina = $id_rutina AND p.id_paneles_tipo = 2";
-    $penalizaciones_ia = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_ia))['sum_puntos'] ?? 0);
-    if ($penalizaciones_ia > 0) $penalizaciones_ia = -$penalizaciones_ia;
+    $pen_ia_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_ia))['sum_puntos'] ?? 0);
+    $penalizaciones_ia = -$pen_ia_abs;
 
     // Penalizaciones de Rutina (Árbitro / Panel 0)
-    $q_pen_rutina = "SELECT SUM(puntos) as sum_puntos FROM penalizaciones p 
+    $q_pen_rutina = "SELECT SUM(ABS(p.puntos)) as sum_puntos FROM penalizaciones p 
                      JOIN penalizaciones_rutinas pr ON pr.id_penalizacion = p.id 
                      WHERE pr.id_rutina = $id_rutina AND (p.id_paneles_tipo = 0 OR p.id_paneles_tipo IS NULL)";
-    $penalizaciones_rutina = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_rutina))['sum_puntos'] ?? 0);
-    if ($penalizaciones_rutina > 0) $penalizaciones_rutina = -$penalizaciones_rutina;
+    $pen_rut_abs = floatval(mysqli_fetch_assoc(mysqli_query($connection, $q_pen_rutina))['sum_puntos'] ?? 0);
+    $penalizaciones_rutina = -$pen_rut_abs;
 
     // 5. CÁLCULO DE TOTALES
     // Panel Elementos
