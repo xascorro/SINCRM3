@@ -1,22 +1,14 @@
-# Resumen de Última Sesión (13-Nov-2026)
+# Resumen de Última Sesión (14-Nov-2026)
 
 ## 🎯 Objetivos Realizados:
-1. **Hojas de Anotadores (`informe_figuras_notas_anotadores.php`)**:
-   - Ajustada la rotación circular para que en cada panel de figuras comience exactamente por la nadadora indicada por el corte (`fases.corte`), p.ej. en Alevín Fase 2 (Figura 423 Ariana) comienza por el dorsal 5 (Lucía Navazo) continuando 6, 7, 8, 9, 1, 2, 3, 4.
-   - En la columna `ORD.` se muestra el dorsal oficial de categoría de la nadadora.
-   - Preservados pre-swimmers (`PS`) arriba y añadido badge `CORTE: DESDE Nº X`.
+1. **Copia de Seguridad de Base de Datos (`sincrm4`)**:
+   - Generado volcado completo comprimido: `sincrm4_20261114_124128.sql.gz` (828 KB) en `database/backup/`.
+   - Ajustado límite Nginx `client_max_body_size 50M;` en el servidor Blue (`pulse.pedrodiaz.eu`) para permitir envíos de adjuntos de gran tamaño vía API Pulse Hub.
+   - Enviado el archivo adjunto por email a `xascorro@gmail.com` con éxito.
+2. **Git & Limpieza**:
+   - Restaurado `database/backup/*` en `.gitignore`.
+   - Todos los cambios confirmados y subidos a `origin/master`.
 
-2. **Diferenciación de Informes (`informe_figuras.php`)**:
-   - Restaurada la distinción estricta según el parámetro `titulo`:
-     - **Inscripciones (`titulo=Inscripciones`)**: Censo alfabético por Club y Apellidos, columna `ORD` con `-`, sin marcado de cortes `[C1]` en nadadoras.
-     - **Orden de Salida (`titulo=orden` o `Orden de Salida`)**: Ordenado numéricamente por dorsal (`i.orden`), mostrando números 1..N (o PS/EX) y badges de corte `[C1]`, `[C2]`, etc.
-   - Mantenido el ajuste modular para cortes que excedan el total de inscritas.
-
-## 📁 Archivos Modificados:
-- `informes/informe_figuras_notas_anotadores.php`
-- `informes/informe_figuras.php`
-- Base de datos `sincrm4`: órdenes sorteados y estado `fases.sorteado = 'si'` para comp #81.
-
-## 🚀 Estado:
-- Servidor probado y verificado localmente vía CLI (`pdftotext`).
-- Caché de Cloudflare purgada con éxito (`pedrodiaz.eu`).
+## 📁 Archivos Clave:
+- [database/backup/sincrm4_20261114_124128.sql.gz](file:///var/www/html/sincrm/database/backup/sincrm4_20261114_124128.sql.gz)
+- [.gitignore](file:///var/www/html/sincrm/.gitignore)
