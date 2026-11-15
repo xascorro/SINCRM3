@@ -888,7 +888,7 @@ if (!function_exists('render_puntuaciones_rutina')) {
                     $html_r .= '<table cellpadding="2" style="width:100%; border-collapse:collapse;">';
                     $html_r .= '<tr style="color:#64748b; border-bottom:1px solid #cbd5e1;">';
                     $html_r .= '<th width="12%">ELEMENTO</th>';
-                    $html_r .= '<th width="12%" align="center">DD / BM / 0</th>';
+                    $html_r .= '<th width="12%" align="center">DD / BM</th>';
                     $html_r .= '<th width="8%" align="center">FACTOR</th>';
                     $html_r .= '<th width="44%">NOTAS JUECES (P1)</th>';
                     $html_r .= '<th width="10%" align="center">MEDIA</th>';
@@ -910,10 +910,10 @@ if (!function_exists('render_puntuaciones_rutina')) {
                             $is_bm = ($el['llevado_BM'] === 'si');
                             $is_tre = (($el['tipo_nombre'] ?? '') === 'TRE');
 
-                            // DD o BM valor (los TRE no tienen Base Mark; si fallan reciben 0)
+                            // DD o BM valor (los TRE no tienen Base Mark; si fallan reciben DD: 0)
                             if ($is_bm) {
                                 if ($is_tre) {
-                                    $dif_badge = '<span style="color:#dc2626; font-weight:bold;">0</span>';
+                                    $dif_badge = '<span style="color:#dc2626; font-weight:bold;">DD: 0</span>';
                                 } else {
                                     $q_bm_val = mysqli_query($connection, "SELECT valor FROM hibridos_rutina WHERE tipo = 'basemark' AND id_rutina = $id_rutina AND elemento = $elem_num");
                                     $val_dif = $q_bm_val ? floatval(mysqli_fetch_assoc($q_bm_val)['valor'] ?? 0.5) : 0.5;

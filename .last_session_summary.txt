@@ -1,19 +1,14 @@
 =======================================================
-RESUMEN DE SESIÓN: TRE SIN BM (CERO) Y RESTAURACIÓN DE SINCRONIZACIÓN
+RESUMEN DE SESIÓN: ROTULACIÓN DD: 0 Y LIMPIEZA HOJA PUNTUAR
 Fecha: 2026-11-15
 =======================================================
 
 1. AJUSTES SOLICITADOS APLICADOS:
-   - TRE sin Base Mark (Cero):
-     * En la pantalla de puntuación (`puntuaciones_rutina.php`), la columna se rotula "BM / 0". Para elementos TRE se muestra la casilla con etiqueta "0" en lugar de BM.
-     * En el cálculo (`puntuaciones_rutina_code.php`), si se marca la casilla para un TRE, se le asigna dificultad 0.0000 (en vez de valor base mark).
-     * En el informe de resultados (`informes/informe_puntuaciones.php`), la cabecera es "DD / BM / 0". Si un TRE es penalizado se rotula en rojo como "0" (nunca "BM").
-   - Deducciones de Sincronización en Rutinas:
-     * Restaurada la fila oficial de Sincronización en las tablas de rutinas del informe global (`informes/informe_puntuaciones.php`).
-     * Ahora consulta correctamente la tabla `errores_sincronizacion` desglosando errores Pequeños, Obvios y Mayores con sus penalizaciones y deducción total.
+   - En el informe de resultados (`informes/informe_puntuaciones.php`), cuando un TRE es penalizado se rotula en rojo como "DD: 0". La cabecera de la columna vuelve a ser la oficial "DD / BM".
+   - En la hoja para puntuar (`puntuaciones_rutina.php`), se simplificó la etiqueta de penalización del TRE mostrando directamente "0" sin el texto adicional "(Cero)".
+   - Sincronización en rutinas verificada y operativa.
 
 2. ARCHIVOS ACTUALIZADOS:
    - `/var/www/html/sincrm/puntuaciones_rutina.php`
-   - `/var/www/html/sincrm/puntuaciones_rutina_code.php`
    - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
    - Espejo en `/var/www/html/beta/` sincronizado con permisos `www-data:www-data`.

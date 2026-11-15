@@ -185,7 +185,7 @@ $tiene_sincro = !$is_solo;
                                         <label class="flex items-center justify-center gap-2 cursor-pointer group">
                                             <input type="checkbox" name="BM<?php echo $el['elemento']; ?>" value="<?php echo $is_tre ? '0' : $bm; ?>" <?php echo $llevado == 'si' ? 'checked' : ''; ?> class="w-4 h-4 rounded text-red-500 focus:ring-red-500 border-slate-300">
                                             <?php if ($is_tre): ?>
-                                                <span class="text-xs font-black text-red-600 group-hover:text-red-700 transition-colors" title="Los TRE no tienen Base Mark; reciben 0">0 (Cero)</span>
+                                                <span class="text-xs font-black text-red-600 group-hover:text-red-700 transition-colors" title="Los TRE no tienen Base Mark; reciben 0">0</span>
                                             <?php else: ?>
                                                 <span class="text-xs font-black text-slate-500 group-hover:text-red-600 transition-colors"><?php echo $bm; ?></span>
                                             <?php endif; ?>
