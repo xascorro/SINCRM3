@@ -508,15 +508,7 @@ if (empty($categorias_liga)) {
                 $puntos_anterior = $pts;
             }
 
-            if ($posicion === 1) {
-                $pos_style = 'color:#d97706; font-weight:bold; font-size:9.5pt;';
-            } elseif ($posicion === 2) {
-                $pos_style = 'color:#475569; font-weight:bold; font-size:9pt;';
-            } elseif ($posicion === 3) {
-                $pos_style = 'color:#b45309; font-weight:bold; font-size:9pt;';
-            } else {
-                $pos_style = 'color:#1e293b; font-weight:bold; font-size:8pt;';
-            }
+            $pos_style = 'color:#1e293b; font-weight:bold; font-size:8pt;';
 
             $bg = ($row_count % 2 === 0) ? '#ffffff' : '#f8fafc';
             $html .= '<tr style="background-color: '.$bg.'; border-bottom:1px solid #e2e8f0;">';

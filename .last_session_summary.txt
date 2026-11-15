@@ -65,3 +65,8 @@ Fecha: 2026-11-15
    - Establecida la Temporada 2026/2027 como la vista activa y predeterminada por defecto en `ranking_jueces.php` y `mi_auditoria.php`.
    - Formato visual oficial adaptado a `2026/2027` (con barra inclinada) en selectores, cabeceras y Pasaporte Arbitral.
    - El podio de la temporada vigente 2026/2027 refleja en la vista principal a María José Hernández (#1 Oro, 71.0%), Tania Blaya Pérez (#2 Plata, 68.5%) y Laura Manzanera Sánchez (#3 Bronce, 61.7%).
+
+6. INFORME CLASIFICACIÓN GENERAL LIGA (informe_figuras_liga_categorias.php):
+   - Eliminados los colores de podio (oro/plata/bronce) en las 3 primeras posiciones.
+   - Formato unificado a tono neutral corporativo (#1e293b, bold, 8pt) para todas las posiciones.
+   - Sincronizado a `/var/www/html/beta/informes/` con permisos `www-data:www-data`.
