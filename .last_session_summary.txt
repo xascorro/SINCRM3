@@ -1,15 +1,15 @@
 =======================================================
-RESUMEN DE SESIÓN: AJUSTE DE ANCHOS DE COLUMNA EN INFORME
+RESUMEN DE SESIÓN: PUBLICACIÓN UNIFICADA V4 Y NOTA EN EMAIL
 Fecha: 2026-11-15
 =======================================================
 
 1. AJUSTES SOLICITADOS APLICADOS:
-   - Columna "NADADORA" ampliada de 25% a 40% (+60% de espacio) con `white-space: nowrap`.
-   - Todas las nadadoras caben en una sola línea continua junto a su año de nacimiento (ej: "CAJA GRZEGORZEWSKA, AMELIA (2016)"), evitando saltos de línea antiestéticos.
-   - Columna "CLUB" reducida de 13% a 8%, optimizada para códigos cortos de club (SALHAMA, CNCC, SLORCA, CDMS).
-   - Columnas de figuras ajustadas a 8% cada una (total 32%), TOTAL 9% y DIF 7%, manteniendo el 100% exacto de la tabla.
+   - Se unificó la generación de PDFs en `informes_publicar_code.php`: ahora tanto `clasificacion` como `resultados` utilizan siempre el nuevo formato global estructurado `informe_puntuaciones_global.php` (independientemente de si la competición tiene rutinas o solo figuras, como la competición 82 "Control Técnico de Figuras").
+   - Se añadió en el modal de publicación (`js/publicar_modal.js`) un campo de texto adicional opcional ("Texto adicional para el email") para que la organización pueda añadir notas, avisos o aclaraciones antes de enviar.
+   - En `informes_publicar_code.php`, el texto introducido se formatea en un bloque destacado ("Nota de la Organización / Secretaría") integrado de forma limpia en el cuerpo del correo de notificación.
+   - Verificado con la competición 82: genera perfectamente las 2 páginas (clasificación general alevín + desglose detallado de figura con panel y notas).
 
-2. VERIFICACIÓN Y ARCHIVOS ACTUALIZADOS:
-   - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
-   - `/var/www/html/beta/informes/informe_puntuaciones.php` (permisos www-data:www-data)
-   - PDF validado en Alevín (16 filas) e Infantil (25 filas), con nombres al 100% en una sola línea.
+2. ARCHIVOS ACTUALIZADOS:
+   - `/var/www/html/sincrm/informes_publicar_code.php`
+   - `/var/www/html/sincrm/js/publicar_modal.js`
+   - Espejo en `/var/www/html/beta/` sincronizado con permisos `www-data:www-data`.

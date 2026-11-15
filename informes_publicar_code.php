@@ -268,16 +268,8 @@ if ($action === 'publicar') {
     } elseif ($tipo === 'orden') {
         $url_rel = "/informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden&cron_token={$cron_token}";
     } elseif ($tipo === 'clasificacion' || $tipo === 'resultados') {
-        // Comprobar si hay rutinas o es pura de figuras
-        $q_chk_rut = "SELECT COUNT(*) as n FROM rutinas WHERE id_competicion = '$id_competicion'";
-        $res_chk = mysqli_query($connection, $q_chk_rut);
-        $total_rutinas_comp = ($res_chk) ? (int)mysqli_fetch_assoc($res_chk)['n'] : 0;
-
-        if ($total_rutinas_comp > 0) {
-            $url_rel = "/informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&cron_token={$cron_token}";
-        } else {
-            $url_rel = "/informes/informe_figuras_resultados_categorias.php?id_competicion={$id_competicion}&titulo=Resultados&cron_token={$cron_token}";
-        }
+        // Generador unificado v4 estructurado (figuras con resumen por categoría + detalle + rutinas si las hubiera)
+        $url_rel = "/informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo=Clasificación Detallada&cron_token={$cron_token}";
     } elseif ($tipo === 'liga') {
         $url_rel = "/informes/informe_figuras_liga_categorias.php?id_competicion={$id_competicion}&cron_token={$cron_token}";
     } else {
@@ -448,11 +440,27 @@ if ($action === 'publicar') {
         // Nombre de adjunto solicitado: {id}-{tipo}.pdf (ej: 81-orden.pdf, 81-clasificacion.pdf, 81-inscripciones.pdf)
         $attachment_name = "{$id_competicion}-{$tipo}.pdf";
 
+        $texto_adicional = trim($_POST['texto_adicional'] ?? '');
+        $bloque_adicional = '';
+        if (!empty($texto_adicional)) {
+            $bloque_adicional = "
+                <div style='background-color:#eff6ff; border-radius:12px; padding:14px 16px; margin:0 0 16px 0; border-left:4px solid #2563eb; border-top:1px solid #dbeafe; border-right:1px solid #dbeafe; border-bottom:1px solid #dbeafe;'>
+                    <p style='margin:0 0 6px 0; font-size:12px; font-weight:800; color:#1e40af; text-transform:uppercase; letter-spacing:0.5px;'>
+                        Nota de la Organización / Secretaría:
+                    </p>
+                    <p style='margin:0; font-size:13.5px; color:#1e3a8a; line-height:1.6; white-space:pre-wrap;'>
+                        " . nl2br(htmlspecialchars($texto_adicional)) . "
+                    </p>
+                </div>
+            ";
+        }
+
         $cuerpo = "
             <h2 style='color:#0f172a; font-size:18px; font-weight:800; margin:0 0 12px 0;'>Nuevo Documento Publicado</h2>
             <p style='color:#334155; font-size:14px; line-height:1.6; margin:0 0 16px 0;'>
                 Se ha publicado un nuevo documento: <strong>{$tipo_label}</strong> para la competición <strong>{$comp['nombre']}</strong>.
             </p>
+            {$bloque_adicional}
             <div style='background-color:#f1f5f9; border-radius:12px; padding:16px; margin-bottom:20px; border-left:4px solid #2563eb;'>
                 <p style='margin:0 0 6px 0; font-size:13px; color:#1e293b;'><strong>Competición:</strong> #{$id_competicion} - {$comp['nombre']}</p>
                 <p style='margin:0 0 6px 0; font-size:13px; color:#1e293b;'><strong>Fecha:</strong> {$fecha_f}</p>

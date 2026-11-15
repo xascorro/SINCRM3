@@ -175,6 +175,17 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
                     </div>
                 </details>
 
+                <!-- Campo de Texto Adicional para el Email -->
+                <div class="p-3 bg-slate-50/80 rounded-2xl border border-slate-200/90 space-y-1.5 text-left">
+                    <label for="txt_mensaje_email" class="flex items-center justify-between text-slate-700 font-bold text-xs select-none">
+                        <span class="flex items-center gap-1.5">
+                            <i class="fas fa-comment-dots text-blue-600"></i> Texto adicional para el email
+                        </span>
+                        <span class="text-[10px] font-normal text-slate-400">Opcional</span>
+                    </label>
+                    <textarea id="txt_mensaje_email" rows="2" placeholder="Escribe aquí notas adicionales, horarios o aclaraciones para incluir en el correo..." class="w-full text-xs p-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 bg-white placeholder:text-slate-400 text-slate-800 transition-all resize-y outline-none"></textarea>
+                </div>
+
                 <!-- Resumen de Envío Pulse -->
                 <div class="p-2.5 bg-slate-100/80 rounded-xl flex items-center justify-between text-[11px] text-slate-500 font-medium">
                     <span class="flex items-center gap-1.5">
@@ -205,6 +216,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
             const destClubes = document.getElementById('chk_dest_clubes').checked ? '1' : '0';
             const destOficiales = document.getElementById('chk_dest_oficiales').checked ? '1' : '0';
             const destJueces = document.getElementById('chk_dest_jueces').checked ? '1' : '0';
+            const textoAdicional = document.getElementById('txt_mensaje_email') ? document.getElementById('txt_mensaje_email').value.trim() : '';
 
             const formData = new FormData();
             formData.append('action', 'publicar');
@@ -215,6 +227,7 @@ function mostrarModalConfiguracion(tipo, tituloDoc, accionTexto, filenamePreview
             formData.append('dest_clubes', destClubes);
             formData.append('dest_oficiales', destOficiales);
             formData.append('dest_jueces', destJueces);
+            formData.append('texto_adicional', textoAdicional);
 
             return fetch('informes_publicar_code.php', {
                 method: 'POST',
