@@ -1,78 +1,31 @@
 =======================================================
-RESUMEN DE SESIÓN: MEJORAS AVANZADAS BIAS ANALIZER v4
+RESUMEN DE SESIÓN: REESTRUCTURACIÓN DEL INFORME GLOBAL DE PUNTUACIONES
 Fecha: 2026-11-15
 =======================================================
 
-1. MÉTRICAS FORENSES Y DE CALIBRACIÓN INCORPORADAS:
-   - Detección de Asimetría Altas/Bajas por Club (Club Asymmetry Ratio):
-     * Detecta matemáticamente jueces que emiten un ratio desproporcionado de notas máximas o mínimas a un club específico (ej: CNCC 11 notas altas vs 2 bajas, ratio 5.5x), superando el blindaje del promedio aritmético.
-     * Integrado en la tabla de jueces de `analisis_jueces.php` (badge visual), en el desglose de entidades de `analisis_juez_detalle.php`, y en las fichas de `mi_auditoria.php`.
-   - Coherencia de Clasificación y Podio (Spearman Rank Correlation):
-     * Mide el grado de fidelidad con el que la papeleta del juez replica la clasificación oficial general por categoría.
-     * Alerta del Desplazamiento Máximo de Puesto (ej: nadadora que asciende o desciende 3 o más puestos respecto al consenso).
-   - Desviación Máxima Individual (Outlier Alert):
-     * Identificación instantánea de la mayor diferencia puntual emitida por el juez (atleta, ejercicio, nota juez, nota consenso, delta).
-   - Sub-desglose Figuras vs Rutinas Técnicas / AI:
-     * Conteo y porcentaje de precisión AQUA separado para fases de figuras y fases de rutinas.
-   - Comparador Cara a Cara (Head-to-Head):
-     * Selector interactivo en `analisis_juez_detalle.php` para cruzar nota a nota las evaluaciones de dos jueces que compartieron panel en la competición.
-     * Estadísticas automáticas: Concordancia AQUA (≤0.20), concordancia amplia (≤0.50), diferencia media y tabla de máximas discrepancias.
+1. OBJETIVO CUMPLIDO:
+   Reestructuración integral del informe oficial de puntuaciones (`informes/informe_puntuaciones.php` y `informes/informe_puntuaciones_global.php`) para organizar la memoria de resultados de forma jerárquica y oficial:
 
-2. LAS 5 MEJORAS ESTRATÉGICAS COMPLETADAS (100%):
-   - Mejora 1: Informe Oficial de Debriefing del Juez Árbitro (Referee Post-Meet Clinic Report) en `analisis_jueces.php`:
-     * Botón "Debriefing Clinic" en la barra superior.
-     * Modal interactivo e imprimible con acta formal para el Juez Árbitro:
-       - Top 3 figuras/ejercicios con mayor dispersión arbitral.
-       - Asimetrías de club detectadas en la competición.
-       - Bloque pedagógico de conclusiones técnicas para el clinic post-competición.
-       - Validación formal y firmas oficiales.
-   - Mejora 2: Análisis de Deriva Temporal y Fatiga Arbitral (Panel Drift & Fatigue Analysis) en `analisis_juez_detalle.php`:
-     * Tarjeta visual que compara la precisión y sesgo en el primer 25% de la sesión frente al último 25%.
-     * Detección de pérdida de rigor por fatiga o convergencia tardía del criterio.
-   - Mejora 3: Filtro de Temporada y Especialidad en el Ranking General (Season & Event Filter) en `ranking_jueces.php`:
-     * Selector dinámico de Temporada (Todas, 2026-2027, 2025-2026, 2024-2025, 2023-2024, 2022-2023).
-     * Selector de Especialidad (Todas las Especialidades, Solo Figuras, Solo Rutinas).
-     * Controles Zero-Gray con micro-interacciones elásticas y recálculo dinámico del podio y escalafón.
-   - Mejora 4: Matriz de Concordancia Cruzada (N x N) del Panel (Panel Agreement Heatmap) en `analisis_jueces.php`:
-     * Tabla N x N de afinidad técnica que cruza a todos los jueces del evento.
-     * Medición del porcentaje de notas compartidas dentro de la tolerancia oficial AQUA (≤ 0.2 ptos).
-     * Pastillas con código de colores según el grado de coincidencia (Verde ≥70%, Azul 50-69%, Ámbar 35-49%, Rojo <35%).
-   - Mejora 5: Pasaporte Técnico de Acreditación Arbitral (Judge Technical Passport) en `mi_auditoria.php`:
-     * Botón "Pasaporte Técnico" con diseño federativo oficial.
-     * Modal imprimible para clinics y homologación de licencias:
-       - Datos colegiales (Licencia, Categoría Nacional/Territorial, Federación).
-       - Acreditación de eventos, horas estimadas de panel y notas emitidas.
-       - Calificación AQUA Oficial, sesgo acumulado y estabilidad de campana.
-       - Pentágono de Competencias Arbitrales (Radar gráfico de alta resolución).
-       - Código de verificación digital SHA-256 (`AQUA-XXXX-XXXXXX`).
-       - Bloque oficial de firmas (Juez Árbitro, Sello FNRM, Juez Colegiado).
+   - BLOQUE 1: Primeras páginas - Resumen de Figuras por Categoría
+     * Alevín: Tabla con las 4 figuras (140k, 423, 355a, 401), nota media y final ponderada, puntuación total y diferencia, ordenado por ranking oficial (1º a 16º).
+     * Infantil: Tabla con las 4 figuras (356J, 407, 368, 367), nota media y final ponderada, puntuación total y diferencia, ordenado por ranking oficial (1º a 25º).
+     * Cabecera institucional con número de figuras, suma de GD, leyenda de códigos y nombres de figuras.
+     * Tipografía con `tabular-nums` y diseño sobrio sin fondos estridentes en podio (según directriz de usuario).
 
-3. BASE DE DATOS HISTÓRICA 100% INDEXADA Y PERSISTIDA:
-   - 23 competiciones oficiales de la historia de SINCRM auditadas y guardadas.
-   - 4.374 registros estadísticos en `auditoria_jueces_stats`.
-   - 27.083 notas individuales indexadas en `auditoria_jueces_puntos`.
-   - Replicadas y sincronizadas al 100% en MariaDB Docker (`sincrm_prod_db`) y host (`sincrm4` y `sincrm4beta`).
+   - BLOQUE 2: Clasificación Detallada por Figura Individual
+     * Todas las figuras de categoría Alevín agrupadas correlativamente (Figuras 1 a 4).
+     * Todas las figuras de categoría Infantil agrupadas correlativamente (Figuras 1 a 4).
+     * Puntuaciones juez por juez (J1..J5), nota media, penalizaciones, final y diferencia con desglose de paneles de oficiales y jueces.
 
-4. ARCHIVOS MODIFICADOS Y SINCRONIZADOS A PRODUCCIÓN/BETA:
-   - `/var/www/html/sincrm/analisis_jueces.php` (sincronizado a `/var/www/html/beta/`)
-   - `/var/www/html/sincrm/analisis_juez_detalle.php` (sincronizado a `/var/www/html/beta/`)
-   - `/var/www/html/sincrm/ranking_jueces.php` (sincronizado a `/var/www/html/beta/`)
-   - `/var/www/html/sincrm/mi_auditoria.php` (sincronizado a `/var/www/html/beta/`)
-   - `/var/www/html/sincrm/auditoria_jueces_code.php` (sincronizado a `/var/www/html/beta/`)
-   - Permisos `www-data:www-data` garantizados en todos los archivos.
+   - BLOQUE 3: Rutinas Técnicas
+     * Fases de rutinas técnicas ordenadas por categoría y modalidad (Solos, Dúos, Equipos Junior y Absoluto).
+     * Tarjetas técnicas con desglose de elementos (DD/BM, factor, jueces P1), sincronización, impresión artística (P2) y nota final.
 
-5. AJUSTE DE TEMPORADA VIGENTE (2026/2027):
-   - Establecida la Temporada 2026/2027 como la vista activa y predeterminada por defecto en `ranking_jueces.php` y `mi_auditoria.php`.
-   - Formato visual oficial adaptado a `2026/2027` (con barra inclinada) en selectores, cabeceras y Pasaporte Arbitral.
-   - El podio de la temporada vigente 2026/2027 refleja en la vista principal a María José Hernández (#1 Oro, 71.0%), Tania Blaya Pérez (#2 Plata, 68.5%) y Laura Manzanera Sánchez (#3 Bronce, 61.7%).
+2. OPTIMIZACIÓN Y CONTROL DE PAGINACIÓN:
+   - Eliminadas páginas en blanco intermedias mediante ajuste dinámico de salto de página y comprobación de inscripciones existentes (`cnt > 0`).
+   - El informe de competición 81 genera exactamente 14 páginas densas y estructuradas sin páginas vacías.
+   - Total compatibilidad con el modo individual por fase (`id_fase=X`).
 
-6. INFORME CLASIFICACIÓN GENERAL LIGA (informe_figuras_liga_categorias.php):
-   - Eliminados los colores de podio (oro/plata/bronce) en las 3 primeras posiciones.
-   - Formato unificado a tono neutral corporativo (#1e293b, bold, 8pt) para todas las posiciones.
-   - Sincronizado a `/var/www/html/beta/informes/` con permisos `www-data:www-data`.
-
-7. AJUSTE DE SALTO DE PÁGINA EN INFORME DE PUNTUACIONES (informe_puntuaciones.php):
-   - Solucionado el problema de la hoja 8 en blanco (solo cabecera y pie) en `informe_puntuaciones_global.php` (Comp #81).
-   - Ajustado margen de `SetAutoPagebreak` de 22mm a 18mm y espaciado de tarjetas de rutina a `margin-bottom: 5px;` (eliminados tags `<br>` redundantes tras tablas `nobr="true"`).
-   - Las 3 rutinas de Dúo Técnico Junior ahora cierran de forma compacta en la página 7, eliminando la página vacía y optimizando el documento a 12 páginas útiles sin desbordamientos.
-   - Sincronizado a `/var/www/html/beta/informes/` con permisos `www-data:www-data`.
+3. ARCHIVOS MODIFICADOS Y SINCRONIZADOS A BETA:
+   - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
+   - `/var/www/html/beta/informes/informe_puntuaciones.php` (permisos `www-data:www-data`, verificado con `php -l`)
