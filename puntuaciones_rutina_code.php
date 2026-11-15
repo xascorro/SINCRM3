@@ -142,8 +142,19 @@ if (isset($_POST['save_btn']) && $id_rutina > 0) {
         $is_bm = isset($_POST["BM{$elem}"]);
         $llevado_BM = $is_bm ? 'si' : 'no';
 
+        // Comprobar si el elemento es TRE
+        $q_chk_tre = mysqli_query($connection, "SELECT t.nombre FROM hibridos_rutina h JOIN tipo_hibridos t ON h.texto = t.id WHERE h.id_rutina = $id_rutina AND h.elemento = $elem AND h.tipo = 'part' AND h.texto != '3' LIMIT 1");
+        $is_tre_elem = false;
+        if ($q_chk_tre && $row_tre = mysqli_fetch_assoc($q_chk_tre)) {
+            $is_tre_elem = ($row_tre['nombre'] === 'TRE');
+        }
+
         if ($is_bm) {
-            $dd_aplicado = floatval(str_replace(',', '.', $_POST["BM{$elem}"]));
+            if ($is_tre_elem) {
+                $dd_aplicado = 0.0000;
+            } else {
+                $dd_aplicado = floatval(str_replace(',', '.', $_POST["BM{$elem}"] ?? 0.5));
+            }
         } else {
             $dd_aplicado = floatval(str_replace(',', '.', $_POST["dd{$elem}"] ?? 0));
         }

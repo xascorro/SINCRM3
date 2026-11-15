@@ -888,7 +888,7 @@ if (!function_exists('render_puntuaciones_rutina')) {
                     $html_r .= '<table cellpadding="2" style="width:100%; border-collapse:collapse;">';
                     $html_r .= '<tr style="color:#64748b; border-bottom:1px solid #cbd5e1;">';
                     $html_r .= '<th width="12%">ELEMENTO</th>';
-                    $html_r .= '<th width="12%" align="center">DD / BM</th>';
+                    $html_r .= '<th width="12%" align="center">DD / BM / 0</th>';
                     $html_r .= '<th width="8%" align="center">FACTOR</th>';
                     $html_r .= '<th width="44%">NOTAS JUECES (P1)</th>';
                     $html_r .= '<th width="10%" align="center">MEDIA</th>';
@@ -908,12 +908,17 @@ if (!function_exists('render_puntuaciones_rutina')) {
                         while ($el = mysqli_fetch_assoc($res_elem_r)) {
                             $elem_num = intval($el['elemento']);
                             $is_bm = ($el['llevado_BM'] === 'si');
+                            $is_tre = (($el['tipo_nombre'] ?? '') === 'TRE');
 
-                            // DD o BM valor
+                            // DD o BM valor (los TRE no tienen Base Mark; si fallan reciben 0)
                             if ($is_bm) {
-                                $q_bm_val = mysqli_query($connection, "SELECT valor FROM hibridos_rutina WHERE tipo = 'basemark' AND id_rutina = $id_rutina AND elemento = $elem_num");
-                                $val_dif = $q_bm_val ? floatval(mysqli_fetch_assoc($q_bm_val)['valor'] ?? 0.5) : 0.5;
-                                $dif_badge = '<span style="color:#dc2626; font-weight:bold;">BM: ' . number_format($val_dif, 2) . '</span>';
+                                if ($is_tre) {
+                                    $dif_badge = '<span style="color:#dc2626; font-weight:bold;">0</span>';
+                                } else {
+                                    $q_bm_val = mysqli_query($connection, "SELECT valor FROM hibridos_rutina WHERE tipo = 'basemark' AND id_rutina = $id_rutina AND elemento = $elem_num");
+                                    $val_dif = $q_bm_val ? floatval(mysqli_fetch_assoc($q_bm_val)['valor'] ?? 0.5) : 0.5;
+                                    $dif_badge = '<span style="color:#dc2626; font-weight:bold;">BM: ' . number_format($val_dif, 2) . '</span>';
+                                }
                             } else {
                                 $q_dd_val = mysqli_query($connection, "SELECT valor FROM hibridos_rutina WHERE tipo = 'total' AND id_rutina = $id_rutina AND elemento = $elem_num");
                                 $val_dif = $q_dd_val ? floatval(mysqli_fetch_assoc($q_dd_val)['valor'] ?? 0) : 0;
@@ -953,12 +958,37 @@ if (!function_exists('render_puntuaciones_rutina')) {
                         }
                     }
 
-                    // Sincronización
-                    $pen_sinc_val = floatval($rutina['penalizacion_sincro'] ?? 0);
-                    if ($pen_sinc_val != 0) {
-                        $html_r .= '<tr style="background-color:#faf5ff; border-bottom:1px solid #e9d5ff;">';
-                        $html_r .= '<td colspan="5"><b style="color:#9333ea;">Errores de Sincronización</b></td>';
-                        $html_r .= '<td align="right" style="font-weight:bold; color:#9333ea;">-' . number_format(abs($pen_sinc_val), 4) . '</td>';
+                    // Sincronización (todas las modalidades excepto solos)
+                    $id_modalidad = intval($fase['id_modalidad'] ?? 0);
+                    if ($id_modalidad != 1 && $id_modalidad != 5) {
+                        $q_sinc = mysqli_query($connection, "SELECT * FROM errores_sincronizacion WHERE id_rutina = $id_rutina");
+                        $sinc = $q_sinc ? mysqli_fetch_assoc($q_sinc) : null;
+                        $p_sinc = floatval($sinc['errores_pequenos'] ?? 0);
+                        $o_sinc = floatval($sinc['errores_obvios'] ?? 0);
+                        $m_sinc = floatval($sinc['errores_mayores'] ?? 0);
+                        $p_sinc_txt = ($p_sinc == intval($p_sinc)) ? intval($p_sinc) : number_format($p_sinc, 1);
+                        $o_sinc_txt = ($o_sinc == intval($o_sinc)) ? intval($o_sinc) : number_format($o_sinc, 1);
+                        $m_sinc_txt = ($m_sinc == intval($m_sinc)) ? intval($m_sinc) : number_format($m_sinc, 1);
+                        $ded_sinc = isset($sinc['nota']) ? floatval($sinc['nota']) : floatval($rutina['nota_panel_sincro'] ?? 0);
+
+                        $err_xs = !empty($fase['error_xs']) ? $fase['error_xs'] : '-0.1';
+                        $err_ob = !empty($fase['error_ob']) ? $fase['error_ob'] : '-0.5';
+                        $err_xl = !empty($fase['error_xl']) ? $fase['error_xl'] : '-3.0';
+
+                        $html_r .= '<tr style="background-color:#fef2f2; border-bottom:1px solid #fee2e2;">';
+                        $html_r .= '<td colspan="3"><b style="color:#b91c1c;">Sincronización</b></td>';
+                        $html_r .= '<td style="color:#7f1d1d; font-size:6pt;">Pequeños: ' . $p_sinc_txt . ' (' . $err_xs . ') · Obvios: ' . $o_sinc_txt . ' (' . $err_ob . ') · Mayores: ' . $m_sinc_txt . ' (' . $err_xl . ')</td>';
+                        $html_r .= '<td align="center" style="color:#b91c1c;">Deducción</td>';
+                        $html_r .= '<td align="right" style="font-weight:bold; color:#b91c1c;">' . number_format($ded_sinc, 2) . '</td>';
+                        $html_r .= '</tr>';
+                    }
+
+                    // Penalizaciones Elementos
+                    $pen_elem_val = floatval($rutina['penalizaciones_elementos'] ?? 0);
+                    if ($pen_elem_val != 0) {
+                        $html_r .= '<tr style="background-color:#fef2f2; border-bottom:1px solid #fee2e2;">';
+                        $html_r .= '<td colspan="5"><b style="color:#b91c1c;">Penalizaciones Elementos</b></td>';
+                        $html_r .= '<td align="right" style="font-weight:bold; color:#b91c1c;">' . number_format($pen_elem_val, 4) . '</td>';
                         $html_r .= '</tr>';
                     }
 

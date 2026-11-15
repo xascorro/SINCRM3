@@ -121,7 +121,7 @@ $tiene_sincro = !$is_solo;
                             <thead>
                                 <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 bg-white">
                                     <th class="px-6 py-4">Elemento / Factor</th>
-                                    <th class="px-6 py-4 text-center">BM</th>
+                                    <th class="px-6 py-4 text-center">BM / 0</th>
                                     <th class="px-6 py-4 text-center">DD</th>
                                     <?php
                                     $q_jueces1 = "SELECT * FROM panel_jueces WHERE id_fase=$id_fase AND id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 1 AND id_competicion=".$_SESSION['id_competicion_activa'].") ORDER BY numero_juez";
@@ -150,15 +150,20 @@ $tiene_sincro = !$is_solo;
                                 if (mysqli_num_rows($res_elem) > 0) {
                                     while ($el = mysqli_fetch_assoc($res_elem)) {
                                         $factor = 0;
+                                        $is_tre = ($el['nombre'] == 'TRE');
                                         if ($el['nombre'] == 'HYBRID') $factor = $fase['f_hybrid'];
                                         elseif ($el['nombre'] == 'ACROBATIC') $factor = $fase['f_acro'];
-                                        elseif ($el['nombre'] == 'TRE') $factor = $fase['f_tre'];
+                                        elseif ($is_tre) $factor = $fase['f_tre'];
 
                                         $q_dd = "SELECT valor FROM hibridos_rutina WHERE tipo = 'total' AND id_rutina=$id_rutina AND elemento=".$el['elemento'];
                                         $dd = mysqli_fetch_assoc(mysqli_query($connection, $q_dd))['valor'] ?? 0;
                                         
-                                        $q_bm = "SELECT sum(valor) as val FROM hibridos_rutina WHERE tipo = 'basemark' AND id_rutina=$id_rutina AND elemento=".$el['elemento'];
-                                        $bm = mysqli_fetch_assoc(mysqli_query($connection, $q_bm))['val'] ?? 0;
+                                        if ($is_tre) {
+                                            $bm = 0;
+                                        } else {
+                                            $q_bm = "SELECT sum(valor) as val FROM hibridos_rutina WHERE tipo = 'basemark' AND id_rutina=$id_rutina AND elemento=".$el['elemento'];
+                                            $bm = mysqli_fetch_assoc(mysqli_query($connection, $q_bm))['val'] ?? 0;
+                                        }
                                         
                                         $q_llevado = "SELECT llevado_BM FROM puntuaciones_elementos WHERE id_rutina=$id_rutina AND elemento=".$el['elemento'];
                                         $llevado = mysqli_fetch_assoc(mysqli_query($connection, $q_llevado))['llevado_BM'] ?? 'no';
@@ -171,15 +176,19 @@ $tiene_sincro = !$is_solo;
                                         <div class="flex items-center gap-3">
                                             <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black text-white" style="background-color: <?php echo $el['color']; ?>;"><?php echo $el['elemento']; ?></span>
                                             <div>
-                                                <p class="text-xs font-black text-slate-700"><?php echo $el['nombre']; ?></p>
-                                                <p class="text-[9px] font-bold text-slate-400">F: <?php echo $factor; ?></p>
+                                                 <p class="text-xs font-black text-slate-700"><?php echo $el['nombre']; ?></p>
+                                                 <p class="text-[9px] font-bold text-slate-400">F: <?php echo $factor; ?></p>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         <label class="flex items-center justify-center gap-2 cursor-pointer group">
-                                            <input type="checkbox" name="BM<?php echo $el['elemento']; ?>" value="<?php echo $bm; ?>" <?php echo $llevado == 'si' ? 'checked' : ''; ?> class="w-4 h-4 rounded text-red-500 focus:ring-red-500 border-slate-300">
-                                            <span class="text-xs font-black text-slate-500 group-hover:text-red-600 transition-colors"><?php echo $bm; ?></span>
+                                            <input type="checkbox" name="BM<?php echo $el['elemento']; ?>" value="<?php echo $is_tre ? '0' : $bm; ?>" <?php echo $llevado == 'si' ? 'checked' : ''; ?> class="w-4 h-4 rounded text-red-500 focus:ring-red-500 border-slate-300">
+                                            <?php if ($is_tre): ?>
+                                                <span class="text-xs font-black text-red-600 group-hover:text-red-700 transition-colors" title="Los TRE no tienen Base Mark; reciben 0">0 (Cero)</span>
+                                            <?php else: ?>
+                                                <span class="text-xs font-black text-slate-500 group-hover:text-red-600 transition-colors"><?php echo $bm; ?></span>
+                                            <?php endif; ?>
                                         </label>
                                     </td>
                                     <td class="px-6 py-4 text-center font-black text-slate-700"><?php echo $dd; ?></td>

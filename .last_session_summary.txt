@@ -1,17 +1,19 @@
 =======================================================
-RESUMEN DE SESIÓN: PUBLICACIÓN UNIFICADA V4 Y NOTA EN EMAIL
+RESUMEN DE SESIÓN: TRE SIN BM (CERO) Y RESTAURACIÓN DE SINCRONIZACIÓN
 Fecha: 2026-11-15
 =======================================================
 
 1. AJUSTES SOLICITADOS APLICADOS:
-   - Se unificó la generación de PDFs en `informes_publicar_code.php`: ahora tanto `clasificacion` como `resultados` utilizan siempre el nuevo formato global estructurado `informe_puntuaciones_global.php` (independientemente de si la competición tiene rutinas o solo figuras, como la competición 82 "Control Técnico de Figuras").
-   - Se corrigió el error de cURL (`URL rejected: Malformed input to a URL function`) al codificar con `urlencode()` el parámetro `titulo` en la URL interna de generación del PDF.
-   - Se añadió en el modal de publicación (`js/publicar_modal.js`) un campo de texto adicional opcional ("Texto adicional para el email") para que la organización pueda añadir notas, avisos o aclaraciones antes de enviar.
-   - En `informes_publicar_code.php`, el texto introducido se formatea en un bloque destacado ("Nota de la Organización / Secretaría") integrado de forma limpia en el cuerpo del correo de notificación.
-   - Verificado con la competición 82: genera perfectamente las 2 páginas (clasificación general alevín + desglose detallado de figura con panel y notas).
+   - TRE sin Base Mark (Cero):
+     * En la pantalla de puntuación (`puntuaciones_rutina.php`), la columna se rotula "BM / 0". Para elementos TRE se muestra la casilla con etiqueta "0" en lugar de BM.
+     * En el cálculo (`puntuaciones_rutina_code.php`), si se marca la casilla para un TRE, se le asigna dificultad 0.0000 (en vez de valor base mark).
+     * En el informe de resultados (`informes/informe_puntuaciones.php`), la cabecera es "DD / BM / 0". Si un TRE es penalizado se rotula en rojo como "0" (nunca "BM").
+   - Deducciones de Sincronización en Rutinas:
+     * Restaurada la fila oficial de Sincronización en las tablas de rutinas del informe global (`informes/informe_puntuaciones.php`).
+     * Ahora consulta correctamente la tabla `errores_sincronizacion` desglosando errores Pequeños, Obvios y Mayores con sus penalizaciones y deducción total.
 
 2. ARCHIVOS ACTUALIZADOS:
-   - `/var/www/html/sincrm/informes_publicar_code.php`
-   - `/var/www/html/sincrm/informes_competicion.php`
-   - `/var/www/html/sincrm/js/publicar_modal.js`
+   - `/var/www/html/sincrm/puntuaciones_rutina.php`
+   - `/var/www/html/sincrm/puntuaciones_rutina_code.php`
+   - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
    - Espejo en `/var/www/html/beta/` sincronizado con permisos `www-data:www-data`.
