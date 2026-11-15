@@ -114,7 +114,7 @@ $pdf->SetSubject($GLOBALS["nombre_competicion_activa"]);
 $pdf->SetMargins(12, 27, 12);
 $pdf->SetHeaderMargin(5);
 $pdf->SetFooterMargin(15);
-$pdf->SetAutoPagebreak(TRUE, 22);
+$pdf->SetAutoPagebreak(TRUE, 18);
 $pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
 // =============================================================================
@@ -548,7 +548,7 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         $html_fase .= '<tr>';
         $html_fase .= '<td width="100%"><b style="font-size:11pt; color:#1e293b;">' . mb_strtoupper($nombre_modalidad . ' ' . $nombre_categoria, 'UTF-8') . '</b></td>';
         $html_fase .= '</tr>';
-        $html_fase .= '</table><br>';
+        $html_fase .= '</table>';
 
         // Jueces del panel para esta fase
         $q_j1 = "SELECT pj.numero_juez, j.nombre, j.apellidos FROM panel_jueces pj JOIN jueces j ON pj.id_juez = j.id WHERE pj.id_fase = $id_fase AND pj.id_panel IN (SELECT id FROM paneles WHERE id_paneles_tipo = 1 AND id_competicion = " . $GLOBALS['id_competicion_activa'] . ") ORDER BY pj.numero_juez ASC";
@@ -598,7 +598,7 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         if (!empty($jueces2_names)) {
             $html_fase .= '<tr><td width="15%"><b style="color:#059669;">P2 (Imp. Artística):</b></td><td width="85%">' . implode(' &nbsp;·&nbsp; ', $jueces2_names) . '</td></tr>';
         }
-        $html_fase .= '</table><br>';
+        $html_fase .= '</table>';
 
         $pdf->writeHTML($html_fase, true, false, true, false, '');
 
@@ -635,7 +635,7 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
         elseif ($baja) $pos_badge = 'BAJA';
 
         // Rutina HTML con nobr="true" para evitar cortes
-        $html_r = '<table nobr="true" cellpadding="3" style="border:1px solid #cbd5e1; border-collapse:collapse; width:100%; margin-bottom:8px;">';
+        $html_r = '<table nobr="true" cellpadding="2.5" style="border:1px solid #cbd5e1; border-collapse:collapse; width:100%; margin-bottom:5px;">';
 
         // CABECERA RUTINA
         $html_r .= '<tr style="background-color:#0f172a; color:#ffffff;">';
@@ -842,7 +842,7 @@ while ($fase = mysqli_fetch_assoc($res_fases)) {
             $html_r .= '</tr>';
         }
 
-        $html_r .= '</table><br>';
+        $html_r .= '</table>';
         $pdf->writeHTML($html_r, true, false, true, false, '');
     }
 }

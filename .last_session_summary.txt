@@ -70,3 +70,9 @@ Fecha: 2026-11-15
    - Eliminados los colores de podio (oro/plata/bronce) en las 3 primeras posiciones.
    - Formato unificado a tono neutral corporativo (#1e293b, bold, 8pt) para todas las posiciones.
    - Sincronizado a `/var/www/html/beta/informes/` con permisos `www-data:www-data`.
+
+7. AJUSTE DE SALTO DE PÁGINA EN INFORME DE PUNTUACIONES (informe_puntuaciones.php):
+   - Solucionado el problema de la hoja 8 en blanco (solo cabecera y pie) en `informe_puntuaciones_global.php` (Comp #81).
+   - Ajustado margen de `SetAutoPagebreak` de 22mm a 18mm y espaciado de tarjetas de rutina a `margin-bottom: 5px;` (eliminados tags `<br>` redundantes tras tablas `nobr="true"`).
+   - Las 3 rutinas de Dúo Técnico Junior ahora cierran de forma compacta en la página 7, eliminando la página vacía y optimizando el documento a 12 páginas útiles sin desbordamientos.
+   - Sincronizado a `/var/www/html/beta/informes/` con permisos `www-data:www-data`.
