@@ -1,14 +1,15 @@
 =======================================================
-RESUMEN DE SESIÓN: AJUSTES FINALES INFORME GENERAL FIGURAS
+RESUMEN DE SESIÓN: AJUSTE DE ANCHOS DE COLUMNA EN INFORME
 Fecha: 2026-11-15
 =======================================================
 
 1. AJUSTES SOLICITADOS APLICADOS:
-   - Posiciones 1º, 2º y 3º: Eliminados los colores diferenciados (dorado, plata, bronce). Todas las posiciones mantienen el color uniforme corporativo (#0f172a).
-   - Figuras en Clasificación General (Bloque 1): Eliminada la nota media base. Ahora se muestra exclusivamente la nota final ponderada de cada figura.
-   - Puntuaciones Cero: Las nadadoras con puntuación 0 (o sin puntuación en alguna figura) ahora muestran 0.0000 en lugar de guiones o huecos en blanco.
+   - Columna "NADADORA" ampliada de 25% a 40% (+60% de espacio) con `white-space: nowrap`.
+   - Todas las nadadoras caben en una sola línea continua junto a su año de nacimiento (ej: "CAJA GRZEGORZEWSKA, AMELIA (2016)"), evitando saltos de línea antiestéticos.
+   - Columna "CLUB" reducida de 13% a 8%, optimizada para códigos cortos de club (SALHAMA, CNCC, SLORCA, CDMS).
+   - Columnas de figuras ajustadas a 8% cada una (total 32%), TOTAL 9% y DIF 7%, manteniendo el 100% exacto de la tabla.
 
 2. VERIFICACIÓN Y ARCHIVOS ACTUALIZADOS:
    - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
    - `/var/www/html/beta/informes/informe_puntuaciones.php` (permisos www-data:www-data)
-   - PDF validado: 14 páginas generadas con total consistencia y precisión numérica.
+   - PDF validado en Alevín (16 filas) e Infantil (25 filas), con nombres al 100% en una sola línea.

@@ -395,14 +395,14 @@ if (!function_exists('render_resumen_figuras_categoria')) {
         $html .= '<tr><td width="10%"><b style="color:#0f172a;">Figuras:</b></td><td width="90%">' . implode(' &nbsp;·&nbsp; ', $figs_legend) . '</td></tr>';
         $html .= '</table>';
 
-        // Anchos de columnas adaptativos
+        // Anchos de columnas adaptativos (nombre ampliado y club reducido)
         $num_figs = count($figs_arr);
-        $w_pos = 5;
-        $w_club = 13;
-        $w_tot = 10;
+        $w_pos = 4;
+        $w_club = 8;
+        $w_tot = 9;
         $w_dif = 7;
-        $w_figs_total = 40;
-        $w_fig_col = ($num_figs > 0) ? floor($w_figs_total / $num_figs) : 10;
+        $w_figs_total = 32;
+        $w_fig_col = ($num_figs > 0) ? floor($w_figs_total / $num_figs) : 8;
         $w_figs_usado = $w_fig_col * $num_figs;
         $w_nad = 100 - ($w_pos + $w_club + $w_tot + $w_dif + $w_figs_usado);
 
@@ -481,7 +481,7 @@ if (!function_exists('render_resumen_figuras_categoria')) {
             if (!empty($sw['año_nacimiento'])) {
                 $nom_sw .= ' <span style="font-size:6.5pt; color:#94a3b8; font-weight:normal;">(' . $sw['año_nacimiento'] . ')</span>';
             }
-            $html .= '<td width="' . $w_nad . '%"><b style="color:#0f172a; font-size:7.5pt;">' . $nom_sw . '</b></td>';
+            $html .= '<td width="' . $w_nad . '%" style="white-space:nowrap;"><b style="color:#0f172a; font-size:7.5pt;">' . $nom_sw . '</b></td>';
             $html .= '<td width="' . $w_club . '%" style="color:#475569; font-size:7.5pt;">' . htmlspecialchars($sw['club_nom'] ?? '') . '</td>';
 
             foreach ($figs_arr as $fg) {
