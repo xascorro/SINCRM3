@@ -269,7 +269,8 @@ if ($action === 'publicar') {
         $url_rel = "/informes/informe_figuras.php?id_competicion={$id_competicion}&titulo=orden&cron_token={$cron_token}";
     } elseif ($tipo === 'clasificacion' || $tipo === 'resultados') {
         // Generador unificado v4 estructurado (figuras con resumen por categoría + detalle + rutinas si las hubiera)
-        $url_rel = "/informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo=Clasificación Detallada&cron_token={$cron_token}";
+        $titulo_enc = urlencode("Clasificación Detallada");
+        $url_rel = "/informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo={$titulo_enc}&cron_token={$cron_token}";
     } elseif ($tipo === 'liga') {
         $url_rel = "/informes/informe_figuras_liga_categorias.php?id_competicion={$id_competicion}&cron_token={$cron_token}";
     } else {

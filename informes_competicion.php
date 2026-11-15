@@ -92,7 +92,7 @@ $docs_publicacion = [
         'icono' => 'fa-trophy',
         'color' => 'emerald',
         'auto' => true,
-        'preview_url' => "informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo=Clasificación Detallada&v={$cache_buster}"
+        'preview_url' => "informes/informe_puntuaciones_global.php?id_competicion={$id_competicion}&titulo=Clasificaci%C3%B3n%20Detallada&v={$cache_buster}"
     ],
     'normativa' => [
         'titulo' => 'Normativa de Competición',
