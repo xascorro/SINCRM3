@@ -448,7 +448,7 @@ if (!function_exists('render_resumen_figuras_categoria')) {
 
             if ($is_baja) {
                 $pos_badge = '<span style="color:#ef4444; font-weight:bold;">BAJA</span>';
-                $tot_cell = '<span style="color:#94a3b8;">-</span>';
+                $tot_cell = '<span style="color:#ef4444; font-weight:bold;">BAJA</span>';
                 $dif_cell = '<span style="color:#94a3b8;">-</span>';
             } else {
                 $pos = intval($sw['posicion'] ?? 0);
@@ -461,8 +461,7 @@ if (!function_exists('render_resumen_figuras_categoria')) {
                     $pos = $pos_counter;
                     $prev_tot = $tot_calc;
                 }
-                $badge_color = ($pos == 1) ? '#d97706' : (($pos == 2) ? '#64748b' : (($pos == 3) ? '#b45309' : '#0f172a'));
-                $pos_badge = '<span class="tabular-nums" style="font-weight:bold; color:' . $badge_color . ';">' . $pos . 'º</span>';
+                $pos_badge = '<span class="tabular-nums" style="font-weight:bold; color:#0f172a;">' . $pos . 'º</span>';
 
                 $tot_cell = '<span class="tabular-nums" style="font-weight:bold; font-size:8pt; color:#047857;">' . number_format($tot_calc, 4) . '</span>';
                 
@@ -487,14 +486,11 @@ if (!function_exists('render_resumen_figuras_categoria')) {
 
             foreach ($figs_arr as $fg) {
                 $sc = $scores_map[$id_nad][intval($fg['id_fase'])] ?? null;
-                if ($sc && isset($sc['baja']) && $sc['baja'] == 'si') {
+                if ($is_baja || ($sc && isset($sc['baja']) && $sc['baja'] == 'si')) {
                     $cell_fig = '<span style="color:#ef4444; font-size:6.5pt; font-weight:bold;">BAJA</span>';
-                } elseif ($sc && isset($sc['nota_media']) && $sc['nota_media'] !== '' && floatval($sc['nota_media']) > 0) {
-                    $med = number_format(floatval($sc['nota_media']), 4);
-                    $fin = number_format(floatval($sc['nota_final']), 4);
-                    $cell_fig = '<span class="tabular-nums" style="font-weight:bold; color:#0f172a; font-size:7.5pt;">' . $med . '</span><br><span class="tabular-nums" style="color:#64748b; font-size:6pt;">(' . $fin . ')</span>';
                 } else {
-                    $cell_fig = '<span style="color:#94a3b8;">-</span>';
+                    $val_fin = ($sc && isset($sc['nota_final']) && $sc['nota_final'] !== '' && $sc['nota_final'] !== null) ? floatval($sc['nota_final']) : 0.0;
+                    $cell_fig = '<span class="tabular-nums" style="font-weight:bold; color:#0f172a; font-size:8pt;">' . number_format($val_fin, 4) . '</span>';
                 }
                 $html .= '<td width="' . $w_fig_col . '%" align="center">' . $cell_fig . '</td>';
             }

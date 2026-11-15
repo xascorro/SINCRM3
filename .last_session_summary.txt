@@ -1,31 +1,14 @@
 =======================================================
-RESUMEN DE SESIÓN: REESTRUCTURACIÓN DEL INFORME GLOBAL DE PUNTUACIONES
+RESUMEN DE SESIÓN: AJUSTES FINALES INFORME GENERAL FIGURAS
 Fecha: 2026-11-15
 =======================================================
 
-1. OBJETIVO CUMPLIDO:
-   Reestructuración integral del informe oficial de puntuaciones (`informes/informe_puntuaciones.php` y `informes/informe_puntuaciones_global.php`) para organizar la memoria de resultados de forma jerárquica y oficial:
+1. AJUSTES SOLICITADOS APLICADOS:
+   - Posiciones 1º, 2º y 3º: Eliminados los colores diferenciados (dorado, plata, bronce). Todas las posiciones mantienen el color uniforme corporativo (#0f172a).
+   - Figuras en Clasificación General (Bloque 1): Eliminada la nota media base. Ahora se muestra exclusivamente la nota final ponderada de cada figura.
+   - Puntuaciones Cero: Las nadadoras con puntuación 0 (o sin puntuación en alguna figura) ahora muestran 0.0000 en lugar de guiones o huecos en blanco.
 
-   - BLOQUE 1: Primeras páginas - Resumen de Figuras por Categoría
-     * Alevín: Tabla con las 4 figuras (140k, 423, 355a, 401), nota media y final ponderada, puntuación total y diferencia, ordenado por ranking oficial (1º a 16º).
-     * Infantil: Tabla con las 4 figuras (356J, 407, 368, 367), nota media y final ponderada, puntuación total y diferencia, ordenado por ranking oficial (1º a 25º).
-     * Cabecera institucional con número de figuras, suma de GD, leyenda de códigos y nombres de figuras.
-     * Tipografía con `tabular-nums` y diseño sobrio sin fondos estridentes en podio (según directriz de usuario).
-
-   - BLOQUE 2: Clasificación Detallada por Figura Individual
-     * Todas las figuras de categoría Alevín agrupadas correlativamente (Figuras 1 a 4).
-     * Todas las figuras de categoría Infantil agrupadas correlativamente (Figuras 1 a 4).
-     * Puntuaciones juez por juez (J1..J5), nota media, penalizaciones, final y diferencia con desglose de paneles de oficiales y jueces.
-
-   - BLOQUE 3: Rutinas Técnicas
-     * Fases de rutinas técnicas ordenadas por categoría y modalidad (Solos, Dúos, Equipos Junior y Absoluto).
-     * Tarjetas técnicas con desglose de elementos (DD/BM, factor, jueces P1), sincronización, impresión artística (P2) y nota final.
-
-2. OPTIMIZACIÓN Y CONTROL DE PAGINACIÓN:
-   - Eliminadas páginas en blanco intermedias mediante ajuste dinámico de salto de página y comprobación de inscripciones existentes (`cnt > 0`).
-   - El informe de competición 81 genera exactamente 14 páginas densas y estructuradas sin páginas vacías.
-   - Total compatibilidad con el modo individual por fase (`id_fase=X`).
-
-3. ARCHIVOS MODIFICADOS Y SINCRONIZADOS A BETA:
+2. VERIFICACIÓN Y ARCHIVOS ACTUALIZADOS:
    - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
-   - `/var/www/html/beta/informes/informe_puntuaciones.php` (permisos `www-data:www-data`, verificado con `php -l`)
+   - `/var/www/html/beta/informes/informe_puntuaciones.php` (permisos www-data:www-data)
+   - PDF validado: 14 páginas generadas con total consistencia y precisión numérica.
