@@ -83,6 +83,11 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                                 <i class="fas fa-gavel text-[9px]"></i> Juez Vinculado
                             </a>
                         <?php endif; ?>
+                        <?php if (!empty($user_data['telegram_chat_id'])): ?>
+                            <span class="px-3 py-1 bg-sky-50 text-sky-700 text-[10px] font-black uppercase tracking-wider rounded-full border border-sky-200 flex items-center gap-1.5" title="Telegram Vinculado">
+                                <i class="fab fa-telegram-plane text-[9px]"></i> <?php echo htmlspecialchars(!empty($user_data['telegram_username']) ? '@' . $user_data['telegram_username'] : 'Telegram OK'); ?>
+                            </span>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Métricas de Cuenta -->
@@ -214,6 +219,22 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                                        class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white transition-all text-xs sm:text-sm font-bold text-slate-800 outline-none tabular-nums">
                             </div>
 
+                            <!-- Preferencia de Notificaciones por Email -->
+                            <div class="space-y-1.5 sm:col-span-2 pt-2">
+                                <div class="p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
+                                    <div class="space-y-0.5">
+                                        <label class="text-xs font-black text-slate-800 flex items-center gap-2 cursor-pointer" for="recibir_emails_toggle">
+                                            <i class="fas fa-envelope text-blue-600 text-xs"></i> Recibir Notificaciones por Correo Electrónico
+                                        </label>
+                                        <p class="text-[11px] text-slate-500 font-medium">Recibir avisos oficiales, circulares, cierres de inscripciones y confirmaciones en tu email.</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                        <input type="checkbox" name="recibir_emails" id="recibir_emails_toggle" value="1" <?php echo (!isset($user_data['recibir_emails']) || $user_data['recibir_emails'] == 1) ? 'checked' : ''; ?> class="sr-only peer">
+                                        <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+
                             <!-- Selector de Foto de Perfil -->
                             <div class="space-y-1.5 sm:col-span-2 pt-2">
                                 <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Actualizar Foto de Perfil</label>
@@ -277,6 +298,131 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                         </p>
                     </div>
 
+                    <?php
+                    $is_tg_linked = !empty($user_data['telegram_chat_id']);
+                    $tg_username_display = !empty($user_data['telegram_username']) ? '@' . $user_data['telegram_username'] : 'Chat ID ' . ($user_data['telegram_chat_id'] ?? '');
+                    $tg_prefs = json_decode($user_data['telegram_prefs'] ?? '{}', true) ?: [];
+                    ?>
+                    <!-- BLOQUE 3: NOTIFICACIONES OFICIALES POR TELEGRAM -->
+                    <div id="telegramCard" class="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-sm border border-slate-200/80 border-t-4 border-t-sky-500 relative overflow-hidden">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 sm:mb-6">
+                            <div>
+                                <h2 class="text-base sm:text-lg font-black text-slate-800 flex items-center gap-2.5">
+                                    <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center text-sm shadow-2xs border border-sky-100">
+                                        <i class="fab fa-telegram-plane"></i>
+                                    </span>
+                                    Notificaciones Instantáneas vía Telegram
+                                </h2>
+                                <p class="text-xs text-slate-400 font-medium mt-1">Avisos oficiales de cierres de plazo, música pendiente, orden de salida y resultados en tu móvil.</p>
+                            </div>
+                            
+                            <div id="tgStatusBadge">
+                                <?php if ($is_tg_linked): ?>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                        Vinculado (<?php echo htmlspecialchars($tg_username_display); ?>)
+                                    </span>
+                                <?php else: ?>
+                                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs">
+                                        <i class="fas fa-circle-minus text-[9px]"></i> No Vinculado
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Contenido cuando NO está vinculado -->
+                        <div id="tgUnlinkedView" class="<?php echo $is_tg_linked ? 'hidden' : ''; ?> space-y-4">
+                            <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-sky-50/70 to-blue-50/50 border border-sky-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div class="space-y-1">
+                                    <span class="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-2">
+                                        <i class="fas fa-bolt text-sky-500"></i> Vinculación Rápida en 1 Clic
+                                    </span>
+                                    <p class="text-[11px] text-slate-500 max-w-xl leading-relaxed">
+                                        Al pulsar en conectar, se abrirá la aplicación de Telegram en tu dispositivo. Solo tendrás que pulsar el botón <b>Iniciar</b> (Start) para quedar vinculado inmediatamente.
+                                    </p>
+                                </div>
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 shrink-0">
+                                    <button type="button" onclick="iniciarVinculacionTelegram()" class="px-5 py-3 bg-sky-500 hover:bg-sky-600 text-white font-black text-xs uppercase tracking-wider rounded-xl shadow-lg shadow-sky-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                        <i class="fab fa-telegram-plane text-sm"></i> Conectar con Telegram
+                                    </button>
+                                    <button type="button" onclick="mostrarModalQRTelegram()" class="px-3.5 py-3 bg-white text-slate-600 hover:text-sky-600 border border-slate-200 hover:border-sky-200 text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-1.5" title="Escanear con la cámara del móvil">
+                                        <i class="fas fa-qrcode text-sm"></i> Ver QR
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido cuando SÍ está vinculado -->
+                        <div id="tgLinkedView" class="<?php echo $is_tg_linked ? '' : 'hidden'; ?> space-y-5">
+                            <div class="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center text-lg shadow-md shadow-sky-500/20 shrink-0">
+                                        <i class="fab fa-telegram-plane"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-black text-slate-800" id="tgAccountInfo">
+                                            Conectado a Telegram como <span class="text-sky-600 font-bold"><?php echo htmlspecialchars($tg_username_display); ?></span>
+                                        </p>
+                                        <span class="text-[10px] text-slate-400">Canal verificado para notificaciones de SINCRM</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="probarMensajeTelegram()" class="px-4 py-2 bg-white hover:bg-sky-50 text-sky-700 border border-sky-200 text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-2xs">
+                                        <i class="fas fa-paper-plane text-[11px]"></i> Enviar Prueba
+                                    </button>
+                                    <button type="button" onclick="desvincularTelegram()" class="px-3 py-2 bg-white hover:bg-rose-50 text-rose-600 border border-slate-200 hover:border-rose-200 text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center gap-1.5 shadow-2xs" title="Desconectar este chat">
+                                        <i class="fas fa-unlink text-[11px]"></i> Desvincular
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Opciones de Notificaciones -->
+                            <div class="pt-2 border-t border-slate-100">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Avisos Activos para tu Cuenta</span>
+                                    <span class="text-[10px] text-slate-400 font-medium italic">Se actualizan automáticamente</span>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    <label class="p-3 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
+                                        <div class="space-y-0.5">
+                                            <span class="text-xs font-bold text-slate-700 block">Competiciones y Sorteos</span>
+                                            <span class="text-[10px] text-slate-400 block">Publicación de orden de salida y horarios.</span>
+                                        </div>
+                                        <input type="checkbox" onchange="guardarPrefsTelegram()" id="pref_competiciones" <?php echo (!isset($tg_prefs['competiciones']) || $tg_prefs['competiciones']) ? 'checked' : ''; ?> class="w-4 h-4 rounded text-sky-500 border-slate-300">
+                                    </label>
+
+                                    <label class="p-3 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
+                                        <div class="space-y-0.5">
+                                            <span class="text-xs font-bold text-slate-700 block">Cierres y Avisos de Música</span>
+                                            <span class="text-[10px] text-slate-400 block">Confirmaciones de cierre y música pendiente.</span>
+                                        </div>
+                                        <input type="checkbox" onchange="guardarPrefsTelegram()" id="pref_cierres" <?php echo (!isset($tg_prefs['cierres']) || $tg_prefs['cierres']) ? 'checked' : ''; ?> class="w-4 h-4 rounded text-sky-500 border-slate-300">
+                                    </label>
+
+                                    <label class="p-3 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
+                                        <div class="space-y-0.5">
+                                            <span class="text-xs font-bold text-slate-700 block">Resultados Oficiales</span>
+                                            <span class="text-[10px] text-slate-400 block">Actas finales y clasificaciones publicadas.</span>
+                                        </div>
+                                        <input type="checkbox" onchange="guardarPrefsTelegram()" id="pref_resultados" <?php echo (!isset($tg_prefs['resultados']) || $tg_prefs['resultados']) ? 'checked' : ''; ?> class="w-4 h-4 rounded text-sky-500 border-slate-300">
+                                    </label>
+
+                                    <?php if (!empty($user_data['id_juez_v3'])): ?>
+                                    <label class="p-3 rounded-xl bg-slate-50/70 border border-slate-200/60 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
+                                        <div class="space-y-0.5">
+                                            <span class="text-xs font-bold text-slate-700 block">Paneles de Jueces</span>
+                                            <span class="text-[10px] text-slate-400 block">Asignación técnica a mesas y paneles.</span>
+                                        </div>
+                                        <input type="checkbox" onchange="guardarPrefsTelegram()" id="pref_paneles" <?php echo (!isset($tg_prefs['paneles']) || $tg_prefs['paneles']) ? 'checked' : ''; ?> class="w-4 h-4 rounded text-sky-500 border-slate-300">
+                                    </label>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Botones de Acción (Margen inferior para Bottom Nav móvil) -->
                     <div class="pt-2 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pb-24 sm:pb-8">
                         <button type="reset" class="px-6 py-3.5 text-center text-xs font-black uppercase tracking-wider text-slate-500 hover:text-slate-800 bg-white border border-slate-200 rounded-xl transition-all active:scale-[0.98]">
@@ -310,6 +456,214 @@ function togglePasswordVisibility(inputId, iconId) {
         icon.classList.remove('fa-eye-slash');
         icon.classList.add('fa-eye');
     }
+}
+
+// GESTIÓN DE TELEGRAM 1-CLIC
+let tgPollTimer = null;
+
+function iniciarVinculacionTelegram() {
+    Swal.fire({
+        title: 'Generando enlace...',
+        text: 'Conectando con el bot de Telegram',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    $.post('telegram_link.php', { action: 'generar_token' }, function(res) {
+        if (res.status === 'success') {
+            // Abrir Telegram en nueva pestaña / app móvil
+            window.open(res.link, '_blank');
+
+            // Modal interactivo mientras el usuario pulsa Iniciar
+            Swal.fire({
+                title: 'Pulsa "Iniciar" en Telegram',
+                html: `
+                    <div class="space-y-4 my-2 text-slate-600">
+                        <div class="w-16 h-16 rounded-2xl bg-sky-50 text-sky-500 mx-auto flex items-center justify-center text-3xl shadow-sm border border-sky-100">
+                            <i class="fab fa-telegram-plane animate-bounce"></i>
+                        </div>
+                        <p class="text-xs">Se ha abierto Telegram en tu dispositivo. Pulsa en <b>Iniciar</b> o envía el mensaje inicial para completar la vinculación.</p>
+                        <p class="text-[11px] text-slate-400 italic">Esperando confirmación del bot...</p>
+                        <div class="pt-2">
+                            <a href="${res.link}" target="_blank" class="inline-flex items-center gap-1.5 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-all">
+                                <i class="fas fa-external-link-alt text-[10px]"></i> Volver a abrir Telegram
+                            </a>
+                        </div>
+                    </div>
+                `,
+                showCancelButton: true,
+                cancelButtonText: 'Cerrar',
+                showConfirmButton: false,
+                didOpen: () => {
+                    iniciarSondeoVinculacion();
+                },
+                willClose: () => {
+                    detenerSondeoVinculacion();
+                }
+            });
+        } else {
+            Swal.fire('Error', res.message || 'No se pudo generar el enlace', 'error');
+        }
+    }, 'json').fail(function() {
+        Swal.fire('Error', 'Fallo de comunicación con el servidor', 'error');
+    });
+}
+
+function mostrarModalQRTelegram() {
+    Swal.fire({
+        title: 'Generando código QR...',
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    $.post('telegram_link.php', { action: 'generar_token' }, function(res) {
+        if (res.status === 'success') {
+            const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(res.link);
+
+            Swal.fire({
+                title: 'Escanea con la cámara de tu móvil',
+                html: `
+                    <div class="flex flex-col items-center justify-center space-y-3 my-2">
+                        <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                            <img src="${qrUrl}" alt="QR Telegram" class="w-48 h-48 rounded-lg object-contain">
+                        </div>
+                        <p class="text-xs text-slate-500 max-w-xs">Apunta con la cámara de tu móvil para abrir Telegram y pulsa <b>Iniciar</b>.</p>
+                        <span class="text-[10px] text-slate-400 italic">Detección automática en tiempo real</span>
+                    </div>
+                `,
+                showCancelButton: true,
+                cancelButtonText: 'Cerrar',
+                showConfirmButton: false,
+                didOpen: () => {
+                    iniciarSondeoVinculacion();
+                },
+                willClose: () => {
+                    detenerSondeoVinculacion();
+                }
+            });
+        } else {
+            Swal.fire('Error', res.message || 'Error al generar el QR', 'error');
+        }
+    }, 'json');
+}
+
+function iniciarSondeoVinculacion() {
+    detenerSondeoVinculacion();
+    tgPollTimer = setInterval(function() {
+        $.getJSON('telegram_link.php?action=comprobar_estado', function(data) {
+            if (data.status === 'success' && data.vinculado) {
+                detenerSondeoVinculacion();
+                Swal.close();
+
+                // Actualizar interfaz a estado conectado
+                document.getElementById('tgUnlinkedView').classList.add('hidden');
+                document.getElementById('tgLinkedView').classList.remove('hidden');
+                
+                const usernameTxt = data.telegram_username ? '@' + data.telegram_username : 'Chat ID ' + data.chat_id;
+                document.getElementById('tgStatusBadge').innerHTML = `
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Vinculado (${usernameTxt})
+                    </span>
+                `;
+                document.getElementById('tgAccountInfo').innerHTML = `
+                    Conectado a Telegram como <span class="text-sky-600 font-bold">${usernameTxt}</span>
+                `;
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Vinculación Exitosa!',
+                    text: 'Tu cuenta de SINCRM ha sido conectada correctamente a Telegram.',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }, 2500);
+}
+
+function detenerSondeoVinculacion() {
+    if (tgPollTimer) {
+        clearInterval(tgPollTimer);
+        tgPollTimer = null;
+    }
+}
+
+function probarMensajeTelegram() {
+    Swal.fire({
+        title: 'Enviando mensaje...',
+        didOpen: () => { Swal.showLoading(); }
+    });
+
+    $.post('telegram_link.php', { action: 'probar_mensaje' }, function(res) {
+        if (res.status === 'success') {
+            Swal.fire({
+                icon: 'success',
+                title: '¡Mensaje Enviado!',
+                text: res.message,
+                timer: 2500,
+                showConfirmButton: false
+            });
+        } else {
+            Swal.fire('Atención', res.message, 'warning');
+        }
+    }, 'json').fail(function() {
+        Swal.fire('Error', 'Fallo de conexión al enviar prueba', 'error');
+    });
+}
+
+function guardarPrefsTelegram() {
+    const payload = {
+        action: 'guardar_prefs',
+        notif_activas: '1',
+        pref_competiciones: document.getElementById('pref_competiciones')?.checked ? '1' : '0',
+        pref_cierres: document.getElementById('pref_cierres')?.checked ? '1' : '0',
+        pref_musica: document.getElementById('pref_musica')?.checked ? '1' : '0',
+        pref_resultados: document.getElementById('pref_resultados')?.checked ? '1' : '0',
+        pref_paneles: document.getElementById('pref_paneles')?.checked ? '1' : '0'
+    };
+
+    $.post('telegram_link.php', payload, function(res) {
+        if (res.status === 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Preferencias guardadas',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }, 'json');
+}
+
+function desvincularTelegram() {
+    Swal.fire({
+        title: '¿Desvincular Telegram?',
+        text: 'Dejarás de recibir notificaciones oficiales en tiempo real en tu aplicación.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Sí, desvincular',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.post('telegram_link.php', { action: 'desvincular' }, function(res) {
+                if (res.status === 'success') {
+                    document.getElementById('tgLinkedView').classList.add('hidden');
+                    document.getElementById('tgUnlinkedView').classList.remove('hidden');
+                    document.getElementById('tgStatusBadge').innerHTML = `
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs">
+                            <i class="fas fa-circle-minus text-[9px]"></i> No Vinculado
+                        </span>
+                    `;
+                    Swal.fire('Desvinculado', res.message, 'success');
+                } else {
+                    Swal.fire('Error', res.message || 'No se pudo desvincular', 'error');
+                }
+            }, 'json');
+        }
+    });
 }
 </script>
 

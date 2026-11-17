@@ -21,7 +21,7 @@ workbox.routing.registerRoute(
 workbox.routing.registerRoute(
     /\.(?:png|jpg|jpeg|gif|woff2)$/,
     new workbox.strategies.CacheFirst({
-        "cacheName": "images",
+        "cacheName": "images-v4.1",
         plugins: [
             new workbox.expiration.Plugin({
                 maxEntries: 1000,

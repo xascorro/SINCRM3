@@ -2,6 +2,7 @@
 include('security.php');
 include('database/dbconfig.php');
 include('./includes/mysql_backup_import.php');
+include_once('./includes/telegram_functions.php');
 
 //Modificar ./database/dbconfig.php
 if (isset($_POST['update_btn']) && isset($_POST['accept']) && $_POST['accept'] == '1') {
@@ -247,6 +248,59 @@ if (isset($_POST['delete_residual_file'])) {
         $_SESSION['error'] = "No se pudo eliminar el archivo";
     }
     header('Location: mantenimiento.php');
+    exit();
+}
+
+// Guardar Credenciales y Ajustes del Bot de Telegram
+if (isset($_POST['save_telegram_config'])) {
+    $bot_token = trim($_POST['telegram_bot_token'] ?? '');
+    $bot_username = ltrim(trim($_POST['telegram_bot_username'] ?? ''), '@');
+    $webhook_secret = trim($_POST['telegram_webhook_secret'] ?? '');
+    $notif_enabled = isset($_POST['telegram_notif_enabled']) ? '1' : '0';
+
+    set_sincrm_config('telegram_bot_token', $bot_token, 'Token de la API de Telegram de @BotFather');
+    set_sincrm_config('telegram_bot_username', $bot_username, 'Nombre de usuario del bot en Telegram');
+    set_sincrm_config('telegram_webhook_secret', $webhook_secret, 'Token secreto para validar webhooks');
+    set_sincrm_config('telegram_notif_enabled', $notif_enabled, 'Habilitar notificaciones generales vía Telegram');
+
+    write_log("Telegram: Actualizada la configuración del bot (@$bot_username)", "INFO");
+    $_SESSION['correcto'] = 'Configuración del Bot de Telegram guardada correctamente';
+    header('Location: configuracion_sistema.php');
+    exit();
+}
+
+// Registrar / Actualizar Webhook con Telegram
+if (isset($_POST['register_telegram_webhook'])) {
+    $secret = get_sincrm_config('telegram_webhook_secret', '');
+    $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "https";
+    $host = $_SERVER['HTTP_HOST'] ?? 'sincrm.pedrodiaz.eu';
+    $webhook_url = "{$protocol}://{$host}/webhook_telegram.php";
+
+    $res = telegram_setup_webhook($webhook_url, $secret);
+
+    if (!empty($res['ok'])) {
+        write_log("Telegram: Webhook registrado con éxito en $webhook_url", "SUCCESS");
+        $_SESSION['correcto'] = "Webhook registrado correctamente con Telegram: $webhook_url";
+    } else {
+        $desc = $res['description'] ?? 'Error desconocido';
+        write_log("Telegram: Fallo al registrar webhook: $desc", "ERROR");
+        $_SESSION['error'] = "Error al registrar Webhook en Telegram: $desc";
+    }
+    header('Location: configuracion_sistema.php');
+    exit();
+}
+
+// Eliminar Webhook de Telegram
+if (isset($_POST['delete_telegram_webhook'])) {
+    $res = telegram_delete_webhook();
+    if (!empty($res['ok'])) {
+        write_log("Telegram: Webhook eliminado", "INFO");
+        $_SESSION['correcto'] = 'Webhook eliminado correctamente de Telegram';
+    } else {
+        $desc = $res['description'] ?? 'Error desconocido';
+        $_SESSION['error'] = "Error al eliminar Webhook: $desc";
+    }
+    header('Location: configuracion_sistema.php');
     exit();
 }
 ?>

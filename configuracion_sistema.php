@@ -2,6 +2,18 @@
 include('security.php');
 include('includes/header.php');
 include('includes/navbar.php');
+include_once('includes/telegram_functions.php');
+
+$tg_token = get_sincrm_config('telegram_bot_token', '');
+$tg_username = get_sincrm_config('telegram_bot_username', 'SincrmBot');
+$tg_secret = get_sincrm_config('telegram_webhook_secret', '');
+$tg_enabled = get_sincrm_config('telegram_notif_enabled', '1');
+
+$tg_bot_info = !empty($tg_token) ? telegram_get_bot_info() : null;
+$tg_webhook_info = !empty($tg_token) ? telegram_get_webhook_info() : null;
+
+$server_host = $_SERVER['HTTP_HOST'] ?? 'sincrm.pedrodiaz.eu';
+$current_webhook_url = "https://{$server_host}/webhook_telegram.php";
 ?>
 
 <!-- Contenedor Principal -->
@@ -82,6 +94,152 @@ include('includes/navbar.php');
                                 <i class="fas fa-wrench text-xs"></i> Ejecutar Ahora
                             </button>
                         </form>
+                    </div>
+                </div>
+
+                <!-- Panel: Bot de Telegram para Notificaciones y Usuarios -->
+                <div class="bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200 border-l-4 sm:border-l-[6px] border-l-sky-500 relative overflow-hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+                        <h2 class="text-base sm:text-xl font-black text-slate-800 flex items-center gap-2.5 sm:gap-3 italic">
+                            <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center text-sm shadow-2xs border border-sky-100">
+                                <i class="fab fa-telegram-plane"></i>
+                            </span>
+                            Bot de Telegram
+                        </h2>
+
+                        <!-- Badge de Estado de Conexión -->
+                        <?php if (!empty($tg_bot_info['ok'])): ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-2xs">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                @<?php echo htmlspecialchars($tg_bot_info['result']['username'] ?? $tg_username); ?> (Conectado)
+                            </span>
+                        <?php elseif (!empty($tg_token)): ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200 shadow-2xs">
+                                <i class="fas fa-triangle-exclamation text-[9px]"></i> Token no verificado
+                            </span>
+                        <?php else: ?>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs">
+                                <i class="fas fa-circle-pause text-[9px]"></i> Sin Configurar
+                            </span>
+                        <?php endif; ?>
+                    </div>
+
+                    <p class="text-xs text-slate-500 mb-6 font-medium">
+                        Configura las credenciales oficiales de tu bot creado en <b>@BotFather</b> para habilitar la vinculación 1-clic y notificaciones instantáneas de competiciones.
+                    </p>
+
+                    <form action="db_code.php" method="POST" class="space-y-4 sm:space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
+                            
+                            <!-- Bot Token -->
+                            <div class="space-y-1 sm:space-y-2 md:col-span-2">
+                                <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest flex items-center justify-between">
+                                    <span>Token de la API (@BotFather)</span>
+                                    <span class="text-sky-600 lowercase font-medium">ej: 123456789:ABCdefGhIJKlmNoP</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="password" name="telegram_bot_token" id="tg_token_input" value="<?php echo htmlspecialchars($tg_token); ?>" placeholder="Pega aquí el token proporcionado por BotFather..." class="w-full pl-4 pr-10 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 font-mono focus:border-sky-500 focus:bg-white transition-all shadow-inner outline-none">
+                                    <button type="button" onclick="togglePasswordVisibility('tg_token_input', 'eye_tg_token')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1">
+                                        <i class="fas fa-eye text-xs" id="eye_tg_token"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Bot Username -->
+                            <div class="space-y-1 sm:space-y-2">
+                                <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Username del Bot</label>
+                                <div class="relative flex items-center">
+                                    <span class="absolute left-4 text-xs font-black text-slate-400">@</span>
+                                    <input type="text" name="telegram_bot_username" value="<?php echo htmlspecialchars($tg_username); ?>" placeholder="SincrmBot" class="w-full pl-8 pr-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 focus:border-sky-500 focus:bg-white transition-all shadow-inner outline-none">
+                                </div>
+                            </div>
+
+                            <!-- Webhook Secret -->
+                            <div class="space-y-1 sm:space-y-2">
+                                <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest flex items-center justify-between">
+                                    <span>Secret Token (Seguridad Webhook)</span>
+                                    <button type="button" onclick="document.getElementById('tg_secret_input').value = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)" class="text-[9px] text-sky-600 font-bold hover:underline">Generar</button>
+                                </label>
+                                <input type="text" name="telegram_webhook_secret" id="tg_secret_input" value="<?php echo htmlspecialchars($tg_secret); ?>" placeholder="Token secreto para encabezado..." class="w-full px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-700 font-mono focus:border-sky-500 focus:bg-white transition-all shadow-inner outline-none">
+                            </div>
+
+                            <!-- Switch de Notificaciones Globales -->
+                            <div class="md:col-span-2 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-black text-slate-800 block">Canal de Notificaciones Push Globales</span>
+                                    <span class="text-[10px] text-slate-500">Permite a los usuarios recibir avisos automáticos de inscripciones, música y resultados.</span>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="telegram_notif_enabled" value="1" <?php echo ($tg_enabled == '1') ? 'checked' : ''; ?> class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-500"></div>
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <!-- Botón Guardar Credenciales -->
+                        <div class="flex items-center justify-end pt-2 border-t border-slate-100">
+                            <button type="submit" name="save_telegram_config" class="w-full sm:w-auto px-6 sm:px-8 py-2.5 sm:py-3 bg-sky-600 text-white font-black uppercase text-xs tracking-wider rounded-xl sm:rounded-2xl shadow-lg shadow-sky-500/20 active:scale-[0.98] hover:bg-sky-700 transition-all flex items-center justify-center gap-2">
+                                <i class="fas fa-save text-xs"></i> Guardar Credenciales
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Estado del Webhook y Acciones de Registro -->
+                    <div class="mt-6 pt-6 border-t border-slate-200/80">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                            <span class="text-xs font-black text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                                <i class="fas fa-network-wired text-sky-500"></i> Estado del Webhook Oficial
+                            </span>
+                            
+                            <?php 
+                            $wh_url = $tg_webhook_info['result']['url'] ?? '';
+                            $has_wh = !empty($wh_url);
+                            ?>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black <?php echo $has_wh ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-slate-100 text-slate-500'; ?>">
+                                <?php echo $has_wh ? 'Webhook Registrado' : 'Webhook No Registrado'; ?>
+                            </span>
+                        </div>
+
+                        <!-- URL Webhook Actual -->
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 mb-4 flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-mono text-slate-600 truncate"><?php echo htmlspecialchars($current_webhook_url); ?></span>
+                            <button type="button" onclick="navigator.clipboard.writeText('<?php echo $current_webhook_url; ?>'); Swal.fire({toast:true, position:'top-end', icon:'success', title:'URL copiada', showConfirmButton:false, timer:1500});" class="text-slate-400 hover:text-sky-600 p-1 shrink-0" title="Copiar URL">
+                                <i class="fas fa-copy text-xs"></i>
+                            </button>
+                        </div>
+
+                        <?php if ($has_wh && !empty($tg_webhook_info['result'])): ?>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4 text-[10px]">
+                                <div class="p-2 bg-slate-50 rounded-lg">
+                                    <span class="text-slate-400 block font-bold">Mensajes Pendientes</span>
+                                    <span class="font-black text-slate-700 tabular-nums"><?php echo $tg_webhook_info['result']['pending_update_count'] ?? 0; ?></span>
+                                </div>
+                                <div class="p-2 bg-slate-50 rounded-lg">
+                                    <span class="text-slate-400 block font-bold">Último Error</span>
+                                    <span class="font-black text-slate-700 truncate block"><?php echo htmlspecialchars($tg_webhook_info['result']['last_error_message'] ?? 'Ninguno'); ?></span>
+                                </div>
+                                <div class="p-2 bg-slate-50 rounded-lg col-span-2 sm:col-span-1">
+                                    <span class="text-slate-400 block font-bold">Certificado</span>
+                                    <span class="font-black text-emerald-600">SSL Válido</span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <form action="db_code.php" method="POST" class="inline">
+                                <button type="submit" name="register_telegram_webhook" class="px-4 py-2 bg-sky-50 text-sky-700 border border-sky-200 hover:bg-sky-100 text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center gap-2">
+                                    <i class="fas fa-sync-alt text-xs"></i> Registrar / Sincronizar Webhook
+                                </button>
+                            </form>
+                            <?php if ($has_wh): ?>
+                            <form action="db_code.php" method="POST" class="inline">
+                                <button type="submit" name="delete_telegram_webhook" onclick="return confirm('¿Eliminar webhook de Telegram? Dejarás de recibir comandos en tiempo real.')" class="px-4 py-2 bg-slate-100 text-slate-600 hover:bg-rose-50 hover:text-rose-600 text-xs font-bold rounded-xl active:scale-[0.98] transition-all flex items-center gap-2">
+                                    <i class="fas fa-unlink text-xs"></i> Desconectar Webhook
+                                </button>
+                            </form>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
 

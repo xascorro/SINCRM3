@@ -99,5 +99,29 @@ while ($comp = mysqli_fetch_assoc($res_comp)) {
     curl_close($ch);
 
     write_log("Cron Inscripciones: Email enviado para '$nombre_comp'. Respuesta API: $api_res", "SUCCESS");
+
+    // 4. Enviar notificación push con documento adjunto a los usuarios de Telegram
+    include_once(__DIR__ . '/includes/telegram_functions.php');
+    $pdf_file = __DIR__ . "/docs/{$id_comp}-inscripciones.pdf";
+    if (file_exists($pdf_file)) {
+        $tg_caption = "🔴 <b>CIERRE OFICIAL DE INSCRIPCIONES</b>\n\n";
+        $tg_caption .= "Ha finalizado el plazo de inscripción para:\n";
+        $tg_caption .= "🏊 <b>$nombre_comp</b>\n";
+        $tg_caption .= "📅 <i>Captura definitiva a fecha $hoy</i>\n\n";
+        $tg_caption .= "Se adjunta el listado oficial completo de inscripciones.";
+
+        $q_tg_users = mysqli_query($connection, "SELECT id, telegram_chat_id, telegram_prefs FROM usuarios WHERE telegram_chat_id IS NOT NULL AND telegram_notif_activas = 1 AND activo = 1");
+        $tg_enviados = 0;
+        if ($q_tg_users) {
+            while ($tgu = mysqli_fetch_assoc($q_tg_users)) {
+                $prefs = json_decode($tgu['telegram_prefs'] ?? '{}', true) ?: [];
+                if (!isset($prefs['cierres']) || $prefs['cierres']) {
+                    $t_res = telegram_enviar_documento($tgu['telegram_chat_id'], $pdf_file, $tg_caption, basename($pdf_file), 'CIERRE_INSCRIPCIONES');
+                    if (!empty($t_res['ok'])) $tg_enviados++;
+                }
+            }
+        }
+        write_log("Cron Inscripciones: Telegram push enviado a $tg_enviados usuarios vinculados", "INFO");
+    }
 }
 ?>

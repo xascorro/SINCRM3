@@ -153,7 +153,7 @@ include('includes/navbar.php');
         </div>
 
         <?php
-        $query = "SELECT u.id, u.username, u.email, u.telefono, u.activo, u.id_juez_v3, u.email_confirmado, u.foto, r.nombre AS rol, r.id as id_rol, c.nombre_corto AS club_nombre 
+        $query = "SELECT u.id, u.username, u.email, u.telefono, u.activo, u.id_juez_v3, u.email_confirmado, u.foto, u.telegram_chat_id, u.telegram_username, u.telegram_notif_activas, r.nombre AS rol, r.id as id_rol, c.nombre_corto AS club_nombre 
                   FROM usuarios u 
                   LEFT JOIN roles r ON u.id_rol = r.id 
                   LEFT JOIN clubes c ON u.club = c.id 
@@ -182,9 +182,11 @@ include('includes/navbar.php');
                         $is_verified = ($row['email_confirmado'] == 1);
                         $is_judge = ($row['id_rol'] == 4);
                         $is_linked = ($row['id_juez_v3'] > 0);
+                        $is_tg_linked = !empty($row['telegram_chat_id']);
+                        $tg_info_title = $is_tg_linked ? 'Telegram Vinculado' . (!empty($row['telegram_username']) ? ' (@' . $row['telegram_username'] . ')' : '') : 'Telegram No Vinculado';
                         $rol_class = ($row['id_rol'] == 1) ? 'bg-blue-50 text-blue-700 border border-blue-100' : (($row['id_rol'] == 5) ? 'bg-purple-50 text-purple-700 border border-purple-100' : (($row['id_rol'] == 4) ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-slate-100 text-slate-600'));
                         $has_photo = !empty($row['foto']) && file_exists(__DIR__ . '/' . $row['foto']);
-                        $search_string = strtolower($row['username'] . ' ' . $row['email'] . ' ' . ($row['rol'] ?? '') . ' ' . ($row['club_nombre'] ?? ''));
+                        $search_string = strtolower($row['username'] . ' ' . $row['email'] . ' ' . ($row['rol'] ?? '') . ' ' . ($row['club_nombre'] ?? '') . ' ' . ($row['telegram_username'] ? '@' . $row['telegram_username'] : '') . ($is_tg_linked ? ' telegram' : ''));
                     ?>
                     <div class="user-mobile-card p-4 space-y-3 <?php echo !$is_active ? 'opacity-50 bg-slate-50/50' : ''; ?>" data-search="<?php echo htmlspecialchars($search_string); ?>">
                         <div class="flex items-start justify-between gap-3">
@@ -207,6 +209,11 @@ include('includes/navbar.php');
                                             <i class="fas fa-circle-check text-emerald-500 text-[10px]" title="Email Verificado"></i>
                                         <?php else: ?>
                                             <i class="fas fa-circle-xmark text-red-400 text-[10px]" title="Email No Verificado"></i>
+                                        <?php endif; ?>
+                                        <?php if ($is_tg_linked): ?>
+                                            <span class="inline-flex items-center text-sky-500 ml-0.5" title="<?php echo htmlspecialchars($tg_info_title); ?>">
+                                                <i class="fab fa-telegram text-xs"></i>
+                                            </span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -274,6 +281,8 @@ include('includes/navbar.php');
                             $is_verified = ($row['email_confirmado'] == 1);
                             $is_judge = ($row['id_rol'] == 4);
                             $is_linked = ($row['id_juez_v3'] > 0);
+                            $is_tg_linked = !empty($row['telegram_chat_id']);
+                            $tg_info_title = $is_tg_linked ? 'Telegram Vinculado' . (!empty($row['telegram_username']) ? ' (@' . $row['telegram_username'] . ')' : '') : 'Telegram No Vinculado';
                             $rol_class = ($row['id_rol'] == 1) ? 'bg-blue-50 text-blue-700 border border-blue-100' : (($row['id_rol'] == 5) ? 'bg-purple-50 text-purple-700 border border-purple-100' : (($row['id_rol'] == 4) ? 'bg-amber-50 text-amber-700 border border-amber-100' : 'bg-slate-100 text-slate-600'));
                             $has_photo = !empty($row['foto']) && file_exists(__DIR__ . '/' . $row['foto']);
                         ?>
@@ -301,6 +310,14 @@ include('includes/navbar.php');
                                                 <i class="fas fa-circle-check text-emerald-500 text-[10px]" title="Email Verificado"></i>
                                             <?php else: ?>
                                                 <i class="fas fa-circle-xmark text-red-400 text-[10px]" title="Email NO Verificado"></i>
+                                            <?php endif; ?>
+                                            <?php if($is_tg_linked): ?>
+                                                <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-sky-50 text-sky-600 text-[10px] font-bold border border-sky-100 shadow-2xs" title="<?php echo htmlspecialchars($tg_info_title); ?>">
+                                                    <i class="fab fa-telegram text-sky-500 text-xs"></i>
+                                                    <?php if (!empty($row['telegram_username'])): ?>
+                                                        <span class="hidden xl:inline text-[9px] font-semibold text-slate-500">@<?php echo htmlspecialchars($row['telegram_username']); ?></span>
+                                                    <?php endif; ?>
+                                                </span>
                                             <?php endif; ?>
                                         </div>
                                     </div>

@@ -12,7 +12,7 @@ include('./lib/my_functions.php');
     
     <!-- PWA & Mobile Meta -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#2563eb">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -21,6 +21,8 @@ include('./lib/my_functions.php');
     
     <!-- Icons suite -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png">
     <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png">
 
     <!-- Performance: Preconnect & Font Loading -->

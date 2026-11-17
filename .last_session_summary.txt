@@ -1,24 +1,15 @@
 === RESUMEN DE SESIÓN SINCRM-BETA ===
-Fecha: 2026-11-17 08:18
-Objetivo: Módulo de convalidaciones RFEN/FNRM, visualización dinámica de docs de competición en dashboard e informe PDF con nuevo footer 2026-2027.
+Fecha: 2026-11-17 09:33
+Objetivo: Actualización de icono de la aplicación instalable PWA (móvil y escritorio) con el degradado azul.
 
-1. CONVALIDACIONES (convalidaciones.php e informes/informe_convalidaciones.php):
-   - Motor de cálculo y comparativa de notas de figuras frente a baremos oficiales de Pases de Nivel (Nivel 1 al 8) RFEN/FNRM 2026/2027.
-   - Filtros en UI: Pases de nivel (solo competiciones con 'pase') y Jornadas (competiciones de figuras de la temporada actual finalizadas).
-   - Botón 'Copiar' con feedback toast para WhatsApp / portapapeles.
-   - Generación de informe PDF oficial con TCPDF, nota mínima reglamentaria, desglose de figuras y footer alineado a la derecha ('Convalidación para [Competición] · Página X de Y').
-   - Integración en navbar / topbar y en panel de informes de competición (informes_competicion.php).
+1. ICONOS PWA (pwa-icons/ y favicon.ico):
+   - Generadas todas las resoluciones oficiales (16x16, 32x32, 72x72, 96x96, 120x120, 128x128, 144x144, 152x152, 180x180, 192x192, 384x384, 512x512) usando el degradado azul oficial de login.
+   - Generado favicon.ico multirresolución para navegadores de escritorio.
+   - Actualizado manifest.json: theme_color: #2563eb, background_color: #1d4ed8.
+   - Cache buster en service-worker.js ('images-v4.1') para forzar la actualización del icono en dispositivos móviles ya instalados.
 
-2. DASHBOARD Y DOCUMENTACIÓN (index.php):
-   - Regla dinámica glob('docs/{id}-*.pdf') en get_documentos_competicion() para mostrar cualquier archivo extra de competición sin alterar la lógica de informes estándar (ej. 83-preinscripciones.pdf).
+2. SINCRONIZACIÓN Y CACHÉ:
+   - Sincronizado a /var/www/html/beta con permisos www-data:www-data.
+   - Purgada caché de Cloudflare para pedrodiaz.eu y reiniciado Apache en contenedor.
 
-3. FOOTER CORPORATIVO Y BASE DE DATOS:
-   - Nuevo footer oficial: images/footer_reg20262027.jpg.
-   - Base de datos sincrm4 actualizada: competiciones con id >= 83 apuntan a images/footer_reg20262027.jpg.
-
-4. SINCRONIZACIÓN Y CACHÉ:
-   - Archivos sincronizados en producción /var/www/html/sincrm y espejo /var/www/html/beta.
-   - Permisos garantizados para www-data:www-data (664/775).
-   - Purgada caché de Cloudflare para pedrodiaz.eu.
-
-Estado: Commit realizado y verificado.
+Estado: Completado y verificado.

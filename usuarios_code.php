@@ -72,6 +72,8 @@ if(isset($_POST['update_btn'])){
     $raw_telefono = preg_replace('/[^0-9]/', '', $telefono);
     $telefono_sql = !empty($raw_telefono) ? "'$raw_telefono'" : "NULL";
 
+    $recibir_emails = isset($_POST['recibir_emails']) ? 1 : 0;
+
     // Lógica de actualización de contraseña
     $query_parts = [
         "username='$username'",
@@ -80,7 +82,8 @@ if(isset($_POST['update_btn'])){
         "comentario='$comentario'",
         "id_rol='$id_rol'",
         "id_juez_v3=" . ($id_juez_v3 != '' ? "'$id_juez_v3'" : "NULL"),
-        "club='$id_club'"
+        "club='$id_club'",
+        "recibir_emails='$recibir_emails'"
     ];
 
     // Gestión de avatar / foto de perfil
@@ -113,6 +116,14 @@ if(isset($_POST['update_btn'])){
             $_SESSION['foto'] = null;
         }
         write_log("Avatar eliminado para usuario ID $id ($email)", "INFO");
+    }
+
+    // Desvinculación administrativa de Telegram
+    if(isset($_POST['unlink_telegram']) && $_POST['unlink_telegram'] == '1') {
+        $query_parts[] = "telegram_chat_id = NULL";
+        $query_parts[] = "telegram_username = NULL";
+        $query_parts[] = "telegram_notif_activas = 0";
+        write_log("Telegram desvinculado por administración para usuario ID $id ($email)", "INFO");
     }
 
     // Obtener estado anterior para ver si hay cambios que requieran notificación

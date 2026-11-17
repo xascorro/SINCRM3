@@ -17,10 +17,13 @@ if(isset($_POST['update_profile_btn'])){
         exit();
     }
 
+    $recibir_emails = (isset($_POST['recibir_emails']) && $_POST['recibir_emails'] == '1') ? 1 : 0;
+
     $query_parts = [
         "username = '$username'",
         "email = '$email'",
-        "telefono = '$telefono'"
+        "telefono = '$telefono'",
+        "recibir_emails = '$recibir_emails'"
     ];
 
     // Lógica de contraseña

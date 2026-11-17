@@ -105,6 +105,16 @@ include('includes/navbar.php');
                                 </label>
                             </div>
                         </div>
+                        <div class="space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Notificaciones Email</label>
+                            <div class="flex items-center gap-4 px-2 py-2">
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" name="recibir_emails" value="1" <?php echo (!isset($row['recibir_emails']) || $row['recibir_emails'] == 1) ? 'checked' : ''; ?> class="sr-only peer">
+                                    <div class="w-14 h-7 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-600"></div>
+                                    <span class="ml-3 text-xs font-black uppercase tracking-widest text-slate-400 peer-checked:text-blue-600"><?php echo (!isset($row['recibir_emails']) || $row['recibir_emails'] == 1) ? 'ACTIVADAS' : 'DESACTIVADAS'; ?></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -115,7 +125,7 @@ include('includes/navbar.php');
                         <i class="fas fa-gears text-purple-600"></i> Permisos y Vinculación
                     </h2>
                     
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                         <div class="space-y-1.5 sm:space-y-2">
                             <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Estamento (Rol)</label>
                             <div class="relative">
@@ -160,6 +170,33 @@ include('includes/navbar.php');
                             $select_club = preg_replace('/class=[\'"].*?[\'"]/i', '', $select_club);
                             echo str_replace('<select', '<select class="v3-select-fix"', $select_club);
                             ?>
+                        </div>
+
+                        <!-- Vinculación Telegram -->
+                        <div class="space-y-1.5 sm:space-y-2">
+                            <label class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest flex items-center justify-between">
+                                <span class="flex items-center gap-1.5"><i class="fab fa-telegram text-sky-500"></i> Telegram</span>
+                            </label>
+                            <div class="p-2.5 sm:p-3 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-200/80 flex items-center justify-between gap-2 min-h-[46px]">
+                                <?php if (!empty($row['telegram_chat_id'])): ?>
+                                    <div class="flex items-center gap-2 overflow-hidden min-w-0">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+                                        <span class="text-xs font-black text-slate-700 truncate" title="Chat ID: <?php echo htmlspecialchars($row['telegram_chat_id']); ?>">
+                                            <?php echo !empty($row['telegram_username']) ? '@' . htmlspecialchars($row['telegram_username']) : 'ID ' . htmlspecialchars($row['telegram_chat_id']); ?>
+                                        </span>
+                                    </div>
+                                    <label class="flex items-center gap-1 text-[10px] font-bold text-rose-600 hover:text-rose-700 cursor-pointer select-none shrink-0" title="Marcar para desvincular Telegram">
+                                        <input type="checkbox" name="unlink_telegram" value="1" class="rounded border-slate-300 text-rose-600 focus:ring-rose-500/20">
+                                        <span>Desconectar</span>
+                                    </label>
+                                <?php else: ?>
+                                    <div class="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
+                                        <i class="fas fa-circle-minus text-[10px]"></i>
+                                        <span>No vinculado</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 italic">Vía perfil</span>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                     
