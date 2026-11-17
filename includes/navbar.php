@@ -8,7 +8,7 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
     // Agrupación de páginas para estados activos
     $group_users = ['usuarios.php', 'roles.php', 'paginas.php', 'usertype.php', 'usuarios_edit.php', 'roles_edit.php'];
     $group_datos = ['competiciones.php', 'federaciones.php', 'clubes.php', 'nadadoras.php', 'categorias.php', 'modalidades.php', 'jueces.php', 'figuras.php', 'reglas_competicion.php', 'dificultad_tablas.php', 'clubes_edit.php', 'nadadoras_edit.php', 'figuras_edit.php', 'categorias_edit.php', 'modalidades_edit.php', 'competiciones_edit.php'];
-    $group_operativa = ['fases.php', 'paneles_jueces.php', 'inscripciones.php', 'rutinas.php', 'sorteo.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php'];
+    $group_operativa = ['fases.php', 'paneles_jueces.php', 'inscripciones.php', 'rutinas.php', 'sorteo.php', 'sorteo_rutinas.php', 'inscripciones_figuras.php', 'sorteo_figuras.php', 'puntuaciones_lista_fases.php', 'fases_edit.php', 'convalidaciones.php'];
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
     $group_mantenimiento = ['estado_sistema.php', 'configuracion_sistema.php', 'diagnostico.php'];
 ?>
@@ -110,6 +110,9 @@ if(isset($_SESSION['id_rol']) && in_array($_SESSION['id_rol'], $roles_admin)){
                 </a>
                 <a href="puntuaciones_lista_fases.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'puntuaciones_lista_fases.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap border-t border-slate-200/80 pt-2 mt-1">
                     <i class="fas fa-calculator w-3.5 text-center text-[11px] opacity-70"></i> Puntuaciones
+                </a>
+                <a href="convalidaciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'convalidaciones.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-stamp w-3.5 text-center text-[11px] opacity-70"></i> Convalidaciones
                 </a>
             </div>
         </div>
@@ -300,7 +303,7 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '4'){
 // BARRA LATERAL PARA EL ROL CLUB (id_rol = 5)
 if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
     $current_page = basename($_SERVER['PHP_SELF']);
-    $group_club_comp = ['inscripciones.php', 'inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php'];
+    $group_club_comp = ['inscripciones.php', 'inscripciones_figuras.php', 'rutinas.php', 'sorteo_rutinas.php', 'puntuaciones_lista_fases.php', 'coach_card_composer.php', 'convalidaciones.php'];
     $group_bias = ['analisis_jueces.php', 'analisis_juez_detalle.php', 'ranking_jueces.php', 'perfil_juez.php', 'mi_auditoria.php'];
 ?>
 <aside id="sidebar" class="sidebar-transition fixed top-0 left-0 z-50 w-72 lg:w-20 h-screen bg-white text-slate-700 flex flex-col shadow-xl transform -translate-x-full lg:translate-x-0 overflow-x-hidden overflow-y-auto no-scrollbar border-r border-slate-200/80 font-lexend">
@@ -361,6 +364,9 @@ if(isset($_SESSION['id_rol']) && $_SESSION['id_rol'] == '5'){
             <div id="sub-comp-club" data-active="<?php echo in_array($current_page, $group_club_comp) ? 'true' : 'false'; ?>" class="<?php echo in_array($current_page, $group_club_comp) ? 'submenu-open' : 'submenu-closed'; ?> sidebar-text hidden ml-6 pl-3 my-1 space-y-1 border-l-2 border-slate-200/80">
                 <a href="inscripciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo in_array($current_page, ['inscripciones.php', 'inscripciones_figuras.php']) ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?>">
                     <i class="fas fa-clipboard-list w-3.5 text-center text-[11px] opacity-70"></i> Inscripciones
+                </a>
+                <a href="convalidaciones.php" class="flex items-center gap-2.5 px-3 py-1.5 text-xs font-semibold rounded-xl transition-all <?php echo $current_page == 'convalidaciones.php' ? 'sub-nav-item-active' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/70'; ?> whitespace-nowrap">
+                    <i class="fas fa-stamp w-3.5 text-center text-[11px] opacity-70"></i> Convalidaciones
                 </a>
             </div>
         </div>

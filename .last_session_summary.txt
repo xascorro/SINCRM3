@@ -1,14 +1,24 @@
-=======================================================
-RESUMEN DE SESIÓN: ROTULACIÓN DD: 0 Y LIMPIEZA HOJA PUNTUAR
-Fecha: 2026-11-15
-=======================================================
+=== RESUMEN DE SESIÓN SINCRM-BETA ===
+Fecha: 2026-11-17 08:18
+Objetivo: Módulo de convalidaciones RFEN/FNRM, visualización dinámica de docs de competición en dashboard e informe PDF con nuevo footer 2026-2027.
 
-1. AJUSTES SOLICITADOS APLICADOS:
-   - En el informe de resultados (`informes/informe_puntuaciones.php`), cuando un TRE es penalizado se rotula en rojo como "DD: 0". La cabecera de la columna vuelve a ser la oficial "DD / BM".
-   - En la hoja para puntuar (`puntuaciones_rutina.php`), se simplificó la etiqueta de penalización del TRE mostrando directamente "0" sin el texto adicional "(Cero)".
-   - Sincronización en rutinas verificada y operativa.
+1. CONVALIDACIONES (convalidaciones.php e informes/informe_convalidaciones.php):
+   - Motor de cálculo y comparativa de notas de figuras frente a baremos oficiales de Pases de Nivel (Nivel 1 al 8) RFEN/FNRM 2026/2027.
+   - Filtros en UI: Pases de nivel (solo competiciones con 'pase') y Jornadas (competiciones de figuras de la temporada actual finalizadas).
+   - Botón 'Copiar' con feedback toast para WhatsApp / portapapeles.
+   - Generación de informe PDF oficial con TCPDF, nota mínima reglamentaria, desglose de figuras y footer alineado a la derecha ('Convalidación para [Competición] · Página X de Y').
+   - Integración en navbar / topbar y en panel de informes de competición (informes_competicion.php).
 
-2. ARCHIVOS ACTUALIZADOS:
-   - `/var/www/html/sincrm/puntuaciones_rutina.php`
-   - `/var/www/html/sincrm/informes/informe_puntuaciones.php`
-   - Espejo en `/var/www/html/beta/` sincronizado con permisos `www-data:www-data`.
+2. DASHBOARD Y DOCUMENTACIÓN (index.php):
+   - Regla dinámica glob('docs/{id}-*.pdf') en get_documentos_competicion() para mostrar cualquier archivo extra de competición sin alterar la lógica de informes estándar (ej. 83-preinscripciones.pdf).
+
+3. FOOTER CORPORATIVO Y BASE DE DATOS:
+   - Nuevo footer oficial: images/footer_reg20262027.jpg.
+   - Base de datos sincrm4 actualizada: competiciones con id >= 83 apuntan a images/footer_reg20262027.jpg.
+
+4. SINCRONIZACIÓN Y CACHÉ:
+   - Archivos sincronizados en producción /var/www/html/sincrm y espejo /var/www/html/beta.
+   - Permisos garantizados para www-data:www-data (664/775).
+   - Purgada caché de Cloudflare para pedrodiaz.eu.
+
+Estado: Commit realizado y verificado.

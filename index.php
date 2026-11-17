@@ -9,6 +9,63 @@ $meses_es = [
     'May' => 'MAY', 'Jun' => 'JUN', 'Jul' => 'JUL', 'Aug' => 'AGO', 
     'Sep' => 'SEP', 'Oct' => 'OCT', 'Nov' => 'NOV', 'Dec' => 'DIC'
 ];
+
+if (!function_exists('get_documentos_competicion')) {
+    function get_documentos_competicion($id_competicion) {
+        $docs_map = [
+            'normativa'        => ['label' => 'Normativa',        'icon' => 'fa-file-shield',      'color' => 'text-indigo-500'],
+            'preinscripciones' => ['label' => 'Preinscripciones', 'icon' => 'fa-clipboard-list',  'color' => 'text-sky-500'],
+            'inscripciones'    => ['label' => 'Inscripciones',    'icon' => 'fa-file-pen',         'color' => 'text-blue-500'],
+            'orden'            => ['label' => 'Orden Salida',     'icon' => 'fa-list-ol',          'color' => 'text-purple-600'],
+            'clasificacion'    => ['label' => 'Clasificación',    'icon' => 'fa-trophy',           'color' => 'text-amber-500'],
+            'resultados'       => ['label' => 'Resultados',       'icon' => 'fa-trophy',           'color' => 'text-amber-500'],
+            'liga'             => ['label' => 'Ranking Liga',     'icon' => 'fa-ranking-star',     'color' => 'text-amber-600'],
+            'nadadoras'        => ['label' => 'Nadadoras',        'icon' => 'fa-users-viewfinder', 'color' => 'text-teal-600']
+        ];
+
+        $docs_priority = [
+            'normativa' => 10, 'preinscripciones' => 20, 'inscripciones' => 30, 'nadadoras' => 40,
+            'orden' => 50, 'clasificacion' => 60, 'resultados' => 70, 'liga' => 80
+        ];
+
+        $comp_id = (int)$id_competicion;
+        $files = glob('./docs/' . $comp_id . '-*.pdf');
+        $items = [];
+        $has_clasif = file_exists('./docs/' . $comp_id . '-clasificacion.pdf');
+
+        if (!empty($files)) {
+            foreach ($files as $fpath) {
+                $fname = basename($fpath);
+                if (!preg_match('/^' . $comp_id . '-(.+)\.pdf$/i', $fname, $m)) continue;
+                $sufijo = strtolower($m[1]);
+                if ($sufijo === 'resultados' && $has_clasif) continue;
+
+                $meta = $docs_map[$sufijo] ?? [
+                    'label' => ucwords(str_replace(['_', '-'], ' ', $sufijo)),
+                    'icon'  => 'fa-file-lines',
+                    'color' => 'text-slate-600'
+                ];
+
+                $prio = $docs_priority[$sufijo] ?? 100;
+                $items[] = [
+                    'prio'   => $prio,
+                    'sufijo' => $sufijo,
+                    'path'   => $fpath,
+                    'label'  => $meta['label'],
+                    'icon'   => $meta['icon'],
+                    'color'  => $meta['color']
+                ];
+            }
+
+            usort($items, function($a, $b) {
+                if ($a['prio'] === $b['prio']) return strcmp($a['label'], $b['label']);
+                return $a['prio'] <=> $b['prio'];
+            });
+        }
+
+        return $items;
+    }
+}
 ?>
 
 <!-- Contenedor Principal -->
@@ -724,32 +781,16 @@ $meses_es = [
                         <!-- Documentación Adjunta -->
                         <div class="flex flex-wrap gap-2.5 sm:gap-4">
                             <?php
-                            $docs_map = [
-                                'normativa' => ['label' => 'Normativa', 'icon' => 'fa-file-shield'],
-                                'nadadoras' => ['label' => 'Nadadoras', 'icon' => 'fa-users-viewfinder'],
-                                'inscripciones' => ['label' => 'Inscripciones', 'icon' => 'fa-file-pen'],
-                                'orden' => ['label' => 'Orden Salida', 'icon' => 'fa-list-ol'],
-                                'clasificacion' => ['label' => 'Clasificación', 'icon' => 'fa-trophy'],
-                                'resultados' => ['label' => 'Resultados', 'icon' => 'fa-trophy'],
-                                'liga' => ['label' => 'Ranking Liga', 'icon' => 'fa-ranking-star']
-                            ];
-                            $already_showed_clasif = false;
-                            foreach($docs_map as $file_id => $meta):
-                                $filename = './docs/'.$row['id'].'-'.$file_id.'.pdf';
-                                if ($file_id === 'clasificacion' && file_exists($filename)) {
-                                    $already_showed_clasif = true;
-                                }
-                                if ($file_id === 'resultados' && $already_showed_clasif) {
-                                    continue;
-                                }
-                                if (file_exists($filename)):
+                            $comp_docs = get_documentos_competicion($row['id']);
+                            if (!empty($comp_docs)):
+                                foreach ($comp_docs as $doc):
                             ?>
-                                <a href="<?php echo $filename; ?>" target="_blank" class="px-3.5 py-2 sm:px-5 sm:py-2.5 bg-white text-slate-600 hover:bg-slate-800 hover:text-white rounded-xl sm:rounded-[1.25rem] border border-slate-200/80 text-[11px] sm:text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2 sm:gap-3 shadow-xs active:scale-[0.98] group/doc">
-                                    <i class="fa-solid <?php echo $meta['icon']; ?> text-base sm:text-lg text-slate-400 group-hover/doc:text-white transition-colors"></i> <?php echo $meta['label']; ?>
+                                <a href="<?php echo $doc['path']; ?>" target="_blank" class="px-3.5 py-2 sm:px-5 sm:py-2.5 bg-white text-slate-600 hover:bg-slate-800 hover:text-white rounded-xl sm:rounded-[1.25rem] border border-slate-200/80 text-[11px] sm:text-xs font-black uppercase tracking-tight transition-all flex items-center gap-2 sm:gap-3 shadow-xs active:scale-[0.98] group/doc">
+                                    <i class="fa-solid <?php echo $doc['icon']; ?> text-base sm:text-lg text-slate-400 group-hover/doc:text-white transition-colors"></i> <?php echo $doc['label']; ?>
                                 </a>
                             <?php 
-                                endif; 
-                            endforeach; 
+                                endforeach;
+                            endif;
                             ?>
                         </div>
                     </div>
@@ -870,23 +911,21 @@ $meses_es = [
                                     </div>
                                 </td>
 
-                                <!-- Columna 3: Documentación (Colores Fijos) -->
+                                <!-- Columna 3: Documentación (Colores Fijos y Detección docs/id-*) -->
                                 <td class="px-0 md:px-6 py-0 md:py-6 mb-4 md:mb-0">
                                     <div class="flex gap-4 sm:gap-6 flex-wrap items-center">
-                                        <?php if(file_exists('./docs/'.$row['id'].'-normativa.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-normativa.pdf" target="_blank" title="Normativa" class="text-indigo-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-file-shield text-2xl sm:text-3xl"></i></a>
-                                        <?php endif; ?>
-                                        <?php if(file_exists('./docs/'.$row['id'].'-inscripciones.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-inscripciones.pdf" target="_blank" title="Listado Inscripciones" class="text-blue-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-file-pen text-2xl sm:text-3xl"></i></a>
-                                        <?php endif; ?>
-                                        <?php if(file_exists('./docs/'.$row['id'].'-orden.pdf')): ?>
-                                            <a href="./docs/<?php echo $row['id']; ?>-orden.pdf" target="_blank" title="Orden de Salida" class="text-slate-600 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-list-ol text-2xl sm:text-3xl"></i></a>
-                                        <?php endif; ?>
+                                        <?php
+                                        $comp_docs_hist = get_documentos_competicion($row['id']);
+                                        if (!empty($comp_docs_hist)):
+                                            foreach ($comp_docs_hist as $doc):
+                                        ?>
+                                            <a href="<?php echo $doc['path']; ?>" target="_blank" title="<?php echo $doc['label']; ?>" class="<?php echo $doc['color']; ?> hover:scale-110 active:scale-95 transition-transform">
+                                                <i class="fas <?php echo $doc['icon']; ?> text-2xl sm:text-3xl"></i>
+                                            </a>
                                         <?php 
-                                        $f_clasif = file_exists('./docs/'.$row['id'].'-clasificacion.pdf') ? './docs/'.$row['id'].'-clasificacion.pdf' : (file_exists('./docs/'.$row['id'].'-resultados.pdf') ? './docs/'.$row['id'].'-resultados.pdf' : null);
-                                        if($f_clasif): ?>
-                                            <a href="<?php echo $f_clasif; ?>" target="_blank" title="Clasificación / Resultados" class="text-amber-500 hover:scale-110 active:scale-95 transition-transform"><i class="fas fa-trophy text-2xl sm:text-3xl"></i></a>
-                                        <?php endif; ?>
+                                            endforeach;
+                                        endif;
+                                        ?>
                                     </div>
                                 </td>
 

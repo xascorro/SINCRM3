@@ -506,6 +506,18 @@ if (!empty($clave_liga_comp)) {
                             <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-emerald-600 shrink-0"></i>
                         </a>
 
+                        <?php if (($comp['niveles'] ?? '') == 'si' || stripos($comp['nombre'] ?? '', 'nivel') !== false || ($_SESSION['id_rol'] ?? 0) == 1): ?>
+                        <a href="informes/informe_convalidaciones.php?comp_pase=<?php echo $id_competicion; ?>&censo=inscritas&comps_ref[]=81&comps_ref[]=82" target="_blank" class="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-200 flex items-center justify-between group hover:border-rose-300 hover:bg-rose-50 active:scale-[0.98] transition-all no-underline">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-rose-500 group-hover:text-rose-600 transition-colors shadow-2xs shrink-0">
+                                    <i class="fas fa-stamp text-sm"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-800 truncate">Convalidaciones Oficiales Pase de Nivel</span>
+                            </div>
+                            <i class="fas fa-arrow-up-right-from-square text-[10px] text-slate-400 group-hover:text-rose-600 shrink-0"></i>
+                        </a>
+                        <?php endif; ?>
+
                         <?php if (!empty($clave_liga_comp)): ?>
                             <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                                 <div class="flex items-center gap-3 min-w-0">

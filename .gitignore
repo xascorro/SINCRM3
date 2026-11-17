@@ -28,6 +28,9 @@ Thumbs.db
 
 # Documentos generados
 docs/*.pdf
+docs/83-*
+docs/pases_nivel/
+*.bak
 informes/*.pdf
 !informes/*.php
 normativa_2627/
