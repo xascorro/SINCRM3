@@ -50,7 +50,11 @@ if(isset($_POST['update_btn'])){
 	$color = mysqli_real_escape_string($connection, $_POST['edit_color'] ?? '');	
 	$maps = mysqli_real_escape_string($connection, $_POST['edit_maps'] ?? '');	
 	$mascara_licencia = !empty($_POST['edit_mascara_licencia']) ? intval($_POST['edit_mascara_licencia']) : 0;
-	$enlace_sorteo = mysqli_real_escape_string($connection, $_POST['edit_enlace_sorteo'] ?? '');	
+	$enlace_sorteo = mysqli_real_escape_string($connection, $_POST['edit_enlace_sorteo'] ?? '');
+	if (empty($enlace_sorteo)) {
+		$enlace_sorteo = 'https://meet.google.com/jyz-emho-coy';
+	}
+	$hora_sorteo = mysqli_real_escape_string($connection, $_POST['edit_hora_sorteo'] ?? '');
 	$mensaje = mysqli_real_escape_string($connection, $_POST['edit_mensaje'] ?? '');
 
     // GESTIÓN DE SUBIDA DE IMÁGENES (CABECERA / PIE)
@@ -115,6 +119,7 @@ if(isset($_POST['update_btn'])){
 				footer_informe='$footer_informe', 
 				mascara_licencia='$mascara_licencia',
 				enlace_sorteo='$enlace_sorteo',
+				hora_sorteo='$hora_sorteo',
 				mensaje='$mensaje',
 				dias_inicio_inscripcion='$dias_inicio',
 				dias_fin_inscripcion='$dias_fin',

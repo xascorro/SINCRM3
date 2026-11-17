@@ -170,7 +170,36 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
         while ($r = mysqli_fetch_assoc($query_run)) {
             $competiciones[] = $r;
         }
+
+        // Lógica de cálculo de temporalidad: Hoy, Pasadas, Futuras y Próxima(s)
+        $hoy = date('Y-m-d');
+        $proxima_fecha = null;
+
+        // Encontrar la fecha mínima en el futuro o presente (>= hoy)
+        foreach ($competiciones as $c) {
+            if (!empty($c['fecha']) && $c['fecha'] != '0000-00-00' && $c['fecha'] >= $hoy) {
+                if ($proxima_fecha === null || $c['fecha'] < $proxima_fecha) {
+                    $proxima_fecha = $c['fecha'];
+                }
+            }
+        }
         ?>
+
+        <!-- Leyenda de Temporalidad -->
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3 mb-4 sm:mb-6 px-1">
+            <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1.5">
+                <i class="fas fa-calendar-days text-[11px] text-slate-400"></i> Calendario:
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-blue-50/90 text-blue-700 border border-blue-200/90 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Próxima
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-50/80 text-emerald-700 border border-emerald-200/80 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Futura
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-slate-100/90 text-slate-600 border border-slate-200 text-[10px] font-black uppercase tracking-wider shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span> Pasada
+            </span>
+        </div>
 
         <!-- VISTA 1: CUADRÍCULA / MOSAICO DE TARJETAS -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8" id="compGrid">
@@ -183,17 +212,45 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                 $año = date("Y", strtotime($row['fecha']));
                 $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
                 
+                // Determinación sutil de estado temporal
+                $fecha_comp = (!empty($row['fecha']) && $row['fecha'] != '0000-00-00') ? $row['fecha'] : null;
+                if (!$fecha_comp || $fecha_comp < $hoy) {
+                    $temporalidad = 'pasada';
+                    $label_temp = 'Pasada';
+                    $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs"><i class="fas fa-clock-rotate-left text-[7px]"></i> Pasada</span>';
+                    $card_bg = 'bg-slate-50/70 border-slate-200/80 hover:bg-white';
+                    $list_mobile_bg = 'bg-slate-50/50 hover:bg-slate-100/60 border-l-4 border-l-slate-300';
+                    $table_row_bg = 'bg-slate-50/40 hover:bg-slate-100/50 text-slate-600 border-l-4 border-l-slate-300';
+                } elseif ($proxima_fecha !== null && $fecha_comp == $proxima_fecha) {
+                    $temporalidad = 'proxima';
+                    $label_temp = 'Próxima';
+                    $badge_temp = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-xs"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Próxima</span>';
+                    $card_bg = 'bg-gradient-to-br from-blue-50/70 via-indigo-50/30 to-white border-blue-300/90 shadow-md ring-2 ring-blue-500/20';
+                    $list_mobile_bg = 'bg-blue-50/50 hover:bg-blue-50/80 border-l-4 border-l-blue-600 font-medium';
+                    $table_row_bg = 'bg-blue-50/35 hover:bg-blue-50/60 border-l-4 border-l-blue-600 font-semibold';
+                } else {
+                    $temporalidad = 'futura';
+                    $label_temp = 'Futura';
+                    $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs"><i class="fas fa-calendar-check text-[7px]"></i> Futura</span>';
+                    $card_bg = 'bg-gradient-to-br from-emerald-50/30 via-emerald-50/10 to-white border-emerald-200/80 hover:border-emerald-300 hover:shadow-md';
+                    $list_mobile_bg = 'bg-emerald-50/20 hover:bg-emerald-50/40 border-l-4 border-l-emerald-400';
+                    $table_row_bg = 'bg-emerald-50/15 hover:bg-emerald-50/35 border-l-4 border-l-emerald-400';
+                }
+
                 // Lógica de detección de Pase de Nivel por nombre
                 $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
                 $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
-                $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
+                $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search . ' ' . $temporalidad . ' ' . $label_temp));
             ?>
-            <div class="comp-card bg-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm border border-slate-200/80 group hover:shadow-lg transition-all relative flex flex-col border-t-[8px] sm:border-t-[10px] <?php echo !$is_active ? 'grayscale-[0.5] opacity-80' : ''; ?>" 
+            <div class="comp-card <?php echo $card_bg; ?> rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm group hover:shadow-lg transition-all relative flex flex-col border-t-[8px] sm:border-t-[10px] <?php echo !$is_active ? 'grayscale-[0.5] opacity-80' : ''; ?>" 
                  style="border-top-color: <?php echo $color; ?>;"
                  data-search="<?php echo $search_text; ?>">
                 
-                <!-- ID Flotante -->
-                <div class="absolute top-3 right-4 sm:top-4 sm:right-8 text-[10px] font-black text-slate-300 italic tracking-wider uppercase tabular-nums">ID: #<?php echo $row['id']; ?></div>
+                <!-- ID y Estado Temporal Flotante -->
+                <div class="absolute top-3 right-4 sm:top-4 sm:right-8 flex items-center gap-2">
+                    <?php echo $badge_temp; ?>
+                    <span class="text-[10px] font-black text-slate-300 italic tracking-wider uppercase tabular-nums">#<?php echo $row['id']; ?></span>
+                </div>
 
                 <div class="flex justify-between items-start mb-4 sm:mb-8 mt-1 sm:mt-2">
                     <div class="flex items-start gap-3 sm:gap-5 min-w-0 flex-1 pr-12 sm:pr-14">
@@ -275,11 +332,31 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                     $mes = $meses_es[$mes_raw] ?? $mes_raw;
                     $año = date("Y", strtotime($row['fecha']));
                     $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
+
+                    // Determinación sutil de estado temporal
+                    $fecha_comp = (!empty($row['fecha']) && $row['fecha'] != '0000-00-00') ? $row['fecha'] : null;
+                    if (!$fecha_comp || $fecha_comp < $hoy) {
+                        $temporalidad = 'pasada';
+                        $label_temp = 'Pasada';
+                        $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs"><i class="fas fa-clock-rotate-left text-[7px]"></i> Pasada</span>';
+                        $list_mobile_bg = 'bg-slate-50/50 hover:bg-slate-100/60 border-l-4 border-l-slate-300';
+                    } elseif ($proxima_fecha !== null && $fecha_comp == $proxima_fecha) {
+                        $temporalidad = 'proxima';
+                        $label_temp = 'Próxima';
+                        $badge_temp = '<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-xs"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Próxima</span>';
+                        $list_mobile_bg = 'bg-blue-50/50 hover:bg-blue-50/80 border-l-4 border-l-blue-600 font-medium';
+                    } else {
+                        $temporalidad = 'futura';
+                        $label_temp = 'Futura';
+                        $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs"><i class="fas fa-calendar-check text-[7px]"></i> Futura</span>';
+                        $list_mobile_bg = 'bg-emerald-50/20 hover:bg-emerald-50/40 border-l-4 border-l-emerald-400';
+                    }
+
                     $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
                     $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
-                    $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
+                    $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search . ' ' . $temporalidad . ' ' . $label_temp));
                 ?>
-                <div class="comp-list-row p-4 hover:bg-slate-50/70 transition-colors <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
+                <div class="comp-list-row p-4 <?php echo $list_mobile_bg; ?> transition-colors <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
                      data-search="<?php echo $search_text; ?>">
                     <div class="flex items-start justify-between gap-3 mb-2.5">
                         <div class="flex items-start gap-3 min-w-0 flex-1">
@@ -289,6 +366,7 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                                 <div class="flex items-center gap-2">
                                     <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest tabular-nums">#<?php echo $row['id']; ?></span>
                                     <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider tabular-nums"><?php echo "$dia $mes $año"; ?></span>
+                                    <?php echo $badge_temp; ?>
                                 </div>
                                 <h4 class="text-xs sm:text-sm font-black text-slate-800 leading-snug uppercase italic truncate mt-0.5"><?php echo $row['nombre']; ?></h4>
                                 <p class="text-[11px] font-bold text-slate-400 flex items-center gap-1.5 mt-1 uppercase truncate">
@@ -373,11 +451,31 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                             $mes = $meses_es[$mes_raw] ?? $mes_raw;
                             $año = date("Y", strtotime($row['fecha']));
                             $color = (!empty($row['color'])) ? $row['color'] : '#3b82f6';
+
+                            // Determinación sutil de estado temporal
+                            $fecha_comp = (!empty($row['fecha']) && $row['fecha'] != '0000-00-00') ? $row['fecha'] : null;
+                            if (!$fecha_comp || $fecha_comp < $hoy) {
+                                $temporalidad = 'pasada';
+                                $label_temp = 'Pasada';
+                                $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-slate-100 text-slate-500 border border-slate-200 shadow-2xs"><i class="fas fa-clock-rotate-left text-[7px]"></i> Pasada</span>';
+                                $table_row_bg = 'bg-slate-50/40 hover:bg-slate-100/50 text-slate-600 border-l-4 border-l-slate-300';
+                            } elseif ($proxima_fecha !== null && $fecha_comp == $proxima_fecha) {
+                                $temporalidad = 'proxima';
+                                $label_temp = 'Próxima';
+                                $badge_temp = '<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-blue-600 text-white shadow-xs"><span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> Próxima</span>';
+                                $table_row_bg = 'bg-blue-50/35 hover:bg-blue-50/60 border-l-4 border-l-blue-600 font-semibold';
+                            } else {
+                                $temporalidad = 'futura';
+                                $label_temp = 'Futura';
+                                $badge_temp = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs"><i class="fas fa-calendar-check text-[7px]"></i> Futura</span>';
+                                $table_row_bg = 'bg-emerald-50/15 hover:bg-emerald-50/35 border-l-4 border-l-emerald-400';
+                            }
+
                             $es_pase_nivel = (stripos($row['nombre'], 'pase') !== false && stripos($row['nombre'], 'nivel') !== false);
                             $tipo_search = $es_pase_nivel ? 'pase de nivel' : ($row['figuras'] == 'mixta' ? 'mixta' : ($row['figuras'] == 'si' ? 'figuras' : 'rutinas'));
-                            $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search));
+                            $search_text = htmlspecialchars(strtolower($row['nombre'] . ' ' . $row['lugar'] . ' ' . $row['id'] . ' ' . $dia . ' ' . $mes . ' ' . $año . ' ' . $tipo_search . ' ' . $temporalidad . ' ' . $label_temp));
                         ?>
-                        <tr class="comp-list-row hover:bg-slate-50/70 transition-colors group <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
+                        <tr class="comp-list-row <?php echo $table_row_bg; ?> transition-colors group <?php echo !$is_active ? 'grayscale-[0.5] opacity-75' : ''; ?>"
                             data-search="<?php echo $search_text; ?>">
                             
                             <!-- Columna Fecha e ID -->
@@ -386,7 +484,10 @@ $pct_pases = ($total_tecnico > 0) ? round(($n_pases / $total_tecnico) * 100) : 0
                                     <div class="w-1.5 h-10 rounded-full shrink-0 shadow-2xs" style="background-color: <?php echo $color; ?>;"></div>
                                     <div class="flex flex-col">
                                         <span class="text-xs font-black text-slate-800 tabular-nums leading-none"><?php echo "$dia $mes $año"; ?></span>
-                                        <span class="text-[9px] font-bold text-slate-400 tabular-nums uppercase mt-1">ID #<?php echo $row['id']; ?></span>
+                                        <div class="flex items-center gap-1.5 mt-1.5">
+                                            <span class="text-[9px] font-bold text-slate-400 tabular-nums uppercase">#<?php echo $row['id']; ?></span>
+                                            <?php echo $badge_temp; ?>
+                                        </div>
                                     </div>
                                 </div>
                             </td>

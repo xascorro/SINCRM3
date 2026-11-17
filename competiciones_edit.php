@@ -187,9 +187,30 @@ function get_gallery_images($prefix) {
                             <input type="number" name="edit_dias_musica" value="<?php echo $row['dias_musica']?>" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-blue-600">
                         </div>
                     </div>
-                    <div class="mt-8 pt-6 border-t border-slate-50">
-                        <label class="text-[10px] font-black uppercase text-slate-400 px-1">Enlace a la Reunión del Sorteo (Video Llamada)</label>
-                        <input type="text" name="edit_enlace_sorteo" value="<?php echo $row['enlace_sorteo']?>" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold mt-2" placeholder="Enlace de Google Meet, Zoom, Teams...">
+                    <?php
+                    $f_sorteo_calc = date("Y-m-d", strtotime("-".($row['dias_sorteo'] ?? 3)." days", strtotime($row['fecha'] ?? 'now')));
+                    $num_sem_sorteo = (int)date('W', strtotime($f_sorteo_calc));
+                    $es_impar = ($num_sem_sorteo % 2 !== 0);
+                    $hora_sorteo_auto = $es_impar ? '11:00' : '17:00';
+                    $hora_sorteo_val = !empty($row['hora_sorteo']) ? $row['hora_sorteo'] : $hora_sorteo_auto;
+                    $enlace_sorteo_val = !empty($row['enlace_sorteo']) ? $row['enlace_sorteo'] : 'https://meet.google.com/jyz-emho-coy';
+                    ?>
+                    <div class="mt-8 pt-6 border-t border-slate-50 grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1 flex items-center justify-between">
+                                <span>Hora del Sorteo</span>
+                                <span class="text-[9px] font-normal text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">
+                                    Semana <?php echo $num_sem_sorteo; ?> (<?php echo $es_impar ? 'Impar: 11:00' : 'Par: 17:00'; ?>)
+                                </span>
+                            </label>
+                            <input type="time" name="edit_hora_sorteo" value="<?php echo htmlspecialchars($hora_sorteo_val); ?>" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-800">
+                            <p class="text-[10px] text-slate-400 px-1">Auto: 11:00 h en semana impar (tardes) y 17:00 h en semana par (mañanas).</p>
+                        </div>
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-[10px] font-black uppercase text-slate-400 px-1">Enlace a la Reunión del Sorteo (Video Llamada)</label>
+                            <input type="text" name="edit_enlace_sorteo" value="<?php echo htmlspecialchars($enlace_sorteo_val); ?>" class="w-full px-5 py-3 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold" placeholder="https://meet.google.com/jyz-emho-coy">
+                            <p class="text-[10px] text-slate-400 px-1">Sala fija Google Meet: <code>https://meet.google.com/jyz-emho-coy</code></p>
+                        </div>
                     </div>
                 </div>
 

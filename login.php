@@ -21,16 +21,17 @@ $version = getVersion();
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0" name="viewport"/>
     <title>SINCRM | Acceso al Sistema</title>
     
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json?v=4.2">
     <meta name="theme-color" content="#2563eb">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
     <!-- Icons suite -->
-    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=4.2">
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png?v=4.2">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png?v=4.2">
+    <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png?v=4.2">
 
     <script>
         if ('serviceWorker' in navigator) {

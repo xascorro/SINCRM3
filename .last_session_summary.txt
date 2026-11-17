@@ -1,15 +1,28 @@
 === RESUMEN DE SESIÓN SINCRM-BETA ===
-Fecha: 2026-11-17 09:33
-Objetivo: Actualización de icono de la aplicación instalable PWA (móvil y escritorio) con el degradado azul.
+Fecha: 2026-11-17 11:22
+Objetivo: Implementación de consentimiento estricto (Opt-in) con proceso guiado de código de 6 dígitos para notificaciones por email.
 
-1. ICONOS PWA (pwa-icons/ y favicon.ico):
-   - Generadas todas las resoluciones oficiales (16x16, 32x32, 72x72, 96x96, 120x120, 128x128, 144x144, 152x152, 180x180, 192x192, 384x384, 512x512) usando el degradado azul oficial de login.
-   - Generado favicon.ico multirresolución para navegadores de escritorio.
-   - Actualizado manifest.json: theme_color: #2563eb, background_color: #1d4ed8.
-   - Cache buster en service-worker.js ('images-v4.1') para forzar la actualización del icono en dispositivos móviles ya instalados.
+1. PROCESO GUIADO DE ACTIVACIÓN Y VERIFICACIÓN (perfil.php, perfil_code.php):
+   - Al pulsar el conmutador de "Recibir Notificaciones por Correo Electrónico":
+     * Si el email ya está verificado, se activa/desactiva directamente con feedback toast.
+     * Si el email NO está verificado, el conmutador se mantiene desmarcado y abre un modal guiado paso a paso con SweetAlert2.
+     * Paso 1: Explicación de que se va a verificar la dirección de correo y botón "Enviar Código".
+     * Paso 2: Generación de código numérico OTP de 6 dígitos (válido 15 min) y envío por email con diseño corporativo y tipografía mono grande.
+     * Paso 3: Pantalla interactiva para introducir los 6 dígitos.
+     * Paso 4: Comprobación del código en el backend. Si es correcto, activa simultáneamente `email_confirmado = 1` y `recibir_emails = 1`.
+   - Modificación de email en perfil: si el usuario cambia su correo, se desactiva `email_confirmado = 0` y `recibir_emails = 0` hasta que verifique la nueva dirección.
 
-2. SINCRONIZACIÓN Y CACHÉ:
-   - Sincronizado a /var/www/html/beta con permisos www-data:www-data.
-   - Purgada caché de Cloudflare para pedrodiaz.eu y reiniciado Apache en contenedor.
+2. BLINDAJE DE ENVÍOS MASIVOS Y DIFUSIÓN (informes_publicar_code.php):
+   - Todas las consultas de difusión de circulares, documentos de competición, actas a clubes, oficiales y jueces requieren de forma estricta:
+     `u.activo = 1 AND u.recibir_emails = 1 AND u.email_confirmado = 1`
+   - Ningún usuario recibirá correos masivos a menos que haya confirmado su correo y activado voluntariamente la recepción.
 
-Estado: Completado y verificado.
+3. BASE DE DATOS MARIADB:
+   - Modificada la columna `recibir_emails` a `DEFAULT 0` (Opt-in estricto).
+   - Reseteados los usuarios no confirmados/no administradores a `recibir_emails = 0`.
+
+4. SINCRONIZACIÓN Y PERMISOS:
+   - Sincronizado en `/var/www/html/sincrm` y `/var/www/html/beta` con permisos `www-data:www-data`.
+   - Purgada la caché de Cloudflare para `pedrodiaz.eu`.
+
+Estado: 100% operativo y probado.

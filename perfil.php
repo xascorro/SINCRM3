@@ -66,7 +66,18 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                     <h3 class="text-base sm:text-lg font-black text-slate-800 leading-snug truncate">
                         <?php echo htmlspecialchars($user_data['username'] ?? 'Usuario'); ?>
                     </h3>
-                    <p class="text-xs text-slate-400 font-medium truncate mt-0.5"><?php echo htmlspecialchars($user_data['email'] ?? ''); ?></p>
+                    <div class="flex items-center justify-center gap-1.5 mt-0.5 truncate">
+                        <p class="text-xs text-slate-400 font-medium truncate"><?php echo htmlspecialchars($user_data['email'] ?? ''); ?></p>
+                        <?php if (!empty($user_data['email_confirmado'])): ?>
+                            <span class="inline-flex items-center text-emerald-500 text-xs shrink-0" title="Email verificado">
+                                <i class="fas fa-circle-check"></i>
+                            </span>
+                        <?php else: ?>
+                            <span class="inline-flex items-center text-amber-500 text-xs shrink-0" title="Email pendiente de verificación">
+                                <i class="fas fa-clock"></i>
+                            </span>
+                        <?php endif; ?>
+                    </div>
 
                     <!-- Badges de Rol y Club -->
                     <div class="flex flex-wrap items-center justify-center gap-2 mt-4">
@@ -208,8 +219,19 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                             </div>
 
                             <div class="space-y-1.5">
-                                <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest">Email de Acceso</label>
-                                <input type="email" name="email" value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>" required 
+                                <label class="text-[10px] font-black uppercase text-slate-400 px-1 tracking-widest flex items-center justify-between">
+                                    <span>Email de Acceso</span>
+                                    <?php if (!empty($user_data['email_confirmado'])): ?>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-black uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                            <i class="fas fa-check-circle text-emerald-500 text-[10px]"></i> Verificado
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="inline-flex items-center gap-1 text-[10px] font-black uppercase text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                                            <i class="fas fa-clock text-amber-500 text-[10px]"></i> No verificado
+                                        </span>
+                                    <?php endif; ?>
+                                </label>
+                                <input type="email" name="email" id="inputUserEmail" value="<?php echo htmlspecialchars($user_data['email'] ?? ''); ?>" required 
                                        class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white transition-all text-xs sm:text-sm font-bold text-slate-800 outline-none">
                             </div>
 
@@ -219,6 +241,27 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                                        class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white transition-all text-xs sm:text-sm font-bold text-slate-800 outline-none tabular-nums">
                             </div>
 
+                            <!-- Banner de Verificación de Email si no está confirmado -->
+                            <?php if (empty($user_data['email_confirmado'])): ?>
+                                <div id="bannerVerificarEmail" class="sm:col-span-2 p-4 rounded-2xl bg-amber-50/70 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                                    <div class="flex items-start gap-3 min-w-0">
+                                        <div class="w-9 h-9 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-xs">
+                                            <i class="fas fa-envelope-circle-check text-sm"></i>
+                                        </div>
+                                        <div class="min-w-0">
+                                            <h4 class="text-xs font-black text-amber-900">Tu dirección de email aún no está verificada</h4>
+                                            <p class="text-[11px] text-amber-700 font-medium mt-0.5">
+                                                Valida tu correo para recibir avisos oficiales de competiciones y poder restablecer tu contraseña si la olvidas.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button type="button" id="btnEnviarVerificacion" onclick="iniciarProcesoVerificacionGuiado()" class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 active:scale-95 text-white font-black text-[11px] uppercase tracking-wider rounded-xl shadow-xs transition-all shrink-0">
+                                        <i class="fas fa-paper-plane text-xs"></i>
+                                        <span>Verificar con Código</span>
+                                    </button>
+                                </div>
+                            <?php endif; ?>
+
                             <!-- Preferencia de Notificaciones por Email -->
                             <div class="space-y-1.5 sm:col-span-2 pt-2">
                                 <div class="p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between gap-3">
@@ -226,10 +269,18 @@ $user_data = mysqli_fetch_assoc($query_run) ?: [];
                                         <label class="text-xs font-black text-slate-800 flex items-center gap-2 cursor-pointer" for="recibir_emails_toggle">
                                             <i class="fas fa-envelope text-blue-600 text-xs"></i> Recibir Notificaciones por Correo Electrónico
                                         </label>
-                                        <p class="text-[11px] text-slate-500 font-medium">Recibir avisos oficiales, circulares, cierres de inscripciones y confirmaciones en tu email.</p>
+                                        <p class="text-[11px] text-slate-500 font-medium">
+                                            Recibir avisos oficiales, circulares, cierres de inscripciones y actas en tu email.
+                                            <?php if (empty($user_data['email_confirmado'])): ?>
+                                                <span class="text-amber-600 font-bold block mt-0.5"><i class="fas fa-triangle-exclamation text-[10px]"></i> Requiere verificar tu email previamente con un código de 6 dígitos.</span>
+                                            <?php endif; ?>
+                                        </p>
                                     </div>
                                     <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                        <input type="checkbox" name="recibir_emails" id="recibir_emails_toggle" value="1" <?php echo (!isset($user_data['recibir_emails']) || $user_data['recibir_emails'] == 1) ? 'checked' : ''; ?> class="sr-only peer">
+                                        <input type="checkbox" name="recibir_emails" id="recibir_emails_toggle" value="1" 
+                                               <?php echo (!empty($user_data['recibir_emails']) && $user_data['recibir_emails'] == 1) ? 'checked' : ''; ?> 
+                                               onchange="manejarClickRecibirEmails(this)"
+                                               class="sr-only peer">
                                         <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
                                     </label>
                                 </div>
@@ -662,6 +713,162 @@ function desvincularTelegram() {
                     Swal.fire('Error', res.message || 'No se pudo desvincular', 'error');
                 }
             }, 'json');
+        }
+    });
+}
+
+const userEmailAddress = <?php echo json_encode($user_data['email'] ?? ''); ?>;
+let isUserEmailVerified = <?php echo !empty($user_data['email_confirmado']) ? 'true' : 'false'; ?>;
+
+function manejarClickRecibirEmails(input) {
+    if (input.checked && !isUserEmailVerified) {
+        // Desmarcar visualmente hasta que complete el proceso guiado
+        input.checked = false;
+        iniciarProcesoVerificacionGuiado();
+    } else {
+        // Usuario ya verificado: actualizar directamente por AJAX
+        actualizarPreferenciaEmails(input.checked ? 1 : 0);
+    }
+}
+
+function actualizarPreferenciaEmails(valor) {
+    $.post('perfil_code.php', {
+        action: 'toggle_recibir_emails',
+        recibir: valor
+    }, function(res) {
+        if (res.status === 'success') {
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: res.message,
+                showConfirmButton: false,
+                timer: 2000
+            });
+        } else if (res.status === 'requiere_verificacion') {
+            document.getElementById('recibir_emails_toggle').checked = false;
+            iniciarProcesoVerificacionGuiado();
+        } else {
+            Swal.fire('Error', res.message || 'No se pudo actualizar la preferencia', 'error');
+        }
+    }, 'json');
+}
+
+function iniciarProcesoVerificacionGuiado() {
+    Swal.fire({
+        title: 'Verificación de Correo Requerida',
+        html: `
+            <div class="text-left space-y-3 font-lexend p-1">
+                <div class="p-3 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-800">
+                    <i class="fas fa-shield-halved text-blue-600 mr-1.5"></i>
+                    Para activar la recepción de emails oficiales, primero debemos verificar que este correo te pertenece:
+                    <div class="font-bold font-mono text-slate-800 mt-1 break-all">${userEmailAddress}</div>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Te enviaremos un <strong>código de 6 dígitos</strong>. Al confirmarlo, tu email quedará verificado y las notificaciones oficiales se activarán automáticamente.
+                </p>
+            </div>
+        `,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-paper-plane mr-1.5"></i> Enviar Código',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#2563eb',
+        cancelButtonColor: '#94a3b8',
+        showLoaderOnConfirm: true,
+        preConfirm: () => {
+            return fetch('perfil_code.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ action: 'enviar_codigo_verificacion' })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    throw new Error(data.message || 'Error al enviar el código de verificación.');
+                }
+                return data;
+            })
+            .catch(err => {
+                Swal.showValidationMessage(err.message);
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            pedirCodigoVerificacion();
+        }
+    });
+}
+
+function pedirCodigoVerificacion() {
+    Swal.fire({
+        title: 'Introduce tu Código',
+        html: `
+            <div class="space-y-3 font-lexend text-left p-1">
+                <p class="text-xs text-slate-600">
+                    Introduce los 6 dígitos que acabamos de enviar a <strong>${userEmailAddress}</strong>:
+                </p>
+                <div class="text-center my-3">
+                    <input type="text" id="inputCodigoOTP" maxlength="6" placeholder="000000" autofocus
+                           class="w-52 text-center text-3xl font-mono font-black tracking-[8px] px-4 py-3 rounded-2xl border-2 border-indigo-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-100 focus:outline-none bg-slate-50 text-indigo-700">
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                    <span><i class="fas fa-stopwatch mr-1"></i> Válido 15 minutos</span>
+                    <button type="button" onclick="iniciarProcesoVerificacionGuiado()" class="text-indigo-600 font-bold hover:underline">Reenviar código</button>
+                </div>
+            </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: '✓ Verificar y Activar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#16a34a',
+        cancelButtonColor: '#94a3b8',
+        showLoaderOnConfirm: true,
+        didOpen: () => {
+            const input = document.getElementById('inputCodigoOTP');
+            if (input) {
+                input.focus();
+                input.addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') Swal.clickConfirm();
+                });
+            }
+        },
+        preConfirm: () => {
+            const codigo = document.getElementById('inputCodigoOTP').value.trim();
+            if (!codigo || codigo.length !== 6) {
+                Swal.showValidationMessage('Introduce el código completo de 6 dígitos.');
+                return false;
+            }
+            return fetch('perfil_code.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ 
+                    action: 'validar_codigo_y_activar',
+                    codigo: codigo 
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'success') {
+                    throw new Error(data.message || 'Código incorrecto o caducado.');
+                }
+                return data;
+            })
+            .catch(err => {
+                Swal.showValidationMessage(err.message);
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: '¡Todo Listo!',
+                text: 'Tu correo ha sido verificado y las notificaciones oficiales han quedado activadas.',
+                icon: 'success',
+                confirmButtonColor: '#2563eb'
+            }).then(() => {
+                window.location.reload();
+            });
         }
     });
 }

@@ -17,18 +17,28 @@ if (isset($_GET['confirmar_email'])) {
     @session_start();
     $token = mysqli_real_escape_string($connection, $_GET['confirmar_email']);
     
-    $query = "SELECT id, email FROM usuarios WHERE token_confirmacion = '$token' AND email_confirmado = 0";
+    $query = "SELECT id, email, activo FROM usuarios WHERE token_confirmacion = '$token' AND email_confirmado = 0";
     $result = mysqli_query($connection, $query);
     
-    if (mysqli_num_rows($result) > 0) {
+    if ($result && mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_assoc($result);
         $user_id = $row['id'];
         $user_email = $row['email'];
+        $user_activo = (int)($row['activo'] ?? 0);
         
         $update = "UPDATE usuarios SET email_confirmado = 1, token_confirmacion = NULL WHERE id = '$user_id'";
         if (mysqli_query($connection, $update)) {
             write_log("Email verificado con éxito: $user_email", "SUCCESS");
-            $_SESSION['correcto'] = "¡Email verificado con éxito! Ahora un administrador debe aprobar tu acceso.";
+            
+            if ($user_activo == 1) {
+                $_SESSION['correcto'] = "¡Tu dirección de email ha sido verificada correctamente!";
+                if (isset($_SESSION['id_usario'])) {
+                    header('Location: perfil.php');
+                    exit();
+                }
+            } else {
+                $_SESSION['correcto'] = "¡Email verificado con éxito! Ahora un administrador debe aprobar tu acceso.";
+            }
             header('Location: login.php');
             exit();
         } else {

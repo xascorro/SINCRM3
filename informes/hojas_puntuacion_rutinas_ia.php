@@ -121,7 +121,7 @@ function buildArtisticSlipHTML($comp_nombre, $juez_num, $juez_nombre, $modalidad
     $html .= '<thead>';
     $html .= '<tr style="background-color: #0f172a; color: #ffffff; font-weight: bold; font-size: 8pt; height: 20px;">';
     $html .= '<th style="width: 9%; text-align: center; border-right: 1px solid #475569;">#</th>';
-    $html .= '<th style="width: 53%; text-align: left; border-right: 1px solid #475569;">&nbsp;CRITERIO ARTÍSTICO</th>';
+    $html .= '<th style="width: 53%; text-align: left; border-right: 1px solid #475569;">&nbsp;IMPRESIÓN ARTÍSTICA</th>';
     $html .= '<th style="width: 38%; text-align: center;">NOTA</th>';
     $html .= '</tr>';
     $html .= '</thead>';

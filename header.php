@@ -11,7 +11,7 @@ include('./lib/my_functions.php');
     <meta name="description" content="Sistema integral para la gestión de competiciones, clubes y auditoría de jueces de Natación Artística. Optimizado para normativa World Aquatics (AQUA).">
     
     <!-- PWA & Mobile Meta -->
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json?v=4.2">
     <meta name="theme-color" content="#2563eb">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,10 +20,10 @@ include('./lib/my_functions.php');
     <meta name="apple-mobile-web-app-title" content="SINCRM">
     
     <!-- Icons suite -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png">
+    <link rel="icon" type="image/x-icon" href="favicon.ico?v=4.2">
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa-icons/32x32.png?v=4.2">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa-icons/16x16.png?v=4.2">
+    <link rel="apple-touch-icon" sizes="180x180" href="pwa-icons/180x180.png?v=4.2">
 
     <!-- Performance: Preconnect & Font Loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

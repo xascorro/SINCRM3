@@ -95,6 +95,8 @@ if ($action === 'get_destinatarios') {
         FROM usuarios u
         JOIN clubes c ON u.club = c.id
         WHERE u.activo = 1 
+          AND u.recibir_emails = 1 
+          AND u.email_confirmado = 1 
           AND u.email IS NOT NULL 
           AND TRIM(u.email) != ''
           AND u.club IN (
@@ -140,6 +142,8 @@ if ($action === 'get_destinatarios') {
         JOIN jueces j ON pz.id_juez = j.id
         JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
         WHERE u.activo = 1 
+          AND u.recibir_emails = 1 
+          AND u.email_confirmado = 1 
           AND u.email IS NOT NULL 
           AND TRIM(u.email) != ''
           AND pz.id_competicion = '$id_competicion'
@@ -174,6 +178,8 @@ if ($action === 'get_destinatarios') {
         JOIN jueces j ON pj.id_juez = j.id
         JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
         WHERE u.activo = 1 
+          AND u.recibir_emails = 1 
+          AND u.email_confirmado = 1 
           AND u.email IS NOT NULL 
           AND TRIM(u.email) != ''
           AND (pj.id_competicion = '$id_competicion' OR pj.id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_competicion'))
@@ -220,6 +226,316 @@ if ($action === 'get_destinatarios') {
             'destinatarios' => array_values($jueces_dest)
         ]
     ]);
+    exit();
+}
+
+// =========================================================================
+// ACCIÓN: SUBIDA DE DOCUMENTOS PERSONALIZADOS / ADICIONALES (docs/{id}-{slug}.pdf)
+// Compatible con selección individual o MULTIARCHIVO
+// =========================================================================
+if ($action === 'subir_custom') {
+    $docs_dir = __DIR__ . '/docs/';
+    if (!is_dir($docs_dir)) {
+        @mkdir($docs_dir, 0775, true);
+    }
+
+    // Normalizar archivos recibidos (soporta multiarchivo 'archivos_pdf[]' o individual 'archivo_pdf')
+    $files_to_process = [];
+    if (isset($_FILES['archivos_pdf']) && is_array($_FILES['archivos_pdf']['name'])) {
+        for ($i = 0; $i < count($_FILES['archivos_pdf']['name']); $i++) {
+            if ($_FILES['archivos_pdf']['error'][$i] === UPLOAD_ERR_OK) {
+                $files_to_process[] = [
+                    'name' => $_FILES['archivos_pdf']['name'][$i],
+                    'tmp_name' => $_FILES['archivos_pdf']['tmp_name'][$i],
+                    'size' => $_FILES['archivos_pdf']['size'][$i]
+                ];
+            }
+        }
+    } elseif (isset($_FILES['archivo_pdf']) && $_FILES['archivo_pdf']['error'] === UPLOAD_ERR_OK) {
+        $files_to_process[] = [
+            'name' => $_FILES['archivo_pdf']['name'],
+            'tmp_name' => $_FILES['archivo_pdf']['tmp_name'],
+            'size' => $_FILES['archivo_pdf']['size']
+        ];
+    }
+
+    if (empty($files_to_process)) {
+        $err = "No se ha seleccionado ningún archivo PDF o hubo un error en la subida.";
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $err]);
+            exit();
+        }
+        $_SESSION['estado'] = $err;
+        header("Location: informes_competicion.php?id=$id_competicion");
+        exit();
+    }
+
+    $user_nombre_doc = trim($_POST['nombre_doc'] ?? '');
+    $archivos_guardados = [];
+    $errores_archivos = [];
+
+    foreach ($files_to_process as $idx => $fitem) {
+        $orig_name = $fitem['name'];
+        $ext = strtolower(pathinfo($orig_name, PATHINFO_EXTENSION));
+        if ($ext !== 'pdf') {
+            $errores_archivos[] = "$orig_name (no es PDF)";
+            continue;
+        }
+
+        // Título / Nombre para el documento
+        if (count($files_to_process) === 1 && !empty($user_nombre_doc)) {
+            $titulo_f = $user_nombre_doc;
+        } else {
+            $raw_base = pathinfo($orig_name, PATHINFO_FILENAME);
+            $titulo_f = !empty($user_nombre_doc) ? "{$user_nombre_doc} - {$raw_base}" : $raw_base;
+        }
+
+        // Generar slug limpio
+        $slug = preg_replace('/[^a-zA-Z0-9_-]/', '-', strtolower($titulo_f));
+        $slug = preg_replace('/-+/', '-', $slug);
+        $slug = trim($slug, '-_');
+        // Evitar duplicar el id_competicion si el título o archivo ya empezaba por el ID (ej: 83-normativa -> 83-normativa.pdf)
+        $slug = preg_replace('/^' . preg_quote((string)$id_competicion, '/') . '[-_]*/', '', $slug);
+        if (empty($slug)) {
+            $slug = 'documento-' . ($idx + 1) . '-' . time();
+        }
+
+        $target_filename = "{$id_competicion}-{$slug}.pdf";
+        $target_file = $docs_dir . $target_filename;
+
+        if (move_uploaded_file($fitem['tmp_name'], $target_file)) {
+            @chmod($target_file, 0664);
+            $archivos_guardados[] = [
+                'filename' => $target_filename,
+                'path' => $target_file,
+                'titulo' => $titulo_f,
+                'size' => round(filesize($target_file) / 1024, 1) . ' KB'
+            ];
+        } else {
+            $errores_archivos[] = "$orig_name (error al mover archivo)";
+        }
+    }
+
+    if (empty($archivos_guardados)) {
+        $err = "No se pudo guardar ningún archivo en el servidor: " . implode(', ', $errores_archivos);
+        if (isset($_POST['ajax'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'error' => $err]);
+            exit();
+        }
+        $_SESSION['estado'] = $err;
+        header("Location: informes_competicion.php?id=$id_competicion");
+        exit();
+    }
+
+    $notif_resumen = [];
+
+    // --- 1. NOTIFICACIÓN POR TELEGRAM ---
+    $notif_telegram = isset($_POST['notif_telegram']) && in_array($_POST['notif_telegram'], ['1', 'true', 'on', 1], true);
+    if ($notif_telegram) {
+        include_once('includes/telegram_functions.php');
+        $nota_msg = trim($_POST['texto_adicional'] ?? '');
+        $comp_nom = !empty($comp['nombre']) ? $comp['nombre'] : "Competición #$id_competicion";
+        $total_guardados = count($archivos_guardados);
+
+        // Obtener usuarios a notificar
+        $q_tele = mysqli_query($connection, "SELECT telegram_chat_id FROM usuarios WHERE telegram_chat_id IS NOT NULL AND telegram_notif_activas = 1 AND activo = 1");
+        $tele_chats = [];
+        if ($q_tele) {
+            while ($row_t = mysqli_fetch_assoc($q_tele)) {
+                $tele_chats[] = $row_t['telegram_chat_id'];
+            }
+        }
+
+        $tele_ok = 0;
+        foreach ($archivos_guardados as $num => $doc_item) {
+            $index_str = ($total_guardados > 1) ? " (" . ($num + 1) . "/{$total_guardados})" : "";
+            $caption = "📄 <b>Nuevo Documento Oficial{$index_str}</b>\n"
+                     . "🏊 <b>Competición:</b> " . htmlspecialchars($comp_nom) . "\n"
+                     . "📌 <b>Título:</b> " . htmlspecialchars($doc_item['titulo']) . "\n"
+                     . "📁 <code>" . htmlspecialchars($doc_item['filename']) . "</code>";
+            
+            if (!empty($nota_msg) && $num === 0) {
+                $caption .= "\n\n💬 <i>" . htmlspecialchars($nota_msg) . "</i>";
+            }
+            $caption .= "\n\n🔗 <a href=\"https://sincrm.pedrodiaz.eu/docs/{$doc_item['filename']}\">Abrir en SINCRM</a>";
+
+            foreach ($tele_chats as $chat_id_t) {
+                $res_t = telegram_enviar_documento($chat_id_t, $doc_item['path'], $caption, $doc_item['filename'], 'DOCUMENTO_CUSTOM');
+                if (!empty($res_t['ok'])) {
+                    $tele_ok++;
+                }
+            }
+        }
+
+        if ($tele_ok > 0) {
+            $notif_resumen[] = "Telegram ({$total_guardados} archivo/s enviado/s)";
+        }
+    }
+
+    // --- 2. NOTIFICACIÓN POR EMAIL ---
+    $notif_email_prueba = isset($_POST['notif_email_prueba']) && in_array($_POST['notif_email_prueba'], ['1', 'true', 'on', 1], true);
+    $notif_email_clubes = isset($_POST['notif_email_clubes']) && in_array($_POST['notif_email_clubes'], ['1', 'true', 'on', 1], true);
+
+    $emails_finales = [];
+    if ($notif_email_prueba) {
+        $emails_finales['xascorro@gmail.com'] = 'xascorro@gmail.com';
+    }
+
+    if ($notif_email_clubes) {
+        $q_u_clubes = "
+            SELECT u.email 
+            FROM usuarios u 
+            WHERE u.activo = 1 
+              AND u.recibir_emails = 1 
+              AND u.email_confirmado = 1 
+              AND u.email IS NOT NULL 
+              AND TRIM(u.email) != ''
+              AND u.club IN (
+                SELECT DISTINCT n.club 
+                FROM inscripciones_figuras inf 
+                JOIN nadadoras n ON inf.id_nadadora = n.id 
+                WHERE inf.id_competicion = '$id_competicion' AND n.club IS NOT NULL
+                UNION
+                SELECT DISTINCT r.id_club 
+                FROM rutinas r 
+                WHERE r.id_competicion = '$id_competicion' AND r.id_club IS NOT NULL
+                UNION
+                SELECT DISTINCT n.club
+                FROM rutinas_participantes rp
+                JOIN rutinas r ON rp.id_rutina = r.id
+                JOIN nadadoras n ON rp.id_nadadora = n.id
+                WHERE r.id_competicion = '$id_competicion' AND n.club IS NOT NULL
+              )
+        ";
+        $res_u = mysqli_query($connection, $q_u_clubes);
+        if ($res_u) {
+            while ($row_u = mysqli_fetch_assoc($res_u)) {
+                $em = strtolower(trim($row_u['email']));
+                if (filter_var($em, FILTER_VALIDATE_EMAIL)) {
+                    $emails_finales[$em] = $em;
+                }
+            }
+        }
+    }
+
+    $emails_ok = 0;
+    if (!empty($emails_finales)) {
+        include_once('includes/email_functions.php');
+        $cant_docs = count($archivos_guardados);
+        $asunto_doc = ($cant_docs === 1) ? $archivos_guardados[0]['titulo'] : "{$cant_docs} documentos nuevos";
+        $asunto = "📄 Nueva documentación: {$asunto_doc} - " . $comp['nombre'];
+        $fecha_f = (!empty($comp['fecha'])) ? date('d/m/Y', strtotime($comp['fecha'])) : 'Fecha por determinar';
+        $lugar_f = !empty($comp['lugar']) ? $comp['lugar'] : 'Sede oficial';
+        
+        $nota_adicional = trim($_POST['texto_adicional'] ?? '');
+        $bloque_nota = '';
+        if (!empty($nota_adicional)) {
+            $bloque_nota = "
+                <div style='background-color:#eff6ff; border-radius:12px; padding:14px 16px; margin:0 0 16px 0; border-left:4px solid #2563eb;'>
+                    <p style='margin:0 0 4px 0; font-size:12px; font-weight:800; color:#1e40af; text-transform:uppercase;'>Nota de la Secretaría:</p>
+                    <p style='margin:0; font-size:13px; color:#1e3a8a; line-height:1.5;'>" . nl2br(htmlspecialchars($nota_adicional)) . "</p>
+                </div>
+            ";
+        }
+
+        $lista_docs_html = "";
+        $attachments = [];
+        foreach ($archivos_guardados as $fitem) {
+            $url_doc = "https://sincrm.pedrodiaz.eu/docs/{$fitem['filename']}";
+            $lista_docs_html .= "<li style='margin-bottom:8px;'><strong>" . htmlspecialchars($fitem['titulo']) . "</strong> — <code>{$fitem['filename']}</code> ({$fitem['size']})<br><a href='{$url_doc}' style='color:#2563eb; font-size:11px;'>Abrir enlace</a></li>";
+            $attachments[] = [
+                'filename' => $fitem['filename'],
+                'content' => base64_encode(@file_get_contents($fitem['path']))
+            ];
+        }
+
+        $cuerpo = "
+            <div style='font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,sans-serif; max-width:600px; margin:0 auto; padding:20px; color:#1e293b;'>
+                <div style='background:linear-gradient(135deg, #2563eb 0%, #1e40af 100%); padding:24px; border-radius:16px; color:#ffffff; margin-bottom:20px;'>
+                    <h1 style='margin:0 0 6px 0; font-size:20px; font-weight:800;'>Nueva Documentación Publicada</h1>
+                    <p style='margin:0; font-size:13px; opacity:0.9;'>{$comp['nombre']}</p>
+                </div>
+                {$bloque_nota}
+                <div style='background-color:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:20px; margin-bottom:20px;'>
+                    <p style='margin:0 0 12px 0; font-size:14px; color:#334155;'>Se ha publicado nueva documentación oficial en la plataforma SINCRM:</p>
+                    <ul style='margin:0 0 16px 0; padding-left:20px; font-size:13px; color:#475569; line-height:1.7;'>
+                        {$lista_docs_html}
+                    </ul>
+                    <p style='margin:12px 0 0 0; font-size:12px; color:#64748b;'><strong>Competición:</strong> {$comp['nombre']} | <strong>Fecha:</strong> {$fecha_f} | <strong>Sede:</strong> {$lugar_f}</p>
+                </div>
+                <p style='font-size:11px; color:#94a3b8; text-align:center; margin:0;'>
+                    Este es un aviso automático generado por el Sistema SINCRM (FNRM). Los archivos PDF van adjuntos en este correo.
+                </p>
+            </div>
+        ";
+
+        foreach ($emails_finales as $dest_em) {
+            $res_m = enviar_email($dest_em, $asunto, $cuerpo, $attachments);
+            if ($res_m === true) $emails_ok++;
+        }
+
+        if ($emails_ok > 0) {
+            $notif_resumen[] = "Email ({$emails_ok} destinatarios)";
+        }
+    }
+
+    $nombres_guardados = array_column($archivos_guardados, 'filename');
+    $msg_extra = !empty($notif_resumen) ? " (Notificado vía " . implode(' y ', $notif_resumen) . ")" : "";
+    write_log(count($archivos_guardados) . " documento(s) personalizado(s) subido(s) para competición #{$id_competicion} por " . ($_SESSION['username'] ?? 'Usuario') . ": " . implode(', ', $nombres_guardados) . $msg_extra, "SUCCESS");
+
+    $msg_exito = (count($archivos_guardados) === 1) 
+        ? "¡Documento '{$archivos_guardados[0]['titulo']}' subido con éxito!$msg_extra" 
+        : "¡" . count($archivos_guardados) . " documentos subidos con éxito!$msg_extra";
+
+    if (isset($_POST['ajax'])) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => true,
+            'message' => $msg_exito,
+            'total' => count($archivos_guardados),
+            'archivos' => $archivos_guardados
+        ]);
+        exit();
+    }
+
+    $_SESSION['correcto'] = $msg_exito;
+    header("Location: informes_competicion.php?id=$id_competicion");
+    exit();
+}
+
+// =========================================================================
+// ACCIÓN: BORRAR DOCUMENTO PERSONALIZADO (docs/{id}-{slug}.pdf)
+// =========================================================================
+if ($action === 'borrar_custom') {
+    $docs_dir = __DIR__ . '/docs/';
+    $filename = basename($_POST['filename'] ?? '');
+
+    if (preg_match('/^' . $id_competicion . '-[a-zA-Z0-9_\.-]+\.pdf$/i', $filename)) {
+        $file_to_del = $docs_dir . $filename;
+        if (file_exists($file_to_del)) {
+            @unlink($file_to_del);
+            write_log("Documento personalizado '{$filename}' eliminado (#{$id_competicion}) por " . ($_SESSION['username'] ?? 'Usuario'), "WARNING");
+            if (isset($_POST['ajax'])) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'message' => "El documento '$filename' ha sido eliminado de la web."]);
+                exit();
+            }
+            $_SESSION['correcto'] = "Documento '$filename' eliminado con éxito.";
+            header("Location: informes_competicion.php?id=$id_competicion");
+            exit();
+        }
+    }
+
+    $err = "No se pudo encontrar o eliminar el archivo especificado.";
+    if (isset($_POST['ajax'])) {
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'error' => $err]);
+        exit();
+    }
+    $_SESSION['estado'] = $err;
+    header("Location: informes_competicion.php?id=$id_competicion");
     exit();
 }
 
@@ -353,6 +669,8 @@ if ($action === 'publicar') {
             SELECT u.email 
             FROM usuarios u 
             WHERE u.activo = 1 
+              AND u.recibir_emails = 1 
+              AND u.email_confirmado = 1 
               AND u.email IS NOT NULL 
               AND TRIM(u.email) != ''
               AND u.club IN (
@@ -391,6 +709,8 @@ if ($action === 'publicar') {
             JOIN jueces j ON pz.id_juez = j.id
             JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
             WHERE u.activo = 1 
+              AND u.recibir_emails = 1 
+              AND u.email_confirmado = 1 
               AND u.email IS NOT NULL 
               AND TRIM(u.email) != ''
               AND pz.id_competicion = '$id_competicion'
@@ -414,6 +734,8 @@ if ($action === 'publicar') {
             JOIN jueces j ON pj.id_juez = j.id
             JOIN usuarios u ON (u.id_juez_v3 = j.id OR LOWER(TRIM(u.username)) = LOWER(TRIM(CONCAT(j.nombre, ' ', j.apellidos))))
             WHERE u.activo = 1 
+              AND u.recibir_emails = 1 
+              AND u.email_confirmado = 1 
               AND u.email IS NOT NULL 
               AND TRIM(u.email) != ''
               AND (pj.id_competicion = '$id_competicion' OR pj.id_fase IN (SELECT id FROM fases WHERE id_competicion = '$id_competicion'))

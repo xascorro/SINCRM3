@@ -648,9 +648,16 @@ if (!function_exists('get_documentos_competicion')) {
 
                                 <?php endif; ?>
 
-                                <?php if(!empty($row['enlace_sorteo'])): ?>
+                                <?php if(!empty($row['enlace_sorteo'])): 
+                                    $num_sem_sorteo = (int)date('W', strtotime($fecha_sorteo));
+                                    $hora_sorteo_display = !empty($row['hora_sorteo']) 
+                                        ? $row['hora_sorteo'] 
+                                        : (($num_sem_sorteo % 2 !== 0) ? '11:00' : '17:00');
+                                ?>
                                     <div class="text-center sm:text-left w-full sm:w-auto self-center">
-                                        <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2 tabular-nums">Sorteo: <?php echo dateAFecha($fecha_sorteo); ?></p>
+                                        <p class="text-[10px] sm:text-xs font-black text-slate-400 uppercase mb-2 tabular-nums">
+                                            <i class="fas fa-dice text-indigo-500 mr-1"></i> Sorteo: <?php echo dateAFecha($fecha_sorteo); ?> &bull; <?php echo $hora_sorteo_display; ?> h
+                                        </p>
                                         <a href="<?php echo $row['enlace_sorteo'];?>" target="_blank" class="w-full sm:w-auto px-6 py-3.5 sm:px-7 sm:py-3.5 bg-blue-600 text-white font-black uppercase text-xs sm:text-sm tracking-widest rounded-xl sm:rounded-[1.5rem] shadow-lg shadow-blue-500/20 hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3 no-underline">
                                             <i class="fa-solid fa-video text-base"></i> Unirse al Sorteo
                                         </a>
